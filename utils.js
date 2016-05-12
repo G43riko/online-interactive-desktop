@@ -3,10 +3,18 @@ function GVector2f(x, y){
 	this.y = y;
 };
 
+GVector2f.prototype.dist = function(x, y){
+	return Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2));
+}
+
+
+
 Movement = {};
 Movement.move = function(object, x, y){
-	object.position.x += x;
-	object.position.y += y;
+	if(object.position !== undefined){
+		object.position.x += x;
+		object.position.y += y;
+	}
 }
 
 function deselectAll(object = false){

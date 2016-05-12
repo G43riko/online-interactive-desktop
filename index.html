@@ -3,23 +3,33 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+	<script src="js/jquery.min.js"></script>
+	<!--<link rel="stylesheet" type="text/css" href="css/styles.css">-->
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	<script type="text/javascript" src="config.js"></script>
 	<script type="text/javascript" src="main.js"></script>
+	<script type="text/javascript" src="layer.js"></script>
+	<script type="text/javascript" src="scene.js"></script>
 	<script type="text/javascript" src="rect.js"></script>
 	<script type="text/javascript" src="paint.js"></script>
+	<script type="text/javascript" src="arc.js"></script>
 	<script type="text/javascript" src="canvas.js"></script>
 	<script type="text/javascript" src="utils.js"></script>
-	<script type="text/javascript" src="config.js"></script>
 	<script type="text/javascript" src="listeners.js"></script>
-	<style type="text/css">
-	*{
-		margin: 0;
-		padding: 0;
-	}
-	</style>
 </head>
 <body>
-	<canvas id="myCanvas" width="800" height="600">
+	<div id="topPanel">
+		<div class="verticalMenu"> tuto bude horné menu</div>
+		<div class="verticalMenu"> tu budu ikonky</div>
+	</div>
+	<div id="leftPanel">
+		<div class="leftContainter">vrstvy</div>
+		<div class="leftContainter">objekty</div>
+		<div class="leftContainter">krokovanie</div>
+		<div class="leftContainter">niečo dalšie</div>
+		<div class="leftContainter">a zasa niečo dalšie</div>
+	</div>
+	<canvas id="myCanvas">
 		Váš prehliadač nepodporuje Canvas
 	</canvas>
 </body>

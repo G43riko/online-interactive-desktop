@@ -1,22 +1,34 @@
 var initTime = window.performance.now();
 
 var keys = [];
-var objects = [];
+var buttons = [];
 var selectedObjects = [];
 var creatingObject = false;
 var movedObject = false;
 var isMoved = false;
-
-
+var operation = OPERATION_DRAW_RECT;
 
 $(function(){
+	/**
+	 * DOLEZITE!!!
+	 */
+	Scene.createLayer("default");
 	console.log("stranka sa nacítala za: ", (window.performance.now() - initTime) + " ms");
-
+	
 	canvas = document.getElementById("myCanvas");
-	canvas.width = window.innerWidth - 4;
-	canvas.height = window.innerHeight - 4;
+	var tmpC = $(canvas);
+
+	canvas.width = tmpC.width();
+	canvas.height = tmpC.height();
+
 	context = canvas.getContext("2d");
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
+
+	initListeners();
+
+	/**
+	 * OSTATNE
+	 */
 
 	var p = new Paint("black", 5);
 
@@ -24,38 +36,29 @@ $(function(){
 	p.addPoint(new GVector2f(200, 160));
 	p.addPoint(new GVector2f(500, 90));
 
-	objects.push(p);
+	addToScene(p);
 
-//	objects.push(new Rect(new GVector2f(50, 50), new GVector2f(100, 100), "red"));
-//	objects.push(new Rect(new GVector2f(250, 250), new GVector2f(100, 100), "green"));
+	addToScene(new Arc(new GVector2f(600, 100), new GVector2f(50, 50), "aqua"));
+
+	addToScene(new Rect(new GVector2f(50, 50), new GVector2f(100, 100), "red"));
+	addToScene(new Rect(new GVector2f(250, 250), new GVector2f(100, 100), "green"));
 	
-	initListeners();
 
 	mainLoop();
 });
 
-function mainLoop(){
+function draw(){
 	resetCanvas();
-	
-	for(var i in objects)
-		objects[i].draw();
+
+	for(var i in layers)
+		layers[i].draw();
 
 	if(creatingObject)
 		creatingObject.draw();
+}
 
-/*
-	context.beginPath();
-	context.moveTo(100, 20);
-
-	// line 1
-	context.lineTo(200, 160);
-	// line 2
-	context.lineTo(500, 90);
-
-	context.lineWidth = 5;
-	context.strokeStyle = 'blue';
-	context.stroke();
-*/
-	requestAnimationFrame(mainLoop);
+function mainLoop(){
+	draw();
+	//requestAnimationFrame(mainLoop);
 }
 
