@@ -23,12 +23,13 @@ Rect.prototype.draw = function(){
 	context.fillStyle = this.color;
 	context.fillRect(this.position.x, this.position.y, this.size.x, this.size.y);
 
+	if(this.moving)
+		setShadow(false);
+	
 	if(this.selected){
 		context.lineWidth = this.borderWidth;
 		context.strokeStyle = this.borderColor;
 		context.strokeRect(this.position.x, this.position.y, this.size.x, this.size.y);
 	}
 
-	if(this.moving)
-		setShadow(false);
 };

@@ -1,6 +1,5 @@
 function initListeners(){
 	canvas.onmousedown = function(e){
-		console.log(e);
 		if(e.button == LEFT_BUTTON)
 			for(var i in layers["default"].objects) //zoberie iba jeden??
 				if(typeof layers["default"].objects[i].clickIn === 'function'){
@@ -35,10 +34,12 @@ function initListeners(){
 		}
 
 
-		layers["default"].objects[0].addPoint(new GVector2f(e.offsetX, e.offsetY));
+		if(operation == OPERATION_DRAW_PATH){
+			layers["default"].objects[0].addPoint(new GVector2f(e.offsetX, e.offsetY));
 
-		if(layers["default"].objects[0].points[layers["default"].objects[0].points.length - 1].length >= 5)
-			layers["default"].objects[0].breakLine();
+			if(layers["default"].objects[0].points[layers["default"].objects[0].points.length - 1].length >= 5)
+				layers["default"].objects[0].breakLine();
+		}
 
 		movedObject.moving = false;
 		movedObject = false;
@@ -58,7 +59,15 @@ function initListeners(){
 		deselectAll();
 		draw();
 	}
+	/*
+	canvas.addEventListener("touchstart", handleStart, false);
+	canvas.addEventListener("touchend", handleEnd, false);
+	canvas.addEventListener("touchcancel", handleCancel, false);
+	canvas.addEventListener("touchmove", handleMove, false);
+	*/
 
+	canvas.onresize = function(){console.log("resizeheee"); initCanvasSize();}
+	canvas.orientationchange = function(){initCanvasSize();}
 	canvas.onmousemove = function(e){
 		if(movedObject){
 			isMoved = true;
@@ -68,7 +77,7 @@ function initListeners(){
 				Movement.move(movedObject, e.movementX, e.movementY)
 		}
 
-		if(keys[SHIFT_KEY])
+		if(keys[SHIFT_KEY] && operation == OPERATION_DRAW_PATH)
 			layers["default"].objects[0].addPoint(new GVector2f(e.offsetX, e.offsetY));
 
 

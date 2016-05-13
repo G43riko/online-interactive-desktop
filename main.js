@@ -16,10 +16,7 @@ $(function(){
 	console.log("stranka sa nacítala za: ", (window.performance.now() - initTime) + " ms");
 	
 	canvas = document.getElementById("myCanvas");
-	var tmpC = $(canvas);
-
-	canvas.width = tmpC.width();
-	canvas.height = tmpC.height();
+	initCanvasSize();
 
 	context = canvas.getContext("2d");
 	context.shadowColor = DEFAULT_SHADOW_COLOR;

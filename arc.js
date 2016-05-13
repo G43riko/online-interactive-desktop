@@ -22,16 +22,31 @@ Arc.prototype.draw = function(){
 
 	context.beginPath();
 	context.fillStyle = this.color;
-	context.arc(this.position.x, this.position.y, Math.abs(this.size.x), Math.abs(this.size.y), 0, 2 * Math.PI);
+	//context.arc(this.position.x, this.position.y, Math.abs(this.size.x), Math.abs(this.size.y), 0, 2 * Math.PI);
+	context.ellipse(this.position.x + this.size.x / 2,
+					this.position.y + this.size.y / 2,
+					Math.abs(this.size.x / 2), 
+					Math.abs(this.size.y / 2), 
+					0, 
+					0, 
+					Math.PI * 2);
 	context.fill()
+
+	if(this.moving)
+		setShadow(false);
 
 	if(this.selected){
 		context.lineWidth = this.borderWidth;
 		context.strokeStyle = this.borderColor;
-		context.arc(this.position.x, this.position.y, this.size.x, this.size.y, 0, 2 * Math.PI);
+		//context.arc(this.position.x, this.position.y, this.size.x, this.size.y, 0, 2 * Math.PI);
+		context.ellipse(this.position.x + this.size.x / 2, 
+						this.position.y + this.size.y / 2, 
+						Math.abs(this.size.x / 2), 
+						Math.abs(this.size.y / 2), 
+						0, 
+						0, 
+						Math.PI * 2);
 		context.stroke();
 	}
 
-	if(this.moving)
-		setShadow(false);
 }

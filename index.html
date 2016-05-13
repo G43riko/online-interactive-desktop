@@ -18,9 +18,18 @@
 	<script type="text/javascript" src="listeners.js"></script>
 </head>
 <body>
+	<script type="text/javascript">
+	</script>
 	<div id="topPanel">
 		<div class="verticalMenu"> tuto bude horné menu</div>
-		<div class="verticalMenu"> tu budu ikonky</div>
+		<div class="verticalMenu">
+			<select id="test" onchange="operation=parseInt(this.options[this.selectedIndex].getAttribute('operation'))">
+				<option operation="1000" selected="selected">obdlznik</option>
+				<option operation="1001" >elipsa</option>
+				<option operation="1002" >kresba</option>
+				<option operation="1003" >ciara</option>
+			</select>
+		</div>
 	</div>
 	<div id="leftPanel">
 		<div class="leftContainter">vrstvy</div>

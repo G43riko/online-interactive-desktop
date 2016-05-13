@@ -3,6 +3,11 @@ function resetCanvas(){
 	context.fillRect(0, 0, canvas.width, canvas.height);
 };
 
+function initCanvasSize(){
+	var tmpC = $(canvas);
+	canvas.width = tmpC.width();
+	canvas.height = tmpC.height();
+}
 
 function setShadow(variable){
 	if(variable){

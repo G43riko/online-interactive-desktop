@@ -7,6 +7,9 @@ const ESCAPE_KEY 	= 27;
 const DEFAULT_SHADOW_COLOR	= "black";
 const DEFAUL_STROKE_COLOR	= "black";
 const DEFAULT_STROKE_WIDTH	= 2;
+const LINE_CAP_BUTTT 	= "butt";
+const LINE_CAP_ROUND 	= "round";
+const LINE_CAP_SQUARE 	= "square";
 
 const OPERATION_DRAW_RECT 	= 1000;
 const OPERATION_DRAW_ARC	= 1001;
