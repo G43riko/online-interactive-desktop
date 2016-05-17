@@ -1,12 +1,13 @@
 var initTime = window.performance.now();
 
-var keys = [];
-var buttons = [];
-var selectedObjects = [];
-var creatingObject = false;
-var movedObject = false;
-var isMoved = false;
-var operation = OPERATION_DRAW_RECT;
+keys = [];
+buttons = [];
+selectedObjects = [];
+creatingObject = false;
+movedObject = false;
+isMoved = false;
+selectedColor = DEFAULT_COLOR;
+operation = OPERATION_DRAW_RECT;
 
 $(function(){
 	/**
@@ -14,13 +15,12 @@ $(function(){
 	 */
 	Scene.createLayer("default");
 	console.log("stranka sa nacítala za: ", (window.performance.now() - initTime) + " ms");
-	
 	canvas = document.getElementById("myCanvas");
 	initCanvasSize();
 
 	context = canvas.getContext("2d");
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
-
+	console.log("teraz");
 	initListeners();
 
 	/**
@@ -32,6 +32,7 @@ $(function(){
 	p.addPoint(new GVector2f(100, 20));
 	p.addPoint(new GVector2f(200, 160));
 	p.addPoint(new GVector2f(500, 90));
+	p.breakLine();
 
 	addToScene(p);
 

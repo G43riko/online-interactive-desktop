@@ -9,5 +9,8 @@ Layer.prototype.draw = function(){
 	if(!this.visible)
 		return;
 	for(var i in this.objects)
-		this.objects[i].draw();
+		if(typeof this.objects[i].draw === "function")
+			this.objects[i].draw();
+		else
+			Logger.error("layer: " + this.title + ": kresli sa objekt ktorý nemá draw():", this.objects[i]);
 }

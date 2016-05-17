@@ -41,3 +41,40 @@
 	width: calc(100% - 4px);
 	background-color: pink;
 }
+/**
+ * COLORS
+ */
+.colorPatern{
+	float: left;
+	width: 18px;
+	height: 18px;
+	border: 1px solid white;
+	border-radius: 5px;
+	margin: 1px;
+}
+
+.colorPatern.selected{
+	width: 14px;
+	height: 14px;
+	border: 3px solid black;
+}
+#colorPalete{
+	border: 1px solid black;
+	position: relative;
+	width: 100%;
+	height: calc(100% - 20px);
+}
+/**
+ * LAYERS
+ */
+
+.layer{
+	position: relative;
+	width: calc(100% - 10px);
+	top: 5px;
+	padding: 10px;
+	height: 20px;
+	margin: 5px;
+	border: 1px solid black;
+
+}

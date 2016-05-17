@@ -17,7 +17,7 @@ Paint.prototype.breakLine = function(){
 Paint.prototype.draw = function(){
 	if(!this.visible)
 		return;
-
+	
 	context.beginPath();
 	for(var i in this.points){
 		var points2 = this.points[i];

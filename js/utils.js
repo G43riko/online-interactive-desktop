@@ -21,4 +21,10 @@ function deselectAll(object = false){
 	for(var j in selectedObjects)
 		selectedObjects[j].selected = false;
 	selectedObjects = object ? [object] : [];
+	object.selected = true;
+}
+
+function selectObject(object){
+	selectedObjects.push(object);
+	object.selected = true;
 }

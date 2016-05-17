@@ -4,22 +4,25 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<script src="js/jquery.min.js"></script>
-	<!--<link rel="stylesheet" type="text/css" href="css/styles.css">-->
+	<script src="js/angular.min.js"></script>
+	<script src="js/mainController.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
-	<script type="text/javascript" src="config.js"></script>
-	<script type="text/javascript" src="main.js"></script>
-	<script type="text/javascript" src="layer.js"></script>
-	<script type="text/javascript" src="scene.js"></script>
-	<script type="text/javascript" src="rect.js"></script>
-	<script type="text/javascript" src="paint.js"></script>
-	<script type="text/javascript" src="arc.js"></script>
-	<script type="text/javascript" src="canvas.js"></script>
-	<script type="text/javascript" src="utils.js"></script>
-	<script type="text/javascript" src="listeners.js"></script>
+	<script type="text/javascript" src="js/config.js"></script>
+	<script type="text/javascript" src="js/logger.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+	<script type="text/javascript" src="js/layer.js"></script>
+	<script type="text/javascript" src="js/scene.js"></script>
+	<script type="text/javascript" src="js/rect.js"></script>
+	<script type="text/javascript" src="js/paint.js"></script>
+	<script type="text/javascript" src="js/arc.js"></script>
+	<script type="text/javascript" src="js/canvas.js"></script>
+	<script type="text/javascript" src="js/utils.js"></script>
+	<script type="text/javascript" src="js/listeners.js"></script>
+
+	<meta name="viewport" content="width=1200">
+	<meta name="apple-mobile-web-app-copable" content="yes">
 </head>
-<body>
-	<script type="text/javascript">
-	</script>
+<body ng-app="myApp" ng-controller="myCtrl">
 	<div id="topPanel">
 		<div class="verticalMenu"> tuto bude horné menu</div>
 		<div class="verticalMenu">
@@ -32,14 +35,76 @@
 		</div>
 	</div>
 	<div id="leftPanel">
-		<div class="leftContainter">vrstvy</div>
+		<div class="leftContainter" id="cont_select_obj">označenený element</div>
+		<div class="leftContainter">
+			<div id="colorPanel" style="border: 1px solid black; width: 100%; height: 140px;">
+				<div id="paleteSelect" style="width: 100%; height: 30px;">
+					<select style="margin: 5px">
+						<option name="default" selected="selected">základné</option>
+						<option name="web">web</option>
+						<option name="dark">dark</option>
+					</select>
+				</div>
+				<div id="colorPalete"></div>
+			</div>
+		</div>
+		<div class="leftContainter">
+			<div><input type="button" value="pridat" onclick="addLayer(prompt('meno vrstvy'))"></div>
+			<div class="layer" onmouseover="$(this).find('.removeLayer').show()" onmouseleave="$(this).find('.removeLayer').hide()">
+				<input type="checkbox" value="visible">
+				<!--<input type="text" value="nazov" readonly>-->
+				<span>nazov</span>
+				<select>
+					<option selected="selected">normal</option>
+					<option>add</option>
+					<option>sub</option>
+					<option>mul</option>
+				</select>
+				<input class="removeLayer" type="button" value="vymazat" style="display: none" onclick="this.parentElement.parentElement.removeChild(this.parentElement);">
+			</div>
+			<div class="layer"></div>
+			<div class="layer"></div>
+		</div>
 		<div class="leftContainter">objekty</div>
-		<div class="leftContainter">krokovanie</div>
-		<div class="leftContainter">niečo dalšie</div>
-		<div class="leftContainter">a zasa niečo dalšie</div>
+		<div class="leftContainter">krokovanie<test title="meno"></test ></div>
 	</div>
 	<canvas id="myCanvas">
 		Váš prehliadač nepodporuje Canvas
 	</canvas>
 </body>
 </html>
+
+	<script type="text/javascript">
+		function addLayer(name){
+			if(name == null)
+				return;
+
+			var compositions = ["normal", "add", "sub", "mul"];
+
+			var obj = document.createElement("select");
+
+			for(var i in compositions){
+				var tmp = document.createElement("option");
+				tmp.appendChild(document.createTextNode(compositions[i]));
+				obj.appendChild(tmp);
+			}
+
+			console.log(name, obj);
+		}
+		var colors = ["#191919", "#DFE2DB", "#FFF056", "#FFFFFF", "#C63D0F", "#3B3738", "#FDF3E7", 
+					  "#7E8F7C", "#005A31", "#A8CD1B", "#CBE32D", "#F3FAB6", "#558C89", "#74AFAD", 
+					  "#D9853B", "#ECECEA", "#2B2B2B", "#DE1B1B", "#F6F6F6", "#E9E581", "#7D1935", 
+					  "#4A96AD", "#F5F3EE", "#E44424", "#67BCDB", "#A2AB58", "#404040", "#6DBDD6", 
+					  "#B71427", "#FFE658", "#585858", "#118C4E", "#C1E1A6", "#FF9009", "#DF3D82"]
+		var res = "";
+		for(var i in colors)
+			res += '<div class="colorPatern" style="background-color:'+colors[i]+'"></div>';
+
+		$("#colorPalete").append(res).delegate(".colorPatern", "click", function(){
+			if($(this).hasClass("selected"))
+				return false;
+			$(".selected").removeClass("selected");
+			selectedColor = $(this).addClass("selected").css("backgroundColor");
+		});
+
+	</script>
