@@ -14,3 +14,11 @@ Scene.createLayer = function(title){
 	layers[title] = new Layer(title);
 }
 
+Scene.forEach = function(func){
+	for(var i in layers)
+		if(layers[i].visible)
+			for(var j in layers[i].objects)
+				if(func(layers[i].objects[j]))
+					return true;
+	return false;
+}

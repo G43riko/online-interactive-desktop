@@ -1,13 +1,20 @@
 var initTime = window.performance.now();
 
-keys = [];
-buttons = [];
-selectedObjects = [];
+Creator = {
+	creatingObject: false,
+	selectedColor: DEFAULT_COLOR,
+	operation: OPERATION_DRAW_RECT
+}
+
 creatingObject = false;
 movedObject = false;
 isMoved = false;
 selectedColor = DEFAULT_COLOR;
 operation = OPERATION_DRAW_RECT;
+
+$.getJSON("js/json/menu.json", function(data){
+	Menu.items = data;
+})
 
 $(function(){
 	/**
@@ -19,10 +26,15 @@ $(function(){
 	initCanvasSize();
 
 	context = canvas.getContext("2d");
+
+
+	context.roundRect = roundRect;
+
+
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
-	console.log("teraz");
 	initListeners();
 
+	Menu.init();
 	/**
 	 * OSTATNE
 	 */
@@ -41,18 +53,22 @@ $(function(){
 	addToScene(new Rect(new GVector2f(50, 50), new GVector2f(100, 100), "red"));
 	addToScene(new Rect(new GVector2f(250, 250), new GVector2f(100, 100), "green"));
 	
-
-	mainLoop();
+	draw();
 });
+
 
 function draw(){
 	resetCanvas();
+
+	drawGrid(0.1, 10, 50);
 
 	for(var i in layers)
 		layers[i].draw();
 
 	if(creatingObject)
 		creatingObject.draw();
+
+	Menu.draw();
 }
 
 function mainLoop(){

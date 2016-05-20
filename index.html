@@ -9,6 +9,10 @@
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
 	<script type="text/javascript" src="js/config.js"></script>
 	<script type="text/javascript" src="js/logger.js"></script>
+	<script type="text/javascript" src="js/utils.js"></script>
+	<script type="text/javascript" src="js/menu.js"></script>
+	<script type="text/javascript" src="js/input.js"></script>
+	<script type="text/javascript" src="js/selectedObjects.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript" src="js/layer.js"></script>
 	<script type="text/javascript" src="js/scene.js"></script>
@@ -16,7 +20,6 @@
 	<script type="text/javascript" src="js/paint.js"></script>
 	<script type="text/javascript" src="js/arc.js"></script>
 	<script type="text/javascript" src="js/canvas.js"></script>
-	<script type="text/javascript" src="js/utils.js"></script>
 	<script type="text/javascript" src="js/listeners.js"></script>
 
 	<meta name="viewport" content="width=1200">
@@ -35,7 +38,13 @@
 		</div>
 	</div>
 	<div id="leftPanel">
-		<div class="leftContainter" id="cont_select_obj">označenený element</div>
+		<div class="leftContainter" id="cont_select_obj">
+			<div style="display: none">
+				<span>position: <span id="posX"></span>X<span id="posY"></span></span>
+				<span>size: <span id="sizeX"></span>X<span id="sizeY"></span></span><br/>
+				<span>color: <span id="color"></span></span>
+			</div>
+		</div>
 		<div class="leftContainter">
 			<div id="colorPanel" style="border: 1px solid black; width: 100%; height: 140px;">
 				<div id="paleteSelect" style="width: 100%; height: 30px;">
@@ -49,7 +58,7 @@
 			</div>
 		</div>
 		<div class="leftContainter">
-			<div><input type="button" value="pridat" onclick="addLayer(prompt('meno vrstvy'))"></div>
+			<div>Vrstvy: <input type="button" value="pridat" onclick="addLayer(prompt('meno vrstvy'))"></div>
 			<div class="layer" onmouseover="$(this).find('.removeLayer').show()" onmouseleave="$(this).find('.removeLayer').hide()">
 				<input type="checkbox" value="visible">
 				<!--<input type="text" value="nazov" readonly>-->
@@ -68,7 +77,7 @@
 		<div class="leftContainter">objekty</div>
 		<div class="leftContainter">krokovanie<test title="meno"></test ></div>
 	</div>
-	<canvas id="myCanvas">
+	<canvas id="myCanvas" class="animated">
 		Váš prehliadač nepodporuje Canvas
 	</canvas>
 </body>
@@ -95,7 +104,10 @@
 					  "#7E8F7C", "#005A31", "#A8CD1B", "#CBE32D", "#F3FAB6", "#558C89", "#74AFAD", 
 					  "#D9853B", "#ECECEA", "#2B2B2B", "#DE1B1B", "#F6F6F6", "#E9E581", "#7D1935", 
 					  "#4A96AD", "#F5F3EE", "#E44424", "#67BCDB", "#A2AB58", "#404040", "#6DBDD6", 
-					  "#B71427", "#FFE658", "#585858", "#118C4E", "#C1E1A6", "#FF9009", "#DF3D82"]
+					  "#B71427", "#FFE658", "#585858", "#118C4E", "#C1E1A6", "#FF9009", "#DF3D82", 
+					  "#F361C2", "#EBED5B", "#3C007B"];
+
+		colors = colors.sort().reverse();
 		var res = "";
 		for(var i in colors)
 			res += '<div class="colorPatern" style="background-color:'+colors[i]+'"></div>';
