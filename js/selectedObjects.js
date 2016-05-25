@@ -15,8 +15,9 @@ selectedObjects = {
 	},
 	clear: function(){
 		$("#cont_select_obj div").hide();
-		for(var j in this.objects)
-			this.objects[j].selected = false;
+		this.objects.forEach(function(e){
+			e.selected = false;
+		});
 		this.objects = [];
 	},
 	clearAndAdd: function(o){
@@ -25,7 +26,7 @@ selectedObjects = {
 	},
 	forEach: function(e){
 		for(var j in this.objects)
-			if(e(this.objects[j]))
+			if(this.objects.hasOwnProperty(j) && e(this.objects[j]))
 				return true;
 		return false;
 	},
@@ -34,4 +35,4 @@ selectedObjects = {
 			return false;
 		return this.objects[this.size() - 1];
 	}
-}
+};

@@ -8,14 +8,20 @@ body{
 #myCanvas{
 	border: 1px solid black;
 	position: absolute;
+	/*
 	top: 10%;
 	left: 0;
 	width: calc(80% - 2px);
 	height: calc(90% - 2px);
+	*/
+	width: calc(100% - 2px);
+	height: calc(100% - 2px);
 }
 .animated{
 	-webkit-transition: all 0.5s ease; 
-	-moz-transition: all 0.5s ease; 
+	-moz-transition: -webkit-animation-delay: time;
+	-o-animation-delay: time;
+	animation-delay: time;l 0.5s ease; 
 	-ms-transition: all 0.5s ease; 
 	-o-transition: all 0.5s ease; 
 	transition: all 0.5s ease;

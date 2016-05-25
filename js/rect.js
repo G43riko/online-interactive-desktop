@@ -11,6 +11,11 @@ Rect.prototype.visible 		= true;
 Rect.prototype.moving 		= false;
 Rect.prototype.moveType 	= -1;
 
+Rect.prototype.clickInBoundingBox = function(x, y){
+	return x + (SELECTOR_SIZE >> 1) > this.position.x && x - (SELECTOR_SIZE >> 1) < this.position.x + this.size.x &&
+		   y + (SELECTOR_SIZE >> 1) > this.position.y && y - (SELECTOR_SIZE >> 1) < this.position.y + this.size.y;
+};
+
 Rect.prototype.toString = function(){
 	return Json.stringify({
 		pX: this.position.x,
@@ -37,24 +42,32 @@ Rect.prototype.loadData = function(text){
 	this.visible = data.v;
 
 	draw();
-}
+};
+
+Rect.prototype.updateCreatingPosition = function(pos){
+	this.size.x = pos.x - this.position.x;
+	this.size.y = pos.y - this.position.y;
+};
 
 Rect.prototype.clickIn = function(x, y){
+	if(!this.clickInBoundingBox(x, y))
+		return false;
+
 	this.moveType = -1;
-	if(new GVector2f(x, y).dist(this.position.x + this.size.x / 2, this.position.y) < SELECTOR_SIZE)
+	if(new GVector2f(x, y).dist(this.position.x + (this.size.x >> 1), this.position.y) < SELECTOR_SIZE)
 		this.moveType = 0;
-	else if(new GVector2f(x, y).dist(this.position.x + this.size.x, this.position.y + this.size.y / 2) < SELECTOR_SIZE)
+	else if(new GVector2f(x, y).dist(this.position.x + this.size.x, this.position.y + (this.size.y >> 1)) < SELECTOR_SIZE)
 		this.moveType = 1;
-	else if(new GVector2f(x, y).dist(this.position.x + this.size.x / 2, this.position.y + this.size.y) < SELECTOR_SIZE)
+	else if(new GVector2f(x, y).dist(this.position.x + (this.size.x >> 1), this.position.y + this.size.y) < SELECTOR_SIZE)
 		this.moveType = 2;
-	else if(new GVector2f(x, y).dist(this.position.x, this.position.y + this.size.y / 2) < SELECTOR_SIZE)
+	else if(new GVector2f(x, y).dist(this.position.x, this.position.y + (this.size.y >> 1)) < SELECTOR_SIZE)
 		this.moveType = 3;
 	else if(new GVector2f(x, y).dist(this.position.x + this.size.x, this.position.y + this.size.y) < SELECTOR_SIZE)
 		this.moveType = 5;
 	else if(x > this.position.x && y > this.position.y && x < this.position.x + this.size.x && y < this.position.y + this.size.y)
 		this.moveType = 4;
 	return this.moveType >= 0;
-}
+};
 
 Rect.prototype.draw = function(){
 	if(!this.visible)

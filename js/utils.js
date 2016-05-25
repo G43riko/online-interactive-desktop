@@ -1,52 +1,97 @@
-function GVector2f(x, y){
-	this.x = x;
-	this.y = y;
-};
+var getClassOf = Function.prototype.call.bind(Object.prototype.toString);
 
-GVector2f.prototype.dist = function(x, y){
-	return Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2));
-}
-
-GVector2f.prototype.set = function(x, y){
-	this.x = x;
-	this.y = y;
-}
-
-
-
-Movement = {};
-Movement.move = function(o, x, y){
-	if(o.moveType !== undefined){
-		switch(o.moveType){
-			case 0:
-				o.position.y += y;
-				o.size.y -= y;
-				break;
-			case 1:
-				o.size.x += x;
-				break;
-			case 2:
-				o.size.y += y;
-				break;
-			case 3:
-				o.position.x += x;
-				o.size.x -= x;
-				break;
-			case 4:
-				o.position.x += x;
-				o.position.y += y;
-				break;
-			case 5:
-				o.size.x += x;
-				o.size.y += y;
-				break;
+class GVector2f{
+	constructor(){
+		if(arguments.length == 0){
+			this.x = 0;
+			this.y = 0;
+		}
+		else if(arguments.length == 1){
+			this.x = arguments[0].x;
+			this.y = arguments[0].y;
+		}
+		else if(arguments.length == 2){
+			this.x = arguments[0];
+			this.y = arguments[1];
 		}
 	}
-	else{
-		o.position.x += x;
-		o.position.y += y;
+
+	dist(){
+		if(arguments.length == 1)
+			return Math.sqrt(Math.pow(this.x - arguments[0].x, 2) + Math.pow(this.y - arguments[0].y, 2));
+		else if(arguments.length == 2)
+			return Math.sqrt(Math.pow(this.x - arguments[0], 2) + Math.pow(this.y - arguments[1], 2));
+	}
+
+	set(){
+		if(arguments.length == 1){
+			this.x = arguments[0].x;
+			this.y = arguments[0].y;
+		}
+		else if(arguments.length == 2){
+			this.x = arguments[0];
+			this.y = arguments[1];
+		}
 	}
 }
+
+function isInt(n){
+	return Number(n) === n && n % 1 === 0;
+}
+
+function isFloat(n){
+	return Number(n) === n && n % 1 !== 0;
+}
+
+Movement = {
+	move: function(o, x, y){
+		if(o.moveType !== undefined){
+			switch(o.moveType){
+				case 0:
+					o.position.y += y;
+					o.size.y -= y;
+					break;
+				case 1:
+					o.size.x += x;
+					break;
+				case 2:
+					o.size.y += y;
+					break;
+				case 3:
+					o.position.x += x;
+					o.size.x -= x;
+					break;
+				case 4:
+					o.position.x += x;
+					o.position.y += y;
+					break;
+				case 5:
+					o.size.x += x;
+					o.size.y += y;
+					break;
+			}
+		}
+		else if(o.movingPoint !== undefined && o.movingPoint >= 0){
+			var intVal = 0;
+			if(isInt(o.movingPoint)){
+				o.points[o.movingPoint].x += x;
+				o.points[o.movingPoint].y += y;
+				o.findMinAndMax();
+			}
+			else{
+				intVal = parseInt(o.movingPoint) + 1;
+				o.points.splice(intVal, 0, new GVector2f((o.points[intVal - 1].x + (o.points[intVal].x) >> 1),
+														 (o.points[intVal - 1].y + (o.points[intVal].y) >> 1)));
+				o.findMinAndMax();
+				o.movingPoint = intVal;
+			}
+		}
+		else{
+			o.position.x += x;
+			o.position.y += y;
+		}
+	}
+};
 
 function deselectAll(object = false){
 	selectedObjects.clear();
@@ -55,45 +100,44 @@ function deselectAll(object = false){
 }
 
 function updateSelectedObjectView(object){
+	/*
 	var container = $("#cont_select_obj");
 	container.find("#posX").text(object.position.x);
 	container.find("#posY").text(object.position.y);
 	container.find("#sizeX").text(object.size.x);
 	container.find("#sizeY").text(object.size.y);
 	container.find("#color").css("backgroundColor", object.color).text(object.color);
+	*/
 }
 
-function isKeyDown(key){
-	return keys.hasOwnProperty(key) && keys[key];
+function drawBorder(o){
+	context.lineWidth = o.borderWidth * 2;
+	context.save();
+	setLineDash(true);
+	context.strokeStyle = o.borderColor;
+	context.strokeRect(o.position.x, o.position.y, o.size.x, o.size.y);
+
+	drawSelectArc(o.position.x + (o.size.x >> 1), o.position.y);
+	drawSelectArc(o.position.x, o.position.y + (o.size.y >> 1));
+	drawSelectArc(o.position.x + (o.size.x >> 1), o.position.y + o.size.y);
+	drawSelectArc(o.position.x + o.size.x, o.position.y + (o.size.y >> 1));
+
+	drawSelectArc(o.position.x + o.size.x, o.position.y + o.size.y);
+	context.restore();
 }
 
-function isButtonDown(button){
-	return buttons.hasOwnProperty(button) && buttons[button];
-}
-
-function drawBorder(object){
-	context.lineWidth = object.borderWidth;
-	context.strokeStyle = object.borderColor;
-	context.strokeRect(object.position.x, object.position.y, object.size.x, object.size.y);
-
-	drawSelectArc(object.position.x + object.size.x / 2, object.position.y, SELECTOR_COLOR, SELECTOR_SIZE);
-	drawSelectArc(object.position.x, object.position.y + object.size.y / 2, SELECTOR_COLOR, SELECTOR_SIZE);
-	drawSelectArc(object.position.x + object.size.x / 2, object.position.y + object.size.y, SELECTOR_COLOR, SELECTOR_SIZE);
-	drawSelectArc(object.position.x + object.size.x, object.position.y + object.size.y / 2, SELECTOR_COLOR, SELECTOR_SIZE);
-
-	drawSelectArc(object.position.x + object.size.x, object.position.y + object.size.y, SELECTOR_COLOR, SELECTOR_SIZE);
-}
-
-function drawSelectArc(x, y, color, size){
+function drawSelectArc(x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE, dots = true){
+	context.save();
+	setLineDash(dots);
 	context.beginPath();
 	context.fillStyle = color;
-	context.arc(x, y, size, size, 0, 2 * Math.PI);
-	context.fill()
+	context.arc(x, y, size, size, 0, Math.PI << 1);
+	context.fill();
 
-	context.lineWidth = 2;
 	context.strokeStyle = "black";
-	context.arc(x, y, size, size, 0,  Math.PI * 2);
+	context.arc(x, y, size, size, 0, Math.PI << 1);
 	context.stroke();
+	context.restore();
 }
 
 function getMousePos(canvasDom, mouseEvent) {
@@ -110,7 +154,7 @@ function drawGrid(width = 0.1, dist = 50, strong = 0){
 	context.lineWidth = width;
 	while((i += dist) < canvas.width){
 		if(strong > 0 && i % strong == 0){
-			context.lineWidth = width * 2;
+			context.lineWidth = width << 1;
 			context.moveTo(i,0);
 			context.lineTo(i,canvas.height);
 			context.lineWidth = width;
@@ -120,14 +164,13 @@ function drawGrid(width = 0.1, dist = 50, strong = 0){
 	}
 	i = 0;
 	while((i += dist) < canvas.height){
-		if(strong > 0 && i % strong == 0){
-			context.lineWidth = width * 2;
-			context.moveTo(0, i);
-			context.lineTo(canvas.width, i);
-			context.lineWidth = width;
-		}
+		context.save();
+		if(strong > 0 && i % strong == 0)
+			context.lineWidth = width << 1;
+
 		context.moveTo(0, i);
 		context.lineTo(canvas.width, i);
+		context.restore();
 	}
 	context.stroke();
 }

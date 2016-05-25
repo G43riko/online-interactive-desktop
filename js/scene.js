@@ -1,24 +1,21 @@
-var objects = [];
-var layers = {};
-var Scene = {};
-
-function addToScene(object, layer = "default"){
-	if(!layers.hasOwnProperty(layer))
-		Logger.error("ide sa načítať neexistujúca vrstva: " + layer);
-	layers[layer].objects.push(object);
-}
-
-Scene.createLayer = function(title){
-	if(layers.hasOwnProperty(title))
-		Logger.error("ide sa vytvoriť vrstva ktorá už existuje: " + layer);
-	layers[title] = new Layer(title);
-}
-
-Scene.forEach = function(func){
-	for(var i in layers)
-		if(layers[i].visible)
-			for(var j in layers[i].objects)
-				if(func(layers[i].objects[j]))
-					return true;
-	return false;
+class SceneManager{
+	constructor(){
+		this._layers = {};
+	};
+	forEach(func){
+		$.each(this._layers, function(key, val){
+			if(val.visible)
+				val.forEach(func);
+		});
+	};
+	createLayer(title){
+		if(this._layers.hasOwnProperty(title))
+			Logger.error("ide sa vytvoriť vrstva ktorá už existuje: " + title);
+		this._layers[title] = new Layer(title);
+	};
+	addToScene(object, layer = "default"){
+		if(!this._layers.hasOwnProperty(layer))
+			Logger.error("ide sa načítať neexistujúca vrstva: " + layer);
+		this._layers[layer].add(object);
+	};
 }

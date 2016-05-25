@@ -1,20 +1,13 @@
 var initTime = window.performance.now();
-
-Creator = {
-	creatingObject: false,
-	selectedColor: DEFAULT_COLOR,
-	operation: OPERATION_DRAW_RECT
-}
-
-creatingObject = false;
-movedObject = false;
-isMoved = false;
-selectedColor = DEFAULT_COLOR;
-operation = OPERATION_DRAW_RECT;
-
+var drawMousePos = false;
+var movedObject = false;
+var lastTouch = false;
+var Scene = new SceneManager();
+var Creator = new objectCreator();
+var Input = new InputManager();
 $.getJSON("js/json/menu.json", function(data){
 	Menu.items = data;
-})
+});
 
 $(function(){
 	/**
@@ -26,10 +19,7 @@ $(function(){
 	initCanvasSize();
 
 	context = canvas.getContext("2d");
-
-
 	context.roundRect = roundRect;
-
 
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
 	initListeners();
@@ -41,38 +31,37 @@ $(function(){
 
 	var p = new Paint("black", 5);
 
-	p.addPoint(new GVector2f(100, 20));
-	p.addPoint(new GVector2f(200, 160));
-	p.addPoint(new GVector2f(500, 90));
+	p.addPoint(new GVector2f(700, 20));
+	p.addPoint(new GVector2f(600, 160));
+	p.addPoint(new GVector2f(500, 390));
 	p.breakLine();
 
-	addToScene(p);
+	Scene.addToScene(p);
 
-	addToScene(new Arc(new GVector2f(600, 100), new GVector2f(50, 50), "aqua"));
+	Scene.addToScene(new Line([new GVector2f(10, 400), new GVector2f(300, 450)], 1, "aqua"));
 
-	addToScene(new Rect(new GVector2f(50, 50), new GVector2f(100, 100), "red"));
-	addToScene(new Rect(new GVector2f(250, 250), new GVector2f(100, 100), "green"));
+	Scene.addToScene(new Arc(new GVector2f(600, 300), new GVector2f(50, 50), "aqua"));
+
+	Scene.addToScene(new Rect(new GVector2f(800, 50), new GVector2f(100, 100), "red"));
+	Scene.addToScene(new Rect(new GVector2f(250, 250), new GVector2f(100, 100), "green"));
 	
 	draw();
 });
 
 
 function draw(){
+	drawMousePos = new Date().getMilliseconds();
 	resetCanvas();
 
 	drawGrid(0.1, 10, 50);
 
-	for(var i in layers)
-		layers[i].draw();
+	Scene.forEach(function(e){
+		if(typeof e.draw === "function")
+			e.draw();
+	});
 
-	if(creatingObject)
-		creatingObject.draw();
+	if(Creator.object)
+		Creator.object.draw();
 
 	Menu.draw();
 }
-
-function mainLoop(){
-	draw();
-	//requestAnimationFrame(mainLoop);
-}
-

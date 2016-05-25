@@ -1,16 +1,28 @@
-function Layer(title){
-	this.title = title;
-}
+class Layer{
+	constructor(title){
+		this._objects = [];
+		this._visible = true;
+		this.title = title;
+	}
 
-Layer.prototype.objects = [];
-Layer.prototype.visible = true;
+	get visible(){
+		return this._visible;
+	}
 
-Layer.prototype.draw = function(){
-	if(!this.visible)
-		return;
-	for(var i in this.objects)
-		if(typeof this.objects[i].draw === "function")
-			this.objects[i].draw();
-		else
-			Logger.error("layer: " + this.title + ": kresli sa objekt ktorý nemá draw():", this.objects[i]);
+	draw(){
+		if(!this.visible)
+			return;
+		this._objects.forEach(function(e){
+			if(typeof e.draw === "function")
+				e.draw();
+		});
+	}
+
+	add(element){
+		this._objects.push(element);
+	}
+
+	forEach(func){
+		this._objects.forEach(func);
+	}
 }

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="js/jquery.min.js"></script>
+</head>
+<body>
+	<svg width="800" height="600">
+		<circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+	</svg>
+</body>
+</html>
+<script type="text/javascript">
+
+	//var svg = $(document.createElement('svg')).attr({width: 800, height: 600}).css({width:800, height:600});
+	var svg = $("svg");
+
+	var circle = $(document.createElement('circle')).attr({
+		cx: 50, 
+		cy: 50, 
+		stroke: "green", 
+		strokeWidth: 4, 
+		fill:"blue"}).appendTo(svg);
+
+
+	svg.width(800).height(600).appendTo("body");
+</script>

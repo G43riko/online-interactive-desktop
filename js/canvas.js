@@ -1,7 +1,7 @@
 function resetCanvas(){
 	context.fillStyle = DEFAULT_BACKGROUND_COLOR;
 	context.fillRect(0, 0, canvas.width, canvas.height);
-};
+}
 
 function initCanvasSize(){
 	var tmpC = $(canvas);
@@ -13,6 +13,11 @@ function setShadow(variable){
 	context.shadowBlur = variable ? DEFAULT_SHADOW_BLUR : 0;
 	context.shadowOffsetX = variable ? DEFAULT_SHADOW_OFFSET : 0;
 	context.shadowOffsetY = variable ? DEFAULT_SHADOW_OFFSET : 0;
+}
+
+function setLineDash(variable){
+	if(variable)
+		context.setLineDash([15, 5]);
 }
 
 function canvasToImage(canvas) {
@@ -37,8 +42,8 @@ function roundRect(x, y, width, height, radius = 5, fill = true, stroke = true) 
 			radius = {tl: radius, tr: radius, br: radius, bl: radius};
 		else {
 			var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
-			for (var side in defaultRadius)
-				radius[side] = radius[side] || defaultRadius[side];
+			for (var i in defaultRadius)
+					radius[i] = radius[i] || defaultRadius[i];
 		}
 
 		this.beginPath();
