@@ -38,27 +38,29 @@ function imageToCanvas(image) {
 }
 
 function roundRect(x, y, width, height, radius = 5, fill = true, stroke = true) {
-		if (typeof radius === 'number')
-			radius = {tl: radius, tr: radius, br: radius, bl: radius};
-		else {
-			var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
-			for (var i in defaultRadius)
-					radius[i] = radius[i] || defaultRadius[i];
-		}
-
-		this.beginPath();
-		this.moveTo(x + radius.tl, y);
-		this.lineTo(x + width - radius.tr, y);
-		this.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
-		this.lineTo(x + width, y + height - radius.br);
-		this.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
-		this.lineTo(x + radius.bl, y + height);
-		this.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
-		this.lineTo(x, y + radius.tl);
-		this.quadraticCurveTo(x, y, x + radius.tl, y);
-		this.closePath();
-		if (fill)
-			this.fill();
-		if (stroke)
-			this.stroke();
+	var defaultRadius;
+	if (typeof radius === 'number')
+		radius = {tl: radius, tr: radius, br: radius, bl: radius};
+	else {
+		defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+		defaultRadius.forEach(function(e, i){
+			radius[i] = e || defaultRadius[i];
+		});
 	}
+
+	this.beginPath();
+	this.moveTo(x + radius.tl, y);
+	this.lineTo(x + width - radius.tr, y);
+	this.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+	this.lineTo(x + width, y + height - radius.br);
+	this.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+	this.lineTo(x + radius.bl, y + height);
+	this.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+	this.lineTo(x, y + radius.tl);
+	this.quadraticCurveTo(x, y, x + radius.tl, y);
+	this.closePath();
+	if (fill)
+		this.fill();
+	if (stroke)
+		this.stroke();
+}

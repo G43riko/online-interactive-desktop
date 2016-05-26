@@ -1,0 +1,19 @@
+{
+	"joinType" : {
+		"name" : "Join type",
+		"fields" :  {
+			"linear" : {
+				"name" : "Linear"
+			},
+			"sequencal" : {
+				"name" : "Sequencal"
+			},
+			"bezier" : {
+				"name" : "Bezier"
+			}
+		}
+	},
+	"delete" : {
+		"name" : "Delete"
+	}
+}

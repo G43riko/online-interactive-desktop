@@ -5,6 +5,11 @@ class objectCreator{
 		this._operation = OPERATION_DRAW_RECT;
 	}
 
+	draw(){
+		if(this._object)
+			this._object.draw();
+	}
+
 	get object(){
 		return this._object;
 	}

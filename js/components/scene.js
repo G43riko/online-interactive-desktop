@@ -18,4 +18,10 @@ class SceneManager{
 			Logger.error("ide sa načítať neexistujúca vrstva: " + layer);
 		this._layers[layer].add(object);
 	};
+	draw(){
+		this.forEach(function(e){
+			if(typeof e.draw === "function")
+				e.draw();
+		});
+	}
 }

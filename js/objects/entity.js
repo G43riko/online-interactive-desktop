@@ -1,5 +1,5 @@
 class Entity{
-	constructor(position = new GVector(), size = new GVector(), color = DEFAULT_COLOR){
+	constructor(position = new GVector2f(), size = new GVector2f(), color = DEFAULT_COLOR){
 		this._position = position;
 		this._size = size;
 		this._color = color;
@@ -17,4 +17,6 @@ class Entity{
 		return x + SELECTOR_SIZE > this.position.x && x - SELECTOR_SIZE < this.position.x + this.size.x && 
 			   y + SELECTOR_SIZE > this.position.y && y - SELECTOR_SIZE < this.position.y + this.size.y;
 	};
+
+
 }

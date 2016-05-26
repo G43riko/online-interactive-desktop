@@ -12,6 +12,7 @@ const DEFAULT_SHADOW_OFFSET		= 5;
 const DEFAUL_STROKE_COLOR		= "black";
 const DEFAULT_STROKE_WIDTH		= 2;
 const DEFAULT_COLOR				= "black";
+const DEFAULT_TEXT_COLOR		= "black";
 
 const SELECTOR_SIZE 	= 10;
 const SELECTOR_COLOR	= "orange";
@@ -25,6 +26,15 @@ const OPERATION_DRAW_ARC	= 1001;
 const OPERATION_DRAW_PATH	= 1002;
 const OPERATION_DRAW_LINE	= 1003;
 
+const JOIN_LINEAR		= 2000;
+const JOIN_BAZIER		= 2001;
+const JOIN_SEQUENCAL	= 2002;
+
+
+const CONTEXT_MENU_LINE_HEIGHT = 40;
+const CONTEXT_MENU_OFFSET = 10;
+const CONTEXT_MENU_WIDTH = 150;
+
 const TOUCH_DURATION = 500;
 const TOUCH_VARIATION = 5;
 
@@ -35,3 +45,5 @@ const MENU_BORDER_COLOR = "black";
 const MENU_WIDTH = 60;
 const MENU_HEIGHT = 60;
 const MENU_POSITION = MENU_OFFSET;
+
+const PI2 = Math.PI * 2;

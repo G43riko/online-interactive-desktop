@@ -105,7 +105,7 @@ function initListeners(){
 					Creator.object = new Line([position], 5, Creator.color);
 					break;
 			}
-			deselectAll(Creator.object);
+			selectedObjects.clearAndAdd(Creator.object);
 		}
 		
 		draw();
@@ -116,14 +116,38 @@ function initListeners(){
 			draw();
 			return true;
 		}
+
+		actContextMenu = new ContexMenuManager(position);
+
+		draw();
 		return false;
 	}
 
 	function mouseDoubleClick(position, button){
+		var result = false;
+		Scene.forEach(function(e){
+			if(result)
+				return;
+			if(typeof e.doubleClickIn !== "undefined" && e.doubleClickIn(position.x, position.y))
+				result = e;
 
+		});
+
+		draw();
+
+		return true;
 	}
 
 	function mouseUp(position){
+		var result = false;
+
+		if(actContextMenu)
+			if(!actContextMenu.clickIn(position.x, position.y))
+				actContextMenu = false;
+
+
+
+
 		if(Creator.object){
 			Scene.addToScene(Creator.object);
 			Creator.object = false;
@@ -142,18 +166,18 @@ function initListeners(){
 		movedObject = false;
 
 
-		var result = false;
 		Scene.forEach(function(o){
 			if(result)
 				return;
 			if(o.clickIn(position.x, position.y)) {
-				Input.isKeyDown(L_CTRL_KEY) ? selectedObjects.add(o) : deselectAll(o);
+				Input.isKeyDown(L_CTRL_KEY) ? selectedObjects.add(o) : selectedObjects.clearAndAdd(o);
 				result = true;
 			}
 		});
 
 		if(!result)
-			deselectAll();
+			selectedObjects.clear();
+			//deselectAll();
 	}
 
 	function mouseMove(position, movement){

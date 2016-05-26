@@ -10,6 +10,7 @@ Rect.prototype.selected 	= false;
 Rect.prototype.visible 		= true;
 Rect.prototype.moving 		= false;
 Rect.prototype.moveType 	= -1;
+Rect.prototype.name 		= "Rect";
 
 Rect.prototype.clickInBoundingBox = function(x, y){
 	return x + (SELECTOR_SIZE >> 1) > this.position.x && x - (SELECTOR_SIZE >> 1) < this.position.x + this.size.x &&

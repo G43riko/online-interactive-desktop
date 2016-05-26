@@ -16,6 +16,64 @@ class GVector2f{
 		}
 	}
 
+	add(){
+		if(arguments.length == 1){
+			if(isNaN(arguments[0]))
+				return new GVector2f(this.x + arguments[0].x, this.y + arguments[0].y);
+			else
+				return new GVector2f(this.x + arguments[0], this.y + arguments[0]);
+		}
+		else if(arguments.length == 2)
+			return new GVector2f(this.x + arguments[0], this.y + arguments[1]);
+	}
+
+	br(){
+		if(arguments.length == 1){
+			if(isNaN(arguments[0]))
+				return new GVector2f(this.x >> arguments[0].x, this.y >> arguments[0].y);
+			else
+				return new GVector2f(this.x >> arguments[0], this.y >> arguments[0]);
+		}
+		else if(arguments.length == 2)
+			return new GVector2f(this.x >> arguments[0], this.y >> arguments[1]);
+	}
+
+	bl(){
+		if(arguments.length == 1){
+			if(isNaN(arguments[0]))
+				return new GVector2f(this.x << arguments[0].x, this.y << arguments[0].y);
+			else
+				return new GVector2f(this.x << arguments[0], this.y << arguments[0]);
+		}
+		else if(arguments.length == 2)
+			return new GVector2f(this.x << arguments[0], this.y << arguments[1]);
+	}
+
+	div(){
+		if(arguments.length == 1){
+			if(isNaN(arguments[0]))
+				return new GVector2f(this.x / arguments[0].x, this.y / arguments[0].y);
+			else
+				return new GVector2f(this.x / arguments[0], this.y / arguments[0]);
+		}
+		else if(arguments.length == 2)
+			return new GVector2f(this.x / arguments[0], this.y / arguments[1]);
+	}
+
+	sub(){
+		if(arguments.length == 1)
+			return new GVector2f(this.x - arguments[0].x, this.y - arguments[0].y);
+		else if(arguments.length == 2)
+			return new GVector2f(this.x - arguments[0], this.y - arguments[1]);
+	}
+
+	mul(){
+		if(arguments.length == 1)
+			return new GVector2f(this.x * arguments[0].x, this.y * arguments[0].y);
+		else if(arguments.length == 2)
+			return new GVector2f(this.x * arguments[0], this.y * arguments[1]);
+	}
+
 	dist(){
 		if(arguments.length == 1)
 			return Math.sqrt(Math.pow(this.x - arguments[0].x, 2) + Math.pow(this.y - arguments[0].y, 2));
@@ -92,12 +150,13 @@ Movement = {
 		}
 	}
 };
-
+/*
 function deselectAll(object = false){
 	selectedObjects.clear();
 	if(object)
 		selectedObjects.add(object);
 }
+*/
 
 function updateSelectedObjectView(object){
 	/*
@@ -173,4 +232,84 @@ function drawGrid(width = 0.1, dist = 50, strong = 0){
 		context.restore();
 	}
 	context.stroke();
+}
+
+function drawRect(x, y, width, height, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR){
+	context.lineWidth = borderWidth;
+	context.strokeStyle = borderColor;
+	context.strokeRect(x, y, width, height);
+}
+
+function fillRect(x, y, width, height, color){
+	context.fillStyle = color;
+	context.fillRect(x, y, width, height);
+}
+
+function drawArc(x, y, width, height, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR){
+	context.lineWidth = borderWidth;
+	context.strokeStyle = borderColor;
+	context.beginPath();
+	context.ellipse(x + (width >> 1), y + (height >> 1), Math.abs(width >> 1), Math.abs(height >> 1), 0, 0, PI2);
+	context.stroke();
+}
+
+function fillArc(x, y, width, height, color){
+	context.fillStyle = color;
+	context.beginPath();
+	context.ellipse(x + (width >> 1), y + (height >> 1), Math.abs(width >> 1), Math.abs(height >> 1), 0, 0, PI2);
+	context.fill();
+}
+
+function drawLine(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR){
+	if(points.length < 2)
+		return;
+
+	context.lineWidth = borderWidth;
+	context.strokeStyle = borderColor;
+	context.beginPath();
+	points.forEach(function(e, i){
+		if(i == 0)
+			context.moveTo(e.x, e.y);
+		else
+			context.lineTo(e.x, e.y);
+	});
+	context.stroke();
+}
+
+function drawQuadraticCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR){
+	if(points.length < 2)
+		return;
+
+	context.lineWidth = borderWidth;
+	context.strokeStyle = borderColor;
+	context.beginPath();
+	points.forEach(function(e, i){
+		if(i == 0)
+			context.moveTo(e.x, e.y);
+		else
+			context.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y);
+	});
+	context.stroke();
+}
+
+function drawBazierCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR){
+	if(points.length < 2)
+		return;
+
+	context.lineWidth = borderWidth;
+	context.strokeStyle = borderColor;
+	context.beginPath();
+	points.forEach(function(e, i){
+		if(i == 0)
+			context.moveTo(e.x, e.y);
+		else
+			context.bezierCurveTo(e[0].x, e[0].y, e[1].x, e[1].y, e[2].x, e[2].y);
+	});
+	context.stroke();
+}
+
+function fillText(text, x, y, width, height, size = 22, color = DEFAULT_TEXT_COLOR){
+	context.font = size + "px Comic Sans MS";
+	context.fillStyle = color;
+	context.fillText(text, x, y + (height >> 1) + (size >> 2));
 }

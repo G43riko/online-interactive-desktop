@@ -10,6 +10,7 @@ Arc.prototype.selected 		= false;
 Arc.prototype.visible 		= true;
 Arc.prototype.moving 		= false;
 Arc.prototype.moveType 		= -1;
+Arc.prototype.name 			= "Arc";
 
 Arc.prototype.clickInBoundingBox = function(x, y){
 	return x + SELECTOR_SIZE > this.position.x && x - SELECTOR_SIZE < this.position.x + this.size.x && 
@@ -20,8 +21,10 @@ Arc.prototype.clickIn = function(x, y){
 	if(!this.clickInBoundingBox(x, y))
 		return false;
 
+	var pos = this.position;
+
 	this.moveType = -1;
-	var pos = this.position; //new GVector2f(this.position.x + this.size.x / 2, this.position.y + this.size.y / 2);
+
 	if(new GVector2f(x, y).dist(pos.x + (this.size.x >> 1), pos.y) < SELECTOR_SIZE)
 		this.moveType = 0;
 	else if(new GVector2f(x, y).dist(pos.x + this.size.x, pos.y + (this.size.y >> 1)) < SELECTOR_SIZE)
@@ -71,7 +74,7 @@ Arc.prototype.draw = function(){
 					Math.abs(this.size.y >> 1),
 					0, 
 					0, 
-					Math.PI * 2);
+					Math.PI << 1);
 	context.fill();
 
 	if(this.moving)

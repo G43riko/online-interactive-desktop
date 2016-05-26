@@ -1,12 +1,22 @@
-var initTime = window.performance.now();
-var drawMousePos = false;
-var movedObject = false;
-var lastTouch = false;
-var Scene = new SceneManager();
-var Creator = new objectCreator();
-var Input = new InputManager();
+var initTime = window.performance.now(),
+	drawMousePos = false,
+	movedObject = false,
+	lastTouch = false,
+	Scene = new SceneManager(),
+	Creator = new objectCreator(),
+	Input = new InputManager(),
+	selectedObjects = new ObjectsManager(),
+	Menu = new MenuManager(),
+	actContextMenu = false,
+	canvas, context;
+
 $.getJSON("js/json/menu.json", function(data){
 	Menu.items = data;
+	draw();
+});
+
+$.getJSON("js/json/context.json", function(data){
+	ContexMenuManager.items = data;
 });
 
 $(function(){
@@ -23,8 +33,6 @@ $(function(){
 
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
 	initListeners();
-
-	Menu.init();
 	/**
 	 * OSTATNE
 	 */
@@ -44,24 +52,27 @@ $(function(){
 
 	Scene.addToScene(new Rect(new GVector2f(800, 50), new GVector2f(100, 100), "red"));
 	Scene.addToScene(new Rect(new GVector2f(250, 250), new GVector2f(100, 100), "green"));
-	
+
+	j = new Join(Scene._layers["default"]._objects[3], Scene._layers["default"]._objects[4]);
+
 	draw();
 });
 
 
 function draw(){
+	//var startDraw = window.performance.now();
 	drawMousePos = new Date().getMilliseconds();
 	resetCanvas();
 
 	drawGrid(0.1, 10, 50);
 
-	Scene.forEach(function(e){
-		if(typeof e.draw === "function")
-			e.draw();
-	});
-
-	if(Creator.object)
-		Creator.object.draw();
-
+	j.draw();
+	Scene.draw();
 	Menu.draw();
+	Creator.draw();
+
+	if(actContextMenu)
+		actContextMenu.draw();
+
+	//console.log("nakreslilo sa za: ", (window.performance.now() - startDraw));
 }
