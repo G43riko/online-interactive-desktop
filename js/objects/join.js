@@ -1,25 +1,35 @@
-class Join{
+class Join extends Entity{
 	constructor(obj1, obj2, type = JOIN_BAZIER){
-		this.obj1 = obj1;
-		this.obj2 = obj2;
-		this._type = type;
-		this.borderColor = "blue";
-		this.borderWidth = 10;
+		super("Join");
+		this.obj1 			= obj1;
+		this.obj2 			= obj2;
+		this._type 			= type;
+		this._borderColor 	= "blue";
+		this._borderWidth 	= 10;
 	};
+
+	set obj1(val){this._obj1 = val;}
+	set obj2(val){this._obj2 = val;}
 	set type(val){
 		this._type = val;
 		draw();
-	}
+	};
+
 	draw(){
-		var obj1pos = this.obj1.position.add(this.obj1.size.br(1)),
-			obj2pos = this.obj2.position.add(this.obj2.size.br(1)),
+		if(this._obj1.position == null || this._obj2.position == null){
+			Scene.remove(this);
+			return;
+		}
+
+		var obj1pos = this._obj1.position.getClone().add(this._obj1.size.getClone().br(1)),
+			obj2pos = this._obj2.position.getClone().add(this._obj2.size.getClone().br(1)),
 			array = [];
 
 		array.push(obj1pos);
 
 		if(this._type != JOIN_LINEAR){
-			var center = obj1pos.add(obj2pos).br(1),
-				diff = obj1pos.sub(obj2pos);
+			var center = obj1pos.getClone().add(obj2pos).br(1),
+				diff = obj1pos.getClone().sub(obj2pos);
 
 			diff.x = Math.abs(diff.x);
 			diff.y = Math.abs(diff.y);

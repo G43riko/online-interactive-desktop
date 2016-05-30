@@ -4,87 +4,44 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<script src="js/lib/jquery.min.js"></script>
-	<script src="js/lib/angular.min.js"></script>
 	<script src="js/lib/CanvasInput.min.js"></script>
-	<script src="js/mainController.js"></script>
+    <script src="js/lib/color.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
-	<script type="text/javascript" src="js/functional.js"></script>
 	<script type="text/javascript" src="js/config.js"></script>
 	<script type="text/javascript" src="js/components/creator.js"></script>
-	<script type="text/javascript" src="js/logger.js"></script>
-	<script type="text/javascript" src="js/utils.js"></script>
+	<script type="text/javascript" src="js/utils/logger.js"></script>
+	<script type="text/javascript" src="js/utils/GVector2f.js"></script>
+	<script type="text/javascript" src="js/utils/utils.js"></script>
 	<script type="text/javascript" src="js/components/menu.js"></script>
+	<script type="text/javascript" src="js/components/slider.js"></script>
 	<script type="text/javascript" src="js/components/contextMenu.js"></script>
 	<script type="text/javascript" src="js/components/input.js"></script>
 	<script type="text/javascript" src="js/components/selectedObjects.js"></script>
 	<script type="text/javascript" src="js/components/layer.js"></script>
 	<script type="text/javascript" src="js/components/scene.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
+	<script type="text/javascript" src="js/canvas.js"></script>
 	<script type="text/javascript" src="js/objects/entity.js"></script>
+	<script type="text/javascript" src="js/components/layersViewer.js"></script>
+	<script type="text/javascript" src="js/objects/text.js"></script>
+    <script type="text/javascript" src="js/objects/table.js"></script>
+	<script type="text/javascript" src="js/objects/polygon.js"></script>
 	<script type="text/javascript" src="js/objects/join.js"></script>
 	<script type="text/javascript" src="js/objects/rect.js"></script>
 	<script type="text/javascript" src="js/objects/paint.js"></script>
 	<script type="text/javascript" src="js/objects/line.js"></script>
 	<script type="text/javascript" src="js/objects/arc.js"></script>
-	<script type="text/javascript" src="js/canvas.js"></script>
 	<script type="text/javascript" src="js/listeners.js"></script>
+	<script type="text/javascript" src="js/utils/test.js"></script>
 
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
 	<meta name="apple-mobile-web-app-copable" content="yes">
 </head>
-<body ng-app="myApp" ng-controller="myCtrl">
-	<!--
-	<div id="topPanel">
-		<div class="verticalMenu"> tuto bude horné menu</div>
-		<div class="verticalMenu">
-			<select id="test" onchange="operation=parseInt(this.options[this.selectedIndex].getAttribute('operation'))">
-				<option operation="1000" selected="selected">obdlznik</option>
-				<option operation="1001" >elipsa</option>
-				<option operation="1002" >kresba</option>
-				<option operation="1003" >ciara</option>
-			</select>
-		</div>
-	</div>
-	<div id="leftPanel">
-		<div class="leftContainter" id="cont_select_obj">
-			<div style="display: none">
-				<span>position: <span id="posX"></span>X<span id="posY"></span></span>
-				<span>size: <span id="sizeX"></span>X<span id="sizeY"></span></span><br/>
-				<span>color: <span id="color"></span></span>
-			</div>
-		</div>
-		<div class="leftContainter">
-			<div id="colorPanel" style="border: 1px solid black; width: 100%; height: 140px;">
-				<div id="paleteSelect" style="width: 100%; height: 30px;">
-					<select style="margin: 5px">
-						<option name="default" selected="selected">základné</option>
-						<option name="web">web</option>
-						<option name="dark">dark</option>
-					</select>
-				</div>
-				<div id="colorPalete"></div>
-			</div>
-		</div>
-		<div class="leftContainter">
-			<div>Vrstvy: <input type="button" value="pridat" onclick="addLayer(prompt('meno vrstvy'))"></div>
-			<div class="layer" onmouseover="$(this).find('.removeLayer').show()" onmouseleave="$(this).find('.removeLayer').hide()">
-				<input type="checkbox" value="visible">
-				<span>nazov</span>
-				<select>
-					<option selected="selected">normal</option>
-					<option>add</option>
-					<option>sub</option>
-					<option>mul</option>
-				</select>
-				<input class="removeLayer" type="button" value="vymazat" style="display: none" onclick="this.parentElement.parentElement.removeChild(this.parentElement);">
-			</div>
-			<div class="layer"></div>
-			<div class="layer"></div>
-		</div>
-		<div class="leftContainter">objekty</div>
-		<div class="leftContainter">krokovanie<test title="meno"></test ></div>
-	</div>
-	-->
+<body>
+
+	<div id="modalWindow" style="display: none">
+            <div id="colorPalete" style="display: none"></div>
+    </div>
 	<canvas id="myCanvas" class="animated">
 		Váš prehliadač nepodporuje Canvas
 	</canvas>
@@ -92,22 +49,6 @@
 </html>
 
 	<script type="text/javascript">
-		function addLayer(name){
-			if(name == null)
-				return;
-
-			var compositions = ["normal", "add", "sub", "mul"];
-
-			var obj = document.createElement("select");
-
-			for(var i in compositions){
-				var tmp = document.createElement("option");
-				tmp.appendChild(document.createTextNode(compositions[i]));
-				obj.appendChild(tmp);
-			}
-
-			console.log(name, obj);
-		}
 		var colors = ["#191919", "#DFE2DB", "#FFF056", "#FFFFFF", "#C63D0F", "#3B3738", "#FDF3E7", 
 					  "#7E8F7C", "#005A31", "#A8CD1B", "#CBE32D", "#F3FAB6", "#558C89", "#74AFAD", 
 					  "#D9853B", "#ECECEA", "#2B2B2B", "#DE1B1B", "#F6F6F6", "#E9E581", "#7D1935", 
@@ -117,14 +58,73 @@
 
 		colors = colors.sort().reverse();
 		var res = "";
-		for(var i in colors)
-			res += '<div class="colorPatern" style="background-color:'+colors[i]+'"></div>';
-
-		$("#colorPalete").append(res).delegate(".colorPatern", "click", function(){
-			if($(this).hasClass("selected"))
-				return false;
-			$(".selected").removeClass("selected");
-			selectedColor = $(this).addClass("selected").css("backgroundColor");
+		colors.forEach(function(e, i){
+			res += '<div class="colorPatern" style="background-color:' + colors[i] + '"></div>';
 		});
+
+        $("#colorPalete").append(res);
+
+
+        function showColors(){
+            $("#modalWindow ").find("div").each(function(){
+                $(this).show();
+            });
+            $("#modalWindow").show();
+            $("canvas").addClass("blur");
+        }
+
+        function closeDialog(){
+            $("#modalWindow ").find("div").each(function(){
+                $(this).show();
+            });
+            $("#modalWindow").hide();
+            $("canvas").removeClass("blur");
+        }
+
+        function pickUpColor(func, thisArg){
+            var T;
+            if (arguments.length > 1)
+                T = thisArg;
+            $("#colorPalete").delegate(".colorPatern", "click", function(){
+                $(".selected").removeClass("selected");
+                func.call(T, $(this).addClass("selected").css("backgroundColor"));
+                closeDialog();
+                draw();
+                $("#colorPalete").undelegate();
+            });
+            showColors();
+        }
+
+		function getText(text, position, size, funct, thisArg){
+			var T,
+				x = $(document.createElement("INPUT"));
+
+			if (arguments.length > 1)
+				T = thisArg;
+
+			x.attr({
+				type: "text",
+				value: text,
+				id: "staticInput"
+			}).css({
+				left: position.x + 'px',
+				top: position.y + 'px',
+				width: size.x,
+				height: size.y,
+				fontSize: size.y * 0.6
+			}).blur(function(){
+				funct.call(T, x.val());
+				x.remove();
+				draw();
+			}).keyup(function(e){
+				if(e.keyCode == ENTER_KEY){
+					x.onblur = false;
+					funct.call(T, x.val());
+					x.remove();
+					draw();
+				}
+			}).appendTo("body");
+			x.select().focus();
+		}
 
 	</script>

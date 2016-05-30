@@ -1,8 +1,16 @@
 class MenuManager{
 	constructor(){
-		this.items = false;
+		this._items 		= false;
 		this.visibleSubMenu = false;
-		this.toolActive = false;
+		this.toolActive 	= false;
+		this._fontColor 	= MENU_FONT_COLOR;
+	}
+
+	set items(val){
+		if(this._items)
+			Logger.error("priraduje sa druhy krat menu");
+
+		this._items = val;
 	}
 
 	isToolActive(){
@@ -16,7 +24,7 @@ class MenuManager{
 
 		context.fillStyle = backGroundColor;
 
-		$.each(this.items["tools"], function(i, e){
+		$.each(this._items["tools"], function(i, e){
 			x = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
 			off = e.sur;
 			context.roundRect(x, y, MENU_WIDTH, MENU_HEIGHT, MENU_RADIUS, true, true);
@@ -48,7 +56,7 @@ class MenuManager{
 		context.strokeStyle = MENU_BORDER_COLOR;
 		context.fillStyle = "rgb(153, 217, 234)";
 
-		$.each(this.items["main"], function(i, e){
+		$.each(this._items["main"], function(i, e){
 			posX = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
 			off = e.sur;
 
@@ -102,7 +110,9 @@ class MenuManager{
 				this.toolActive = true;
 				break;
 			case "colors":
-				this.visibleSubMenu = index;
+				pickUpColor(function(color){
+					Creator.color = color;
+				});
 				break;
 			case "draw":
 				Creator.operation = OPERATION_DRAW_PATH;
@@ -127,7 +137,7 @@ class MenuManager{
 			result = false,
 			menuInst = this;
 
-		$.each(this.items["main"], function(i){
+		$.each(this._items["main"], function(i){
 			if(result)
 				return;
 			posX = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
@@ -143,7 +153,7 @@ class MenuManager{
 			count = 0,
 			menuInst = this,
 			posX;
-		$.each(this.items["tools"], function(i){
+		$.each(this._items["tools"], function(i){
 			if(result)
 				return;
 			posX = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
@@ -167,7 +177,7 @@ class MenuManager{
 				posX = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++
 			}
 			if(x > posX && y > posY && x < posX + MENU_WIDTH && y < posY + MENU_HEIGHT){
-				Creator.color = e;
+				Creator.fillColor = e;
 				result = true;
 			}
 		});
@@ -182,7 +192,7 @@ class MenuManager{
 			result = false,
 			lastSubMenu = this.visibleSubMenu;
 
-		$.each(this.items.main, function(i){
+		$.each(this._items.main, function(i){
 			if(result)
 				return;
 			posX = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
@@ -194,7 +204,6 @@ class MenuManager{
 			return result;
 
 		posY += MENU_OFFSET + MENU_HEIGHT;
-		count = 0;
 		this.visibleSubMenu = false;
 
 		if(lastSubMenu == "tools")
@@ -220,13 +229,22 @@ class MenuManager{
 						  new GVector2f(x + width - (offset << 1), y + offset)]);
 				break;
 			case "text":
-				fillText("TEXT", x, y, width, height);
+				fillText2("TEXT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
+				break;
+			case "ctrl":
+				fillText2("CTRL", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
+				break;
+			case "file":
+				fillText2("FILE", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
+				break;
+			case "options":
+				fillText2("OPT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
 				break;
 			case "tools":
-				fillText("TOOLS", x, y, width, height, 17);
+				fillText2("TOOLS", x + (width >> 1), y + (height >> 1), height / 5, this._fontColor, 0, FONT_ALIGN_CENTER);
 				break;
 			case "help":
-				fillText("HELP", x + (offset >> 1), y, width, height);
+				fillText2("HELP", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
 				break;
 			case "draw":
 				drawQuadraticCurve([new GVector2f(x + offset, y + offset),

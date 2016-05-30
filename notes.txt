@@ -1,0 +1,71 @@
+borderWidth
+borderColor
+fillColor
+selected
+position
+visible
+moving
+locked
+size
+name
+
+//ENTITY
+
+clickInBoundingBox(x, y)
+draw();
+clickIn(x, y);
+doubleClickIn(x, y);
+pressIn(x, y);
+doClickAct(act);
+doDoubleClickAct(act);
+doPressClickAct(act);
+updateCreatingPosition(pos);
+
+//SPECIFIC
+
+determineClick(p1, p2, x, y, maxDist); --> determineLineClick(p1, p2, x, y, maxDist); //line
+determineClick(points, x, y); --> determinePolygonClick(points, x, y); //polygon
+findMinAndMax(); //line, polygon --> static findMinAndMax(points, position, size);
+addPoint(point); //paint, line, polygon
+breakLine(); //paint;
+
+
+//TABLE
+
+addRow(y, type);
+addColumn(x, type);
+removeRow(y);
+removeColumn(x);
+--> clearRow(y);
+--> clearColumn(x);
+calcMaxTextWidth(value = 0) --> static calcMaxTextWidth(value = 0, font = DEFAULT_FONT_SIZE + "px " + DEFAULT_FONT);
+checkSize();
+
+//CANVAS
+
+drawRect(x, y, width, height, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR);
+fillRect(x, y, widh, height, fillColor = DEFAULT_BACKGROUND_COLOR);
+
+drawArc(x, y, widh, height, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR);
+fillArc(x, y, widh, height, fillColor = DEFAULT_BACKGROUND_COLOR);
+
+drawPolygon(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR);
+fillPolygon(points, fillColor = DEFAULT_BACKGROUND_COLOR);
+
+drawLine(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR);
+drawQuadraticCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR);
+drawBezierCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR);
+
+fillText(text, x, y, width, height, size = DEFAULT_FONT_SIZE, fillColor = DEFAULT_FONT_COLOR) --> fillText(text, x, y, width, height, size = DEFAULT_FONT_SIZE, fillColor = DEFAULT_FONT_COLOR, align = DEFAULT_FONT_ALIGN, offset = DEFAULT_TEXT_OFFSET);
+
+//LISTENERS
+
+mousedown
+	mousemove
+	mouseup
+touchstart
+	touchmove
+	touchend
+	touchcancel
+keydown
+keyup

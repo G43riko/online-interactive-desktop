@@ -1,3 +1,15 @@
+UtilsVectors = {
+	mouseDown: new GVector2f(),
+	mouseDoubleClick: new GVector2f(),
+	mouseDoubleClickSize: new GVector2f(),
+	mouseUp:new GVector2f(),
+	mouseMove: new GVector2f(),
+	touchStart:new GVector2f(),
+	touchMove:new GVector2f(),
+	touchEnd:new GVector2f(),
+	touchCancel:new GVector2f()
+};
+
 function initListeners(){
 	canvas.onclick = function(){draw();};
 	window.onresize = function(){initCanvasSize(); draw();};
@@ -7,21 +19,12 @@ function initListeners(){
 		event.returnValue = "Nazoaj chceš odísť s tejto stránky???!!!";
 	};
 
-	/*
-	window.onwheel = function(e) {
-		var offset = e.deltaY / 10000;
-		zoom += offset;
-		context.scale(zoom, zoom);
-		draw();
-	};
-	*/
-
 	canvas.onmousepress = function(e){
-		return mousePress(e.position, e.button);
+		return mousePress(e.position.getClone(), e.button);
 	};
 
 	canvas.ondblclick = function(e){
-		mouseDoubleClick(new GVector2f(e.offsetX, e.offsetY), e.button);
+		mouseDoubleClick(UtilsVectors.mouseDoubleClick.set(e.offsetX, e.offsetY), e.button);
 	};
 
 	canvas.onmousedown = function(e){
@@ -36,7 +39,7 @@ function initListeners(){
 		};
 		e.target.onmousemove = function(e){
 			Input.mouseMove(e);
-			mouseMove(new GVector2f(e.offsetX, e.offsetY), new GVector2f(e.movementX, e.movementY));
+			mouseMove(new GVector2f(e.offsetX, e.offsetY), e.movementX, e.movementY);
 		}
 	};
 
@@ -55,17 +58,17 @@ function initListeners(){
 	});
 
 	canvas.addEventListener("touchstart", function(e){
-		Input.buttonDown(LEFT_BUTTON);
-
 		lastTouch = getMousePos(canvas, e);
+		Input.buttonDown({button: LEFT_BUTTON, offsetX: lastTouch.x, offsetY: lastTouch.y});
 
-		mouseDown(new GVector2f(lastTouch.x, lastTouch.y), LEFT_BUTTON);
+		mouseDown(UtilsVectors.touchStart.set(lastTouch.x, lastTouch.y), LEFT_BUTTON);
 		e.target.addEventListener("touchmove", function(e){
+			Input.mouseMove({offsetX: lastTouch.x, offsetY: lastTouch.y});
 			var mov = getMousePos(canvas, e);
 			mov.x -=  lastTouch.x;
 			mov.y -=  lastTouch.y;
 			lastTouch = getMousePos(canvas, e);
-			mouseMove(new GVector2f(lastTouch.x, lastTouch.y), new GVector2f(mov.x, mov.y));
+			mouseMove(UtilsVectors.touchMove.set(lastTouch.x, lastTouch.y), mov.x, mov.y);
 			
 		}, false);
 
@@ -73,9 +76,17 @@ function initListeners(){
 		e.target.addEventListener("touchend", function(){
 			if(!Input.isButtonDown(LEFT_BUTTON))
 				return false;
-			Input.buttonUp(LEFT_BUTTON);
-			mouseUp(new GVector2f(lastTouch.x, lastTouch.y), LEFT_BUTTON);
+			Input.buttonUp({button: LEFT_BUTTON, offsetX: lastTouch.x, offsetY: lastTouch.y});
+			mouseUp(UtilsVectors.touchEnd.set(lastTouch.x, lastTouch.y), LEFT_BUTTON);
 		}, false);
+
+		e.target.addEventListener("touchcancel", function(){
+			if(!Input.isButtonDown(LEFT_BUTTON))
+				return false;
+			Input.buttonUp({button: LEFT_BUTTON, offsetX: lastTouch.x, offsetY: lastTouch.y});
+			mouseUp(UtilsVectors.touchCancel.set(lastTouch.x, lastTouch.y), LEFT_BUTTON);
+		}, false);
+
 	}, false);
 
 	/**
@@ -83,9 +94,14 @@ function initListeners(){
 	 */
 
 	function mouseDown(position, button){
+		if($(canvas).hasClass("blur"))
+			return false;
+
+		if(actContextMenu)
+			if(actContextMenu.clickIn(position.x, position.y))
+				return;
 		if(button == LEFT_BUTTON)
 			Scene.forEach(function(o){
-
 				if(o.clickIn(position.x, position.y, button)){
 					o.moving = true;
 					movedObject = o;
@@ -93,20 +109,9 @@ function initListeners(){
 				}
 			});
 
-		if(Menu.isToolActive() && !Creator.object){
-			switch(Creator.operation){
-				case OPERATION_DRAW_RECT:
-					Creator.object = new Rect(position, new GVector2f(), Creator.color);
-					break;
-				case OPERATION_DRAW_ARC:
-					Creator.object = new Arc(position, new GVector2f(), Creator.color);
-					break;
-				case OPERATION_DRAW_LINE:
-					Creator.object = new Line([position], 5, Creator.color);
-					break;
-			}
-			selectedObjects.clearAndAdd(Creator.object);
-		}
+		if(Menu.isToolActive() && !Creator.object)
+			Creator.createObject(position);
+
 		
 		draw();
 	}
@@ -119,12 +124,18 @@ function initListeners(){
 
 		actContextMenu = new ContexMenuManager(position);
 
+		movedObject.moving = false;
+		movedObject = false;
+
 		draw();
 		return false;
 	}
 
 	function mouseDoubleClick(position, button){
 		var result = false;
+
+		UtilsVectors.mouseDoubleClickSize.set(100, 40);
+
 		Scene.forEach(function(e){
 			if(result)
 				return;
@@ -133,20 +144,24 @@ function initListeners(){
 
 		});
 
+		if(result === false)
+			getText("", position, UtilsVectors.mouseDoubleClickSize, function(val){
+				if(val.length > 0)
+					Scene.addToScene(new Text(val, position, UtilsVectors.mouseDoubleClickSize));
+			});
 		draw();
-
 		return true;
 	}
 
 	function mouseUp(position){
 		var result = false;
 
-		if(actContextMenu)
+		if(actContextMenu){
 			if(!actContextMenu.clickIn(position.x, position.y))
 				actContextMenu = false;
-
-
-
+			else
+				return
+		}
 
 		if(Creator.object){
 			Scene.addToScene(Creator.object);
@@ -157,14 +172,15 @@ function initListeners(){
 		if(Menu.clickIn(position.x, position.y))
 			return;
 
+		closeDialog();
+
 		if(Creator.operation == OPERATION_DRAW_PATH){
-			layers["default"].objects[0].addPoint(position);
-			layers["default"].objects[0].breakLine();
+			Scene.getPaint().addPoint(position);
+			Scene.getPaint().breakLine();
 		}
 
 		movedObject.moving = false;
 		movedObject = false;
-
 
 		Scene.forEach(function(o){
 			if(result)
@@ -180,19 +196,19 @@ function initListeners(){
 			//deselectAll();
 	}
 
-	function mouseMove(position, movement){
+	function mouseMove(position, movX, movY){
 		//ak sa hýbe nejakým objektom
 		if(movedObject){
 			//prejdu sa všetky označené objekty a pohne sa nimi
 			selectedObjects.forEach(function(e){
-				Movement.move(e, movement.x, movement.y);
+				Movement.move(e, movX, movY);
 			});
 			//for(var i in selectedObjects)
 			//	Movement.move(selectedObjects[i], movement.x, movement.y)
 
 			//ak objekt s ktorým sa hýbe nieje označený(už sa sním pohlo) tak sa sním tiež pohne
 			if(!movedObject.selected)
-				Movement.move(movedObject, movement.x, movement.y);
+				Movement.move(movedObject, movX, movY);
 
 			//ak sú nejaké objekty označené tak sa aktualizuje prehlad posledného označeného ináč iba hýbaného 
 			if(selectedObjects.size() > 0)
@@ -202,8 +218,8 @@ function initListeners(){
 		}
 
 		//ak sa kreslí čiara tak sa nakreslí nové posunutie
-		if(Input.isKeyDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH){
-			layers["default"].objects[0].addPoint(position);
+		if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH){
+			Scene.getPaint().addPoint(position);
 			draw();
 		}
 

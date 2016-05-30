@@ -1,19 +1,135 @@
 {
 	"joinType" : {
 		"name" : "Join type",
+		"type" : "text",
 		"fields" :  {
 			"linear" : {
-				"name" : "Linear"
+				"name" : "Linear",
+				"type" : "radio"
 			},
 			"sequencal" : {
-				"name" : "Sequencal"
+				"name" : "Sequencal",
+				"type" : "radio"
 			},
 			"bezier" : {
-				"name" : "Bezier"
+				"name" : "Bezier",
+				"type" : "radio"
+			}
+		}
+	},
+	"capType" : {
+		"name" : "Cap type",
+		"type" : "text",
+		"fields" : {
+			"butt" : {
+				"name" : "Butt",
+				"type" : "radio"
+			},
+			"round" : {
+				"name" : "Round",
+				"type" : "radio"
+			},
+			"square" : {
+				"name" : "Square",
+				"type" : "radio"
+			}
+		}
+	},
+	"joinType" : {
+		"name" : "Join type",
+		"type" : "text",
+		"fields" : {
+			"miter" : {
+				"name" : "Miter join",
+				"type" : "radio"
+			},
+			"round" : {
+				"name" : "Round join",
+				"type" : "radio"
+			},
+			"bevel" : {
+				"name" : "Bevel join",
+				"type" : "radio"
 			}
 		}
 	},
 	"delete" : {
-		"name" : "Delete"
+		"name" : "Delete",
+		"type" : "text"
+	},
+	"changeFillColor" : {
+		"name" : "Change fill color",
+		"type" : "text"
+	},
+	"changeBorderColor" : {
+		"name" : "Change border color",
+		"type" : "text"
+	},
+	"clearWorkspace" : {
+		"name" : "Clear workspace",
+		"type" : "text"
+	},
+	"locked" : {
+		"name" : "Locked",
+		"type" : "checkbox"
+	},
+	"editTable" : {
+		"name" : "Edit table",
+		"type" : "text",
+		"fields" : {
+			"removeRow" : {
+				"name" : "Remove row",
+				"type" : "text"
+			},
+			"removeColumn" : {
+				"name" : "Remove column",
+				"type" : "text"
+			},
+			"clearColumn" : {
+				"name" : "Clear column",
+				"type" : "text"
+			},
+			"clearRow" : {
+				"name" : "Clear row",
+				"type" : "text"
+			},
+			"clearTable" : {
+				"name" : "Clear table",
+				"type" : "text"
+			},
+			"addRowBelow" : {
+				"name" : "Add row below",
+				"type" : "text"
+			},
+			"addRowAbove" : {
+				"name" : "Add row above",
+				"type" : "text"
+			},
+			"addColumnToRight" : {
+				"name" : "Add column right",
+				"type" : "text"
+			},
+			"addColumnToLeft" : {
+				"name" : "Add column left",
+				"type" : "text"
+			}
+
+		}
+	},
+	"visible" : {
+		"name" : "Visible",
+		"type" : "checkbox"
+	},
+	"deleteLayer" : {
+		"name" : "Delete layer",
+		"type" : "text"
+	},
+	"renameLayer" : {
+		"name" : "Rename layer",
+		"type" : "text"
+	},
+	"clearLayer" : {
+		"name" : "Clear layer",
+		"type" : "text"
 	}
 }

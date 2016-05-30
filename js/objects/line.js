@@ -1,106 +1,140 @@
-function Line(points, width, color) {
-	this.points = points;
-	this.points.push(new GVector2f(points[0]));
-	this.color 	= color;
-	this.width = width;
-	this.findMinAndMax();
-}
+class Line extends Entity{
+	constructor(points, width, color) {
+		super("Line", new GVector2f(), new GVector2f(), color);
 
-Line.prototype.borderWidth 	= DEFAULT_STROKE_WIDTH;
-Line.prototype.borderColor 	= DEFAUL_STROKE_COLOR;
-Line.prototype.selected 	= false;
-Line.prototype.visible 		= true;
-Line.prototype.moving 		= false;
-Line.prototype.movingPoint	= -1;
-Line.prototype.name 		= "Line";
+		this.points 		= points;
+		this._borderWidth 	= width;
+		this.movingPoint	= -1;
+		this._lineCap		= LINE_CAP_BUTT;
+		this._joinType		= LINE_JOIN_MITER;
 
-Line.prototype.clickInBoundingBox = function(x, y){
-	return x + SELECTOR_SIZE > this.position.x && x - SELECTOR_SIZE < this.position.x + this.size.x &&
-		   y + SELECTOR_SIZE > this.position.y && y - SELECTOR_SIZE < this.position.y + this.size.y;
-};
-
-Line.prototype.doubleClickIn = function(x, y){
-	if(!this.clickInBoundingBox(x, y))
-		return false;
-	this.points.forEach(function(e, i){
-		if(new GVector2f(x, y).dist(e) < SELECTOR_SIZE)
-			this.points.splice(i, 1);
-	}, this);
-
-};
-
-Line.prototype.clickIn = function(x, y){
-	if(!this.clickInBoundingBox(x, y))
-		return false;
-
-	this.movingPoint = false;
-	this.points.forEach(function(e,i, points){
-		if(this.movingPoint)
-			return;
-		var intVal = parseInt(i);
-		if(new GVector2f(x, y).dist(e) < SELECTOR_SIZE)
-			this.movingPoint = intVal;
-		else if(intVal + 1 < points.length &&
-			new GVector2f(x, y).dist((e.x + (points[intVal + 1 + ""].x) >> 1),
-									 (e.y + (points[intVal + 1 + ""].y) >> 1)) < SELECTOR_SIZE)
-			this.movingPoint = parseFloat(i) + 0.5;
-	}, this);
-	return this.movingPoint;
-};
-
-Line.prototype.findMinAndMax = function(){
-	var min = new GVector2f(this.points[0]);
-	var max = new GVector2f(this.points[0]);
-	this.points.forEach(function(e, i){
-		if(i == 0)
-			return;
-		min.x = Math.min(this.points[i].x, min.x);
-		min.y = Math.min(this.points[i].y, min.y);
-		max.x = Math.max(this.points[i].x, max.x);
-		max.y = Math.max(this.points[i].y, max.y);
-	}, this);
-	this.position = min;
-	this.size = new GVector2f(max.x - min.x, max.y - min.y);
-};
-
-Line.prototype.toString = function(){
-	return Json.stringify({
-		sX: this.width,
-		bW: this.borderWidth,
-		bC: this.borderColor,
-		c: this.color,
-		v: this.visible
-	});
-};
-
-Line.prototype.updateCreatingPosition = function(pos){
-	var last = this.points[this.points.length - 1];
-	last.x = pos.x;
-	last.y = pos.y;
-	this.findMinAndMax();
-};
-
-Line.prototype.draw = function(){
-	if(this.points.length < 2)
-		return;
-	var i;
-	context.beginPath();
-	context.moveTo(this.points[0].x, this.points[0].y);
-
-	for(i=1 ; i<this.points.length ; i++)
-		context.lineTo(this.points[i].x, this.points[i].y);
-
-
-	context.lineWidth = this.width;
-	context.strokeStyle = this.color;
-	context.stroke();
-
-	if(this.selected){
-		drawSelectArc(this.points[0].x, this.points[0].y);
-		for(i=1 ; i<this.points.length ; i++){
-			drawSelectArc(this.points[i].x, this.points[i].y);
-			drawSelectArc((this.points[i].x + this.points[i - 1].x) >> 1, (this.points[i].y + this.points[i - 1].y) >> 1);
+		if(points.length < 2){
+			Logger.warn("vytvoril sa line ktory mal menej ako 2 body a tak sa maže");
+			Scene.remove(this);
 		}
+
+		Entity.findMinAndMax(this.points, this.position, this.size);
 	}
-	//drawBorder(this);
-};
+
+	set lineCap(val){
+		this._lineCap = val;
+	}
+
+	doubleClickIn(x, y){
+		if(!this.clickInBoundingBox(x, y))
+			return false;
+
+		this.points.forEach(function(e, i){
+			if(new GVector2f(x, y).dist(e) < SELECTOR_SIZE){
+				this.points.splice(i, 1);
+				Entity.findMinAndMax(this.points, this.position, this.size);
+			}
+		}, this);
+
+		if(this.points.length < 2)
+			Scene.remove(this);
+
+		return true;
+	};
+
+	clickIn(x, y){
+		if(!this.clickInBoundingBox(x, y))
+			return false;
+
+		this.movingPoint = -1;
+		this.points.forEach(function(e,i, points){
+			if(this.movingPoint >= 0)
+				return true;
+			if(new GVector2f(x, y).dist(e) < SELECTOR_SIZE)
+				this.movingPoint = i;
+			else if(i + 1 < points.length &&
+				new GVector2f(x, y).dist((e.x + (points[i + 1].x) >> 1),
+										 (e.y + (points[i + 1].y) >> 1)) < SELECTOR_SIZE)
+				this.movingPoint = parseFloat(i) + 0.5;
+		}, this);
+
+		if(this.movingPoint >= 0)
+			return this.movingPoint >= 0;
+
+		for(var i=1 ; i<this.points.length ; i++)
+			if(Line.determineClick(this.points[i-1], this.points[i], x, y, 10))
+				return true;
+
+
+		return false;
+	};
+
+	static determineClick(p1, p2, x, y, maxDist){
+		if(x < Math.min(p1.x, p2.x) || x > Math.max(p1.x, p2.x) || y < Math.min(p1.y, p2.y) || y > Math.max(p1.y, p2.y))
+			return false;
+
+		var dist = p1.dist(p2),
+			log = Math.ceil(Math.log2(dist)),
+			min,
+			max,
+			center,
+			i;
+		if(p1.x < p2.x){
+			min = p1.getClone();
+			max = p2.getClone();
+		}
+		else{
+			min = p2.getClone();
+			max = p1.getClone();
+		}
+		center = min.getClone().add(max).br(1);
+		for(i=0 ; i<log ; i++){
+			if(x > center.x)
+				min = center;
+			else
+				max = center;
+			center = min.getClone().add(max).br(1);
+
+			if(Math.abs(y - center.y) < maxDist)
+				return true;
+		}
+		return false;
+	};
+
+	toString(){
+		return Json.stringify({
+			sX: this._borderWidth,
+			bC: this.borderColor,
+			c: this.fillColor,
+			v: this.visible
+		});
+	};
+
+	updateCreatingPosition(pos){
+		var last = this.points[this.points.length - 1];
+		last.x = pos.x;
+		last.y = pos.y;
+		this.findMinAndMax();
+	};
+
+	draw(){
+		if (this.moving && !this.locked)
+			setShadow(true);
+
+		context.save();
+
+		context.lineCap = this._lineCap;
+		context.lineJoin = this._joinType;
+
+		drawLine(this.points, this._borderWidth , this.fillColor, "quadratic");
+
+		context.restore();
+		if (this.moving)
+			setShadow(false);
+
+		context.lineWidth = DEFAULT_STROKE_WIDTH << 1;
+		if(this.selected){
+			drawBorder(this, {});
+			drawSelectArc(this.points[0].x, this.points[0].y);
+			for(var i=1 ; i<this.points.length ; i++){
+				drawSelectArc(this.points[i].x, this.points[i].y);
+				drawSelectArc((this.points[i].x + this.points[i - 1].x) >> 1, (this.points[i].y + this.points[i - 1].y) >> 1);
+			}
+		}
+	};
+}

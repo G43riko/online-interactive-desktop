@@ -6,8 +6,13 @@ class ObjectsManager{
 		return this._objects.length;
 	};
 	add(o){
+		if((typeof o.locked !== "undefined" && o.locked) || !o)
+			return;
+
 		this._objects.push(o);
+
 		o.selected = true;
+
 		updateSelectedObjectView(o);
 		$("#cont_select_obj div").show();
 	};
@@ -17,6 +22,8 @@ class ObjectsManager{
 	clear(){
 		$("#cont_select_obj div").hide();
 		this._objects.forEach(function(e){
+			if(typeof e.moveType !== "undefined")
+				e.moveType = -1;
 			e.selected = false;
 		});
 		this._objects = [];

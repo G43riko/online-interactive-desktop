@@ -1,45 +1,61 @@
 class InputManager{
 	constructor(){
-		this.keys = [];
-		this.timer = false;
-		this.pressPosition = false;
-		this.button = [];
+		this._keys = [];
+		this._timer = false;
+		this._buttons = [];
+		this.pressPosition = new GVector2f();
+		//this.mouseDownOnObject = false
 	};
+
 	keyDown(val){
-		this.keys[val] = true;
+		this._keys[val] = true;
 	};
+
 	keyUp(val){
-		this.keys[val] = false;
+		this._keys[val] = false;
 	};
+
 	isKeyDown(val){
-		return this.keys[val];
+		return this._keys[val];
 	};
+
 	checkPress(button){
-		this.button[button] = false;
+		this._buttons[button] = false;
 		canvas.onmousepress({
-			position: Input.presPosition,
+			position: Input.pressPosition,
 			button: button
 		});
+		if(this._timer){}
+			this.clearTimer();
 	};
+
+	clearTimer(){
+		clearTimeout(this._timer);
+		this._timer = false;
+	}
+
 	mouseMove(val){
-		if(this.timer)
-			if(this.presPosition.dist(val.offsetX, val.offsetY) > TOUCH_VARIATION)
-				clearTimeout(this.timer);
+		if(this._timer)
+			if(this.pressPosition.dist(val.offsetX, val.offsetY) > TOUCH_VARIATION)
+				this.clearTimer();
 	};
+
 	buttonDown(val){
-		this.button[val.button] = true;
-		if (this.timer)
-			clearTimeout(this.timer);
-		this.timer = setTimeout(function(){Input.checkPress(val.button)}, TOUCH_DURATION);
-		this.presPosition = new GVector2f(val.offsetX, val.offsetY);
+		this._buttons[val.button] = true;
+		var t = this;
+		if (this._timer)
+			this.clearTimer();
+		this._timer = setTimeout(function(){t.checkPress(val.button)}, TOUCH_DURATION);
+		this.pressPosition.set(val.offsetX, val.offsetY);
 	};
+
 	buttonUp(val){
-		if (this.timer)
-			clearTimeout(this.timer);
-		this.button[val.button] = false;
+		if (this._timer)
+			this.clearTimer();
+		this._buttons[val.button] = false;
 	};
 
 	isButtonDown(val){
-		return this.button[val];
+		return this._buttons[val];
 	};
 }
