@@ -19,7 +19,7 @@ class MenuManager{
 		return tmp;
 	};
 
-	drawTools(x, y, backGroundColor){
+	_drawTools(x, y, backGroundColor){
 		var off, count = 0;
 
 		context.fillStyle = backGroundColor;
@@ -32,7 +32,7 @@ class MenuManager{
 		});
 	};
 
-	drawColors(x, y){
+	_drawColors(x, y){
 		var count = 0;
 		colors.forEach(function(e){
 			x = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
@@ -86,12 +86,12 @@ class MenuManager{
 
 		posY += MENU_OFFSET + MENU_HEIGHT;
 		if(this.visibleSubMenu == "tools")
-			this.drawTools(posX, posY, "rgb(153, 217, 234)");
+			this._drawTools(posX, posY, "rgb(153, 217, 234)");
 		else if(this.visibleSubMenu == "colors")
-			this.drawColors(posX, posY);
+			this._drawColors(posX, posY);
 	};
 
-	doPressAct(index){
+	_doPressAct(index){
 		if(!index)
 			return false;
 		switch(index){
@@ -102,7 +102,7 @@ class MenuManager{
 		return index;
 	};
 
-	doClickAct(index){
+	_doClickAct(index){
 		if(!index)
 			return false;
 		switch(index){
@@ -142,13 +142,13 @@ class MenuManager{
 				return;
 			posX = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
 			if(x > posX && y > posY && x < posX + MENU_WIDTH && y < posY + MENU_HEIGHT)
-				result = menuInst.doPressAct(i);
+				result = menuInst._doPressAct(i);
 		});
 
 		return result;
 	};
 
-	clickInTools(x, y, posY){
+	_clickInTools(x, y, posY){
 		var result = false,
 			count = 0,
 			menuInst = this,
@@ -158,12 +158,12 @@ class MenuManager{
 				return;
 			posX = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
 			if(x > posX && y > posY && x < posX + MENU_WIDTH && y < posY + MENU_HEIGHT)
-				result = menuInst.doClickAct(i);
+				result = menuInst._doClickAct(i);
 		});
 		return result;
 	}
 
-	clickInColors(x, y, posY){
+	_clickInColors(x, y, posY){
 		var count = 0,
 			result = false,
 			posX;
@@ -197,7 +197,7 @@ class MenuManager{
 				return;
 			posX = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
 			if(x > posX && y > posY && x < posX + MENU_WIDTH && y < posY + MENU_HEIGHT)
-				result = menuInst.doClickAct(i);
+				result = menuInst._doClickAct(i);
 		});
 
 		if(result)
@@ -207,9 +207,9 @@ class MenuManager{
 		this.visibleSubMenu = false;
 
 		if(lastSubMenu == "tools")
-			result = this.clickInTools(x, y, posY);
+			result = this._clickInTools(x, y, posY);
 		else if(lastSubMenu == "colors")
-			result = this.clickInColors(x, y, posY);
+			result = this._clickInColors(x, y, posY);
 
 		return result;
 	};
@@ -229,22 +229,22 @@ class MenuManager{
 						  new GVector2f(x + width - (offset << 1), y + offset)]);
 				break;
 			case "text":
-				fillText2("TEXT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
+				fillText("TEXT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
 				break;
 			case "ctrl":
-				fillText2("CTRL", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
+				fillText("CTRL", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
 				break;
 			case "file":
-				fillText2("FILE", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
+				fillText("FILE", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
 				break;
 			case "options":
-				fillText2("OPT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
+				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
 				break;
 			case "tools":
-				fillText2("TOOLS", x + (width >> 1), y + (height >> 1), height / 5, this._fontColor, 0, FONT_ALIGN_CENTER);
+				fillText("TOOLS", x + (width >> 1), y + (height >> 1), height / 5, this._fontColor, 0, FONT_ALIGN_CENTER);
 				break;
 			case "help":
-				fillText2("HELP", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
+				fillText("HELP", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
 				break;
 			case "draw":
 				drawQuadraticCurve([new GVector2f(x + offset, y + offset),

@@ -1,7 +1,7 @@
 class SceneManager{
 	constructor(){
 		this._layers = {};
-		this.paint = null;
+		this._paint = null;
 	};
 
 	forEach(func){
@@ -15,7 +15,7 @@ class SceneManager{
 		$.each(this._layers, function(key, val){
 			val.cleanUp();
 		});
-		this.getPaint().cleanUp();
+		this.paint.cleanUp();
 	};
 
 	createLayer(title){
@@ -35,14 +35,13 @@ class SceneManager{
 			if(typeof e.draw === "function")
 				e.draw();
 		});
-		this.getPaint().draw();
+		this.paint.draw();
 	};
 
-	getPaint(){
-		if(this.paint == null)
-			this.paint = new Paint("black", 5);
-		return this.paint;
-		//return this._layers["default"]._objects[0];
+	get paint(){
+		if(this._paint == null)
+			this._paint = new Paint("black", 5);
+		return this._paint;
 	};
 
 	remove(obj, layer = "default"){

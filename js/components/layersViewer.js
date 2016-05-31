@@ -37,12 +37,12 @@ class LayersViewer extends Entity{
 
 
 		if(this._layers.hasOwnProperty(i))
-			this.clickInLayer(i, x, y);
+			this._clickInLayer(i, x, y);
 
 		return true;
 	}
 
-	clickInLayer(order, x, y){
+	_clickInLayer(order, x, y){
 		/*
 		if(x > this._position.x + this._size.x - this._checkBoxSize - this._checkYOffset &&
 		   y > this._layers[order].posY + this._checkYOffset &&
@@ -68,15 +68,15 @@ class LayersViewer extends Entity{
 
 	toggleVisibilityOfLayer(num){
 		var i = parseInt((num - this._position.y) / this._layerPanelHeight);
-		this._layers[i].layer._visible = !this._layers[i].layer._visible;
+		this._layers[i].layer.visible = !this._layers[i].layer.visible;
 	}
 
-	drawLayer(layer, order){
+	_drawLayer(layer, order){
 		var checkColor = layer._visible ? "green" : "red",
 			posY = this._position.y + order * this._layerPanelHeight;
 
 		context.roundRect(this._position.x, posY, this._size.x, this._layerPanelHeight, MENU_RADIUS, false, true);
-		fillText2(layer._title, this._position.x, posY, this._fontSize, this._fontColor, 13);
+		fillText(layer.title, this._position.x, posY, this._fontSize, this._fontColor, [7, 5]);
 
 
 		context.fillStyle = checkColor;
@@ -100,7 +100,7 @@ class LayersViewer extends Entity{
 			inst = this;
 
 		$.each(Scene._layers, function(i, e){
-			inst.drawLayer(e, num++);
+			inst._drawLayer(e, num++);
 		});
 		
 

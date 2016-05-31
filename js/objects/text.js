@@ -5,10 +5,20 @@ class Text extends Entity{
 		this._textColor = color;
 		this._fontSize 	= DEFAULT_FONT_SIZE;
 		this.moveType 	= -1;
-		this._align 	= FONT_ALIGN_LEFT;
 		this._size.x 	= calcTextWidth(text, DEFAULT_FONT_SIZE + "pt " + DEFAULT_FONT) + (DEFAULT_TEXT_OFFSET << 1);
 		this._minSize 	= this._size.getClone();
+		this._verticalTextAlign = FONT_VALIGN_TOP;
+		this._horizontalTextAlign = FONT_HALIGN_LEFT;
+		this._fontOffset = DEFAULT_TEXT_OFFSET;
 	};
+
+	set verticalTextAlign(val){
+		this._verticalTextAlign = val;
+	}
+
+	set horizontalTextAlign(val){
+		this._horizontalTextAlign = val;
+	}
 
 	draw(){
 		context.fillStyle = this._fillColor;
@@ -24,24 +34,25 @@ class Text extends Entity{
 
 		context.roundRect(this._position.x, this._position.y, this._size.x, this._size.y, DEFAULT_RADIUS, true, false);
 
-		if(this._align == FONT_ALIGN_LEFT)
-			fillText2(this._text, this._position.x, this._position.y, this._fontSize, this._textColor, DEFAULT_TEXT_OFFSET);
-		else if(this._align == FONT_ALIGN_RIGHT)
-			fillText2(this._text,
-					  this._position.x + this._size.x,
-					  this._position.y,
-					  this._fontSize,
-					  this._textColor,
-					  DEFAULT_TEXT_OFFSET,
-					  this._align);
-		else if(this._align == FONT_ALIGN_CENTER)
-			fillText2(this._text,
-					 this._position.x + (this._size.x >> 1),
-					 this._position.y + (this._fontSize >> 1),
-					 this._fontSize,
-					 this._textColor,
-					 DEFAULT_TEXT_OFFSET,
-					 this._align);
+		var pos = this.position.getClone();
+
+		context.textAlign = this._horizontalTextAlign;
+		context.textBaseline = this._verticalTextAlign;
+		context.fillStyle = this._textColor;
+
+		if(this._horizontalTextAlign == FONT_HALIGN_LEFT)
+			pos.x += this._fontOffset;
+		else if(this._horizontalTextAlign == FONT_HALIGN_CENTER)
+			pos.x += this.size.x >> 1;
+		else if(this._horizontalTextAlign == FONT_HALIGN_RIGHT)
+			pos.x += this.size.x - this._fontOffset;
+
+		if(this._verticalTextAlign == FONT_VALIGN_MIDDLE)
+			pos.y += this.size.y >> 1;
+		else if(this._verticalTextAlign == FONT_VALIGN_BOTT)
+			pos.y += this.size.y - this._fontOffset;
+
+		context.fillText(this._text, pos.x, pos.y);
 
 		if(this.selected)
 			drawBorder(this);

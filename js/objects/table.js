@@ -8,12 +8,12 @@ class Table extends Entity{
 		this.textOffset		= TABLE_TEXT_OFFSET;
 		this.columnWidth 	= this._size.x / this.data[0].length;
 		this._lineHeight	= TABLE_LINE_HEIGHT;
-		this.borderColor	= shadeColor1(new String(TABLE_HEADER_COLOR), -20);
+		this.borderColor	= shadeColor1(TABLE_HEADER_COLOR, -20);
 
 		this._size.set(this._size.x, data.length * this._lineHeight);
 
 
-		this.calcMaxTextWidth();
+		this._calcMaxTextWidth();
 	}
 
 	clear(pos, type){
@@ -51,7 +51,7 @@ class Table extends Entity{
 		});
 		this.data.splice(row + offset, 0, newRow);
 		this._size.y = this.data.length * this._lineHeight;
-		this.checkSize();
+		this._checkSize();
 	}
 
 	addColumn(x, type){
@@ -65,7 +65,7 @@ class Table extends Entity{
 		});
 
 		this.columnWidth 	= this._size.x / this.data[0].length;
-		this.checkSize();
+		this._checkSize();
 
 	}
 
@@ -77,7 +77,7 @@ class Table extends Entity{
 		else
 			Logger.error("nemožeš vymazať hlavičku tabulky");
 		this._size.y = this.data.length * this._lineHeight;
-		this.calcMaxTextWidth();
+		this._calcMaxTextWidth();
 
 		if(this.data.length == 0)
 			Scene.remove(this);
@@ -90,7 +90,7 @@ class Table extends Entity{
 			e.splice(column, 1);
 		});
 		this.columnWidth 	= this._size.x / this.data[0].length;
-		this.calcMaxTextWidth();
+		this._calcMaxTextWidth();
 
 		if(this.data[0].length == 0)
 			Scene.remove(this);
@@ -118,7 +118,7 @@ class Table extends Entity{
 		return this.moveType >= 0;
 	}
 
-	calcMaxTextWidth(value = 0){
+	_calcMaxTextWidth(value = 0){
 		var w;
 		context.font = DEFAULT_FONT_SIZE + "pt " + DEFAULT_FONT;
 		if(typeof value === "string"){
@@ -138,7 +138,7 @@ class Table extends Entity{
 		}, this);
 	}
 
-	checkSize(){
+	_checkSize(){
 		if(this.size.y < TABLE_LINE_HEIGHT * this.data.length)
 			this.size.y = TABLE_LINE_HEIGHT * this.data.length;
 
@@ -159,8 +159,8 @@ class Table extends Entity{
 
 		getText(this.data[row][column], new GVector2f(posX, posY), new GVector2f(w, this._lineHeight).sub(4), function(val){
 			this.data[row][column] = val;
-			this.calcMaxTextWidth(val);
-			this.checkSize();
+			this._calcMaxTextWidth(val);
+			this._checkSize();
 		}, this);
 
 		return true;
@@ -174,7 +174,7 @@ class Table extends Entity{
 
 
 		if(this.moveType >= 0)
-			this.checkSize();
+			this._checkSize();
 
 
 
@@ -200,14 +200,12 @@ class Table extends Entity{
 		context.roundRect(this._position.x, this._position.y, this._size.x, this._lineHeight * this.data.length, MENU_RADIUS, false, true);
 
 
-
-
 		///DRAW HEADER TEXT AND VERTICAL LINES
 		posX = this._position.x;
 		for(i=0 ; i<this.data[0].length ; i++) {
 			if (i > 0)
 				drawLine([posX, this._position.y, posX, this._position.y + this.data.length * this._lineHeight], this.borderWidth, this.borderColor);
-			fillText2(this.data[0][i], posX + this.textOffset,  this._position.y, DEFAULT_FONT_SIZE, DEFAULT_FONT_COLOR, DEFAULT_TEXT_OFFSET);
+			fillText(this.data[0][i], posX + (this.columnWidth >> 1),  this._position.y + (this._lineHeight >> 1), DEFAULT_FONT_SIZE, DEFAULT_FONT_COLOR, 0, FONT_ALIGN_CENTER);
 			posX += this.columnWidth;
 		}
 
@@ -219,7 +217,7 @@ class Table extends Entity{
 			if(i > 0)
 				drawLine([this._position.x, posY, this._position.x + this._size.x, posY], this.borderWidth, this.borderColor);
 			for(j=0 ; j<this.data[i].length ; j++) {
-				fillText2(this.data[i][j], posX + this.textOffset,  posY, DEFAULT_FONT_SIZE, DEFAULT_FONT_COLOR, DEFAULT_TEXT_OFFSET);
+				fillText(this.data[i][j], posX + (this.columnWidth >> 1),  posY + (this._lineHeight >> 1), DEFAULT_FONT_SIZE, DEFAULT_FONT_COLOR, 0, FONT_ALIGN_CENTER);
 				posX += this.columnWidth;
 			}
 		}

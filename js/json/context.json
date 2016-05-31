@@ -1,135 +1,207 @@
 {
-	"joinType" : {
-		"name" : "Join type",
+	"lineType" : {
+		"label" : "Line type",
 		"type" : "text",
 		"fields" :  {
 			"linear" : {
-				"name" : "Linear",
-				"type" : "radio"
+				"label" : "Linear",
+				"type" : "radio",
+				"name" : 2000
 			},
 			"sequencal" : {
-				"name" : "Sequencal",
-				"type" : "radio"
+				"label" : "Sequencal",
+				"type" : "radio",
+				"name" : 2002
 			},
 			"bezier" : {
-				"name" : "Bezier",
-				"type" : "radio"
+				"label" : "Bezier",
+				"type" : "radio",
+				"name" : 2001
 			}
 		}
 	},
-	"capType" : {
-		"name" : "Cap type",
+	"lineStyle" : {
+		"label" : "Line style",
 		"type" : "text",
 		"fields" : {
-			"butt" : {
-				"name" : "Butt",
-				"type" : "radio"
+			"normalLine" : {
+				"label" : "Normal line",
+				"type" : "radio",
+				"name" : 2100
 			},
-			"round" : {
-				"name" : "Round",
-				"type" : "radio"
+			"strippedLine" : {
+				"label" : "Stripped line",
+				"type" : "radio",
+				"name" : 2101
 			},
-			"square" : {
-				"name" : "Square",
-				"type" : "radio"
+			"fillLine" : {
+				"label" : "Filled line",
+				"type" : "radio",
+				"name" : 2102
+			}
+		}
+	},
+	"lineCap" : {
+		"label" : "Cap type",
+		"type" : "text",
+		"fields" : {
+			"buttCap" : {
+				"label" : "Butt cap",
+				"type" : "radio",
+				"name" : "butt"
+			},
+			"roundCap" : {
+				"label" : "Round cap",
+				"type" : "radio",
+				"name" : "round"
+			},
+			"squareCap" : {
+				"label" : "Square cap",
+				"type" : "radio",
+				"name" : "square"
 			}
 		}
 	},
 	"joinType" : {
-		"name" : "Join type",
+		"label" : "Join type",
 		"type" : "text",
 		"fields" : {
-			"miter" : {
-				"name" : "Miter join",
-				"type" : "radio"
+			"miterJoin" : {
+				"label" : "Miter join",
+				"type" : "radio",
+				"name" : "miter"
 			},
-			"round" : {
-				"name" : "Round join",
-				"type" : "radio"
+			"roundJoin" : {
+				"label" : "Round join",
+				"type" : "radio",
+				"name" : "round"
 			},
-			"bevel" : {
-				"name" : "Bevel join",
-				"type" : "radio"
+			"bevelJoin" : {
+				"label" : "Bevel join",
+				"type" : "radio",
+				"name" : "bevel"
 			}
 		}
 	},
 	"delete" : {
-		"name" : "Delete",
+		"label" : "Delete",
 		"type" : "text"
 	},
 	"changeFillColor" : {
-		"name" : "Change fill color",
+		"label" : "Change fill color",
 		"type" : "text"
 	},
 	"changeBorderColor" : {
-		"name" : "Change border color",
+		"label" : "Change border color",
 		"type" : "text"
 	},
 	"clearWorkspace" : {
-		"name" : "Clear workspace",
+		"label" : "Clear workspace",
 		"type" : "text"
 	},
 	"locked" : {
-		"name" : "Locked",
+		"label" : "Locked",
 		"type" : "checkbox"
 	},
 	"editTable" : {
-		"name" : "Edit table",
+		"label" : "Edit table",
 		"type" : "text",
 		"fields" : {
 			"removeRow" : {
-				"name" : "Remove row",
+				"label" : "Remove row",
 				"type" : "text"
 			},
 			"removeColumn" : {
-				"name" : "Remove column",
+				"label" : "Remove column",
 				"type" : "text"
 			},
 			"clearColumn" : {
-				"name" : "Clear column",
+				"label" : "Clear column",
 				"type" : "text"
 			},
 			"clearRow" : {
-				"name" : "Clear row",
+				"label" : "Clear row",
 				"type" : "text"
 			},
 			"clearTable" : {
-				"name" : "Clear table",
+				"label" : "Clear table",
 				"type" : "text"
 			},
 			"addRowBelow" : {
-				"name" : "Add row below",
+				"label" : "Add row below",
 				"type" : "text"
 			},
 			"addRowAbove" : {
-				"name" : "Add row above",
+				"label" : "Add row above",
 				"type" : "text"
 			},
 			"addColumnToRight" : {
-				"name" : "Add column right",
+				"label" : "Add column right",
 				"type" : "text"
 			},
 			"addColumnToLeft" : {
-				"name" : "Add column left",
+				"label" : "Add column left",
 				"type" : "text"
 			}
 
 		}
 	},
 	"visible" : {
-		"name" : "Visible",
+		"label" : "Visible",
 		"type" : "checkbox"
 	},
 	"deleteLayer" : {
-		"name" : "Delete layer",
+		"label" : "Delete layer",
 		"type" : "text"
 	},
 	"renameLayer" : {
-		"name" : "Rename layer",
+		"label" : "Rename layer",
 		"type" : "text"
 	},
 	"clearLayer" : {
-		"name" : "Clear layer",
+		"label" : "Clear layer",
 		"type" : "text"
+	},
+	"verticalTextAlign" : {
+		"label" : "Vert. align",
+		"type" : "text",
+		"fields" : {
+			"topVAlign" : {
+				"label" : "Top",
+				"type" : "radio",
+				"name" : "top"
+			},
+			"middleVAlign" : {
+				"label" : "Middle",
+				"type" : "radio",
+				"name" : "middle"
+			},
+			"bottomVAlign" : {
+				"label" : "Bottom",
+				"type" : "radio",
+				"name" : "bottom"
+			}
+		}
+	},
+	"horizontalTextAlign" : {
+		"label" : "Hor. align",
+		"type" : "text",
+		"fields" : {
+			"leftHAlign" : {
+				"label" : "Left",
+				"type" : "radio",
+				"name" : "left"
+			},
+			"centerHAlign" : {
+				"label" : "Center",
+				"type" : "radio",
+				"name" : "center"
+			},
+			"rightHAlign" : {
+				"label" : "Right",
+				"type" : "radio",
+				"name" : "right"
+			}
+		}
 	}
 }

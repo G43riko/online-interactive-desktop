@@ -2,27 +2,25 @@ class Layer{
 	constructor(title){
 		this._objects = [];
 		this._visible = true;
-		this.title = title;
+		this._title = title;
 	};
 
-	get visible(){
-		return this._visible;
-	};
+	get visible(){return this._visible;}
+	get objects(){return this._objects}
+	get title(){return this._title;}
 
-	set title(val){
-		this._title = val;
-	}
+	set visible(val){this._visible = val;}
+	set objects(val){this._objects = val;}
+	set title(val){this._title = val;}
 
-	get title(){
-		return this._title;
-	}
 	cleanUp(){
 		this.forEach(function(e){
 			if(typeof e.cleanUp !== "undefined")
 				e.cleanUp();
 		});
 		this._objects = [];
-	}
+	};
+
 	draw(){
 		if(!this.visible)
 			return;

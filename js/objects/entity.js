@@ -53,9 +53,10 @@ class Entity{
 	get borderColor(){return this._borderColor;}
 
 
-	set locked(val){this._locked = val};
+	set locked(val){this._locked = val;}
 	set selected(val){this._selected = val;}
-	set fillColor(val){this._fillColor = val};
-	set borderColor(val){this._borderColor = val};
+	set fillColor(val){this._fillColor = val;}
+	set borderWidth(val){this._borderWidth = val;}
+	set borderColor(val){this._borderColor = val;}
 
 }

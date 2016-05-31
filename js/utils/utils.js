@@ -103,8 +103,10 @@ function shadeColor1(color, percent) {  // deprecated. See below.
 function objectToArray(obj){
 	var result = [];
 	for(var i in obj)
-		if(obj.hasOwnProperty(i))
+		if(obj.hasOwnProperty(i)){
+			obj[i]["key"] = i;
 			result.push(obj[i]);
+		}
 
 	return result;
 }

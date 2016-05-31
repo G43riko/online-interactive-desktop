@@ -19,17 +19,17 @@ class InputManager{
 		return this._keys[val];
 	};
 
-	checkPress(button){
+	_checkPress(button){
 		this._buttons[button] = false;
 		canvas.onmousepress({
 			position: Input.pressPosition,
 			button: button
 		});
 		if(this._timer){}
-			this.clearTimer();
+			this._clearTimer();
 	};
 
-	clearTimer(){
+	_clearTimer(){
 		clearTimeout(this._timer);
 		this._timer = false;
 	}
@@ -37,21 +37,21 @@ class InputManager{
 	mouseMove(val){
 		if(this._timer)
 			if(this.pressPosition.dist(val.offsetX, val.offsetY) > TOUCH_VARIATION)
-				this.clearTimer();
+				this._clearTimer();
 	};
 
 	buttonDown(val){
 		this._buttons[val.button] = true;
 		var t = this;
 		if (this._timer)
-			this.clearTimer();
-		this._timer = setTimeout(function(){t.checkPress(val.button)}, TOUCH_DURATION);
+			this._clearTimer();
+		this._timer = setTimeout(function(){t._checkPress(val.button)}, TOUCH_DURATION);
 		this.pressPosition.set(val.offsetX, val.offsetY);
 	};
 
 	buttonUp(val){
 		if (this._timer)
-			this.clearTimer();
+			this._clearTimer();
 		this._buttons[val.button] = false;
 	};
 

@@ -6,9 +6,20 @@ const L_ALT_KEY 	= 18;
 const ESCAPE_KEY 	= 27;
 const ENTER_KEY 	= 13;
 
-const FONT_ALIGN_LEFT		= "left";
-const FONT_ALIGN_RIGHT		= "right";
-const FONT_ALIGN_CENTER		= "center";
+const FONT_HALIGN_LEFT		= "left";
+const FONT_HALIGN_CENTER	= "center";
+const FONT_HALIGN_RIGHT		= "right";
+
+const FONT_VALIGN_MIDDLE	= "middle";
+const FONT_VALIGN_TOP		= "top";
+const FONT_VALIGN_ALPHA		= "alphabetic";
+const FONT_VALIGN_HANG		= "hanging";
+const FONT_VALIGN_IDEO		= "ideographic";
+const FONT_VALIGN_BOTT		= "bottom";
+
+const FONT_ALIGN_CENTER = 10;
+const FONT_ALIGN_NORMAL = 11;
+
 
 const DEFAULT_BACKGROUND_COLOR	= "WHITE";
 const DEFAULT_FONT				= "Comic Sans MS";
@@ -22,7 +33,8 @@ const DEFAULT_STROKE_WIDTH		= 2;
 const DEFAULT_COLOR				= "#000000";
 const DEFAULT_RADIUS			= 5;
 const DEFAULT_TEXT_OFFSET		= 5;
-const DEFAULT_FONT_ALIGN		= FONT_ALIGN_LEFT;
+const DEFAULT_FONT_HALIGN		= FONT_HALIGN_LEFT;
+const DEFAULT_FONT_VALIGN		= FONT_VALIGN_TOP;
 
 const SELECTOR_SIZE 	= 10;
 const SELECTOR_COLOR	= "orange";
@@ -44,6 +56,10 @@ const OPERATION_DRAW_LINE	= 1003;
 const JOIN_LINEAR		= 2000;
 const JOIN_BAZIER		= 2001;
 const JOIN_SEQUENCAL	= 2002;
+
+const LINE_STYLE_NORMAL		= 2100;
+const LINE_STYLE_STRIPPED	= 2101;
+const LINE_STYLE_FILLED		= 2102;
 
 
 const CONTEXT_MENU_LINE_HEIGHT 	= 40;

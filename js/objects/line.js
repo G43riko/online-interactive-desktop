@@ -7,6 +7,8 @@ class Line extends Entity{
 		this.movingPoint	= -1;
 		this._lineCap		= LINE_CAP_BUTT;
 		this._joinType		= LINE_JOIN_MITER;
+		this._lineStyle		= LINE_STYLE_NORMAL;
+		this._lineType		= JOIN_LINEAR;
 
 		if(points.length < 2){
 			Logger.warn("vytvoril sa line ktory mal menej ako 2 body a tak sa maže");
@@ -16,9 +18,10 @@ class Line extends Entity{
 		Entity.findMinAndMax(this.points, this.position, this.size);
 	}
 
-	set lineCap(val){
-		this._lineCap = val;
-	}
+	set lineCap(val){this._lineCap = val;}
+	set lineType(val){this._lineType = val;}
+	set joinType(val){this._joinType = val;}
+	set lineStyle(val){this._lineStyle = val;}
 
 	doubleClickIn(x, y){
 		if(!this.clickInBoundingBox(x, y))
@@ -96,15 +99,6 @@ class Line extends Entity{
 		return false;
 	};
 
-	toString(){
-		return Json.stringify({
-			sX: this._borderWidth,
-			bC: this.borderColor,
-			c: this.fillColor,
-			v: this.visible
-		});
-	};
-
 	updateCreatingPosition(pos){
 		var last = this.points[this.points.length - 1];
 		last.x = pos.x;
@@ -113,19 +107,19 @@ class Line extends Entity{
 	};
 
 	draw(){
+
+		context.save();
 		if (this.moving && !this.locked)
 			setShadow(true);
 
-		context.save();
-
 		context.lineCap = this._lineCap;
 		context.lineJoin = this._joinType;
+		if(this._lineStyle == LINE_STYLE_STRIPPED)
+		setLineDash(true);
 
-		drawLine(this.points, this._borderWidth , this.fillColor, "quadratic");
+		drawLine(this.points, this._borderWidth , this.fillColor, this._lineStyle);
 
 		context.restore();
-		if (this.moving)
-			setShadow(false);
 
 		context.lineWidth = DEFAULT_STROKE_WIDTH << 1;
 		if(this.selected){

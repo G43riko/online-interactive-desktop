@@ -154,7 +154,7 @@ function drawPolygon(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = D
 }
 
 
-function drawLine(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, type = "normal"){
+function drawLine(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, type = JOIN_LINEAR){
 	if(points.length < 2)
 		return;
 
@@ -162,7 +162,7 @@ function drawLine(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFA
 	context.strokeStyle = borderColor;
 	context.beginPath();
 	if(isNaN(points[0])){
-		if(type == "normal" || points.length < 3){
+		if(type == JOIN_LINEAR || points.length < 3){
 			points.forEach(function(e, i){
 				if(i == 0)
 					context.moveTo(e.x, e.y);
@@ -172,6 +172,14 @@ function drawLine(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFA
 		}
 		else{
 			context.moveTo(points[0].x, points[0].y);
+			for(var i=1 ; i<points.length-1 ; i++){
+				context.quadraticCurveTo(points[i].x + (points[i].x - points[i + 1].x) / 2,
+										 points[i].y + (points[i].y - points[i + 1].y) / 2, points[i].x, points[i].y);
+			}
+			var i = points.length - 2;
+			context.quadraticCurveTo(points[i].x + (points[i].x - points[i - 1].x) / 2,
+									 points[i].y + (points[i].y - points[i - 1].y) / 2, points[i+1].x, points[i+1].y);
+			/*
 			for(var i=1 ; i<points.length-1 ; i+=2)
 				context.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
 			if(points.length % 2 == 0)
@@ -179,6 +187,7 @@ function drawLine(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFA
 										 (points[points.length - 1].y + points[points.length - 2].y) >> 1,
 										  points[points.length - 1].x,
 										  points[points.length - 1].y);
+			*/
 		}
 	}
 	else{
@@ -220,20 +229,24 @@ function drawBazierCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor
 	context.stroke();
 }
 
-function fillText2(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COLOR, offset = 0, align = DEFAULT_FONT_ALIGN){
+function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COLOR, offset = 0, align = FONT_ALIGN_NORMAL){
 	context.font = size + "pt " + DEFAULT_FONT;
-	context.textAlign = align;
 	context.fillStyle = color;
 
+	if(align == FONT_ALIGN_NORMAL){
+		context.textAlign = FONT_HALIGN_LEFT;
+		context.textBaseline = FONT_VALIGN_TOP;
+		if(Array.isArray(offset))
+			context.fillText(text, x + offset[0], y + offset[1]);
+		else
+		context.fillText(text, x + offset, y + offset);
+	}
+	else if(align == FONT_ALIGN_CENTER){
+		context.textAlign = FONT_HALIGN_CENTER;
+		context.textBaseline = FONT_VALIGN_MIDDLE;
+		context.fillText(text, x, y);
+	}
 
-
-
-	if(align == FONT_ALIGN_CENTER)
-		context.fillText(text, x, y + (size >> 1) + offset);
-	else if(align == FONT_ALIGN_LEFT)
-		context.fillText(text, x + offset, y + size + offset);
-	else if(align == FONT_ALIGN_RIGHT)
-		context.fillText(text, x - offset, y + size + offset);
 }
 
 function calcTextWidth(value, font = false){
