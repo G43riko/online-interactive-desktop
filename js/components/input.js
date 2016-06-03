@@ -4,8 +4,12 @@ class InputManager{
 		this._timer = false;
 		this._buttons = [];
 		this.pressPosition = new GVector2f();
-		//this.mouseDownOnObject = false
+		this._mousePos = new GVector2f();
 	};
+
+	get mousePos(){
+		return this._mousePos;
+	}
 
 	keyDown(val){
 		this._keys[val] = true;
@@ -35,6 +39,7 @@ class InputManager{
 	}
 
 	mouseMove(val){
+		this._mousePos.set(val.offsetX, val.offsetY);
 		if(this._timer)
 			if(this.pressPosition.dist(val.offsetX, val.offsetY) > TOUCH_VARIATION)
 				this._clearTimer();

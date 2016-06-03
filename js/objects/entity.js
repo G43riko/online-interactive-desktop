@@ -1,17 +1,26 @@
 class Entity{
 	constructor(name, position = new GVector2f(), size = new GVector2f(), fillColor = DEFAULT_COLOR){
-		this._position 		= position;
-		this._size 			= size;
-		this._name 			= name;
-		this._fillColor 	= fillColor;
-		this._borderWidth 	= 3;
-		this._borderColor 	= shadeColor1(fillColor, -20);
-		this._selected 		= false;
-		this._visible 		= true;
-		this._moving 		= false;
-		this._locked		= false;
-		this._minSize 		= false;
+		this._position 			= position;
+		this._size 				= size;
+		this._name 				= name;
+		this._fillColor 		= fillColor;
+		this._borderWidth 		= 3;
+		this._borderColor 		= shadeColor1(fillColor, -20);
+		this._selected 			= false;
+		this._visible 			= true;
+		this._moving 			= false;
+		this._locked			= false;
+		this._minSize 			= false;
+		this._selectedConnector = false;
+		this._connectors 		= [new GVector2f(0.5, 0), new GVector2f(0.5, 1), new GVector2f(0, 0.5), new GVector2f(1, 0.5)]
 	}
+
+	addConnector(){
+		objectToArray(arguments).forEach(function(e){
+			this._connectors.push(e);
+		}, this);
+	}
+
 	/**
 	 * vráti true ak je šanca že bolo kliknuté na niektorú časť objektu
 	 */
@@ -41,6 +50,58 @@ class Entity{
 		size.sub(position);
 	}
 
+	checkConnectors(vec){
+		if(Creator.operation != OPERATION_DRAW_JOIN)
+			return;
+
+		this._selectedConnector = false;
+		this._connectors.forEach(function(e){
+			if(this._selectedConnector)
+				return;
+			var d = e.getClone().mul(this.size);
+			if (vec.dist(this.position.x + d.x, this.position.y + d.y) < SELECTOR_SIZE){
+				this._selectedConnector = e;
+				if(!Creator.object)
+					Creator.createObject(this);
+			}
+		}, this);
+	}
+
+	static drawConnectors(obj){
+		if(Creator.operation != OPERATION_DRAW_JOIN)
+			return;
+
+		obj._connectors.forEach(function(e){
+			drawConnector(e, obj);
+		});
+	};
+
+	static clone(obj){
+		var copy = Object.create(obj.__proto__);
+
+		$.each(obj, function(i, e){
+			if(e.constructor.name == "GVector2f")
+				copy[i] = e.getClone();
+			else if(i == "data"){
+				copy[i] = [];
+				e.forEach(function(ee){
+					var tmp = [];
+					ee.forEach(eee => tmp.push(eee));
+					copy[i].push(tmp);
+				});
+			}
+			else if(i == "points"){
+				copy[i] = [];
+				e.forEach(ee => copy[i].push(ee.getClone().add(obj.size)));
+			}
+			else
+				copy[i] = e;
+		});
+
+		copy.position.add(obj.size);
+		Scene.addToScene(copy);
+	}
+
 	get name(){return this._name;}
 	get size(){return this._size;}
 	get locked(){return this._locked;}
@@ -51,12 +112,14 @@ class Entity{
 	get fillColor(){return this._fillColor;}
 	get borderWidth(){return this._borderWidth;}
 	get borderColor(){return this._borderColor;}
+	get selectedConnector(){return this._selectedConnector;}
 
-
+	
 	set locked(val){this._locked = val;}
 	set selected(val){this._selected = val;}
 	set fillColor(val){this._fillColor = val;}
 	set borderWidth(val){this._borderWidth = val;}
 	set borderColor(val){this._borderColor = val;}
+	set selectedConnector(val){this._selectedConnector = val;}
 
 }

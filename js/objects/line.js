@@ -103,7 +103,7 @@ class Line extends Entity{
 		var last = this.points[this.points.length - 1];
 		last.x = pos.x;
 		last.y = pos.y;
-		this.findMinAndMax();
+		Entity.findMinAndMax(this.points, this.position, this.size);
 	};
 
 	draw(){

@@ -4,65 +4,71 @@ class GVector2f{
 	constructor(){
 		GVetor2fCounter++;
 		if(arguments.length == 0){
-			this.x = 0;
-			this.y = 0;
+			this._x = 0;
+			this._y = 0;
 		}
 		else if(arguments.length == 1){
 			if(isNaN(arguments[0])){
-				this.x = arguments[0].x;
-				this.y = arguments[0].y;
+				this._x = arguments[0].x;
+				this._y = arguments[0].y;
 			}
 			else{
-				this.x = arguments[0];
-				this.y = arguments[0];
+				this._x = arguments[0];
+				this._y = arguments[0];
 			}
 		}
 		else if(arguments.length == 2){
-			this.x = arguments[0];
-			this.y = arguments[1];
+			this._x = arguments[0];
+			this._y = arguments[1];
 		}
 	}
 
+	get x(){return this._x;}
+	get y(){return this._y;}
+
+	set x(val){this._x = val;}
+	set y(val){this._y = val;}
+
 	getLength(){
-		return Math.sqrt(this.x * this.x + this.y * this.y);
+		return Math.sqrt(this._x * this._x + this._y * this._y);
 	}
 
 	getClone(){
 		GVetor2fCounterClone++;
-		return new GVector2f(this.x, this.y);
+		return new GVector2f(this._x, this._y);
 	}
 
 	add(){
 		if(arguments.length == 1){
 			if(isNaN(arguments[0])){
-				this.x += arguments[0].x;
-				this.y += arguments[0].y;
+				this._x += arguments[0].x;
+				this._y += arguments[0].y;
 			}
 			else{
-				this.x += arguments[0];
-				this.y += arguments[0];
+				this._x += arguments[0];
+				this._y += arguments[0];
 			}
 		}
 		else if(arguments.length == 2){
-			this.x += arguments[0];
-			this.y += arguments[1];
+			this._x += arguments[0];
+			this._y += arguments[1];
 		}
 		return this
 	}
 	br(){
 		if(arguments.length == 1){
 			if(isNaN(arguments[0])){
-				this.x >>= arguments[0].x;
-				this.y >>= arguments[0].y;
+				this._x >>= arguments[0].x;
+				this._y >>= arguments[0].y;
 			}
 			else{
-				this.x >>= arguments[0];
-				this.y >>= arguments[0];
+				this._x >>= arguments[0];
+				this._y >>= arguments[0];
 			}
 		}
 		else if(arguments.length == 2){
-			this.x >>= arguments[0];
-			this.y >>= arguments[1];
+			this._x >>= arguments[0];
+			this._y >>= arguments[1];
 		}
 		return this
 	}
@@ -70,17 +76,17 @@ class GVector2f{
 	bl(){
 		if(arguments.length == 1){
 			if(isNaN(arguments[0])){
-				this.x <<= arguments[0].x;
-				this.y <<= arguments[0].y;
+				this._x <<= arguments[0].x;
+				this._y <<= arguments[0].y;
 			}
 			else{
-				this.x <<= arguments[0];
-				this.y <<= arguments[0];
+				this._x <<= arguments[0];
+				this._y <<= arguments[0];
 			}
 		}
 		else if(arguments.length == 2){
-			this.x <<= arguments[0];
-			this.y <<= arguments[1];
+			this._x <<= arguments[0];
+			this._y <<= arguments[1];
 		}
 		return this
 	}
@@ -88,17 +94,17 @@ class GVector2f{
 	div(){
 		if(arguments.length == 1){
 			if(isNaN(arguments[0])){
-				this.x /= arguments[0].x;
-				this.y /= arguments[0].y;
+				this._x /= arguments[0].x;
+				this._y /= arguments[0].y;
 			}
 			else{
-				this.x /= arguments[0];
-				this.y /= arguments[0];
+				this._x /= arguments[0];
+				this._y /= arguments[0];
 			}
 		}
 		else if(arguments.length == 2){
-			this.x /= arguments[0];
-			this.y /= arguments[1];
+			this._x /= arguments[0];
+			this._y /= arguments[1];
 		}
 		return this
 	}
@@ -106,17 +112,17 @@ class GVector2f{
 	sub(){
 		if(arguments.length == 1){
 			if(isNaN(arguments[0])){
-				this.x -= arguments[0].x;
-				this.y -= arguments[0].y;
+				this._x -= arguments[0].x;
+				this._y -= arguments[0].y;
 			}
 			else{
-				this.x -= arguments[0];
-				this.y -= arguments[0];
+				this._x -= arguments[0];
+				this._y -= arguments[0];
 			}
 		}
 		else if(arguments.length == 2){
-			this.x -= arguments[0];
-			this.y -= arguments[1];
+			this._x -= arguments[0];
+			this._y -= arguments[1];
 		}
 		return this
 	}
@@ -124,42 +130,42 @@ class GVector2f{
 	mul(){
 		if(arguments.length == 1){
 			if(isNaN(arguments[0])){
-				this.x *= arguments[0].x;
-				this.y *= arguments[0].y;
+				this._x *= arguments[0].x;
+				this._y *= arguments[0].y;
 			}
 			else{
-				this.x *= arguments[0];
-				this.y *= arguments[0];
+				this._x *= arguments[0];
+				this._y *= arguments[0];
 			}
 		}
 		else if(arguments.length == 2){
-			this.x *= arguments[0];
-			this.y *= arguments[1];
+			this._x *= arguments[0];
+			this._y *= arguments[1];
 		}
 		return this
 	}
 
 	dist(){
 		if(arguments.length == 1)
-			return Math.sqrt(Math.pow(this.x - arguments[0].x, 2) + Math.pow(this.y - arguments[0].y, 2));
+			return Math.sqrt(Math.pow(this._x - arguments[0].x, 2) + Math.pow(this._y - arguments[0].y, 2));
 		else if(arguments.length == 2)
-			return Math.sqrt(Math.pow(this.x - arguments[0], 2) + Math.pow(this.y - arguments[1], 2));
+			return Math.sqrt(Math.pow(this._x - arguments[0], 2) + Math.pow(this._y - arguments[1], 2));
 	}
 
 	set(){
 		if(arguments.length == 1){
 			if(isNaN(arguments[0])) {
-				this.x = arguments[0].x;
-				this.y = arguments[0].y;
+				this._x = arguments[0].x;
+				this._y = arguments[0].y;
 			}
 			else{
-				this.x = arguments[0];
-				this.y = arguments[0];
+				this._x = arguments[0];
+				this._y = arguments[0];
 			}
 		}
 		else if(arguments.length == 2){
-			this.x = arguments[0];
-			this.y = arguments[1];
+			this._x = arguments[0];
+			this._y = arguments[1];
 		}
 		return this;
 	}

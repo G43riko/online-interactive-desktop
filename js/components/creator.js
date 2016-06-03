@@ -16,13 +16,20 @@ class objectCreator{
 			case OPERATION_DRAW_LINE:
 				this._object = new Line([position, position.getClone()], 5, this._fillColor);
 				break;
+			case OPERATION_DRAW_JOIN:
+				this._object = new Join(position);
+				break;
 		}
 		selectedObjects.clearAndAdd(this._object);
 	}
 
 	draw(){
-		if(this._object)
-			this._object.draw();
+		if(this._object){
+			if(this._object.name == "JOIN")
+				this._object.draw();
+			else
+				this._object.draw();
+		}
 	}
 
 	get object(){return this._object;}

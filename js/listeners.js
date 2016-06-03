@@ -149,7 +149,7 @@ function initListeners(){
 				return
 		}
 
-		if(Creator.object){
+		if(Creator.object && Creator.object.name != "Join"){
 			Scene.addToScene(Creator.object);
 			Creator.object = false;
 			return;
@@ -160,23 +160,31 @@ function initListeners(){
 
 		closeDialog();
 
+		movedObject.moving = false;
+		movedObject = false;
+
 		if(Creator.operation == OPERATION_DRAW_PATH){
 			Scene.paint.addPoint(position, Creator.color);
 			Scene.paint.breakLine();
 		}
-
-		movedObject.moving = false;
-		movedObject = false;
-
 		Scene.forEach(function(o){
 			if(result)
 				return;
 			if(o.clickIn(position.x, position.y)) {
-				Input.isKeyDown(L_CTRL_KEY) ? selectedObjects.add(o) : selectedObjects.clearAndAdd(o);
+				if(Creator.object){
+					if(o.selectedConnector){
+						Creator.object.obj2 = o;
+						Scene.addToScene(Creator.object);
+					}
+				}
+				else
+					Input.isKeyDown(L_CTRL_KEY) ? selectedObjects.add(o) : selectedObjects.clearAndAdd(o);
 				result = true;
+
 			}
 		});
 
+		Creator.object = false;
 		if(!result)
 			selectedObjects.clear();
 			//deselectAll();
@@ -184,7 +192,7 @@ function initListeners(){
 
 	function mouseMove(position, movX, movY){
 		//ak sa hýbe nejakým objektom
-		if(movedObject){
+		if(movedObject && Creator.operation != OPERATION_DRAW_PATH){
 			//prejdu sa všetky označené objekty a pohne sa nimi
 			selectedObjects.forEach(function(e){
 				Movement.move(e, movX, movY);

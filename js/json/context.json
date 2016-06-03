@@ -203,5 +203,9 @@
 				"name" : "right"
 			}
 		}
+	},
+	"makeCopy" : {
+		"label" : "Make copy",
+		"type" : "text"
 	}
 }

@@ -17,6 +17,10 @@ class Arc extends Entity{
 		var vec = new GVector2f(x, y);
 		this.moveType = -1;
 
+		this.checkConnectors(vec);
+		if(this._selectedConnector)
+			return true;
+
 		if (x > this.position.x && y > this.position.y && x < this.position.x + this.size.x && y < this.position.y + this.size.y)
 			this.moveType = 4;
 		else if (vec.dist(this.position.x + (this.size.x >> 1), this.position.y) < SELECTOR_SIZE)
@@ -46,7 +50,8 @@ class Arc extends Entity{
 
 		drawArc(this.position.x, this.position.y, this.size.x, this.size.y, this.borderWidth, this.borderColor);
 
-		if (this.selected)
-			drawBorder(this);
+		drawBorder(this);
+
+		Entity.drawConnectors(this);
 	};
 }

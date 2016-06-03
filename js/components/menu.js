@@ -1,9 +1,10 @@
 class MenuManager{
 	constructor(){
-		this._items 		= false;
-		this.visibleSubMenu = false;
-		this.toolActive 	= false;
-		this._fontColor 	= MENU_FONT_COLOR;
+		this._items 			= false;
+		this.visibleSubMenu 	= false;
+		this.toolActive 		= false;
+		this._fontColor 		= MENU_FONT_COLOR;
+		this._backgroundColor 	= "rgb(153, 217, 234)";
 	}
 
 	set items(val){
@@ -20,13 +21,10 @@ class MenuManager{
 	};
 
 	_drawTools(x, y, backGroundColor){
-		var off, count = 0;
-
-		context.fillStyle = backGroundColor;
-
+		var count = 0;
 		$.each(this._items["tools"], function(i, e){
 			x = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
-			off = e.sur;
+			context.fillStyle = backGroundColor;
 			context.roundRect(x, y, MENU_WIDTH, MENU_HEIGHT, MENU_RADIUS, true, true);
 			MenuManager.drawIcon(i, x, y);
 		});
@@ -34,6 +32,7 @@ class MenuManager{
 
 	_drawColors(x, y){
 		var count = 0;
+		context.save();
 		colors.forEach(function(e){
 			x = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
 			if(x + MENU_WIDTH + MENU_OFFSET > canvas.width){
@@ -44,6 +43,7 @@ class MenuManager{
 			context.fillStyle = e;
 			context.roundRect(x, y, MENU_WIDTH, MENU_HEIGHT, MENU_RADIUS, true, true);
 		});
+		context.restore();
 	}
 
 	draw(){
@@ -54,7 +54,7 @@ class MenuManager{
 
 		context.lineWidth = MENU_BORDER_WIDTH;
 		context.strokeStyle = MENU_BORDER_COLOR;
-		context.fillStyle = "rgb(153, 217, 234)";
+		context.fillStyle = this._backgroundColor;
 
 		$.each(this._items["main"], function(i, e){
 			posX = MENU_POSITION + (MENU_WIDTH + MENU_OFFSET) * count++;
@@ -86,7 +86,7 @@ class MenuManager{
 
 		posY += MENU_OFFSET + MENU_HEIGHT;
 		if(this.visibleSubMenu == "tools")
-			this._drawTools(posX, posY, "rgb(153, 217, 234)");
+			this._drawTools(posX, posY, this._backgroundColor);
 		else if(this.visibleSubMenu == "colors")
 			this._drawColors(posX, posY);
 	};
@@ -125,6 +125,9 @@ class MenuManager{
 				break;
 			case "arc":
 				Creator.operation = OPERATION_DRAW_ARC;
+				break;
+			case "join":
+				Creator.operation = OPERATION_DRAW_JOIN;
 				break;
 		}
 		return index;
@@ -252,6 +255,9 @@ class MenuManager{
 					[new GVector2f(x + offset, y + offset), new GVector2f(x + offset, y +  height - (offset << 1))],
 					[new GVector2f(x + width - (offset << 1), y + (height >> 1)), new GVector2f(x + width - (offset << 1), y + offset)],
 					[new GVector2f(x + offset, y +  height - (offset << 1)), new GVector2f(x + offset, y + offset)]]);
+				break;
+			case "join":
+				fillText("JOIN", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER);
 				break;
 		}
 	}

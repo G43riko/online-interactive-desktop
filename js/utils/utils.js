@@ -17,7 +17,10 @@ Movement = {
 		if(typeof o.locked !== "undefined" && o.locked)
 			return;
 
-		if(o.moveType !== undefined){
+		if(typeof o.selectedConnector !== "undefined" && Creator.operation == OPERATION_DRAW_JOIN && o.selectedConnector !== false){
+
+		}
+		else if(o.moveType !== undefined){
 			switch(o.moveType){
 				case 0:
 					o.position.y += y;
@@ -45,7 +48,7 @@ Movement = {
 					break;
 			}
 		}
-		else if(o.movingPoint !== undefined){
+		else if(typeof o.movingPoint !== "undefined"){
 			var intVal = 0;
 			if(o.movingPoint < 0){
 				o.points.forEach(function(e){
@@ -73,6 +76,8 @@ Movement = {
 };
 
 function drawBorder(o, selectors = {tc: true, bc: true, cl: true, cr: true, br: true}){
+	if(!o.selected && o.name != "Paint")
+		return;
 	context.save();
 
 
@@ -120,6 +125,16 @@ function updateSelectedObjectView(object){
 	 container.find("#sizeY").text(object.size.y);
 	 container.find("#color").css("backgroundColor", object.color).text(object.color);
 	 */
+}
+
+function drawConnector(vec, obj){
+	context.save();
+	context.beginPath();
+	vec = vec.getClone().mul(obj.size);
+	context.fillStyle = "brown";
+	context.arc(obj.position.x + vec.x, obj.position.y + vec.y, 5, 0, PI2);
+	context.fill();
+	context.restore();
 }
 
 function drawSelectArc(x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE, dots = true){

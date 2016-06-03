@@ -1,6 +1,8 @@
 function resetCanvas(){
-	context.fillStyle = DEFAULT_BACKGROUND_COLOR;
-	context.fillRect(0, 0, canvas.width, canvas.height);
+	//context.fillStyle = DEFAULT_BACKGROUND_COLOR;
+	//context.fillRect(0, 0, canvas.width, canvas.height);
+
+	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function initCanvasSize(){

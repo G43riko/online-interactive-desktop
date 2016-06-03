@@ -11,15 +11,15 @@ class ContexMenuManager{
 		if(this._titles.length == 0){
 			if(movedObject){
 				if(movedObject.name == "Arc" || movedObject.name == "Rect" || movedObject.name == "Polygon")
-					this._addFields("changeFillColor", "changeBorderColor", "delete", "locked");
+					this._addFields("changeFillColor", "changeBorderColor", "delete", "locked", "makeCopy");
 				else if(movedObject.name == "Line")
-					this._addFields("joinType", "lineCap", "lineStyle", "lineType");
+					this._addFields("joinType", "lineCap", "lineStyle", "lineType", "makeCopy");
 				else if(movedObject.name == "Table")
-					this._addFields("editTable", "locked", "delete");
+					this._addFields("editTable", "locked", "delete", "makeCopy");
 				else if(movedObject.name == "LayerViewer")
 					this._addFields("visible", "deleteLayer", "renameLayer", "clearLayer");
 				else if(movedObject.name == "Text")
-					this._addFields("changeFillColor", "changeBorderColor", "delete", "locked", "verticalTextAlign", "horizontalTextAlign");
+					this._addFields("changeFillColor", "changeBorderColor", "delete", "locked", "verticalTextAlign", "horizontalTextAlign", "makeCopy");
 			}
 			this._addFields("clearWorkspace");
 		}
@@ -250,9 +250,10 @@ class ContexMenuManager{
 				this.selectedObject.lineStyle = LINE_STYLE_NORMAL;
 				actContextMenu = false;
 				break;
-
-
-
+			case "makeCopy":
+				Entity.clone(this.selectedObject);
+				actContextMenu = false;
+				break;
 		}
 	}
 

@@ -8,6 +8,7 @@ var initTime = window.performance.now(),
 	selectedObjects = new ObjectsManager(),
 	Menu = new MenuManager(),
 	actContextMenu = false,
+	Logger = new LogManager(),
 	canvas, context;
 
 $.getJSON("js/json/menu.json", function(data){
@@ -48,7 +49,7 @@ $(function(){
 	Scene.addToScene(new Rect(new GVector2f(800, 50), new GVector2f(100, 100), "#ff0000"));
 	Scene.addToScene(new Rect(new GVector2f(250, 250), new GVector2f(100, 100), "#00ff00"));
 
-	Scene.addToScene(new Join(Scene._layers["default"]._objects[2], Scene._layers["default"]._objects[3]));
+	//Scene.addToScene(new Join(Scene._layers["default"]._objects[2], Scene._layers["default"]._objects[3]));
 
 	Scene.addToScene(new Table(new GVector2f(800, 250), new GVector2f(200, 800), [["meno", "vek"], ["gabo", 21], ["maros", 35]]), "test2");
 
