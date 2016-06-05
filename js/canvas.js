@@ -1,7 +1,4 @@
 function resetCanvas(){
-	//context.fillStyle = DEFAULT_BACKGROUND_COLOR;
-	//context.fillRect(0, 0, canvas.width, canvas.height);
-
 	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -48,11 +45,6 @@ function roundRect(x, y, width, height, radius = 5, fill = true, stroke = true) 
 		$.each(defaultRadius, function(i){
 			radius[i] = radius[i] || defaultRadius[i];
 		});
-		/*
-		defaultRadius.forEach(function(e, i){
-			radius[i] = e || defaultRadius[i];
-		});
-		*/
 	}
 
 	this.beginPath();
@@ -76,10 +68,11 @@ function drawGrid(width = 0.1, dist = 50, strong = 0){
 	var i = 0;
 	context.beginPath();
 	context.lineWidth = width;
+	context.strokeStyle = "black";
 	while((i += dist) < canvas.width){
 		if(strong > 0 && i % strong == 0){
 			context.lineWidth = width << 1;
-			context.moveTo(i,0);
+			context.moveTo(i, 0);
 			context.lineTo(i,canvas.height);
 			context.lineWidth = width;
 		}
@@ -99,34 +92,52 @@ function drawGrid(width = 0.1, dist = 50, strong = 0){
 	context.stroke();
 }
 
-function drawRect(x, y, width, height, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR){
-	context.lineWidth = borderWidth;
-	context.strokeStyle = borderColor;
-	context.strokeRect(x, y, width, height);
+function drawRect(x, y, width, height, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, ctx = context){
+	ctx.lineWidth = borderWidth;
+	ctx.strokeStyle = borderColor;
+	//context.strokeRect(round(x), round(y), round(width), round(height));
+	ctx.strokeRect(x, y, width, height);
 }
 
-function fillRect(x, y, width, height, color){
-	context.fillStyle = color;
-	context.fillRect(x, y, width, height);
+function fillRect(x, y, width, height, color, ctx = context){
+	ctx.fillStyle = color;
+	//context.fillRect(round(x), round(y), round(width), round(height));
+	ctx.fillRect(x, y, width, height);
 }
 
-function drawArc(x, y, width, height, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR){
-	context.lineWidth = borderWidth;
-	context.strokeStyle = borderColor;
-	context.beginPath();
-	context.ellipse(x + (width >> 1), y + (height >> 1), Math.abs(width >> 1), Math.abs(height >> 1), 0, 0, PI2);
-	context.stroke();
+function drawArc(x, y, width, height, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, ctx = context){
+	ctx.lineWidth = borderWidth;
+	ctx.strokeStyle = borderColor;
+	ctx.beginPath();
+	ctx.ellipse(x + (width >> 1), y + (height >> 1), Math.abs(width >> 1), Math.abs(height >> 1), 0, 0, PI2);
+	//context.ellipse(round(x + (width >> 1)), round(y + (height >> 1)), round(Math.abs(width >> 1)), round(Math.abs(height >> 1)), 0, 0, PI2);
+	ctx.stroke();
 }
 
-function fillArc(x, y, width, height, color){
-	context.fillStyle = color;
-	context.beginPath();
-	context.ellipse(x + (width >> 1), y + (height >> 1), Math.abs(width >> 1), Math.abs(height >> 1), 0, 0, PI2);
-	context.fill();
+function fillArc(x, y, width, height, color, ctx = context){
+	ctx.fillStyle = color;
+	ctx.beginPath();
+	ctx.ellipse(x + (width >> 1), y + (height >> 1), Math.abs(width >> 1), Math.abs(height >> 1), 0, 0, PI2);
+	//context.ellipse(round(x + (width >> 1)), round(y + (height >> 1)), round(Math.abs(width >> 1)), round(Math.abs(height >> 1)), 0, 0, PI2);
+	ctx.fill();
 }
 
-function fillPolygon(points, color){
-	context.beginPath();
+function fillPolygon(points, color, ctx = context){
+	ctx.beginPath();
+	points.forEach(function(e, i){
+		if(i == 0)
+			ctx.moveTo(e.x, e.y);
+		else
+			ctx.lineTo(e.x, e.y);
+
+	});
+
+	ctx.fillStyle = color;
+	ctx.fill();
+	ctx.closePath();
+}
+function drawPolygon(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, ctx = context){
+	ctx.beginPath();
 	points.forEach(function(e, i){
 		if(i == 0)
 			context.moveTo(e.x, e.y);
@@ -135,118 +146,95 @@ function fillPolygon(points, color){
 
 	});
 
-	context.fillStyle = color;
-	context.fill();
-	context.closePath();
-}
-function drawPolygon(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR){
-	context.beginPath();
-	points.forEach(function(e, i){
-		if(i == 0)
-			context.moveTo(e.x, e.y);
-		else
-			context.lineTo(e.x, e.y);
-
-	});
-
-	context.closePath();
-	context.lineWidth = borderWidth;
-	context.strokeStyle = borderColor;
-	context.stroke();
+	ctx.closePath();
+	ctx.lineWidth = borderWidth;
+	ctx.strokeStyle = borderColor;
+	ctx.stroke();
 }
 
 
-function drawLine(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, type = JOIN_LINEAR){
+function drawLine(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, type = JOIN_LINEAR, ctx = context){
 	if(points.length < 2)
 		return;
-
-	context.lineWidth = borderWidth;
-	context.strokeStyle = borderColor;
-	context.beginPath();
+	var i;
+	ctx.lineWidth = borderWidth;
+	ctx.strokeStyle = borderColor;
+	ctx.beginPath();
 	if(isNaN(points[0])){
 		if(type == JOIN_LINEAR || points.length < 3){
 			points.forEach(function(e, i){
 				if(i == 0)
-					context.moveTo(e.x, e.y);
+					ctx.moveTo(e.x, e.y);
 				else
-					context.lineTo(e.x, e.y);
+					ctx.lineTo(e.x, e.y);
 			});
 		}
 		else{
-			context.moveTo(points[0].x, points[0].y);
-			for(var i=1 ; i<points.length-1 ; i++){
+			ctx.moveTo(points[0].x, points[0].y);
+			for(i=1 ; i<points.length-1 ; i++){
 				context.quadraticCurveTo(points[i].x + (points[i].x - points[i + 1].x) / 2,
 										 points[i].y + (points[i].y - points[i + 1].y) / 2, points[i].x, points[i].y);
 			}
-			var i = points.length - 2;
-			context.quadraticCurveTo(points[i].x + (points[i].x - points[i - 1].x) / 2,
+			i = points.length - 2;
+			ctx.quadraticCurveTo(points[i].x + (points[i].x - points[i - 1].x) / 2,
 									 points[i].y + (points[i].y - points[i - 1].y) / 2, points[i+1].x, points[i+1].y);
-			/*
-			for(var i=1 ; i<points.length-1 ; i+=2)
-				context.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
-			if(points.length % 2 == 0)
-				context.quadraticCurveTo((points[points.length - 1].x + points[points.length - 2].x) >> 1,
-										 (points[points.length - 1].y + points[points.length - 2].y) >> 1,
-										  points[points.length - 1].x,
-										  points[points.length - 1].y);
-			*/
 		}
 	}
 	else{
-		context.moveTo(points[0], points[1]);
-		context.lineTo(points[2], points[3]);
+		ctx.moveTo(points[0], points[1]);
+		ctx.lineTo(points[2], points[3]);
 	}
-	context.stroke();
+	ctx.stroke();
 }
 
-function drawQuadraticCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR){
+function drawQuadraticCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, ctx = context){
 	if(points.length < 2)
 		return;
 
-	context.lineWidth = borderWidth;
-	context.strokeStyle = borderColor;
-	context.beginPath();
+	ctx.lineWidth = borderWidth;
+	ctx.strokeStyle = borderColor;
+	ctx.beginPath();
 	points.forEach(function(e, i){
 		if(i == 0)
-			context.moveTo(e.x, e.y);
+			ctx.moveTo(e.x, e.y);
 		else
-			context.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y);
+			ctx.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y);
 	});
-	context.stroke();
+	ctx.stroke();
 }
 
-function drawBazierCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR){
+function drawBazierCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, ctx = context){
 	if(points.length < 2)
 		return;
 
-	context.lineWidth = borderWidth;
-	context.strokeStyle = borderColor;
-	context.beginPath();
+	ctx.lineWidth = borderWidth;
+	ctx.strokeStyle = borderColor;
+	ctx.beginPath();
 	points.forEach(function(e, i){
 		if(i == 0)
-			context.moveTo(e.x, e.y);
+			ctx.moveTo(e.x, e.y);
 		else
-			context.bezierCurveTo(e[0].x, e[0].y, e[1].x, e[1].y, e[2].x, e[2].y);
+			ctx.bezierCurveTo(e[0].x, e[0].y, e[1].x, e[1].y, e[2].x, e[2].y);
 	});
-	context.stroke();
+	ctx.stroke();
 }
 
-function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COLOR, offset = 0, align = FONT_ALIGN_NORMAL){
-	context.font = size + "pt " + DEFAULT_FONT;
-	context.fillStyle = color;
+function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COLOR, offset = 0, align = FONT_ALIGN_NORMAL, ctx = context){
+	ctx.font = size + "pt " + DEFAULT_FONT;
+	ctx.fillStyle = color;
 
 	if(align == FONT_ALIGN_NORMAL){
-		context.textAlign = FONT_HALIGN_LEFT;
-		context.textBaseline = FONT_VALIGN_TOP;
+		ctx.textAlign = FONT_HALIGN_LEFT;
+		ctx.textBaseline = FONT_VALIGN_TOP;
 		if(Array.isArray(offset))
-			context.fillText(text, x + offset[0], y + offset[1]);
+			ctx.fillText(text, x + offset[0], y + offset[1]);
 		else
-		context.fillText(text, x + offset, y + offset);
+			ctx.fillText(text, x + offset, y + offset);
 	}
 	else if(align == FONT_ALIGN_CENTER){
-		context.textAlign = FONT_HALIGN_CENTER;
-		context.textBaseline = FONT_VALIGN_MIDDLE;
-		context.fillText(text, x, y);
+		ctx.textAlign = FONT_HALIGN_CENTER;
+		ctx.textBaseline = FONT_VALIGN_MIDDLE;
+		ctx.fillText(text, x, y);
 	}
 
 }

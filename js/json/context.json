@@ -207,5 +207,44 @@
 	"makeCopy" : {
 		"label" : "Make copy",
 		"type" : "text"
+	},
+	"lineWidth" : {
+		"label" : "Line width",
+		"type" : "text",
+		"fields" : {
+			"1pxWidth" : {
+				"label" : "1 px",
+				"type" : "widthValue",
+				"name" : 1
+			},
+			"2pxWidth" : {
+				"label" : "2 px",
+				"type" : "widthValue",
+				"name" : 2
+			},
+			"5pxWidth" : {
+				"label" : "5 px",
+				"type" : "widthValue",
+				"name" : 5
+			},
+			"10pxWidth" : {
+				"label" : "10 px",
+				"type" : "widthValue",
+				"name" : 10
+			},
+			"20pxWidth" : {
+				"label" : "20 px",
+				"type" : "widthValue",
+				"name" : 20
+			},
+			"otherWidth" : {
+				"label" : "custom width",
+				"type" : "text"
+			}
+		}
+	},
+	"makeCopy" : {
+		"label" : "Make copy",
+		"type" : "text"
 	}
 }

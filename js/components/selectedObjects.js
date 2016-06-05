@@ -14,13 +14,11 @@ class ObjectsManager{
 		o.selected = true;
 
 		updateSelectedObjectView(o);
-		$("#cont_select_obj div").show();
 	};
 	get(i){
 		return this._objects.hasOwnProperty(i) ? this._objects[i] : false;
 	};
 	clear(){
-		$("#cont_select_obj div").hide();
 		this._objects.forEach(function(e){
 			if(typeof e.moveType !== "undefined")
 				e.moveType = -1;
@@ -36,7 +34,4 @@ class ObjectsManager{
 	forEach(e){
 		this._objects.forEach(e);
 	};
-	getLast(){
-		return this.size() > 0 ? this.objects[this.size() - 1] : false;
-	}
 }

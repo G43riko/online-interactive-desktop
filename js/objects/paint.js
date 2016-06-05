@@ -10,6 +10,9 @@ class Paint extends Entity{
 		this._canvas.height	= canvas.height;
 		this._context 		= this._canvas.getContext('2d');
 		this._max 			= new GVector2f();
+		this._images		= [];
+		this._brushSize 	= new GVector2f(32);
+		this._selectedImg	= null;
 
 		/*
 		for(var i=0 ; i<1000 ; i++)
@@ -17,13 +20,59 @@ class Paint extends Entity{
 		*/
 	};
 
+	get selectedImg(){
+		return this._selectedImg;
+	}
+
+	setImage(title){
+		this._selectedImg = this._images[title];
+		this.rePaintImage();
+		Menu._redraw();
+	}
+
+	getImage(title){
+		return this._images[title];
+	}
+
+	addImage(title){
+		var img = new Image();
+		img.src = "img/" + title;
+		this._images[title] = img;
+
+		if(this._selectedImg == null){
+			this._selectedImg = img;
+			Menu._redraw();
+		}
+	}
+
+	rePaintImage(){
+		var c = document.createElement('canvas');
+		c.width = this._brushSize.x;
+		c.height = this._brushSize.y;
+		var ctx = c.getContext('2d');
+
+		ctx.drawImage(this._selectedImg, 0, 0, this._brushSize.x, this._brushSize.y);
+		var imgData = ctx.getImageData(0, 0, this._brushSize.x, this._brushSize.y);
+		var data = imgData.data;
+		var color = Creator.color.replace("rgb(", "").replace("rgba(", "").replace(")", "").split(", ").map(a => parseInt(a));
+		for(var i=3 ; i<data.length ; i+=4){
+			if(data[i] == 0)
+				continue;
+			data[i - 3] = color[0];
+			data[i - 2] = color[1];
+			data[i - 1] = color[2];
+		}
+		ctx.putImageData(imgData, 0, 0);
+		this._img2 = c;
+	}
+
 	cleanUp(){
 		this._points[this._actColor] = [[]];
-		this._count = 0;	
-		context.clearRect(0, 0, canvas.width, canvas.height);
+		this._count = 0;
+		this._context.clearRect(0, 0, canvas.width, canvas.height);
 	};
 
-	addPoint(point, color = "black"){
+	addPoint(point, color = "#000000"){
 		if (this._count == 0) {
 			this.position.set(point);
 			this._max.set(point);
@@ -38,6 +87,10 @@ class Paint extends Entity{
 		this._count++;
 
 
+		if(this._actColor != color)
+			this.rePaintImage();
+
+
 		this._actColor = color;
 		if(!this._points.hasOwnProperty(this._actColor))
 			this._points[this._actColor] = [[]];
@@ -46,7 +99,7 @@ class Paint extends Entity{
 		var arr = this._points[this._actColor][this._points[this._actColor].length - 1];
 
 		if(arr.length > 0){
-			
+			/*
 			this._context.lineCap 		= LINE_CAP_ROUND;
 			this._context.lineWidth 	= this.borderWidth;
 			this._context.strokeStyle	= color;
@@ -54,6 +107,18 @@ class Paint extends Entity{
 			this._context.moveTo(point.x, point.y);
 			this._context.lineTo(arr[arr.length - 1].x, arr[arr.length - 1].y);
 			this._context.stroke();
+			*/
+
+			var lastPoint = arr[arr.length - 1];
+			var dist = point.dist(lastPoint);
+			var angle = Math.atan2(point.x - lastPoint.x, point.y - lastPoint.y);
+			for (var i = 0; i < dist; i++)
+				this._context.drawImage(this._img2,
+										lastPoint.x + (Math.sin(angle) * i) - (this._brushSize.x >> 1),
+										lastPoint.y + (Math.cos(angle) * i) - (this._brushSize.y >> 1),
+										this._brushSize.x,
+										this._brushSize.y);
+
 		}
 		arr.push(point);
 	};

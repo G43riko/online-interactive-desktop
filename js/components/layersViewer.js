@@ -34,9 +34,7 @@ class LayersViewer extends Entity{
 
 		var i = parseInt((y - this._position.y) / this._layerPanelHeight);
 
-
-
-		if(this._layers.hasOwnProperty(i))
+		if(typeof this._layers[i] !== "undefined")
 			this._clickInLayer(i, x, y);
 
 		return true;

@@ -1,78 +1,60 @@
 {
-	"main": {
-		"tools": {
-			"sur": {
-				"x":0,
-				"y":0
-			}
-		},
-		"colors": {
-			"sur": {
-				"x":1,
-				"y":0
-			}
+	"mainMenu" : {
+		"tools" : {
+			"visible" : true
 		},
 		"file": {
-			"sur": {
-				"x":2,
-				"y":0
-			}
+			"visible" : true
 		},
-		"options": {
-			"sur": {
-				"x":3,
-				"y":0
-			}
+		"options" : {
+			"visible" : true
 		},
-		"help": {
-			"sur": {
-				"x":4,
-				"y":0
-			}
+		"help" : {
+			"visible" : true
 		},
 		"ctrl": {
-			"sur": {
-				"x":5,
-				"y":0
-			}
+			"visible" : true
+		},
+		"color" : {
+			"visible" : true
+		},
+		"lineWidth" : {
+			"visible" : false
+		},
+		"brushes" : {
+			"visible" : false
 		}
 	},
 	"tools": {
 		"draw": {
-			"sur": {
-				"x":1,
-				"y":1
-			}
+			"visible" : true
 		},
 		"rect": {
-			"sur": {
-				"x":2,
-				"y":1
-			}
+			"visible" : true
 		},
 		"line": {
-			"sur": {
-				"x":3,
-				"y":1
-			}
+			"visible" : true
 		},
 		"arc": {
-			"sur": {
-				"x":5,
-				"y":1
-			}
+			"visible" : true
 		},
 		"text": {
-			"sur": {
-				"x":6,
-				"y":1
-			}
+			"visible" : true
 		},
 		"join": {
-			"sur": {
-				"x":4,
-				"y":1
-			}
+			"visible" : true
+		}
+	},
+	"lineWidth" : {
+		"defaultWidth" : {
+			"visible" : true,
+			"values" : [1, 2, 5, 10, 20]
+		}
+	},
+	"brushes" : {
+		"defaultBrushes" : {
+			"visible" : true,
+			"values" : ["brush1.png", "brush2.png", "brush3.png"]
 		}
 	}
 }

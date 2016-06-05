@@ -91,7 +91,7 @@ class Line extends Entity{
 				min = center;
 			else
 				max = center;
-			center = min.getClone().add(max).br(1);
+			center = min.add(max).br(1);
 
 			if(Math.abs(y - center.y) < maxDist)
 				return true;
@@ -115,9 +115,9 @@ class Line extends Entity{
 		context.lineCap = this._lineCap;
 		context.lineJoin = this._joinType;
 		if(this._lineStyle == LINE_STYLE_STRIPPED)
-		setLineDash(true);
+			setLineDash(true);
 
-		drawLine(this.points, this._borderWidth , this.fillColor, this._lineStyle);
+		drawLine(this.points, this._borderWidth , this.fillColor);
 
 		context.restore();
 

@@ -1,86 +1,5 @@
-function initListeners(){
-	canvas.onclick = function(){draw();};
-	window.onresize = function(){initCanvasSize(); draw();};
-	window.orientationchange = function(){initCanvasSize(); draw();};
-	window.onbeforeunload= function(event){
-		event.returnValue = "Nazoaj chceš odísť s tejto stránky???!!!";
-	};
-
-	canvas.onmousepress = function(e){
-		return mousePress(e.position.getClone(), e.button);
-	};
-
-	canvas.ondblclick = function(e){
-		mouseDoubleClick(new GVector2f(e.offsetX, e.offsetY), e.button);
-	};
-
-	canvas.onmousedown = function(e){
-		Input.buttonDown(e);
-		mouseDown(new GVector2f(e.offsetX, e.offsetY), e.button);
-
-		e.target.onmouseup = function(e){
-			if(!Input.isButtonDown(e.button))
-				return  false;
-			Input.buttonUp(e);
-			mouseUp(new GVector2f(e.offsetX, e.offsetY), e.button);
-		};
-		e.target.onmousemove = function(e){
-			Input.mouseMove(e);
-			mouseMove(new GVector2f(e.offsetX, e.offsetY), e.movementX, e.movementY);
-		}
-	};
-
-	window.onkeydown = function(e){
-		Input.keyDown(e.keyCode);
-
-		e.target.onkeyup = function(e){
-			Input.keyUp(e.keyCode);
-		}
-	};
-
-	window.addEventListener('orientationchange', initCanvasSize, false);
-
-	$(canvas).bind('contextmenu', function(){
-		return false;
-	});
-
-	canvas.addEventListener("touchstart", function(e){
-		lastTouch = getMousePos(canvas, e);
-		Input.buttonDown({button: LEFT_BUTTON, offsetX: lastTouch.x, offsetY: lastTouch.y});
-
-		mouseDown(new GVector2f(lastTouch.x, lastTouch.y), LEFT_BUTTON);
-		e.target.addEventListener("touchmove", function(e){
-			Input.mouseMove({offsetX: lastTouch.x, offsetY: lastTouch.y});
-			var mov = getMousePos(canvas, e);
-			mov.x -=  lastTouch.x;
-			mov.y -=  lastTouch.y;
-			lastTouch = getMousePos(canvas, e);
-			mouseMove(new GVector2f(lastTouch.x, lastTouch.y), mov.x, mov.y);
-			
-		}, false);
-
-
-		e.target.addEventListener("touchend", function(){
-			if(!Input.isButtonDown(LEFT_BUTTON))
-				return false;
-			Input.buttonUp({button: LEFT_BUTTON, offsetX: lastTouch.x, offsetY: lastTouch.y});
-			mouseUp(new GVector2f(lastTouch.x, lastTouch.y), LEFT_BUTTON);
-		}, false);
-
-		e.target.addEventListener("touchcancel", function(){
-			if(!Input.isButtonDown(LEFT_BUTTON))
-				return false;
-			Input.buttonUp({button: LEFT_BUTTON, offsetX: lastTouch.x, offsetY: lastTouch.y});
-			mouseUp(new GVector2f(lastTouch.x, lastTouch.y), LEFT_BUTTON);
-		}, false);
-
-	}, false);
-
-	/**
-	 * IMPLEMENTATION
-	 */
-
-	function mouseDown(position, button){
+class ListenersManager{
+	mouseDown(position, button){
 		if($(canvas).hasClass("blur"))
 			return false;
 
@@ -99,11 +18,11 @@ function initListeners(){
 		if(Menu.isToolActive() && !Creator.object)
 			Creator.createObject(position);
 
-		
+
 		draw();
 	}
 
-	function mousePress(position){
+	mousePress(position){
 		if(Menu.pressIn(position.x, position.y)){
 			draw();
 			return true;
@@ -118,7 +37,7 @@ function initListeners(){
 		return false;
 	}
 
-	function mouseDoubleClick(position, button){
+	mouseDoubleClick(position, button){
 		var result = false,
 			vec = new GVector2f(100, 40);
 
@@ -139,7 +58,7 @@ function initListeners(){
 		return true;
 	}
 
-	function mouseUp(position){
+	mouseUp(position){
 		var result = false;
 
 		if(actContextMenu){
@@ -159,8 +78,8 @@ function initListeners(){
 			return;
 
 		closeDialog();
-
-		movedObject.moving = false;
+		if(movedObject)
+			movedObject.moving = false;
 		movedObject = false;
 
 		if(Creator.operation == OPERATION_DRAW_PATH){
@@ -190,7 +109,7 @@ function initListeners(){
 			//deselectAll();
 	}
 
-	function mouseMove(position, movX, movY){
+	mouseMove(position, movX, movY){
 		//ak sa hýbe nejakým objektom
 		if(movedObject && Creator.operation != OPERATION_DRAW_PATH){
 			//prejdu sa všetky označené objekty a pohne sa nimi
@@ -204,7 +123,7 @@ function initListeners(){
 			if(!movedObject.selected)
 				Movement.move(movedObject, movX, movY);
 
-			//ak sú nejaké objekty označené tak sa aktualizuje prehlad posledného označeného ináč iba hýbaného 
+			//ak sú nejaké objekty označené tak sa aktualizuje prehlad posledného označeného ináč iba hýbaného
 			if(selectedObjects.size() > 0)
 				updateSelectedObjectView(selectedObjects.get(selectedObjects.size() - 1));
 			else if(movedObject)

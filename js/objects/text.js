@@ -4,13 +4,21 @@ class Text extends Entity{
 		this._text 		= text;
 		this._textColor = color;
 		this._fontSize 	= DEFAULT_FONT_SIZE;
-		this.moveType 	= -1;
+		this._moveType 	= -1;
 		this._size.x 	= calcTextWidth(text, DEFAULT_FONT_SIZE + "pt " + DEFAULT_FONT) + (DEFAULT_TEXT_OFFSET << 1);
 		this._minSize 	= this._size.getClone();
 		this._verticalTextAlign = FONT_VALIGN_TOP;
 		this._horizontalTextAlign = FONT_HALIGN_LEFT;
 		this._fontOffset = DEFAULT_TEXT_OFFSET;
 	};
+
+	get moveType(){
+		return this._moveType;
+	}
+
+	set moveType(val){
+		this._moveType = val;
+	}
 
 	set verticalTextAlign(val){
 		this._verticalTextAlign = val;
@@ -66,18 +74,18 @@ class Text extends Entity{
 			vec = new GVector2f(x, y);
 
 		if(vec.dist(pos.x + (this.size.x >> 1), pos.y) < SELECTOR_SIZE)
-			this.moveType = 0;
+			this._moveType = 0;
 		else if(vec.dist(pos.x + this.size.x, pos.y + (this.size.y >> 1)) < SELECTOR_SIZE)
-			this.moveType = 1;
+			this._moveType = 1;
 		else if(vec.dist(pos.x +(this.size.x >> 1), pos.y + this.size.y) < SELECTOR_SIZE)
-			this.moveType = 2;
+			this._moveType = 2;
 		else if(vec.dist(pos.x, pos.y + (this.size.y >> 1)) < SELECTOR_SIZE)
-			this.moveType = 3;
+			this._moveType = 3;
 		else if(vec.dist(pos.x + this.size.x, pos.y + this.size.y) < SELECTOR_SIZE)
-			this.moveType = 5;
+			this._moveType = 5;
 		else if(x > this.position.x && y > this.position.y && x < this.position.x + this.size.x && y < this.position.y + this.size.y)
-			this.moveType = 4;
-		return this.moveType >= 0;
+			this._moveType = 4;
+		return this._moveType >= 0;
 	};
 
 	doubleClickIn(x, y){

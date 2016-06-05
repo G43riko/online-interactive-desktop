@@ -1,19 +1,19 @@
 class ContexMenuManager{
 	constructor(position, titles = [], parent = false, key = "undefined"){
-		this._position 		= position;
-		this._subMenu 		= false;
-		this._parent 		= parent;
-		this._key 			= key;
-		this._textColor 	= CONTEXT_MENU_FONT_COLOR;
-		this.selectedObject = parent ? parent.selectedObject : movedObject;
-		this._titles 		= titles;
+		this._position 			= position;
+		this._subMenu 			= false;
+		this._parent 			= parent;
+		this._key 				= key;
+		this._textColor 		= CONTEXT_MENU_FONT_COLOR;
+		this._selectedObject 	= parent ? parent._selectedObject : movedObject;
+		this._titles 			= titles;
 
 		if(this._titles.length == 0){
 			if(movedObject){
 				if(movedObject.name == "Arc" || movedObject.name == "Rect" || movedObject.name == "Polygon")
 					this._addFields("changeFillColor", "changeBorderColor", "delete", "locked", "makeCopy");
 				else if(movedObject.name == "Line")
-					this._addFields("joinType", "lineCap", "lineStyle", "lineType", "makeCopy");
+					this._addFields("joinType", "lineCap", "lineStyle", "lineType", "makeCopy", "lineWidth", "delete");
 				else if(movedObject.name == "Table")
 					this._addFields("editTable", "locked", "delete", "makeCopy");
 				else if(movedObject.name == "LayerViewer")
@@ -31,7 +31,7 @@ class ContexMenuManager{
 			titles.forEach(function(e, i, arr){
 				if(e["type"] == "radio"){
 					hasExtension = true;
-					arr[i]["value"] = this.selectedObject["_" + this._key] == e["name"];
+					arr[i]["value"] = this._selectedObject["_" + this._key] == e["name"];
 				}
 
 				if(e["type"] == "checkbox"){
@@ -41,6 +41,7 @@ class ContexMenuManager{
 					else if(e["key"] == "visible")
 						arr[i]["value"] = movedObject.visible;
 				}
+
 			}, this);
 
 		this._menuWidth = getMaxWidth(this._titles.map(e => e["label"])) + (CONTEXT_MENU_OFFSET << 1);
@@ -108,6 +109,12 @@ class ContexMenuManager{
 				else
 					drawArc(pX + menuWidth - offset - checkSize, posY + offset, checkSize, checkSize);
 			}
+			else if(e["type"] == "widthValue"){
+				context.save();
+				drawLine([pX + menuWidth - (checkSize << 2), posY + (CONTEXT_MENU_LINE_HEIGHT >> 1),
+						  pX + menuWidth - offset, posY + (CONTEXT_MENU_LINE_HEIGHT >> 1)], e["name"]);
+				context.restore();
+			}
 		});
 
 		if(this._subMenu)
@@ -118,24 +125,24 @@ class ContexMenuManager{
 		switch(act){
 			case "changeFillColor":
 				pickUpColor(function(color){
-					this.selectedObject.fillColor = color;
+					this._selectedObject.fillColor = color;
 					actContextMenu = false;
 				}, this);
 				break;
 			case "changeBorderColor":
 				pickUpColor(function(color){
-					this.selectedObject.borderColor = color;
+					this._selectedObject.borderColor = color;
 					actContextMenu = false;
 				}, this);
 				break;
 			case "delete":
-				if(this.selectedObject)
-					Scene.remove(this.selectedObject);
+				if(this._selectedObject)
+					Scene.remove(this._selectedObject);
 				actContextMenu = false;
 				break;
 			case "locked":
-				this.selectedObject.locked = !this.selectedObject.locked;
-				ContexMenuManager.items["locked"].value = this.selectedObject.locked;
+				this._selectedObject.locked = !this._selectedObject.locked;
+				ContexMenuManager.items["locked"].value = this._selectedObject.locked;
 				actContextMenu = false;
 				break;
 			case "clearWorkspace":
@@ -143,115 +150,135 @@ class ContexMenuManager{
 				actContextMenu = false;
 				break;
 			case "removeRow":
-				this.selectedObject.removeRow(this._parent.position.y);
+				this._selectedObject.removeRow(this._parent.position.y);
 				actContextMenu = false;
 				break;
 			case "removeColumn":
-				this.selectedObject.removeColumn(this._parent.position.x);
+				this._selectedObject.removeColumn(this._parent.position.x);
 				actContextMenu = false;
 				break;
 			case "addRowBelow":
-				this.selectedObject.addRow(this._parent.position.y, "below");
+				this._selectedObject.addRow(this._parent.position.y, "below");
 				actContextMenu = false;
 				break;
 			case "addRowAbove":
-				this.selectedObject.addRow(this._parent.position.y, "above");
+				this._selectedObject.addRow(this._parent.position.y, "above");
 				actContextMenu = false;
 				break;
 			case "addColumnToRight":
-				this.selectedObject.addColumn(this._parent.position.x, "right");
+				this._selectedObject.addColumn(this._parent.position.x, "right");
 				actContextMenu = false;
 				break;
 			case "addColumnToLeft":
-				this.selectedObject.addColumn(this._parent.position.x, "left");
+				this._selectedObject.addColumn(this._parent.position.x, "left");
 				actContextMenu = false;
 				break;
 			case "buttCap":
-				this.selectedObject.lineCap = LINE_CAP_BUTT;
+				this._selectedObject.lineCap = LINE_CAP_BUTT;
 				actContextMenu = false;
 				break;
 			case "roundCap":
-				this.selectedObject.lineCap = LINE_CAP_ROUND;
+				this._selectedObject.lineCap = LINE_CAP_ROUND;
 				actContextMenu = false;
 				break;
 			case "squareCap":
-				this.selectedObject.lineCap = LINE_CAP_SQUARE;
+				this._selectedObject.lineCap = LINE_CAP_SQUARE;
 				actContextMenu = false;
 				break;
 			case "miterJoin":
-				this.selectedObject.joinType = LINE_JOIN_MITER;
+				this._selectedObject.joinType = LINE_JOIN_MITER;
 				actContextMenu = false;
 				break;
 			case "roundJoin":
-				this.selectedObject.joinType = LINE_JOIN_ROUND;
+				this._selectedObject.joinType = LINE_JOIN_ROUND;
 				actContextMenu = false;
 				break;
 			case "bevelJoin":
-				this.selectedObject.joinType = LINE_JOIN_BEVEL;
+				this._selectedObject.joinType = LINE_JOIN_BEVEL;
 				actContextMenu = false;
 				break;
 			case "clearRow":
-				this.selectedObject.clear(this._parent.position.y, "row");
+				this._selectedObject.clear(this._parent.position.y, "row");
 				actContextMenu = false;
 				break;
 			case "clearColumn":
-				this.selectedObject.clear(this._parent.position.x, "column");
+				this._selectedObject.clear(this._parent.position.x, "column");
 				actContextMenu = false;
 				break;
 			case "clearTable":
-				this.selectedObject.clear(null, "table");
+				this._selectedObject.clear(null, "table");
 				actContextMenu = false;
 				break;
 			case "visible":
-				this.selectedObject.toggleVisibilityOfLayer(this._position.y);
+				this._selectedObject.toggleVisibilityOfLayer(this._position.y);
 				actContextMenu = false;
 				break;
 			case "clearLayer":
-				this.selectedObject.clearLayer(this.position.y);
+				this._selectedObject.clearLayer(this.position.y);
 				actContextMenu = false;
 				break;
 			case "renameLayer":
-				this.selectedObject.renameLayer(this.position.y);
+				this._selectedObject.renameLayer(this.position.y);
 				actContextMenu = false;
 				break;
 			case "alphabeticVAlign":
-				this.selectedObject.verticalTextAlign = FONT_VALIGN_ALPHA;
+				this._selectedObject.verticalTextAlign = FONT_VALIGN_ALPHA;
 				actContextMenu = false;
 				break;
 			case "middleVAlign":
-				this.selectedObject.verticalTextAlign = FONT_VALIGN_MIDDLE;
+				this._selectedObject.verticalTextAlign = FONT_VALIGN_MIDDLE;
 				actContextMenu = false;
 				break;
 			case "topVAlign":
-				this.selectedObject.verticalTextAlign = FONT_VALIGN_TOP;
+				this._selectedObject.verticalTextAlign = FONT_VALIGN_TOP;
 				actContextMenu = false;
 				break;
 			case "bottomVAlign":
-				this.selectedObject.verticalTextAlign = FONT_VALIGN_BOTT;
+				this._selectedObject.verticalTextAlign = FONT_VALIGN_BOTT;
 				actContextMenu = false;
 				break;
 			case "leftHAlign":
-				this.selectedObject.horizontalTextAlign = FONT_HALIGN_LEFT;
+				this._selectedObject.horizontalTextAlign = FONT_HALIGN_LEFT;
 				actContextMenu = false;
 				break;
 			case "centerHAlign":
-				this.selectedObject.horizontalTextAlign = FONT_HALIGN_CENTER;
+				this._selectedObject.horizontalTextAlign = FONT_HALIGN_CENTER;
 				actContextMenu = false;
 				break;
 			case "rightHAlign":
-				this.selectedObject.horizontalTextAlign = FONT_HALIGN_RIGHT;
+				this._selectedObject.horizontalTextAlign = FONT_HALIGN_RIGHT;
 				actContextMenu = false;
 				break;
 			case "strippedLine":
-				this.selectedObject.lineStyle = LINE_STYLE_STRIPPED;
+				this._selectedObject.lineStyle = LINE_STYLE_STRIPPED;
 				actContextMenu = false;
 				break;
 			case "normalLine":
-				this.selectedObject.lineStyle = LINE_STYLE_NORMAL;
+				this._selectedObject.lineStyle = LINE_STYLE_NORMAL;
 				actContextMenu = false;
 				break;
 			case "makeCopy":
-				Entity.clone(this.selectedObject);
+				Entity.clone(this._selectedObject);
+				actContextMenu = false;
+				break;
+			case "1pxWidth":
+				this._selectedObject.borderWidth = 1;
+				actContextMenu = false;
+				break;
+			case "2pxWidth":
+				this._selectedObject.borderWidth = 2;
+				actContextMenu = false;
+				break;
+			case "5pxWidth":
+				this._selectedObject.borderWidth = 5;
+				actContextMenu = false;
+				break;
+			case "10pxWidth":
+				this._selectedObject.borderWidth = 10;
+				actContextMenu = false;
+				break;
+			case "20pxWidth":
+				this._selectedObject.borderWidth = 20;
 				actContextMenu = false;
 				break;
 		}
@@ -263,7 +290,7 @@ class ContexMenuManager{
 
 		var i = parseInt((y - this._position.y) / CONTEXT_MENU_LINE_HEIGHT);
 
-		if(this._titles.hasOwnProperty(i) && this._titles[i].hasOwnProperty("fields")){
+		if(typeof this._titles[i] !== "undefined" && this._titles[i].hasOwnProperty("fields")){
 			var pos = this._position.getClone().add(this._menuWidth, i * CONTEXT_MENU_LINE_HEIGHT);
 			if(pos.x + this._menuWidth > canvas.width)
 				pos.x -= this._menuWidth << 1;

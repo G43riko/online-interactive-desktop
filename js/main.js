@@ -1,18 +1,19 @@
-var initTime = window.performance.now(),
-	drawMousePos = false,
-	movedObject = false,
-	lastTouch = false,
-	Scene = new SceneManager(),
-	Creator = new objectCreator(),
-	Input = new InputManager(),
+var initTime 		= window.performance.now(),
+	drawMousePos 	= false,
+	movedObject 	= false,
+	lastTouch 		= false,
+	Scene 			= new SceneManager(),
+	Creator 		= new objectCreator(),
+	Input 			= new InputManager(),
 	selectedObjects = new ObjectsManager(),
-	Menu = new MenuManager(),
-	actContextMenu = false,
-	Logger = new LogManager(),
+	Menu 			= new MenuManager(),
+	actContextMenu 	= false,
+	Logger 			= new LogManager(),
+	Listeners		= new ListenersManager(),
 	canvas, context;
 
 $.getJSON("js/json/menu.json", function(data){
-	Menu.items = data;
+	Menu.init(data);
 	draw();
 });
 
@@ -35,7 +36,8 @@ $(function(){
 	context.roundRect = roundRect;
 
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
-	initListeners();
+	Input.initListeners(canvas);
+	//initListeners();
 	/**
 	 * OSTATNE
 	 */

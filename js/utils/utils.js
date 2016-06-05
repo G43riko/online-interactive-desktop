@@ -1,5 +1,11 @@
 var getClassOf = Function.prototype.call.bind(Object.prototype.toString);
 
+function round(number, value = DEFAULT_ROUND_VAL){
+	if(value == 1)
+		return number;
+	return Math.floor(number / value) * value;
+}
+
 function isInt(n){
 	return Number(n) === n && n % 1 === 0;
 }
@@ -72,10 +78,11 @@ Movement = {
 			o.position.x += x;
 			o.position.y += y;
 		}
+
 	}
 };
 
-function drawBorder(o, selectors = {tc: true, bc: true, cl: true, cr: true, br: true}){
+function drawBorder(o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 	if(!o.selected && o.name != "Paint")
 		return;
 	context.save();
@@ -101,9 +108,21 @@ function drawBorder(o, selectors = {tc: true, bc: true, cl: true, cr: true, br: 
 }
 
 function shadeColor1(color, percent) {  // deprecated. See below.
-	var num = parseInt(color.slice(1),16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, G = (num >> 8 & 0x00FF) + amt, B = (num & 0x0000FF) + amt;
-	return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
+	var num = parseInt(color.slice(1), 16),
+		amt = Math.round(2.55 * percent), 
+		R = (num >> 16) + amt, 
+		G = (num >> 8 & 0x00FF) + amt,
+		B = (num & 0x0000FF) + amt;
+	return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + 
+							  (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + 
+							  (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
 }
+
+function hexToRGBA(color) {
+	var num = parseInt(color.slice(1), 16);
+	return [num >> 16, num >> 8 & 0x00FF, num & 0x0000FF];
+}
+
 
 function objectToArray(obj){
 	var result = [];
@@ -141,11 +160,11 @@ function drawSelectArc(x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE, dots 
 	context.save();
 	setLineDash(dots);
 
+
 	context.beginPath();
 	context.fillStyle = color;
 	context.arc(x, y, size, size, 0, PI2);
 	context.fill();
-
 	context.strokeStyle = "black";
 	context.stroke();
 	context.restore();
