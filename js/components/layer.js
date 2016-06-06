@@ -36,9 +36,8 @@ class Layer{
 
 	remove(element){
 		for(var i = this._objects.length; i--;) {
-			if(this._objects[i] === element) {
+			if(this._objects[i] === element)
 				this._objects.splice(i, 1);
-			}
 		}
 	};
 

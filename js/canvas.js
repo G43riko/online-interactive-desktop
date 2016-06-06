@@ -36,34 +36,6 @@ function imageToCanvas(image) {
 	return canvas;
 }
 
-function roundRect(x, y, width, height, radius = 5, fill = true, stroke = true) {
-	var defaultRadius;
-	if (typeof radius === 'number')
-		radius = {tl: radius, tr: radius, br: radius, bl: radius};
-	else {
-		defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
-		$.each(defaultRadius, function(i){
-			radius[i] = radius[i] || defaultRadius[i];
-		});
-	}
-
-	this.beginPath();
-	this.moveTo(x + radius.tl, y);
-	this.lineTo(x + width - radius.tr, y);
-	this.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
-	this.lineTo(x + width, y + height - radius.br);
-	this.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
-	this.lineTo(x + radius.bl, y + height);
-	this.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
-	this.lineTo(x, y + radius.tl);
-	this.quadraticCurveTo(x, y, x + radius.tl, y);
-	this.closePath();
-	if (fill)
-		this.fill();
-	if (stroke)
-		this.stroke();
-}
-
 function drawGrid(width = 0.1, dist = 50, strong = 0){
 	var i = 0;
 	context.beginPath();
@@ -92,17 +64,108 @@ function drawGrid(width = 0.1, dist = 50, strong = 0){
 	context.stroke();
 }
 
-function drawRect(x, y, width, height, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, ctx = context){
-	ctx.lineWidth = borderWidth;
-	ctx.strokeStyle = borderColor;
-	//context.strokeRect(round(x), round(y), round(width), round(height));
-	ctx.strokeRect(x, y, width, height);
+function doArc(obj){
+	var def = _getDef();
+
+	_checkPosAndSize(def, obj, "Arc");
+
+	var res = $.extend(def, obj);
+
+	_remakePosAndSize(res);
+
+	res.ctx.beginPath();
+	res.ctx.ellipse(res.x + (res.width >> 1), res.y + (res.height >> 1), res.width >> 1, res.height >> 1, 0, 0, PI2);
+
+	_process(res);
 }
 
-function fillRect(x, y, width, height, color, ctx = context){
-	ctx.fillStyle = color;
-	//context.fillRect(round(x), round(y), round(width), round(height));
-	ctx.fillRect(x, y, width, height);
+function doRect(obj){
+	var def = _getDef();
+
+	_checkPosAndSize(def, obj, "Rect");
+
+	if(!isUndefined(obj["radius"])){
+		if(typeof obj["radius"] === "number")
+			obj["radius"] = {tl: obj["radius"], tr: obj["radius"], br: obj["radius"], bl: obj["radius"]};
+		else
+			$.each(def.radius, i => obj.radius[i] = obj.radius[i] || def.radius[i]);
+	}
+
+	var res = $.extend(def, obj);
+
+	_remakePosAndSize(res);
+
+	res.ctx.beginPath();
+	res.ctx.moveTo(res.x + res.radius.tl, res.y);
+	res.ctx.lineTo(res.x + res.width - res.radius.tr, res.y);
+	res.ctx.quadraticCurveTo(res.x + res.width, res.y, res.x + res.width, res.y + res.radius.tr);
+	res.ctx.lineTo(res.x + res.width, res.y + res.height - res.radius.br);
+	res.ctx.quadraticCurveTo(res.x + res.width, res.y + res.height, res.x + res.width - res.radius.br, res.y + res.height);
+	res.ctx.lineTo(res.x + res.radius.bl, res.y + res.height);
+	res.ctx.quadraticCurveTo(res.x, res.y + res.height, res.x, res.y + res.height - res.radius.bl);
+	res.ctx.lineTo(res.x, res.y + res.radius.tl);
+	res.ctx.quadraticCurveTo(res.x, res.y, res.x + res.radius.tl, res.y);
+	res.ctx.closePath();
+
+	_process(res);
+}
+
+function _getDef(){
+	return {
+		borderWidth : DEFAULT_STROKE_WIDTH,
+		borderColor : DEFAUL_STROKE_COLOR,
+		ctx : context,
+		fillColor : DEFAULT_BACKGROUND_COLOR,
+		radius : {tl: 0, tr: 0, br: 0, bl: 0},
+		shadow: false
+	}
+}
+
+function _checkPosAndSize(def, obj, name){
+	def["draw"] = !isUndefined(obj.borderColor) || !isUndefined(obj.borderWidth);
+	def["fill"] = !isUndefined(obj.fillColor);
+
+
+	if((isUndefined(obj["x"]) || isUndefined(obj["y"])) && isUndefined(obj["position"]))
+		Logger.error("chce sa vykresliť " + name + " bez pozície");
+
+	if((isUndefined(obj["width"]) || isUndefined(obj["height"])) && isUndefined(obj["size"]))
+		Logger.error("chce sa vykresliť " + name + " bez velkosti");
+
+	if(obj["width"] <= 0 || obj["height"] <= 0)
+		Logger.error("chce sa vykresliť " + name + " zo zápornou velkosťou");
+}
+
+function _remakePosAndSize(res){
+	if(!isUndefined(res["size"])){
+		res["width"] = res["size"].x;
+		res["height"] = res["size"].y;
+	}
+
+	if(!isUndefined(res["position"])){
+		res["x"] = res["position"].x;
+		res["y"] = res["position"].y;
+	}
+}
+
+function _process(res){
+	if(res.shadow)
+		setShadow(res.shadow);
+
+	if (res.fill){
+		res.ctx.fillStyle = res.fillColor;
+		res.ctx.fill();
+	}
+
+	if(res.shadow)
+		setShadow(false);
+
+
+	if (res.draw){
+		res.ctx.lineWidth = res.borderWidth;
+		res.ctx.strokeStyle = res.borderColor;
+		res.ctx.stroke();
+	}
 }
 
 function drawArc(x, y, width, height, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, ctx = context){
@@ -136,6 +199,7 @@ function fillPolygon(points, color, ctx = context){
 	ctx.fill();
 	ctx.closePath();
 }
+
 function drawPolygon(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, ctx = context){
 	ctx.beginPath();
 	points.forEach(function(e, i){

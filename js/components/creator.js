@@ -25,12 +25,8 @@ class objectCreator{
 	}
 
 	draw(){
-		if(this._object){
-			if(this._object.name == "JOIN")
-				this._object.draw();
-			else
-				this._object.draw();
-		}
+		if(this._object)
+			this._object.draw();
 	}
 
 	get object(){return this._object;}

@@ -176,28 +176,37 @@ class Table extends Entity{
 		if(this.moveType >= 0)
 			this._checkSize();
 
-
-
-		context.lineWidth = this.borderWidth;
-		context.strokeStyle = this.borderColor;
-
-
-		if (this.moving && !this.locked)
-			setShadow(true);
-
 		//FILL HEADER
-		context.fillStyle = this.headerColor;
-		context.roundRect(this._position.x, this._position.y, this._size.x, this._lineHeight, {tr: TABLE_RADIUS, tl: TABLE_RADIUS}, true, false);
+
+		doRect({
+			position: this._position,
+			width: this._size.x,
+			height: this._lineHeight,
+			radius: {tr: TABLE_RADIUS, tl: TABLE_RADIUS},
+			fillColor: this.headerColor,
+			shadow: this.moving && !this.locked
+		});
 
 		//FILL BODY
-		context.fillStyle = this._bodyColor;
-		context.roundRect(this._position.x, this._position.y + this._lineHeight, this._size.x, this._lineHeight * (this.data.length - 1), {br: TABLE_RADIUS, bl: TABLE_RADIUS}, true, false);
-
-		if (this.moving)
-			setShadow(false);
-
+		doRect({
+			x: this._position.x,
+			y: this._position.y +  this._lineHeight,
+			width: this._size.x,
+			height: this._lineHeight * (this.data.length - 1),
+			radius: {br: TABLE_RADIUS, bl: TABLE_RADIUS},
+			fillColor: this._bodyColor,
+			shadow: this.moving && !this.locked
+		});
 		//DRAW BORDER
-		context.roundRect(this._position.x, this._position.y, this._size.x, this._lineHeight * this.data.length, MENU_RADIUS, false, true);
+
+		doRect({
+			position: this._position,
+			size: this._size,
+			radius: TABLE_RADIUS,
+			borderColor: this.borderColor,
+			borderWidth: this.borderWidth
+		});
+
 
 
 		///DRAW HEADER TEXT AND VERTICAL LINES

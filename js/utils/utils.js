@@ -6,6 +6,10 @@ function round(number, value = DEFAULT_ROUND_VAL){
 	return Math.floor(number / value) * value;
 }
 
+function isUndefined(val){
+	return typeof val === "undefined";
+}
+
 function isInt(n){
 	return Number(n) === n && n % 1 === 0;
 }
@@ -43,8 +47,7 @@ Movement = {
 					o.size.x -= x;
 					break;
 				case 4:
-					o.position.x += x;
-					o.position.y += y;
+					o.position.add(x, y);
 					break;
 				case 5:
 					if(!o.minSize || o.size.x + x >= o.minSize.x)
@@ -57,28 +60,19 @@ Movement = {
 		else if(typeof o.movingPoint !== "undefined"){
 			var intVal = 0;
 			if(o.movingPoint < 0){
-				o.points.forEach(function(e){
-					e.add(x, y);
-				});
+				o.points.forEach(a => a.add(x, y));
 			}
-			else if(isInt(o.movingPoint)){
-				o.points[o.movingPoint].x += x;
-				o.points[o.movingPoint].y += y;
-			}
+			else if(isInt(o.movingPoint))
+				o.points[o.movingPoint].add(x, y);
 			else{
-				console.log(intVal);
 				intVal = parseInt(o.movingPoint) + 1;
-				o.points.splice(intVal, 0, new GVector2f((o.points[intVal - 1].x + (o.points[(intVal % o.points.length)].x) >> 1),
-														 (o.points[intVal - 1].y + (o.points[(intVal % o.points.length)].y) >> 1)));
+				o.points.splice(intVal, 0, o.points[intVal - 1].getClone().add(o.points[(intVal % o.points.length)]).br(1));
 				o.movingPoint = intVal;
 			}
 			Entity.findMinAndMax(o.points, o.position, o.size);
 		}
-		else{
-			o.position.x += x;
-			o.position.y += y;
-		}
-
+		else
+			o.position.add(x, y);
 	}
 };
 
@@ -87,11 +81,13 @@ function drawBorder(o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 		return;
 	context.save();
 
-
-	context.lineWidth = DEFAULT_STROKE_WIDTH << 1;
 	setLineDash(true);
 
-	drawRect(o.position.x, o.position.y, o.size.x, o.size.y, o.borderColor);
+	doRect({
+		position: o.position,
+		size: o.size,
+		borderWidth: DEFAULT_STROKE_WIDTH << 1
+	});
 
 	if(selectors.hasOwnProperty("tc"))
 		drawSelectArc(o.position.x + (o.size.x >> 1), o.position.y);
@@ -159,8 +155,6 @@ function drawConnector(vec, obj){
 function drawSelectArc(x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE, dots = true){
 	context.save();
 	setLineDash(dots);
-
-
 	context.beginPath();
 	context.fillStyle = color;
 	context.arc(x, y, size, size, 0, PI2);

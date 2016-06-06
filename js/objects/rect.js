@@ -43,15 +43,14 @@ class Rect extends Entity {
 		if (!this.visible)
 			return;
 
-		if (this.moving && !this.locked)
-			setShadow(true);
-
-		fillRect(this.position.x, this.position.y, this.size.x, this.size.y, this.fillColor);
-
-		if (this.moving)
-			setShadow(false);
-
-		drawRect(this.position.x, this.position.y, this.size.x, this.size.y, this.borderWidth, this.borderColor);
+		doRect({
+			position: this.position,
+			size: this.size,
+			fillColor: this.fillColor,
+			shadow: this.moving && !this.locked,
+			borderWidth: this.borderWidth,
+			borderColor: this.borderColor
+		});
 
 		Entity.drawConnectors(this);
 

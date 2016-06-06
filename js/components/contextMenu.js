@@ -86,11 +86,18 @@ class ContexMenuManager{
 			checkSize = 20,
 			offset = (CONTEXT_MENU_LINE_HEIGHT - checkSize) >> 1;
 
-		context.fillStyle = "rgb(153, 217, 234)";
-		setShadow(true);
-		context.roundRect(pX, pY, this._menuWidth, Object.keys(this._titles).length * CONTEXT_MENU_LINE_HEIGHT, MENU_RADIUS, true, false);
-		setShadow(false);
-		context.roundRect(pX, pY, this._menuWidth, Object.keys(this._titles).length * CONTEXT_MENU_LINE_HEIGHT, MENU_RADIUS, true, true);
+		doRect({
+			x: pX,
+			y: pY,
+			width: this._menuWidth,
+			height: Object.keys(this._titles).length * CONTEXT_MENU_LINE_HEIGHT,
+			radius: MENU_RADIUS,
+			borderColor: this.borderColor,
+			borderWidth: this.borderWidth,
+			fillColor: "rgb(153, 217, 234)",
+			shadow: true,
+			draw: true
+		});
 
 		$.each(this._titles, function(i, e){
 			context.fillStyle = DEFAULT_FONT_COLOR;
@@ -100,8 +107,17 @@ class ContexMenuManager{
 			fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor, [CONTEXT_MENU_OFFSET, 0]);
 
 			if(e["type"] == "checkbox"){
-				context.fillStyle = e["value"] ? "green" : "red";
-				context.roundRect(pX + menuWidth - offset - checkSize, posY + offset, checkSize, checkSize, 5, true, false);
+				doRect({
+					x: pX + menuWidth - offset - checkSize,
+					y: posY + offset,
+					width: checkSize,
+					height: checkSize,
+					radius: 5,
+					borderColor: this.borderColor,
+					borderWidth: this.borderWidth,
+					fillColor: e["value"] ? "green" : "red",
+					draw: true
+				});
 			}
 			else if(e["type"] == "radio"){
 				if(e["value"])
@@ -294,8 +310,7 @@ class ContexMenuManager{
 			var pos = this._position.getClone().add(this._menuWidth, i * CONTEXT_MENU_LINE_HEIGHT);
 			if(pos.x + this._menuWidth > canvas.width)
 				pos.x -= this._menuWidth << 1;
-			this._subMenu = new ContexMenuManager(pos,
-												  objectToArray(this._titles[i]["fields"]), this, this._titles[i]["key"]);
+			this._subMenu = new ContexMenuManager(pos, objectToArray(this._titles[i]["fields"]), this, this._titles[i]["key"]);
 		}
 		else
 			this._subMenu = false;

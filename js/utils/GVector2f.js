@@ -1,8 +1,9 @@
-var GVetor2fCounter = 0;
-var GVetor2fCounterClone = 0;
+var GVector2fCounter = 0;
+var GVector2fCounterClone = 0;
+
 class GVector2f{
 	constructor(){
-		GVetor2fCounter++;
+		GVector2fCounter++;
 		if(arguments.length == 0){
 			this._x = 0;
 			this._y = 0;
@@ -12,10 +13,8 @@ class GVector2f{
 				this._x = arguments[0].x;
 				this._y = arguments[0].y;
 			}
-			else{
-				this._x = arguments[0];
-				this._y = arguments[0];
-			}
+			else
+				this._x = this._y = arguments[0];
 		}
 		else if(arguments.length == 2){
 			this._x = arguments[0];
@@ -29,121 +28,36 @@ class GVector2f{
 	set x(val){this._x = val;}
 	set y(val){this._y = val;}
 
-	getLength(){
-		return Math.sqrt(this._x * this._x + this._y * this._y);
-	}
-
 	getClone(){
-		GVetor2fCounterClone++;
+		GVector2fCounterClone++;
 		return new GVector2f(this._x, this._y);
 	}
 
-	add(){
-		if(arguments.length == 1){
-			if(isNaN(arguments[0])){
-				this._x += arguments[0].x;
-				this._y += arguments[0].y;
+	_process(){
+		if(arguments[0].length == 1){
+			if(isNaN(arguments[0][0])){
+				this._x = arguments[1](this._x, arguments[0][0].x);
+				this._y = arguments[1](this._y, arguments[0][0].y);
 			}
 			else{
-				this._x += arguments[0];
-				this._y += arguments[0];
+				this._x = arguments[1](this._x, arguments[0][0]);
+				this._y = arguments[1](this._y, arguments[0][0]);
 			}
 		}
-		else if(arguments.length == 2){
-			this._x += arguments[0];
-			this._y += arguments[1];
-		}
-		return this
-	}
-	br(){
-		if(arguments.length == 1){
-			if(isNaN(arguments[0])){
-				this._x >>= arguments[0].x;
-				this._y >>= arguments[0].y;
-			}
-			else{
-				this._x >>= arguments[0];
-				this._y >>= arguments[0];
-			}
-		}
-		else if(arguments.length == 2){
-			this._x >>= arguments[0];
-			this._y >>= arguments[1];
+		else if(arguments[0].length == 2){
+			this._x = arguments[1](this._x, arguments[0][0]);
+			this._y = arguments[1](this._y, arguments[0][1]);
 		}
 		return this
 	}
 
-	bl(){
-		if(arguments.length == 1){
-			if(isNaN(arguments[0])){
-				this._x <<= arguments[0].x;
-				this._y <<= arguments[0].y;
-			}
-			else{
-				this._x <<= arguments[0];
-				this._y <<= arguments[0];
-			}
-		}
-		else if(arguments.length == 2){
-			this._x <<= arguments[0];
-			this._y <<= arguments[1];
-		}
-		return this
-	}
-
-	div(){
-		if(arguments.length == 1){
-			if(isNaN(arguments[0])){
-				this._x /= arguments[0].x;
-				this._y /= arguments[0].y;
-			}
-			else{
-				this._x /= arguments[0];
-				this._y /= arguments[0];
-			}
-		}
-		else if(arguments.length == 2){
-			this._x /= arguments[0];
-			this._y /= arguments[1];
-		}
-		return this
-	}
-
-	sub(){
-		if(arguments.length == 1){
-			if(isNaN(arguments[0])){
-				this._x -= arguments[0].x;
-				this._y -= arguments[0].y;
-			}
-			else{
-				this._x -= arguments[0];
-				this._y -= arguments[0];
-			}
-		}
-		else if(arguments.length == 2){
-			this._x -= arguments[0];
-			this._y -= arguments[1];
-		}
-		return this
-	}
-
-	mul(){
-		if(arguments.length == 1){
-			if(isNaN(arguments[0])){
-				this._x *= arguments[0].x;
-				this._y *= arguments[0].y;
-			}
-			else{
-				this._x *= arguments[0];
-				this._y *= arguments[0];
-			}
-		}
-		else if(arguments.length == 2){
-			this._x *= arguments[0];
-			this._y *= arguments[1];
-		}
-		return this
-	}
+	br(){return this._process(arguments, (a, b) => a >> b);}
+	bl(){return this._process(arguments, (a, b) => a << b);}
+	add(){return this._process(arguments, (a, b) => a + b);}
+	div(){return this._process(arguments, (a, b) => a / b);}
+	sub(){return this._process(arguments, (a, b) => a - b);}
+	mul(){return this._process(arguments, (a, b) => a * b);}
+	set(){return this._process(arguments, (a, b) => b);}
 
 	dist(){
 		if(arguments.length == 1)
@@ -152,21 +66,4 @@ class GVector2f{
 			return Math.sqrt(Math.pow(this._x - arguments[0], 2) + Math.pow(this._y - arguments[1], 2));
 	}
 
-	set(){
-		if(arguments.length == 1){
-			if(isNaN(arguments[0])) {
-				this._x = arguments[0].x;
-				this._y = arguments[0].y;
-			}
-			else{
-				this._x = arguments[0];
-				this._y = arguments[0];
-			}
-		}
-		else if(arguments.length == 2){
-			this._x = arguments[0];
-			this._y = arguments[1];
-		}
-		return this;
-	}
 }

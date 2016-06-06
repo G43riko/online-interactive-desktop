@@ -15,6 +15,7 @@ class ListenersManager{
 				}
 			});
 
+
 		if(Menu.isToolActive() && !Creator.object)
 			Creator.createObject(position);
 
@@ -30,8 +31,11 @@ class ListenersManager{
 
 		actContextMenu = new ContexMenuManager(position);
 
-		movedObject.moving = false;
-		movedObject = false;
+
+		if(movedObject){
+			movedObject.moving = false;
+			movedObject = false;
+		}
 
 		draw();
 		return false;

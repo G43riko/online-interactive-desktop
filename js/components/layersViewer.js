@@ -1,8 +1,8 @@
 class LayersViewer extends Entity{
 	constructor(){
 		super("LayerViewer", new GVector2f(1300, 100), new GVector2f(180, 500), "white");
-		this._boderColor = "blue";
-		this._boderWidth = 1;
+		this._borderColor = "blue";
+		this._borderWidth = 1;
 
 		this._layerPanelHeight = 50;
 		this._fontSize = 20;
@@ -73,26 +73,44 @@ class LayersViewer extends Entity{
 		var checkColor = layer._visible ? "green" : "red",
 			posY = this._position.y + order * this._layerPanelHeight;
 
-		context.roundRect(this._position.x, posY, this._size.x, this._layerPanelHeight, MENU_RADIUS, false, true);
+		doRect({
+			x: this._position.x,
+			y: posY,
+			width: this._size.x,
+			height: this._layerPanelHeight,
+			radius: MENU_RADIUS,
+			draw: true,
+			borderColor: this._borderColor
+		});
+
 		fillText(layer.title, this._position.x, posY, this._fontSize, this._fontColor, [7, 5]);
 
 
-		context.fillStyle = checkColor;
-		context.roundRect(this._position.x + this._size.x - this._checkBoxSize - this._checkYOffset,
-						  posY + this._checkYOffset,
-						  this._checkBoxSize,
-						  this._checkBoxSize,
-						  3, 
-						  true, true);		
+		doRect({
+			x: this._position.x + this._size.x - this._checkBoxSize - this._checkYOffset,
+			y: posY + this._checkYOffset,
+			width: this._checkBoxSize,
+			height: this._checkBoxSize,
+			radius: 3,
+			fillColor: checkColor,
+			borderColor: this._borderColor
+		});
+
 
 	}
 
 	draw(){
 		context.save();
-		context.fillStyle = this._fillColor;
-		context.lineWidth = this._boderWidth;
-		context.strokeStyle = this._boderColor;
-		context.roundRect(this._position.x, this._position.y, this._size.x, this._size.y, MENU_RADIUS, true, true);
+
+		doRect({
+			position: this._position,
+			size: this._size,
+			radius: MENU_RADIUS,
+			fillColor: this._fillColor,
+			borderColor: this._borderColor,
+			borderWidth: this._borderWidth
+		});
+
 
 		var num = 2,
 			inst = this;

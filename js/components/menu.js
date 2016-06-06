@@ -241,14 +241,15 @@ class MenuManager{
 			if(!e["visible"])
 				return;
 
-			if(e["key"] == "color"){
-				context.fillStyle = Creator.color;
-				context.roundRect(posX, posY, this._size.x, this._size.y, MENU_RADIUS, true, true);
-				context.fillStyle = this._backgroundColor;
-			}
-			else
-				context.roundRect(posX, posY, this._size.x, this._size.y, MENU_RADIUS, true, true);
-
+			doRect({
+				x: posX,
+				y: posY,
+				size: this._size,
+				radius: MENU_RADIUS,
+				fillColor: e["key"] == "color" ? Creator.color : this._backgroundColor,
+				borderWidth: MENU_BORDER_WIDTH,
+				borderColor: MENU_BORDER_COLOR
+			});
 
 			context.drawImage(this._canvas, e["posX"] * this._size.x, e["posY"] * this._size.y, this._size.x, this._size.y, posX, posY, this._size.x, this._size.y);
 
@@ -277,7 +278,15 @@ class MenuManager{
 				drawArc(x + offset, y + offset, width - (offset << 1), height - (offset << 1), strokeWidth, strokeColor, this._context);
 				break;
 			case "rect":
-				drawRect(x + offset, y + offset, width - (offset << 1), height - (offset << 1), strokeWidth, strokeColor, this._context);
+				doRect({
+					x: x + offset,
+					y: y + offset,
+					width: width - (offset << 1),
+					height: height - (offset << 1),
+					borderWidth: strokeWidth,
+					borderColor: strokeColor,
+					ctx: this._context
+				});
 				break;
 			case "line":
 				drawLine([new GVector2f(x + offset, y + offset),
