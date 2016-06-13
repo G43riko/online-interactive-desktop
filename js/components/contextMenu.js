@@ -1,4 +1,4 @@
-class ContexMenuManager{
+class ContextMenuManager{
 	constructor(position, titles = [], parent = false, key = "undefined"){
 		this._position 			= position;
 		this._subMenu 			= false;
@@ -10,10 +10,12 @@ class ContexMenuManager{
 
 		if(this._titles.length == 0){
 			if(movedObject){
-				if(movedObject.name == "Arc" || movedObject.name == "Rect" || movedObject.name == "Polygon")
+				if(isIn(movedObject.name, "Rect", "Polygon"))
+					this._addFields("changeFillColor", "changeBorderColor", "delete", "locked", "makeCopy", "radius");
+				else if(movedObject.name ==  "Arc")
 					this._addFields("changeFillColor", "changeBorderColor", "delete", "locked", "makeCopy");
 				else if(movedObject.name == "Line")
-					this._addFields("joinType", "lineCap", "lineStyle", "lineType", "makeCopy", "lineWidth", "delete");
+					this._addFields("joinType", "lineCap", "lineStyle", "lineType", "makeCopy", "lineWidth", "delete", "arrowEndType", "arrowStartType", "radius");
 				else if(movedObject.name == "Table")
 					this._addFields("editTable", "locked", "delete", "makeCopy");
 				else if(movedObject.name == "LayerViewer")
@@ -41,7 +43,6 @@ class ContexMenuManager{
 					else if(e["key"] == "visible")
 						arr[i]["value"] = movedObject.visible;
 				}
-
 			}, this);
 
 		this._menuWidth = getMaxWidth(this._titles.map(e => e["label"])) + (CONTEXT_MENU_OFFSET << 1);
@@ -59,7 +60,7 @@ class ContexMenuManager{
 	_addFields(){
 		var res;
 		objectToArray(arguments).forEach(function(e){
-			res = ContexMenuManager.items[e];
+			res = ContextMenuManager.items[e];
 			res["key"] = e;
 
 			this._titles.push(res);
@@ -82,13 +83,13 @@ class ContexMenuManager{
 			pX = this._position.x,
 			pY = this._position.y,
 			menuWidth = this._menuWidth,
-			posY,
+			inst = this,
+			posY = pY + 0 * CONTEXT_MENU_LINE_HEIGHT,
 			checkSize = 20,
 			offset = (CONTEXT_MENU_LINE_HEIGHT - checkSize) >> 1;
 
 		doRect({
-			x: pX,
-			y: pY,
+			position:[pX, pY],
 			width: this._menuWidth,
 			height: Object.keys(this._titles).length * CONTEXT_MENU_LINE_HEIGHT,
 			radius: MENU_RADIUS,
@@ -103,62 +104,65 @@ class ContexMenuManager{
 			context.fillStyle = DEFAULT_FONT_COLOR;
 			posY = pY + count * CONTEXT_MENU_LINE_HEIGHT;
 			if(count++ > 0)
-				drawLine([pX, posY, pX + menuWidth, posY]);
-			fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor, [CONTEXT_MENU_OFFSET, 0]);
+				doLine({points: [pX, posY, pX + menuWidth, posY], draw: true});
 
-			if(e["type"] == "checkbox"){
+			if(inst._subMenu && e["key"] == inst._subMenu._key)
+				fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, inst._textColor);
+			else
+				fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, inst._textColor, [CONTEXT_MENU_OFFSET, 0]);
+
+			if(e["type"] == "checkbox")
 				doRect({
 					x: pX + menuWidth - offset - checkSize,
 					y: posY + offset,
-					width: checkSize,
-					height: checkSize,
+					size: checkSize,
 					radius: 5,
 					borderColor: this.borderColor,
 					borderWidth: this.borderWidth,
 					fillColor: e["value"] ? "green" : "red",
 					draw: true
 				});
-			}
-			else if(e["type"] == "radio"){
-				if(e["value"])
-					fillArc(pX + menuWidth - offset - checkSize, posY + offset, checkSize, checkSize);
-				else
-					drawArc(pX + menuWidth - offset - checkSize, posY + offset, checkSize, checkSize);
-			}
-			else if(e["type"] == "widthValue"){
-				context.save();
-				drawLine([pX + menuWidth - (checkSize << 2), posY + (CONTEXT_MENU_LINE_HEIGHT >> 1),
-						  pX + menuWidth - offset, posY + (CONTEXT_MENU_LINE_HEIGHT >> 1)], e["name"]);
-				context.restore();
-			}
+			else if(e["type"] == "radio")
+				doArc({
+					x: pX + menuWidth - offset - checkSize,
+					y: posY + offset,
+					size: checkSize,
+					borderColor: DEFAULT_FONT_COLOR,
+					fillColor: DEFAULT_FONT_COLOR,
+					draw: !e["value"],
+					fill: e["value"]
+				});
+			else if(e["type"] == "widthValue")
+				doLine({
+					points: [pX + menuWidth - (checkSize << 2), posY + (CONTEXT_MENU_LINE_HEIGHT >> 1),
+							 pX + menuWidth - offset, posY + (CONTEXT_MENU_LINE_HEIGHT >> 1)],
+					borderWidth: e["name"]
+				});
 		});
 
 		if(this._subMenu)
 			this._subMenu.draw();
 	};
 
-	_doClickAct(act){
-		switch(act){
+	_doClickAct(opt) {
+		var act = opt.key;
+		switch (act) {
 			case "changeFillColor":
-				pickUpColor(function(color){
-					this._selectedObject.fillColor = color;
-					actContextMenu = false;
-				}, this);
+				pickUpColor(color => this._selectedObject.fillColor = color, this);
+				actContextMenu = false;
 				break;
 			case "changeBorderColor":
-				pickUpColor(function(color){
-					this._selectedObject.borderColor = color;
-					actContextMenu = false;
-				}, this);
+				pickUpColor(color =>this._selectedObject.borderColor = color, this);
+				actContextMenu = false;
 				break;
 			case "delete":
-				if(this._selectedObject)
+				if (this._selectedObject)
 					Scene.remove(this._selectedObject);
 				actContextMenu = false;
 				break;
 			case "locked":
 				this._selectedObject.locked = !this._selectedObject.locked;
-				ContexMenuManager.items["locked"].value = this._selectedObject.locked;
+				ContextMenuManager.items["locked"].value = this._selectedObject.locked;
 				actContextMenu = false;
 				break;
 			case "clearWorkspace":
@@ -189,30 +193,6 @@ class ContexMenuManager{
 				this._selectedObject.addColumn(this._parent.position.x, "left");
 				actContextMenu = false;
 				break;
-			case "buttCap":
-				this._selectedObject.lineCap = LINE_CAP_BUTT;
-				actContextMenu = false;
-				break;
-			case "roundCap":
-				this._selectedObject.lineCap = LINE_CAP_ROUND;
-				actContextMenu = false;
-				break;
-			case "squareCap":
-				this._selectedObject.lineCap = LINE_CAP_SQUARE;
-				actContextMenu = false;
-				break;
-			case "miterJoin":
-				this._selectedObject.joinType = LINE_JOIN_MITER;
-				actContextMenu = false;
-				break;
-			case "roundJoin":
-				this._selectedObject.joinType = LINE_JOIN_ROUND;
-				actContextMenu = false;
-				break;
-			case "bevelJoin":
-				this._selectedObject.joinType = LINE_JOIN_BEVEL;
-				actContextMenu = false;
-				break;
 			case "clearRow":
 				this._selectedObject.clear(this._parent.position.y, "row");
 				actContextMenu = false;
@@ -237,66 +217,48 @@ class ContexMenuManager{
 				this._selectedObject.renameLayer(this.position.y);
 				actContextMenu = false;
 				break;
-			case "alphabeticVAlign":
-				this._selectedObject.verticalTextAlign = FONT_VALIGN_ALPHA;
-				actContextMenu = false;
-				break;
-			case "middleVAlign":
-				this._selectedObject.verticalTextAlign = FONT_VALIGN_MIDDLE;
-				actContextMenu = false;
-				break;
-			case "topVAlign":
-				this._selectedObject.verticalTextAlign = FONT_VALIGN_TOP;
-				actContextMenu = false;
-				break;
-			case "bottomVAlign":
-				this._selectedObject.verticalTextAlign = FONT_VALIGN_BOTT;
-				actContextMenu = false;
-				break;
-			case "leftHAlign":
-				this._selectedObject.horizontalTextAlign = FONT_HALIGN_LEFT;
-				actContextMenu = false;
-				break;
-			case "centerHAlign":
-				this._selectedObject.horizontalTextAlign = FONT_HALIGN_CENTER;
-				actContextMenu = false;
-				break;
-			case "rightHAlign":
-				this._selectedObject.horizontalTextAlign = FONT_HALIGN_RIGHT;
-				actContextMenu = false;
-				break;
-			case "strippedLine":
-				this._selectedObject.lineStyle = LINE_STYLE_STRIPPED;
-				actContextMenu = false;
-				break;
-			case "normalLine":
-				this._selectedObject.lineStyle = LINE_STYLE_NORMAL;
-				actContextMenu = false;
-				break;
 			case "makeCopy":
 				Entity.clone(this._selectedObject);
 				actContextMenu = false;
 				break;
-			case "1pxWidth":
-				this._selectedObject.borderWidth = 1;
-				actContextMenu = false;
-				break;
-			case "2pxWidth":
-				this._selectedObject.borderWidth = 2;
-				actContextMenu = false;
-				break;
-			case "5pxWidth":
-				this._selectedObject.borderWidth = 5;
-				actContextMenu = false;
-				break;
-			case "10pxWidth":
-				this._selectedObject.borderWidth = 10;
-				actContextMenu = false;
-				break;
-			case "20pxWidth":
-				this._selectedObject.borderWidth = 20;
-				actContextMenu = false;
-				break;
+			default:
+				if(opt.group == "roundRadius"){
+					this._selectedObject.radius = opt.name;
+					actContextMenu = false;
+				}
+				else if(opt.group == "lineCapValue"){
+					this._selectedObject.lineCap = opt.name;
+					actContextMenu = false;
+				}
+				else if(opt.group == "joinTypeValue"){
+					this._selectedObject.joinType = opt.name;
+					actContextMenu = false;
+				}
+				else if(opt.group == "lineStyleValue"){
+					this._selectedObject.lineStyle = opt.name;
+					actContextMenu = false;
+				}
+				else if(opt.group == "widthValue"){
+					this._selectedObject.borderWidth = opt.name;
+					actContextMenu = false;
+				}
+				else if(opt.group == "arrowEndType"){
+					this._selectedObject.arrowEndType = opt.name;
+					actContextMenu = false;
+				}
+				else if(opt.group == "arrowStartType"){
+					this._selectedObject.arrowStartType = opt.name;
+					actContextMenu = false;
+				}
+				else if(opt.group == "valignValue"){
+					this._selectedObject.verticalTextAlign = opt.name;
+					actContextMenu = false;
+				}
+				else if(opt.group == "halignValue"){
+					this._selectedObject.horizontalTextAlign = opt.name;
+					actContextMenu = false;
+				}
+
 		}
 	}
 
@@ -310,12 +272,12 @@ class ContexMenuManager{
 			var pos = this._position.getClone().add(this._menuWidth, i * CONTEXT_MENU_LINE_HEIGHT);
 			if(pos.x + this._menuWidth > canvas.width)
 				pos.x -= this._menuWidth << 1;
-			this._subMenu = new ContexMenuManager(pos, objectToArray(this._titles[i]["fields"]), this, this._titles[i]["key"]);
+			this._subMenu = new ContextMenuManager(pos, objectToArray(this._titles[i]["fields"]), this, this._titles[i]["key"]);
 		}
 		else
 			this._subMenu = false;
 
-		this._doClickAct(this._titles[i].key);
+		this._doClickAct(this._titles[i]);
 
 		return true;
 

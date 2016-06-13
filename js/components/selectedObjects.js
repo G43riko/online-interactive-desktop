@@ -18,6 +18,10 @@ class ObjectsManager{
 	get(i){
 		return this._objects.hasOwnProperty(i) ? this._objects[i] : false;
 	};
+
+	getLast(){
+		return this._objects[this.size() - 1];
+	};
 	clear(){
 		this._objects.forEach(function(e){
 			if(typeof e.moveType !== "undefined")

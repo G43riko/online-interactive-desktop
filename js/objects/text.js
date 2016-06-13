@@ -5,11 +5,13 @@ class Text extends Entity{
 		this._textColor = color;
 		this._fontSize 	= DEFAULT_FONT_SIZE;
 		this._moveType 	= -1;
-		this._size.x 	= calcTextWidth(text, DEFAULT_FONT_SIZE + "pt " + DEFAULT_FONT) + (DEFAULT_TEXT_OFFSET << 1);
-		this._minSize 	= this._size.getClone();
+		this.size.x 	= calcTextWidth(text, DEFAULT_FONT_SIZE + "pt " + DEFAULT_FONT) + (DEFAULT_TEXT_OFFSET << 1);
+		this.minSize 	= this.size.getClone();
 		this._verticalTextAlign = FONT_VALIGN_TOP;
 		this._horizontalTextAlign = FONT_HALIGN_LEFT;
 		this._fontOffset = DEFAULT_TEXT_OFFSET;
+
+		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1))
 	};
 
 	get moveType(){
@@ -29,20 +31,21 @@ class Text extends Entity{
 	}
 
 	draw(){
+		var pos = this.position.getClone();
+
 		context.fillStyle = this._fillColor;
 		context.lineWidth = this._borderWidth;
 
-		if (this.moving && !this.locked)
-			setShadow(true);
+		doRect({
+			shadow: this.moving && !this.locked,
+			position: this.position,
+			size: this.size,
+			radius: DEFAULT_RADIUS,
+			fillColor: this.fillColor,
+			draw: true,
+			fill: true
+		});
 
-		context.roundRect(this._position.x, this._position.y, this._size.x, this._size.y, DEFAULT_RADIUS, false, true);
-
-		if (this.moving)
-			setShadow(false);
-
-		context.roundRect(this._position.x, this._position.y, this._size.x, this._size.y, DEFAULT_RADIUS, true, false);
-
-		var pos = this.position.getClone();
 
 		context.textAlign = this._horizontalTextAlign;
 		context.textBaseline = this._verticalTextAlign;
@@ -62,8 +65,8 @@ class Text extends Entity{
 
 		context.fillText(this._text, pos.x, pos.y);
 
-		if(this.selected)
-			drawBorder(this);
+		drawBorder(this);
+		Entity.drawConnectors(this);
 	};
 
 	clickIn(x, y){
@@ -72,6 +75,11 @@ class Text extends Entity{
 
 		var pos = this.position,
 			vec = new GVector2f(x, y);
+
+
+		this.checkConnectors(vec);
+		if(this._selectedConnector)
+			return true;
 
 		if(vec.dist(pos.x + (this.size.x >> 1), pos.y) < SELECTOR_SIZE)
 			this._moveType = 0;

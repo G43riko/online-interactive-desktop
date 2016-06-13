@@ -12,8 +12,21 @@ class Entity{
 		this._locked			= false;
 		this._minSize 			= false;
 		this._selectedConnector = false;
-		this._connectors 		= [new GVector2f(0.5, 0), new GVector2f(0.5, 1), new GVector2f(0, 0.5), new GVector2f(1, 0.5)]
+		this._layer				= "default";
+		this._connectors 		= [new GVector2f(0.5, 0), new GVector2f(0.5, 1), new GVector2f(0, 0.5), new GVector2f(1, 0.5)];
+		this._id				= Entity.getId();
 	}
+
+	static getId(){
+		var id;
+		do
+			id = parseInt(Math.random() * 1000000);
+		while(typeof Entity._ides[id] !== "undefined");
+		Entity._ides[id] = 1;
+		return id;
+	}
+
+
 
 	addConnector(){
 		objectToArray(arguments).forEach(function(e){
@@ -102,8 +115,10 @@ class Entity{
 		Scene.addToScene(copy);
 	}
 
+	get id(){return this._id;}
 	get name(){return this._name;}
 	get size(){return this._size;}
+	get layer(){return this._layer;}
 	get locked(){return this._locked;}
 	get minSize(){return this._minSize;}
 	get visible(){return this._visible;}
@@ -114,8 +129,10 @@ class Entity{
 	get borderColor(){return this._borderColor;}
 	get selectedConnector(){return this._selectedConnector;}
 
-	
+	//set id(val){this._id = val;}
+	set layer(val){this._layer = val;}
 	set locked(val){this._locked = val;}
+	set minSize(val){this._minSize = val};
 	set selected(val){this._selected = val;}
 	set fillColor(val){this._fillColor = val;}
 	set borderWidth(val){this._borderWidth = val;}

@@ -2,7 +2,7 @@ class Arc extends Entity{
 	constructor(position, size, color){
 		super("Arc", position, size, color);
 		this.moveType 	= -1;
-		this._minSize 	= new GVector2f(SELECTOR_SIZE);
+		this.minSize 	= new GVector2f(SELECTOR_SIZE);
 	};
 
 	updateCreatingPosition(pos){
@@ -40,15 +40,14 @@ class Arc extends Entity{
 		if (!this.visible)
 			return;
 
-		if (this.moving && !this.locked)
-			setShadow(true);
-
-		fillArc(this.position.x, this.position.y, this.size.x, this.size.y, this.fillColor);
-
-		if (this.moving)
-			setShadow(false);
-
-		drawArc(this.position.x, this.position.y, this.size.x, this.size.y, this.borderWidth, this.borderColor);
+		doArc({
+			position: this.position,
+			size: this.size,
+			fillColor: this.fillColor,
+			borderColor: this.borderColor,
+			borderWidth: this.borderWidth,
+			shadow: this.moving && !this.locked
+		});
 
 		drawBorder(this);
 

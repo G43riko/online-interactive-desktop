@@ -6,8 +6,8 @@ class Join extends Entity{
 		this._obj2 				= null;
 		this._obj2_connector 	= null;
 		this._lineType 			= type;
-		this._borderColor 		= "blue";
-		this._borderWidth 		= 5;
+		this.borderColor 		= "blue";
+		this.borderWidth 		= 5;
 		this._tmpPos 			= obj1.position.getClone();
 	};
 
@@ -79,6 +79,6 @@ class Join extends Entity{
 		if(this._lineType == JOIN_BAZIER)
 			drawBazierCurve(array, this.borderWidth, this.borderColor);
 		else
-			drawLine(array, this.borderWidth, this.borderColor);
+			doLine({points: array, borderWidth: this.borderWidth, borderColor: this.borderColor});
 	};
 }

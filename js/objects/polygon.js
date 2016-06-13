@@ -3,13 +3,18 @@ class Polygon extends Entity{
 		super("Polygon", new GVector2f(), new GVector2f(), color);
 		this.points 		= points;
 		this.movingPoint	= -1;
-
+		this._radius 		= 0;
 		if(points.length < 3){
 			Logger.warn("vytvoril sa polygon ktory mal menej ako 3 body a tak sa maže");
 			Scene.remove(this);
 		}
 
 		Entity.findMinAndMax(this.points, this.position, this.size);
+	}
+
+	set radius(val){
+		this._radius = val;
+		draw();
 	}
 
 	doubleClickIn(x, y){
@@ -71,12 +76,14 @@ class Polygon extends Entity{
 	}
 
 	draw(){
-		if (this.moving && !this.locked)
-			setShadow(true);
-		fillPolygon(this.points, this.fillColor);
-		if (this.moving)
-			setShadow(false);
-		drawPolygon(this.points, this.borderWidth, this.borderColor);
+		doPolygon({
+			shadow: this.moving && !this.locked,
+			points: this.points,
+			fillColor: this.fillColor,
+			borderColor: this.borderColor,
+			borderWidth: this.borderWidth,
+			radius: this._radius
+		});
 
 		if(this.selected){
 			drawBorder(this, {});

@@ -242,8 +242,7 @@ class MenuManager{
 				return;
 
 			doRect({
-				x: posX,
-				y: posY,
+				position: [posX, posY],
 				size: this._size,
 				radius: MENU_RADIUS,
 				fillColor: e["key"] == "color" ? Creator.color : this._backgroundColor,
@@ -275,24 +274,33 @@ class MenuManager{
 		var img;
 		switch(type.key){
 			case "arc":
-				drawArc(x + offset, y + offset, width - (offset << 1), height - (offset << 1), strokeWidth, strokeColor, this._context);
+				doArc({
+					position: [x + offset, y + offset],
+					size: [width - (offset << 1), height - (offset << 1)],
+					borderColor: strokeColor,
+					borderWidth: strokeWidth,
+					ctx: this._context
+				});
 				break;
 			case "rect":
 				doRect({
-					x: x + offset,
-					y: y + offset,
-					width: width - (offset << 1),
-					height: height - (offset << 1),
+					position: [x + offset, y + offset],
+					size: [width - (offset << 1), height - (offset << 1)],
 					borderWidth: strokeWidth,
 					borderColor: strokeColor,
 					ctx: this._context
 				});
 				break;
 			case "line":
-				drawLine([new GVector2f(x + offset, y + offset),
-					new GVector2f(x + width - (offset << 1), y + (height >> 1)),
-					new GVector2f(x + offset, y +  height - (offset << 1)),
-					new GVector2f(x + width - (offset << 1), y + offset)], DEFAULT_STROKE_WIDTH, "black", JOIN_LINEAR, this._context);
+				doLine({
+					points: [new GVector2f(x + offset, y + offset),
+							 new GVector2f(x + width - (offset << 1), y + (height >> 1)),
+							 new GVector2f(x + offset, y +  height - (offset << 1)),
+							 new GVector2f(x + width - (offset << 1), y + offset)],
+					borderWidth: DEFAULT_STROKE_WIDTH,
+					borderColor: "black",
+					ctx: this._context
+				});
 				break;
 			case "text":
 				fillText("TEXT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
@@ -313,7 +321,12 @@ class MenuManager{
 				fillText("HELP", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "defaultWidth":
-				drawLine([x + offset, y + (height >> 1), x + width - offset, y + (height >> 1)], type.value, "black", JOIN_LINEAR, this._context);
+				doLine({
+					points: [x + offset, y + (height >> 1), x + width - offset, y + (height >> 1)],
+					borderWidth: type.value,
+					borderColor: "black",
+					ctx: this._context
+				});
 				break;
 			case "brushes":
 				img = Scene.paint.selectedImg;
@@ -322,7 +335,13 @@ class MenuManager{
 				this._context.drawImage(img, 0, 0, img.width, img.height, x , y, width, height);
 				break;
 			case "lineWidth":
-				drawLine([x + offset, y + (height >> 1), x + width - offset, y + (height >> 1)], Creator.lineWidth, "black", JOIN_LINEAR, this._context);
+				doLine({
+					points: [x + offset, y + (height >> 1), x + width - offset, y + (height >> 1)],
+					borderWidth: Creator.lineWidth,
+					borderColor: "black",
+					ctx: this._context
+				});
+
 				break;
 			case "defaultBrushes":
 				Scene.paint.addImage(type.value);

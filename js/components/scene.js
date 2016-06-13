@@ -5,16 +5,11 @@ class SceneManager{
 	};
 
 	forEach(func){
-		$.each(this._layers, function(key, val){
-			if(val.visible)
-				val.forEach(func);
-		});
+		$.each(this._layers, (key, val)	=> val.visible && val.forEach(func));
 	};
 
 	cleanUp(){
-		$.each(this._layers, function(key, val){
-			val.cleanUp();
-		});
+		$.each(this._layers, (key, val) => val.cleanUp());
 		this.paint.cleanUp();
 	};
 
@@ -24,17 +19,25 @@ class SceneManager{
 		this._layers[title] = new Layer(title);
 	};
 
-	addToScene(object, layer = "default"){
+	addToScene(object, layer = "default", resend = true){
 		if(!this._layers.hasOwnProperty(layer))
 			Logger.error("ide sa načítať neexistujúca vrstva: " + layer);
+		object.layer = layer;
 		this._layers[layer].add(object);
+
+		if(resend && typeof Sharer !== "undefined")
+			Sharer.objectChange(object, ACTION_CREATE);
+		else
+			object.selected = false;
 	};
 
+	get(layer, id){
+		return this._layers[layer].get(id);
+	}
+
 	draw(){
-		this.forEach(function(e){
-			if(typeof e.draw === "function")
-				e.draw();
-		});
+		//this.forEach(e => callIfFunc(e.draw));
+		this.forEach(e => isFunction(e.draw) && e.draw());
 		this.paint.draw();
 	};
 
@@ -44,7 +47,16 @@ class SceneManager{
 		return this._paint;
 	};
 
-	remove(obj, layer = "default"){
+	remove(obj, layer = obj.layer, resend = true){
 		this._layers[layer].remove(obj);
+		if(resend && typeof Sharer !== "undefined")
+			Sharer.objectChange(obj, ACTION_DELETE);
+
 	};
+
+	toString(){
+		var result = [];
+		this.forEach(e => e.name == "LayerViewer" || result.push(e));
+		return JSON.stringify(result);
+	}
 }

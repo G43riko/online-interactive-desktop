@@ -6,6 +6,22 @@ function round(number, value = DEFAULT_ROUND_VAL){
 	return Math.floor(number / value) * value;
 }
 
+function isIn(obj){
+	for(var i=1 ; i<arguments.length ; i++)
+		if(arguments[i] === obj)
+			return true;
+
+	return false;
+}
+
+function isFunction(val){
+	return typeof val === "function";
+}
+
+function callIfFunc(val){
+	return isFunction(val) ? val() : false;
+}
+
 function isUndefined(val){
 	return typeof val === "undefined";
 }
@@ -30,7 +46,7 @@ Movement = {
 		if(typeof o.selectedConnector !== "undefined" && Creator.operation == OPERATION_DRAW_JOIN && o.selectedConnector !== false){
 
 		}
-		else if(o.moveType !== undefined){
+		else if(typeof o.moveType !== "undefined"){
 			switch(o.moveType){
 				case 0:
 					o.position.y += y;
@@ -73,6 +89,9 @@ Movement = {
 		}
 		else
 			o.position.add(x, y);
+
+		if(typeof Sharer !== "undefined")
+			Sharer.objectChange(o, ACTION_MOVE);
 	}
 };
 
@@ -81,12 +100,13 @@ function drawBorder(o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 		return;
 	context.save();
 
-	setLineDash(true);
+	//setLineDash(true);
 
 	doRect({
 		position: o.position,
 		size: o.size,
-		borderWidth: DEFAULT_STROKE_WIDTH << 1
+		borderWidth: DEFAULT_STROKE_WIDTH << 1,
+		lineDash:  [15, 5]
 	});
 
 	if(selectors.hasOwnProperty("tc"))

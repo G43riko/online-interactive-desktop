@@ -33,6 +33,14 @@ class GVector2f{
 		return new GVector2f(this._x, this._y);
 	}
 
+	getLength(){
+		return Math.sqrt(this._x * this._x + this._y * this._y);
+	};
+
+	normalize(){
+		return this.div(this.getLength());
+	};
+
 	_process(){
 		if(arguments[0].length == 1){
 			if(isNaN(arguments[0][0])){

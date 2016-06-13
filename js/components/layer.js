@@ -1,6 +1,6 @@
 class Layer{
 	constructor(title){
-		this._objects = [];
+		this._objects = {};
 		this._visible = true;
 		this._title = title;
 	};
@@ -14,34 +14,38 @@ class Layer{
 	set title(val){this._title = val;}
 
 	cleanUp(){
-		this.forEach(function(e){
-			if(typeof e.cleanUp !== "undefined")
-				e.cleanUp();
-		});
+		this.forEach(e => callIfFunc(e.cleanUp));
 		this._objects = [];
 	};
+
+	get(id){
+		return this._objects[id];
+	}
 
 	draw(){
 		if(!this.visible)
 			return;
-		this._objects.forEach(function(e){
-			if(typeof e.draw === "function")
-				e.draw();
-		});
+		//this._objects.forEach(e => callIfFunc(e.draw));
+		this.forEach(e => e.draw());
 	};
 
 	add(element){
-		this._objects.push(element);
+		this._objects[element.id] = element;
+		//this._objects.push(element);
 	};
 
 	remove(element){
+		delete this._objects[element.id];
+		/*
 		for(var i = this._objects.length; i--;) {
 			if(this._objects[i] === element)
 				this._objects.splice(i, 1);
 		}
+		*/
 	};
 
 	forEach(func){
-		this._objects.forEach(func);
+		$.each(this._objects, (i, e) => func(e));
+		//this._objects.forEach(func);
 	};
 }

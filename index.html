@@ -1,134 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-	<script src="js/lib/jquery.min.js"></script>
-	<!--<script src="js/lib/CanvasInput.min.js"></script>
-    <script src="js/lib/color.js"></script>-->
-	<link rel="stylesheet" type="text/css" href="css/styles.css">
-	<script type="text/javascript" src="js/config.js"></script>
-	<script type="text/javascript" src="js/components/creator.js"></script>
-	<script type="text/javascript" src="js/utils/logger.js"></script>
-	<script type="text/javascript" src="js/utils/GVector2f.js"></script>
-	<script type="text/javascript" src="js/utils/utils.js"></script>
-	<script type="text/javascript" src="js/components/menu.js"></script>
-	<script type="text/javascript" src="js/components/slider.js"></script>
-	<script type="text/javascript" src="js/components/contextMenu.js"></script>
-	<script type="text/javascript" src="js/components/input.js"></script>
-	<script type="text/javascript" src="js/components/selectedObjects.js"></script>
-	<script type="text/javascript" src="js/components/layer.js"></script>
-	<script type="text/javascript" src="js/components/scene.js"></script>
-	<script type="text/javascript" src="js/listeners.js"></script>
-	<script type="text/javascript" src="js/main.js"></script>
-	<script type="text/javascript" src="js/canvas.js"></script>
-	<script type="text/javascript" src="js/objects/entity.js"></script>
-	<script type="text/javascript" src="js/components/layersViewer.js"></script>
-	<script type="text/javascript" src="js/objects/text.js"></script>
-    <script type="text/javascript" src="js/objects/table.js"></script>
-	<script type="text/javascript" src="js/objects/polygon.js"></script>
-	<script type="text/javascript" src="js/objects/join.js"></script>
-	<script type="text/javascript" src="js/objects/rect.js"></script>
-	<script type="text/javascript" src="js/objects/paint.js"></script>
-	<script type="text/javascript" src="js/objects/line.js"></script>
-	<script type="text/javascript" src="js/objects/arc.js"></script>
-	<script type="text/javascript" src="js/utils/test.js"></script>
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
+		<script src="js/lib/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="js/config.js"></script>
+		<script type="text/javascript" src="js/components/creator.js"></script>
+		<script type="text/javascript" src="js/utils/logger.js"></script>
+		<script type="text/javascript" src="js/utils/GVector2f.js"></script>
+		<script type="text/javascript" src="js/utils/utils.js"></script>
+		<script type="text/javascript" src="js/components/menu.js"></script>
+		<script type="text/javascript" src="js/components/slider.js"></script>
+		<script type="text/javascript" src="js/components/contextMenu.js"></script>
+		<script type="text/javascript" src="js/components/input.js"></script>
+		<script type="text/javascript" src="js/components/selectedObjects.js"></script>
+		<script type="text/javascript" src="js/components/layer.js"></script>
+		<script type="text/javascript" src="js/components/scene.js"></script>
+		<script type="text/javascript" src="js/listeners.js"></script>
+		<script type="text/javascript" src="js/main.js"></script>
+		<script type="text/javascript" src="js/canvas.js"></script>
+		<script type="text/javascript" src="js/objects/entity.js"></script>
+		<script type="text/javascript" src="js/components/layersViewer.js"></script>
+		<script type="text/javascript" src="js/objects/text.js"></script>
+		<script type="text/javascript" src="js/objects/table.js"></script>
+		<script type="text/javascript" src="js/objects/class.js"></script>
+		<script type="text/javascript" src="js/objects/polygon.js"></script>
+		<script type="text/javascript" src="js/objects/join.js"></script>
+		<script type="text/javascript" src="js/objects/rect.js"></script>
+		<script type="text/javascript" src="js/objects/paint.js"></script>
+		<script type="text/javascript" src="js/objects/line.js"></script>
+		<script type="text/javascript" src="js/objects/arc.js"></script>
+		<script type="text/javascript" src="js/objects/arrow.js"></script>
+		<script type="text/javascript" src="js/utils/test.js"></script>
 
-	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
-	<meta name="apple-mobile-web-app-copable" content="yes">
-</head>
-<body>
-	<div id="modalWindow" style="display: none">
-            <div id="colorPalete" style="display: none"></div>
-    </div>
-	<canvas id="myCanvas" class="animated">
-		Váš prehliadač nepodporuje Canvas
-	</canvas>
-</body>
+		<script type="text/javascript" src="js/components/sharer.js"></script>
+
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+		<meta name="apple-mobile-web-app-copable" content="yes">
+	</head>
+	<body>
+		<div id="modalWindow" style="display: none">
+				<div id="colorPalete" style="display: none"></div>
+		</div>
+		<canvas id="myCanvas" class="animated">
+			Váš prehliadač nepodporuje Canvas
+		</canvas>
+	</body>
 </html>
+<script>
 
-	<script type="text/javascript">
-		var colors = ["#191919", "#DFE2DB", "#FFF056", "#FFFFFF", "#C63D0F", "#3B3738", "#FDF3E7", 
-					  "#7E8F7C", "#005A31", "#A8CD1B", "#CBE32D", "#F3FAB6", "#558C89", "#74AFAD", 
-					  "#D9853B", "#ECECEA", "#2B2B2B", "#DE1B1B", "#F6F6F6", "#E9E581", "#7D1935", 
-					  "#4A96AD", "#F5F3EE", "#E44424", "#67BCDB", "#A2AB58", "#404040", "#6DBDD6", 
-					  "#B71427", "#FFE658", "#585858", "#118C4E", "#C1E1A6", "#FF9009", "#DF3D82", 
-					  "#F361C2", "#EBED5B", "#3C007B"];
+    var colors = ["#191919", "#DFE2DB", "#FFF056", "#FFFFFF", "#C63D0F", "#3B3738", "#FDF3E7",
+        "#7E8F7C", "#005A31", "#A8CD1B", "#CBE32D", "#F3FAB6", "#558C89", "#74AFAD",
+        "#D9853B", "#ECECEA", "#2B2B2B", "#DE1B1B", "#F6F6F6", "#E9E581", "#7D1935",
+        "#4A96AD", "#F5F3EE", "#E44424", "#67BCDB", "#A2AB58", "#404040", "#6DBDD6",
+        "#B71427", "#FFE658", "#585858", "#118C4E", "#C1E1A6", "#FF9009", "#DF3D82",
+        "#F361C2", "#EBED5B", "#3C007B"];
 
-		colors = colors.sort().reverse();
-		var res = "";
-		colors.forEach(function(e, i){
-			res += '<div class="colorPatern" style="background-color:' + colors[i] + '"></div>';
-		});
+    colors = colors.sort().reverse();
+    var res = "";
+    colors.forEach(function(e, i){
+        res += '<div class="colorPatern" style="background-color:' + colors[i] + '"></div>';
+    });
 
-        $("#colorPalete").append(res);
+    $("#colorPalete").append(res);
 
 
-        function showColors(){
-            $("#modalWindow ").find("div").each(function(){
-                $(this).show();
-            });
-            $("#modalWindow").show();
-            $("canvas").addClass("blur");
-        }
+    function showColors(){
+        $("#modalWindow ").find("div").each(function(){
+            $(this).show();
+        });
+        $("#modalWindow").show();
+        $("canvas").addClass("blur");
+    }
 
-        function closeDialog(){
-            $("#modalWindow ").find("div").each(function(){
-                $(this).show();
-            });
-            $("#modalWindow").hide();
-            $("canvas").removeClass("blur");
-        }
+    function closeDialog(){
+        $("#modalWindow ").find("div").each(function(){
+            $(this).show();
+        });
+        $("#modalWindow").hide();
+        $("canvas").removeClass("blur");
+    }
 
-        function pickUpColor(func, thisArg){
-            var T;
-            if (arguments.length > 1)
-                T = thisArg;
-            $("#colorPalete").delegate(".colorPatern", "click", function(){
-                $(".selected").removeClass("selected");
-                func.call(T, $(this).addClass("selected").css("backgroundColor"));
-                closeDialog();
+    function pickUpColor(func, thisArg){
+        var T;
+        if (arguments.length > 1)
+            T = thisArg;
+        $("#colorPalete").delegate(".colorPatern", "click", function(){
+            $(".selected").removeClass("selected");
+            func.call(T, $(this).addClass("selected").css("backgroundColor"));
+            closeDialog();
+            draw();
+            $("#colorPalete").undelegate();
+        });
+        showColors();
+    }
+
+    function getText(text, position, size, func, thisArg){
+        var T,
+                x = $(document.createElement("INPUT"));
+
+        if (arguments.length > 1)
+            T = thisArg;
+
+        x.attr({
+            type: "text",
+            value: text,
+            id: "staticInput"
+        }).css({
+            left: position.x + 'px',
+            top: position.y + 'px',
+            width: size.x,
+            height: size.y,
+            fontSize: size.y * 0.6
+        }).blur(function(){
+            func.call(T, x.val());
+            x.remove();
+            draw();
+        }).keyup(function(e){
+            if(e.keyCode == ENTER_KEY){
+                x.onblur = false;
+                func.call(T, x.val());
+                x.remove();
                 draw();
-                $("#colorPalete").undelegate();
-            });
-            showColors();
-        }
+            }
+        }).appendTo("body");
+        x.select().focus();
+    }
 
-		function getText(text, position, size, funct, thisArg){
-			var T,
-				x = $(document.createElement("INPUT"));
-
-			if (arguments.length > 1)
-				T = thisArg;
-
-			x.attr({
-				type: "text",
-				value: text,
-				id: "staticInput"
-			}).css({
-				left: position.x + 'px',
-				top: position.y + 'px',
-				width: size.x,
-				height: size.y,
-				fontSize: size.y * 0.6
-			}).blur(function(){
-				funct.call(T, x.val());
-				x.remove();
-				draw();
-			}).keyup(function(e){
-				if(e.keyCode == ENTER_KEY){
-					x.onblur = false;
-					funct.call(T, x.val());
-					x.remove();
-					draw();
-				}
-			}).appendTo("body");
-			x.select().focus();
-		}
-
-		function openFile() {
-			console.log(f);
-			f.click();
-		}
-
-	</script>
+    function openFile() {
+        console.log(f);
+        f.click();
+    }
+    Sharer = new Sharer();
+</script>

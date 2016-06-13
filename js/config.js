@@ -91,3 +91,12 @@ const TABLE_RADIUS 			= 10;
 const TABLE_TEXT_OFFSET		= 5;
 
 const PI2 = Math.PI * 2;
+
+const PUBLIC_ACCESS 	= "+";
+const PRIVATE_ACCESS 	= "-";
+const PROTECTED_ACCESS 	= "#";
+
+const ACTION_MOVE 			= 2310;
+const ACTION_CREATE			= 2311;
+const ACTION_CHANGE			= 2312;
+const ACTION_DELETE			= 2313;

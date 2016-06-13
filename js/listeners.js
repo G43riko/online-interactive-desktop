@@ -3,9 +3,9 @@ class ListenersManager{
 		if($(canvas).hasClass("blur"))
 			return false;
 
-		if(actContextMenu)
-			if(actContextMenu.clickIn(position.x, position.y))
-				return;
+		if(actContextMenu && actContextMenu.clickIn(position.x, position.y))
+			return;
+
 		if(button == LEFT_BUTTON)
 			Scene.forEach(function(o){
 				if(o.clickIn(position.x, position.y, button)){
@@ -19,7 +19,6 @@ class ListenersManager{
 		if(Menu.isToolActive() && !Creator.object)
 			Creator.createObject(position);
 
-
 		draw();
 	}
 
@@ -29,7 +28,7 @@ class ListenersManager{
 			return true;
 		}
 
-		actContextMenu = new ContexMenuManager(position);
+		actContextMenu = new ContextMenuManager(position);
 
 
 		if(movedObject){
@@ -41,23 +40,18 @@ class ListenersManager{
 		return false;
 	}
 
-	mouseDoubleClick(position, button){
-		var result = false,
-			vec = new GVector2f(100, 40);
+	mouseDoubleClick(position){
+		var result	= false,
+			vec 	= new GVector2f(100, 40);
 
 		Scene.forEach(function(e){
-			if(result)
-				return;
-			if(typeof e.doubleClickIn !== "undefined" && e.doubleClickIn(position.x, position.y))
+			if(!result && typeof e.doubleClickIn !== "undefined" && e.doubleClickIn(position.x, position.y))
 				result = e;
-
 		});
 
 		if(result === false)
-			getText("", position, vec, function(val){
-				if(val.length > 0)
-					Scene.addToScene(new Text(val, position, vec));
-			});
+			getText("", position, vec, val => val.length > 0 && Scene.addToScene(new Text(val, position, vec)));
+
 		draw();
 		return true;
 	}
@@ -65,6 +59,9 @@ class ListenersManager{
 	mouseUp(position){
 		var result = false;
 
+		/*
+		 * SKONTROLUJE KONTEXTOVE MENU A AK SA KLILKLO NA NEHO TAK HO VYPNE A SKONCI
+		 */
 		if(actContextMenu){
 			if(!actContextMenu.clickIn(position.x, position.y))
 				actContextMenu = false;
@@ -73,8 +70,7 @@ class ListenersManager{
 		}
 
 		if(Creator.object && Creator.object.name != "Join"){
-			Scene.addToScene(Creator.object);
-			Creator.object = false;
+			Creator.finishCreating(position);
 			return;
 		}
 
@@ -82,14 +78,23 @@ class ListenersManager{
 			return;
 
 		closeDialog();
-		if(movedObject)
-			movedObject.moving = false;
-		movedObject = false;
 
+		/*
+		 * AK SA HYBALO S NEJAKYM OBJEKTOM TAK SA DOKONCI POHYB
+		 */
+		if(movedObject){
+			movedObject.moving = false;
+			movedObject = false;
+		}
+
+		/*
+		 * AK JE VYBRATY NASTROJ KRESBA TAK SA PRERUSI CIARA
+		 */
 		if(Creator.operation == OPERATION_DRAW_PATH){
 			Scene.paint.addPoint(position, Creator.color);
 			Scene.paint.breakLine();
 		}
+
 		Scene.forEach(function(o){
 			if(result)
 				return;
@@ -103,25 +108,18 @@ class ListenersManager{
 				else
 					Input.isKeyDown(L_CTRL_KEY) ? selectedObjects.add(o) : selectedObjects.clearAndAdd(o);
 				result = true;
-
 			}
 		});
 
 		Creator.object = false;
-		if(!result)
-			selectedObjects.clear();
-			//deselectAll();
+		result || selectedObjects.clear();
 	}
 
 	mouseMove(position, movX, movY){
 		//ak sa hýbe nejakým objektom
 		if(movedObject && Creator.operation != OPERATION_DRAW_PATH){
 			//prejdu sa všetky označené objekty a pohne sa nimi
-			selectedObjects.forEach(function(e){
-				Movement.move(e, movX, movY);
-			});
-			//for(var i in selectedObjects)
-			//	Movement.move(selectedObjects[i], movement.x, movement.y)
+			selectedObjects.forEach(e => Movement.move(e, movX, movY));
 
 			//ak objekt s ktorým sa hýbe nieje označený(už sa sním pohlo) tak sa sním tiež pohne
 			if(!movedObject.selected)
@@ -129,7 +127,7 @@ class ListenersManager{
 
 			//ak sú nejaké objekty označené tak sa aktualizuje prehlad posledného označeného ináč iba hýbaného
 			if(selectedObjects.size() > 0)
-				updateSelectedObjectView(selectedObjects.get(selectedObjects.size() - 1));
+				updateSelectedObjectView(selectedObjects.getLast());
 			else if(movedObject)
 				updateSelectedObjectView(movedObject);
 		}
@@ -140,7 +138,7 @@ class ListenersManager{
 			draw();
 		}
 
-		//ak sa vytvára objekt tak sa nakreslí nový posunutie
+		//ak sa vytvára objekt tak sa nakreslí nové posunutie
 		if(Creator.object){
 			updateSelectedObjectView(Creator.object);
 			Creator.object.updateCreatingPosition(position);

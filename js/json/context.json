@@ -6,16 +6,19 @@
 			"linear" : {
 				"label" : "Linear",
 				"type" : "radio",
+				"group" : "lineTypeValue",
 				"name" : 2000
 			},
 			"sequencal" : {
 				"label" : "Sequencal",
 				"type" : "radio",
+				"group" : "lineTypeValue",
 				"name" : 2002
 			},
 			"bezier" : {
 				"label" : "Bezier",
 				"type" : "radio",
+				"group" : "lineTypeValue",
 				"name" : 2001
 			}
 		}
@@ -27,16 +30,19 @@
 			"normalLine" : {
 				"label" : "Normal line",
 				"type" : "radio",
+				"group" : "lineStyleValue",
 				"name" : 2100
 			},
 			"strippedLine" : {
 				"label" : "Stripped line",
 				"type" : "radio",
+				"group" : "lineStyleValue",
 				"name" : 2101
 			},
 			"fillLine" : {
 				"label" : "Filled line",
 				"type" : "radio",
+				"group" : "lineStyleValue",
 				"name" : 2102
 			}
 		}
@@ -48,16 +54,19 @@
 			"buttCap" : {
 				"label" : "Butt cap",
 				"type" : "radio",
+				"group" : "lineCapValue",
 				"name" : "butt"
 			},
 			"roundCap" : {
 				"label" : "Round cap",
 				"type" : "radio",
+				"group" : "lineCapValue",
 				"name" : "round"
 			},
 			"squareCap" : {
 				"label" : "Square cap",
 				"type" : "radio",
+				"group" : "lineCapValue",
 				"name" : "square"
 			}
 		}
@@ -69,16 +78,19 @@
 			"miterJoin" : {
 				"label" : "Miter join",
 				"type" : "radio",
+				"group" : "joinTypeValue",
 				"name" : "miter"
 			},
 			"roundJoin" : {
 				"label" : "Round join",
 				"type" : "radio",
+				"group" : "joinTypeValue",
 				"name" : "round"
 			},
 			"bevelJoin" : {
 				"label" : "Bevel join",
 				"type" : "radio",
+				"group" : "joinTypeValue",
 				"name" : "bevel"
 			}
 		}
@@ -169,16 +181,19 @@
 			"topVAlign" : {
 				"label" : "Top",
 				"type" : "radio",
+				"group" : "valignValue",
 				"name" : "top"
 			},
 			"middleVAlign" : {
 				"label" : "Middle",
 				"type" : "radio",
+				"group" : "valignValue",
 				"name" : "middle"
 			},
 			"bottomVAlign" : {
 				"label" : "Bottom",
 				"type" : "radio",
+				"group" : "valignValue",
 				"name" : "bottom"
 			}
 		}
@@ -190,16 +205,19 @@
 			"leftHAlign" : {
 				"label" : "Left",
 				"type" : "radio",
+				"group" : "halignValue",
 				"name" : "left"
 			},
 			"centerHAlign" : {
 				"label" : "Center",
 				"type" : "radio",
+				"group" : "halignValue",
 				"name" : "center"
 			},
 			"rightHAlign" : {
 				"label" : "Right",
 				"type" : "radio",
+				"group" : "halignValue",
 				"name" : "right"
 			}
 		}
@@ -208,33 +226,104 @@
 		"label" : "Make copy",
 		"type" : "text"
 	},
+	"radius" : {
+		"label" : "Radius",
+		"type" : "text",
+		"fields" : {
+			"0Radius" : {
+				"label" : "none",
+				"group" : "roundRadius",
+				"type" : "radio",
+				"name" : 0
+			},
+			"10%Radius" : {
+				"label" : "10%",
+				"group" : "roundRadius",
+				"type" : "radio",
+				"name" : 0.1
+			},
+			"20%Radius" : {
+				"label" : "20%",
+				"group" : "roundRadius",
+				"type" : "radio",
+				"name" : 0.2
+			},
+			"50%Radius" : {
+				"label" : "50%",
+				"group" : "roundRadius",
+				"type" : "radio",
+				"name" : 0.5
+			},
+			"75%Radius" : {
+				"label" : "75%",
+				"group" : "roundRadius",
+				"type" : "radio",
+				"name" : 0.75
+			},
+			"100%Radius" : {
+				"label" : "100%",
+				"group" : "roundRadius",
+				"type" : "radio",
+				"name" : 1
+			},
+			"10pxRadius" : {
+				"label" : "10px",
+				"group" : "roundRadius",
+				"type" : "radio",
+				"name" : "10"
+			},
+			"20pxRadius" : {
+				"label" : "20px",
+				"group" : "roundRadius",
+				"type" : "radio",
+				"name" : "20"
+			},
+			"40pxRadius" : {
+				"label" : "40px",
+				"group" : "roundRadius",
+				"type" : "radio",
+				"name" : "40"
+			},
+			"80pxRadius" : {
+				"label" : "80px",
+				"group" : "roundRadius",
+				"type" : "radio",
+				"name" : "80"
+			}
+		}
+	},
 	"lineWidth" : {
 		"label" : "Line width",
 		"type" : "text",
 		"fields" : {
 			"1pxWidth" : {
 				"label" : "1 px",
-				"type" : "widthValue",
+				"group" : "widthValue",
+				"type" : "radio",
 				"name" : 1
 			},
 			"2pxWidth" : {
 				"label" : "2 px",
-				"type" : "widthValue",
+				"group" : "widthValue",
+				"type" : "radio",
 				"name" : 2
 			},
 			"5pxWidth" : {
 				"label" : "5 px",
-				"type" : "widthValue",
+				"group" : "widthValue",
+				"type" : "radio",
 				"name" : 5
 			},
 			"10pxWidth" : {
 				"label" : "10 px",
-				"type" : "widthValue",
+				"group" : "widthValue",
+				"type" : "radio",
 				"name" : 10
 			},
 			"20pxWidth" : {
 				"label" : "20 px",
-				"type" : "widthValue",
+				"group" : "widthValue",
+				"type" : "radio",
 				"name" : 20
 			},
 			"otherWidth" : {
@@ -243,8 +332,90 @@
 			}
 		}
 	},
-	"makeCopy" : {
-		"label" : "Make copy",
-		"type" : "text"
+	"arrowEndType": {
+		"label" : "Arrow end type",
+		"type" : "text",
+		"fields" : {
+			"arrowEndNone": {
+				"label": "none",
+				"group": "arrowEndType",
+				"type" : "radio",
+				"name": 0
+			},
+			"arrowEnd0": {
+				"label": "classic",
+				"group": "arrowEndType",
+				"type" : "radio",
+				"name": 2210
+			},
+			"arrowEnd1": {
+				"label": "closed",
+				"group": "arrowEndType",
+				"type" : "radio",
+				"name": 2211
+			},
+			"arrowEnd2": {
+				"label": "filled",
+				"group": "arrowEndType",
+				"type" : "radio",
+				"name": 2212
+			},
+			"arrowEnd3": {
+				"label": "diamond",
+				"group": "arrowEndType",
+				"type" : "radio",
+				"name": 2213
+			},
+			"arrowEnd4": {
+				"label": "diamond filled",
+				"group": "arrowEndType",
+				"type" : "radio",
+				"name": 2214
+			}
+
+
+		}
+	},
+	"arrowStartType": {
+		"label" : "Arrow start type",
+		"type" : "text",
+		"fields" : {
+			"arrowStartNone": {
+				"label": "none",
+				"group": "arrowStartType",
+				"type" : "radio",
+				"name": 0
+			},
+			"arrowStart0": {
+				"label": "classic",
+				"group": "arrowStartType",
+				"type" : "radio",
+				"name": 2210
+			},
+			"arrowStart1": {
+				"label": "closed",
+				"group": "arrowStartType",
+				"type" : "radio",
+				"name": 2211
+			},
+			"arrowStart2": {
+				"label": "filled",
+				"group": "arrowStartType",
+				"type" : "radio",
+				"name": 2212
+			},
+			"arrowStart3": {
+				"label": "diamond",
+				"group": "arrowStartType",
+				"type" : "radio",
+				"name": 2213
+			},
+			"arrowStart4": {
+				"label": "diamond filled",
+				"group": "arrowStartType",
+				"type" : "radio",
+				"name": 2214
+			}
+		}
 	}
 }

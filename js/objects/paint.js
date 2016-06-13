@@ -99,18 +99,19 @@ class Paint extends Entity{
 		var arr = this._points[this._actColor][this._points[this._actColor].length - 1];
 
 		if(arr.length > 0){
+			var lastPoint = arr[arr.length - 1];
 			/*
 			this._context.lineCap 		= LINE_CAP_ROUND;
 			this._context.lineWidth 	= this.borderWidth;
 			this._context.strokeStyle	= color;
 			this._context.beginPath();
 			this._context.moveTo(point.x, point.y);
-			this._context.lineTo(arr[arr.length - 1].x, arr[arr.length - 1].y);
+			this._context.lineTo(lastPoint.x, lastPoint.y);
 			this._context.stroke();
-			*/
+			 */
 
-			var lastPoint = arr[arr.length - 1];
 			var dist = point.dist(lastPoint);
+			//this._context.globalAlpha = 1 / dist;
 			var angle = Math.atan2(point.x - lastPoint.x, point.y - lastPoint.y);
 			for (var i = 0; i < dist; i++)
 				this._context.drawImage(this._img2,
@@ -118,6 +119,8 @@ class Paint extends Entity{
 										lastPoint.y + (Math.cos(angle) * i) - (this._brushSize.y >> 1),
 										this._brushSize.x,
 										this._brushSize.y);
+
+			this._context.globalAlpha = 1;
 
 		}
 		arr.push(point);

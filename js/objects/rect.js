@@ -2,8 +2,16 @@ class Rect extends Entity {
 	constructor(position, size, color){
 		super("Rect", position, size, color);
 		this.moveType 	= -1;
-		this._minSize 	= new GVector2f(SELECTOR_SIZE);
+		this._radius	= 0;
+		this.minSize 	= new GVector2f(SELECTOR_SIZE);
 		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1))
+	}
+
+	set radius(val){
+		this._radius = parseFloat(val);
+		if(this._radius < 100)
+			this._radius *= 100;
+		this._checkRadius();
 	}
 
 	updateCreatingPosition(pos){
@@ -38,10 +46,16 @@ class Rect extends Entity {
 		return this.moveType >= 0;
 	};
 
+	_checkRadius(){
+		if(this._radius > Math.min(this.size.x, this.size.y) >> 1)
+			this._radius = Math.min(this.size.x, this.size.y) >> 1;
+	}
 
 	draw(){
 		if (!this.visible)
 			return;
+
+		this._checkRadius();
 
 		doRect({
 			position: this.position,
@@ -49,7 +63,8 @@ class Rect extends Entity {
 			fillColor: this.fillColor,
 			shadow: this.moving && !this.locked,
 			borderWidth: this.borderWidth,
-			borderColor: this.borderColor
+			borderColor: this.borderColor,
+			radius: this._radius
 		});
 
 		Entity.drawConnectors(this);

@@ -1,5 +1,5 @@
 class Table extends Entity{
-	constructor(position, size, data){
+	constructor(position, size, data = [[]]){
 		super("Table", position, size);
 		this.data = data;
 		this.headerColor 	= TABLE_HEADER_COLOR;
@@ -9,10 +9,10 @@ class Table extends Entity{
 		this.columnWidth 	= this._size.x / this.data[0].length;
 		this._lineHeight	= TABLE_LINE_HEIGHT;
 		this.borderColor	= shadeColor1(TABLE_HEADER_COLOR, -20);
+		this._tableRadius	= TABLE_RADIUS;
+		this._fontSize 		= DEFAULT_FONT_SIZE;
 
-		this._size.set(this._size.x, data.length * this._lineHeight);
-
-
+		this.size.set(this._size.x, data.length * this._lineHeight);
 		this._calcMaxTextWidth();
 	}
 
@@ -120,7 +120,7 @@ class Table extends Entity{
 
 	_calcMaxTextWidth(value = 0){
 		var w;
-		context.font = DEFAULT_FONT_SIZE + "pt " + DEFAULT_FONT;
+		context.font = this._fontSize + "pt " + DEFAULT_FONT;
 		if(typeof value === "string"){
 			w = context.measureText(value).width + (this.textOffset << 1);
 			if(w > this._maxTextWidth){
@@ -139,8 +139,8 @@ class Table extends Entity{
 	}
 
 	_checkSize(){
-		if(this.size.y < TABLE_LINE_HEIGHT * this.data.length)
-			this.size.y = TABLE_LINE_HEIGHT * this.data.length;
+		if(this.size.y < this._fontSize * 2 * this.data.length)
+			this.size.y = this._fontSize * 2 * this.data.length;
 
 		this._lineHeight = this.size.y / this.data.length;
 		this.columnWidth = Math.max(this.size.x / this.data[0].length, this._maxTextWidth);
@@ -169,8 +169,9 @@ class Table extends Entity{
 	draw(){
 		var i,
 			j,
-			posX,
-			posY;
+			posX = this._position.x,
+			posY = this._position.y,
+			points = [];
 
 
 		if(this.moveType >= 0)
@@ -182,7 +183,7 @@ class Table extends Entity{
 			position: this._position,
 			width: this._size.x,
 			height: this._lineHeight,
-			radius: {tr: TABLE_RADIUS, tl: TABLE_RADIUS},
+			radius: {tr: this._tableRadius, tl: this._tableRadius},
 			fillColor: this.headerColor,
 			shadow: this.moving && !this.locked
 		});
@@ -193,44 +194,47 @@ class Table extends Entity{
 			y: this._position.y +  this._lineHeight,
 			width: this._size.x,
 			height: this._lineHeight * (this.data.length - 1),
-			radius: {br: TABLE_RADIUS, bl: TABLE_RADIUS},
+			radius: {br: this._tableRadius, bl: this._tableRadius},
 			fillColor: this._bodyColor,
 			shadow: this.moving && !this.locked
 		});
-		//DRAW BORDER
 
+		//DRAW BORDER
 		doRect({
 			position: this._position,
 			size: this._size,
-			radius: TABLE_RADIUS,
+			radius: this._tableRadius,
 			borderColor: this.borderColor,
 			borderWidth: this.borderWidth
 		});
 
-
-
-		///DRAW HEADER TEXT AND VERTICAL LINES
-		posX = this._position.x;
+		///DRAW HEADER TEXT
 		for(i=0 ; i<this.data[0].length ; i++) {
 			if (i > 0)
-				drawLine([posX, this._position.y, posX, this._position.y + this.data.length * this._lineHeight], this.borderWidth, this.borderColor);
-			fillText(this.data[0][i], posX + (this.columnWidth >> 1),  this._position.y + (this._lineHeight >> 1), DEFAULT_FONT_SIZE, DEFAULT_FONT_COLOR, 0, FONT_ALIGN_CENTER);
+				points.push([posX, this._position.y, posX, this._position.y + this.data.length * this._lineHeight]);
+			fillText(this.data[0][i], posX + (this.columnWidth >> 1),  this._position.y + (this._lineHeight >> 1), this._fontSize, DEFAULT_FONT_COLOR, 0, FONT_ALIGN_CENTER);
 			posX += this.columnWidth;
 		}
 
-		//DRAW BODY TEXT AND HORIZONTAL LINES
-		posY = this._position.y;
+		//DRAW BODY TEXT
 		for(i=1 ; i<this.data.length ; i++){
 			posX = this._position.x;
 			posY += this._lineHeight;
 			if(i > 0)
-				drawLine([this._position.x, posY, this._position.x + this._size.x, posY], this.borderWidth, this.borderColor);
+				points.push([this._position.x, posY, this._position.x + this._size.x, posY]);
 			for(j=0 ; j<this.data[i].length ; j++) {
-				fillText(this.data[i][j], posX + (this.columnWidth >> 1),  posY + (this._lineHeight >> 1), DEFAULT_FONT_SIZE, DEFAULT_FONT_COLOR, 0, FONT_ALIGN_CENTER);
+				fillText(this.data[i][j], posX + (this.columnWidth >> 1),  posY + (this._lineHeight >> 1), this._fontSize, DEFAULT_FONT_COLOR, 0, FONT_ALIGN_CENTER);
 				posX += this.columnWidth;
 			}
 		}
-		if(this._selected)
-			drawBorder(this);
+
+		//HORIZONTAL AND VERTICAL LINES
+		doLine({
+			points: points,
+			borderWidth: this.borderWidth,
+			borderColor: this.borderColor
+		});
+
+		drawBorder(this);
 	}
 }
