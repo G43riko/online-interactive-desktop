@@ -3,7 +3,7 @@ class Line extends Entity{
 		super("Line", new GVector2f(), new GVector2f(), color);
 
 		this.points 			= points;
-		this.borderWidth 		= width;
+		this._borderWidth		= width;
 		this.movingPoint		= -1;
 		this._lineCap			= LINE_CAP_BUTT;
 		this._joinType			= LINE_JOIN_MITER;
@@ -146,7 +146,7 @@ class Line extends Entity{
 			//points: res,
 			points: this.points,
 			borderWidth: this.borderWidth,
-			borderColor: this.borderColor,
+			borderColor: this.fillColor,
 			radius: this._radius,
 			lineDash: this._lineStyle == LINE_STYLE_STRIPPED ? [15, 5] : []
 		});

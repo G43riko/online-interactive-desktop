@@ -1,7 +1,7 @@
 class Paint extends Entity{
 	constructor(color, width){
 		super("Paint", new GVector2f(), new GVector2f(), color);
-		this.borderWidth 	= width;
+		this._borderWidth		= width;
 		this._points 		= {color: [[]]};
 		this._count 		= 0;
 		this._actColor 		= color;
@@ -27,6 +27,8 @@ class Paint extends Entity{
 	setImage(title){
 		this._selectedImg = this._images[title];
 		this.rePaintImage();
+		if(typeof Sharer === "object" && Sharer.isSharing)
+			Sharer.paint.changeBrush(title);
 		Menu._redraw();
 	}
 
@@ -41,11 +43,13 @@ class Paint extends Entity{
 
 		if(this._selectedImg == null){
 			this._selectedImg = img;
+			if(typeof Sharer === "object" && Sharer.isSharing)
+				Sharer.paint.changeBrush(title);
 			Menu._redraw();
 		}
 	}
 
-	rePaintImage(){
+	rePaintImage(colorNew){
 		var c = document.createElement('canvas');
 		c.width = this._brushSize.x;
 		c.height = this._brushSize.y;
@@ -54,6 +58,7 @@ class Paint extends Entity{
 		ctx.drawImage(this._selectedImg, 0, 0, this._brushSize.x, this._brushSize.y);
 		var imgData = ctx.getImageData(0, 0, this._brushSize.x, this._brushSize.y);
 		var data = imgData.data;
+		//var color = colorNew.replace("rgb(", "").replace("rgba(", "").replace(")", "").split(", ").map(a => parseInt(a));
 		var color = Creator.color.replace("rgb(", "").replace("rgba(", "").replace(")", "").split(", ").map(a => parseInt(a));
 		for(var i=3 ; i<data.length ; i+=4){
 			if(data[i] == 0)
@@ -70,6 +75,8 @@ class Paint extends Entity{
 		this._points[this._actColor] = [[]];
 		this._count = 0;
 		this._context.clearRect(0, 0, canvas.width, canvas.height);
+		if(typeof Sharer === "object" && Sharer.isSharing)
+			Sharer.paint.clean();
 	};
 
 	addPoint(point, color = "#000000"){
@@ -86,10 +93,11 @@ class Paint extends Entity{
 		}
 		this._count++;
 
+		if(typeof Sharer === "object" && Sharer.isSharing)
+			Sharer.paint.addPoint(point, color);
 
 		if(this._actColor != color)
 			this.rePaintImage();
-
 
 		this._actColor = color;
 		if(!this._points.hasOwnProperty(this._actColor))
@@ -127,7 +135,11 @@ class Paint extends Entity{
 	};
 
 	breakLine() {
+		console.log("breakingLine");
 		this._points[this._actColor].push([]);
+
+		if(typeof Sharer === "object" && Sharer.isSharing)
+			Sharer.paint.breakLine();
 	};
 
 	draw() {

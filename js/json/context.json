@@ -299,31 +299,31 @@
 			"1pxWidth" : {
 				"label" : "1 px",
 				"group" : "widthValue",
-				"type" : "radio",
+				"type" : "widthValue",
 				"name" : 1
 			},
 			"2pxWidth" : {
 				"label" : "2 px",
 				"group" : "widthValue",
-				"type" : "radio",
+				"type" : "widthValue",
 				"name" : 2
 			},
 			"5pxWidth" : {
 				"label" : "5 px",
 				"group" : "widthValue",
-				"type" : "radio",
+				"type" : "widthValue",
 				"name" : 5
 			},
 			"10pxWidth" : {
 				"label" : "10 px",
 				"group" : "widthValue",
-				"type" : "radio",
+				"type" : "widthValue",
 				"name" : 10
 			},
 			"20pxWidth" : {
 				"label" : "20 px",
 				"group" : "widthValue",
-				"type" : "radio",
+				"type" : "widthValue",
 				"name" : 20
 			},
 			"otherWidth" : {

@@ -1,5 +1,18 @@
 class Watcher{
 	constructor(){
+		this._mouseData = {
+			posX: window.innerWidth << 1,
+			posY: window.innerHeight << 1,
+			buttonDown: false
+		};
+
+		this._canvas = document.getElementById("pointerCanvas");
+		var c = $(document.getElementById("myCanvas"));
+		this._canvas.width = c.width();
+		this._canvas.height = c.height();
+		this._context 		= this._canvas.getContext('2d');
+
+
 		this._socket = io();
 		this._id = Watcher.processParameters();
 		var inst = this,
@@ -10,7 +23,6 @@ class Watcher{
 				},
 				id: this._id
 			};
-		console.log(data);
 		this._socket.emit('startWatch', JSON.stringify(data));
 
 		this._socket.on('notification', function(msg){
@@ -32,11 +44,50 @@ class Watcher{
 			Watcher.processOperation(JSON.parse(msg));
 		});
 
+		this._socket.on("paintAction", function(msg){
+			Watcher.processPaintAction(JSON.parse(msg));
+		});
+
+
+
+		this._socket.on("mouseData", function(msg){
+			inst._mouseData = JSON.parse(msg);
+			inst._context.clearRect(0, 0, inst._canvas.width, inst._canvas.height);
+			doArc({
+				x: inst._mouseData.posX - 20,
+				y: inst._mouseData.posY - 20,
+				fillColor: "rgba(255,0,0,0.1)",
+				width: 40,
+				height: 40,
+				ctx: inst._context
+			})
+		});
+
 		this._socket.on('sendAllData', msg => inst.processContent(JSON.parse(JSON.parse(msg))));
 	}
 
 	processContent(content){
 		content.forEach(e => Creator.create(e));
+	}
+
+	static processPaintAction(data){
+		switch(data.action){
+			case ACTION_PAINT_ADD_POINT :
+				Scene.paint.addPoint(new GVector2f(data.pX, data.pY), data.color);
+				break;
+			case ACTION_PAINT_BREAK_LINE :
+				Scene.paint.breakLine();
+				break;
+			case ACTION_PAINT_CHANGE_BRUSH :
+				Scene.paint.setImage(data.brush);
+				break;
+			case ACTION_PAINT_CLEAN :
+				Scene.paint.clean();
+				break;
+			default :
+				Logger.error("bola prijatá neznáma akcia: " + data.action);
+		}
+		draw();
 	}
 
 	static processOperation(data){

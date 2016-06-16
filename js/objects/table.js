@@ -2,13 +2,14 @@ class Table extends Entity{
 	constructor(position, size, data = [[]]){
 		super("Table", position, size);
 		this.data = data;
-		this.headerColor 	= TABLE_HEADER_COLOR;
+		this._headerColor 	= TABLE_HEADER_COLOR;
 		this.moveType 		= -1;
 		this._bodyColor	 	= TABLE_BODY_COLOR;
-		this.textOffset		= TABLE_TEXT_OFFSET;
-		this.columnWidth 	= this._size.x / this.data[0].length;
+		this._textOffset		= TABLE_TEXT_OFFSET;
+		this._columnWidth 	= this._size.x / this.data[0].length;
 		this._lineHeight	= TABLE_LINE_HEIGHT;
-		this.borderColor	= shadeColor1(TABLE_HEADER_COLOR, -20);
+
+		this._borderColor		= shadeColor1(TABLE_HEADER_COLOR, -20);
 		this._tableRadius	= TABLE_RADIUS;
 		this._fontSize 		= DEFAULT_FONT_SIZE;
 
@@ -24,7 +25,7 @@ class Table extends Entity{
 			}, this);
 		}
 		else if(type == "column"){
-			var column = parseInt((pos - this._position.x) / this.columnWidth);
+			var column = parseInt((pos - this._position.x) / this._columnWidth);
 			this.data.forEach(function(e){
 				e[column] = "";
 			});
@@ -55,7 +56,7 @@ class Table extends Entity{
 	}
 
 	addColumn(x, type){
-		var column = parseInt((x - this._position.x) / this.columnWidth),
+		var column = parseInt((x - this._position.x) / this._columnWidth),
 			offset = 0;
 		if(type == "right")
 			offset++;
@@ -64,7 +65,7 @@ class Table extends Entity{
 			e.splice(column + offset, 0, [""]);
 		});
 
-		this.columnWidth 	= this._size.x / this.data[0].length;
+		this._columnWidth 	= this._size.x / this.data[0].length;
 		this._checkSize();
 
 	}
@@ -84,12 +85,12 @@ class Table extends Entity{
 	}
 
 	removeColumn(x){
-		var column = parseInt((x - this._position.x) / this.columnWidth);
+		var column = parseInt((x - this._position.x) / this._columnWidth);
 
 		this.data.forEach(function(e){
 			e.splice(column, 1);
 		});
-		this.columnWidth 	= this._size.x / this.data[0].length;
+		this._columnWidth 	= this._size.x / this.data[0].length;
 		this._calcMaxTextWidth();
 
 		if(this.data[0].length == 0)
@@ -122,7 +123,7 @@ class Table extends Entity{
 		var w;
 		context.font = this._fontSize + "pt " + DEFAULT_FONT;
 		if(typeof value === "string"){
-			w = context.measureText(value).width + (this.textOffset << 1);
+			w = context.measureText(value).width + (this._textOffset << 1);
 			if(w > this._maxTextWidth){
 				this._maxTextWidth = w;
 				return;
@@ -131,7 +132,7 @@ class Table extends Entity{
 		this._maxTextWidth = 0;
 		this.data.forEach(function(e){
 			e.forEach(function(ee){
-				var w = context.measureText(ee).width + (this.textOffset << 1);
+				var w = context.measureText(ee).width + (this._textOffset << 1);
 				if(w > this._maxTextWidth)
 					this._maxTextWidth = w;
 			},this);
@@ -143,8 +144,8 @@ class Table extends Entity{
 			this.size.y = this._fontSize * 2 * this.data.length;
 
 		this._lineHeight = this.size.y / this.data.length;
-		this.columnWidth = Math.max(this.size.x / this.data[0].length, this._maxTextWidth);
-		this.size.x = this.columnWidth * this.data[0].length;
+		this._columnWidth = Math.max(this.size.x / this.data[0].length, this._maxTextWidth);
+		this.size.x = this._columnWidth * this.data[0].length;
 	}
 
 	doubleClickIn(x, y){
@@ -152,10 +153,10 @@ class Table extends Entity{
 			return false;
 
 		var row = parseInt((y - this._position.y) / this._lineHeight),
-			column = parseInt((x - this._position.x) / this.columnWidth),
+			column = parseInt((x - this._position.x) / this._columnWidth),
 			posY = this._position.y + row * this._lineHeight + 1,
-			posX = this._position.x + column * this.columnWidth + 1,
-			w = this.columnWidth;
+			posX = this._position.x + column * this._columnWidth + 1,
+			w = this._columnWidth;
 
 		getText(this.data[row][column], new GVector2f(posX, posY), new GVector2f(w, this._lineHeight).sub(4), function(val){
 			this.data[row][column] = val;
@@ -184,7 +185,7 @@ class Table extends Entity{
 			width: this._size.x,
 			height: this._lineHeight,
 			radius: {tr: this._tableRadius, tl: this._tableRadius},
-			fillColor: this.headerColor,
+			fillColor: this._headerColor,
 			shadow: this.moving && !this.locked
 		});
 
@@ -212,8 +213,8 @@ class Table extends Entity{
 		for(i=0 ; i<this.data[0].length ; i++) {
 			if (i > 0)
 				points.push([posX, this._position.y, posX, this._position.y + this.data.length * this._lineHeight]);
-			fillText(this.data[0][i], posX + (this.columnWidth >> 1),  this._position.y + (this._lineHeight >> 1), this._fontSize, DEFAULT_FONT_COLOR, 0, FONT_ALIGN_CENTER);
-			posX += this.columnWidth;
+			fillText(this.data[0][i], posX + (this._columnWidth >> 1),  this._position.y + (this._lineHeight >> 1), this._fontSize, DEFAULT_FONT_COLOR, 0, FONT_ALIGN_CENTER);
+			posX += this._columnWidth;
 		}
 
 		//DRAW BODY TEXT
@@ -223,8 +224,8 @@ class Table extends Entity{
 			if(i > 0)
 				points.push([this._position.x, posY, this._position.x + this._size.x, posY]);
 			for(j=0 ; j<this.data[i].length ; j++) {
-				fillText(this.data[i][j], posX + (this.columnWidth >> 1),  posY + (this._lineHeight >> 1), this._fontSize, DEFAULT_FONT_COLOR, 0, FONT_ALIGN_CENTER);
-				posX += this.columnWidth;
+				fillText(this.data[i][j], posX + (this._columnWidth >> 1),  posY + (this._lineHeight >> 1), this._fontSize, DEFAULT_FONT_COLOR, 0, FONT_ALIGN_CENTER);
+				posX += this._columnWidth;
 			}
 		}
 

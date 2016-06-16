@@ -29,9 +29,7 @@ class Entity{
 
 
 	addConnector(){
-		objectToArray(arguments).forEach(function(e){
-			this._connectors.push(e);
-		}, this);
+		objectToArray(arguments).forEach(e => this._connectors.push(e), this);
 	}
 
 	/**
@@ -47,6 +45,14 @@ class Entity{
 	};
 
 	draw(){};
+
+	static changeAttr(obj, data, val, underscore = true){
+		if(typeof data == "object")
+			$.each(data, (i, e) => obj[(underscore ? "_" : "") + i] = e);
+		else
+			obj[(underscore ? "_" : "") + data] = val;
+		return obj;
+	}
 
 	static findMinAndMax(points, position, size){
 		position.set(points[0]);
@@ -134,9 +140,9 @@ class Entity{
 	set locked(val){this._locked = val;}
 	set minSize(val){this._minSize = val};
 	set selected(val){this._selected = val;}
-	set fillColor(val){this._fillColor = val;}
-	set borderWidth(val){this._borderWidth = val;}
-	set borderColor(val){this._borderColor = val;}
+	//set fillColor(val){this._fillColor = val;}
+	//set borderWidth(val){this._borderWidth = val;}
+	//set borderColor(val){this._borderColor = val;}
 	set selectedConnector(val){this._selectedConnector = val;}
 
 }

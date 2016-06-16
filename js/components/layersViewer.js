@@ -1,9 +1,8 @@
 class LayersViewer extends Entity{
 	constructor(){
 		super("LayerViewer", new GVector2f(1300, 100), new GVector2f(180, 500), "white");
-		this.borderColor 		= "blue";
-		this.borderWidth 		= 1;
-
+		this._borderColor		= "blue";
+		this._borderWidth		= 1;
 		this._layerPanelHeight 	= 50;
 		this._fontSize 			= 20;
 		this._fontColor 		= "black";

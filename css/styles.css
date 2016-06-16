@@ -41,12 +41,13 @@ body{
 	box-shadow: 1px 1px 0px #fff, inset 0px 0px 5px rgba(0, 0, 0, 0.5);
 }
 
-#myCanvas{
+.canvas{
 	position: absolute;
 
 	width: calc(100% - 2px);
 	height: calc(100% - 2px);
 }
+
 .animated{
 	-webkit-transition: all 0.5s ease;
 	-ms-transition: all 0.5s ease; 

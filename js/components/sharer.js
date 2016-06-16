@@ -2,10 +2,20 @@ class Sharer{
 	constructor(){
 		this._id = false;
 		this._socket = false;
+		this._sharing = false;
+		this.paint = {
+			addPoint: (point, color) => this._pointOperation(ACTION_PAINT_ADD_POINT, point, color),
+			breakLine: () => this._pointOperation(ACTION_PAINT_BREAK_LINE),
+			clean: () => this._pointOperation(ACTION_PAINT_CLEAN),
+			changeBrush: (brush) => this._pointOperation(ACTION_PAINT_CHANGE_BRUSH, brush)
+		}
 	}
+
+	get isSharing(){return this._sharing;}
 
 	startShare(password = "1234", limit = 100){
 		this._socket = io();
+		this._sharing = true;
 
 		var inst = this,
 			data = {
@@ -36,14 +46,72 @@ class Sharer{
 			var recData = JSON.parse(recieveData);
 			var data = {
 				id: inst._id,
-				content: inst._getContent(),
+				content: Sharer._getContent(),
 				target: recData.target
 			};
 			inst._socket.emit('sendAllData', JSON.stringify(data));
 		});
 	}
 
-	_getContent(){
+	_pointOperation(action, arg1, arg2){
+		var data;
+		switch(action){
+			case ACTION_PAINT_ADD_POINT :
+				data = {
+					id: this._id,
+					msg: {
+						action: action,
+						pX: arg1.x,
+						pY: arg1.y,
+						color: arg2
+					}
+				};
+				break;
+			case ACTION_PAINT_BREAK_LINE :
+				data = {
+					id: this._id,
+					msg: {
+						action: action
+					}
+				};
+				break;
+			case ACTION_PAINT_CHANGE_BRUSH :
+				data = {
+					id: this._id,
+					msg: {
+						action: action,
+						brush: arg1
+					}
+				};
+				break;
+			case ACTION_PAINT_CLEAN :
+				data = {
+					id: this._id,
+					msg: {
+						action: action
+					}
+				};
+				break;
+			default:
+				Logger.error("nastala chyba lebo sa chce vykonať neznáma paintAction: " + action);
+				return;
+		}
+		this._socket.emit('paintAction', JSON.stringify(data));
+	}
+
+	mouseChange(){
+		var data = {
+			id: this._id,
+			msg: {
+				posX: Input.mousePos.x,
+				posY: Input.mousePos.y,
+				buttonDown: Input.isButtonDown(LEFT_BUTTON)
+			}
+		};
+		this._socket.emit('mouseData', JSON.stringify(data));
+	}
+
+	static _getContent(){
 		return Scene.toString();
 	}
 

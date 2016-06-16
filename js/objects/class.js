@@ -8,17 +8,15 @@ class Class extends Table{
 		this._attr = attributes;
 		this._fontSize	= 15;
 		this._lineHeight = 30;
-		this.headerColor = "#24D330";
+		this._headerColor = "#24D330";
 		this._bodyColor = "#CCFFCC";
-		this.borderColor	= shadeColor1(this.headerColor, -20);
+		Entity.changeAttr(this, "borderColor", shadeColor1(this._headerColor, -20));
 
 		this._makeData();
 
 		this.size.set(this._size.x, this.data.length * this._lineHeight);
 		this._calcMaxTextWidth();
-		//console.log(Class._parseMethod(" +  initNieco (   void  ) :  GVector2f  "));
-		//console.log(Class._parseAttribute("  	  + 	   gabo  		   :    		string 			  "));
-		//console.log(Class._parseMethod(" +  initNieco (   gabo  :  String  , id :  number) :  GVector2f  "))
+		this._checkSize();
 	}
 
 	static _parseAttribute(string){

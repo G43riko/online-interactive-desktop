@@ -38,6 +38,27 @@ function angleBetween(a, b) {
 	return Math.atan2(b.y, b.x) - Math.atan2(a.y, a.x);
 }
 
+/*
+ * OBJECT
+ */
+/*
+Object.prototype.testasdasdad = function(func, thisArg){
+	for(var i in o)
+		if(o.hasOwnProperty(i))
+			func.call(thisArg, o[i], i, o);
+}
+
+Object.prototype.exist = function(key){
+	var o = Object(this);
+	return typeof o[key] !== "undefined";
+}
+
+Object.prototype.size = function(){
+	var res = 0;
+	this.each(() => res++);
+	return res;
+}
+*/
 Movement = {
 	move: function(o, x, y){
 		if(typeof o.locked !== "undefined" && o.locked)

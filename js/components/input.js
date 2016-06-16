@@ -6,8 +6,9 @@ class InputManager{
 		this._pressPosition = new GVector2f();
 		this._mousePos = new GVector2f();
 		this._lastTouch = false;
-
 	};
+
+	get mousePos(){return this._mousePos;}
 
 	_initWindowListeners(){
 		var inst = this;
@@ -134,6 +135,9 @@ class InputManager{
 
 	_mouseMove(val){
 		this._mousePos.set(val.offsetX, val.offsetY);
+
+		if(typeof Sharer === "object" && Sharer.isSharing)
+			Sharer.mouseChange();
 		if(this._timer)
 			if(this._pressPosition.dist(val.offsetX, val.offsetY) > TOUCH_VARIATION)
 				this._clearTimer();
@@ -141,6 +145,9 @@ class InputManager{
 
 	_buttonDown(val){
 		this._buttons[val.button] = true;
+		if(val.button == LEFT_BUTTON && typeof Sharer === "object" && Sharer.isSharing)
+				Sharer.mouseChange();
+
 		var t = this;
 		if (this._timer)
 			this._clearTimer();
@@ -152,6 +159,8 @@ class InputManager{
 		if (this._timer)
 			this._clearTimer();
 		this._buttons[val.button] = false;
+		if(val.button == LEFT_BUTTON && typeof Sharer === "object" && Sharer.isSharing)
+			Sharer.mouseChange();
 	};
 
 	isButtonDown(val){

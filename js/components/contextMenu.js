@@ -84,7 +84,7 @@ class ContextMenuManager{
 			pY = this._position.y,
 			menuWidth = this._menuWidth,
 			inst = this,
-			posY = pY + 0 * CONTEXT_MENU_LINE_HEIGHT,
+			posY = pY,
 			checkSize = 20,
 			offset = (CONTEXT_MENU_LINE_HEIGHT - checkSize) >> 1;
 
@@ -148,11 +148,11 @@ class ContextMenuManager{
 		var act = opt.key;
 		switch (act) {
 			case "changeFillColor":
-				pickUpColor(color => this._selectedObject.fillColor = color, this);
+				pickUpColor(color => Entity.changeAttr(this._selectedObject, "fillColor", color), this);
 				actContextMenu = false;
 				break;
 			case "changeBorderColor":
-				pickUpColor(color =>this._selectedObject.borderColor = color, this);
+				pickUpColor(color => Entity.changeAttr(this._selectedObject, "borderColor", color), this);
 				actContextMenu = false;
 				break;
 			case "delete":
@@ -223,7 +223,7 @@ class ContextMenuManager{
 				break;
 			default:
 				if(opt.group == "roundRadius"){
-					this._selectedObject.radius = opt.name;
+					Entity.changeAttr(this._selectedObject, "radius", opt.name, false);
 					actContextMenu = false;
 				}
 				else if(opt.group == "lineCapValue"){
@@ -239,7 +239,8 @@ class ContextMenuManager{
 					actContextMenu = false;
 				}
 				else if(opt.group == "widthValue"){
-					this._selectedObject.borderWidth = opt.name;
+					Entity.changeAttr(this._selectedObject, "borderWidth", opt.name);
+					//this._selectedObject.borderWidth = opt.name;
 					actContextMenu = false;
 				}
 				else if(opt.group == "arrowEndType"){

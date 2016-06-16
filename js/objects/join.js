@@ -6,8 +6,11 @@ class Join extends Entity{
 		this._obj2 				= null;
 		this._obj2_connector 	= null;
 		this._lineType 			= type;
+		Entity.changeAttr(this, {borderColor: "blue", borderWidth: 5})
+		/*
 		this.borderColor 		= "blue";
 		this.borderWidth 		= 5;
+		*/
 		this._tmpPos 			= obj1.position.getClone();
 	};
 
