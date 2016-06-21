@@ -1,16 +1,14 @@
 class Table extends Entity{
 	constructor(position, size, data = [[]]){
-		super("Table", position, size);
+		super("Table", position, size, {borderColor: shadeColor1(TABLE_HEADER_COLOR, -20), radius: TABLE_RADIUS});
 		this.data = data;
 		this._headerColor 	= TABLE_HEADER_COLOR;
 		this.moveType 		= -1;
 		this._bodyColor	 	= TABLE_BODY_COLOR;
-		this._textOffset		= TABLE_TEXT_OFFSET;
+		this._textOffset	= TABLE_TEXT_OFFSET;
 		this._columnWidth 	= this._size.x / this.data[0].length;
 		this._lineHeight	= TABLE_LINE_HEIGHT;
 
-		this._borderColor		= shadeColor1(TABLE_HEADER_COLOR, -20);
-		this._tableRadius	= TABLE_RADIUS;
 		this._fontSize 		= DEFAULT_FONT_SIZE;
 
 		this.size.set(this._size.x, data.length * this._lineHeight);
@@ -184,7 +182,7 @@ class Table extends Entity{
 			position: this._position,
 			width: this._size.x,
 			height: this._lineHeight,
-			radius: {tr: this._tableRadius, tl: this._tableRadius},
+			radius: {tr: this.radius, tl: this.radius},
 			fillColor: this._headerColor,
 			shadow: this.moving && !this.locked
 		});
@@ -195,7 +193,7 @@ class Table extends Entity{
 			y: this._position.y +  this._lineHeight,
 			width: this._size.x,
 			height: this._lineHeight * (this.data.length - 1),
-			radius: {br: this._tableRadius, bl: this._tableRadius},
+			radius: {br: this.radius, bl: this.radius},
 			fillColor: this._bodyColor,
 			shadow: this.moving && !this.locked
 		});
@@ -204,7 +202,7 @@ class Table extends Entity{
 		doRect({
 			position: this._position,
 			size: this._size,
-			radius: this._tableRadius,
+			radius: this.radius,
 			borderColor: this.borderColor,
 			borderWidth: this.borderWidth
 		});

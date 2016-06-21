@@ -105,7 +105,7 @@ class Watcher{
 				break;
 			case ACTION_CHANGE:
 				obj = Scene.get(data.oL, data.oId);
-				$.each(data.keys, (i, e) => obj[i] = e);
+				each(data.keys, (e, i) => obj[i] = e);
 				break;
 			case ACTION_CREATE:
 				Creator.create(data.o);

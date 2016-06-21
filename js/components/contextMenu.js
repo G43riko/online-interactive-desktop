@@ -29,7 +29,7 @@ class ContextMenuManager{
 
 		var hasExtension = false;
 
-		if(titles.length > 0)
+		if(titles.length)
 			titles.forEach(function(e, i, arr){
 				if(e["type"] == "radio"){
 					hasExtension = true;
@@ -79,14 +79,13 @@ class ContextMenuManager{
 		if(this._position.y + this._titles.length * CONTEXT_MENU_LINE_HEIGHT >canvas.height)
 			this._position.y = canvas.height - this._titles.length * CONTEXT_MENU_LINE_HEIGHT;
 
-		var count = 0,
-			pX = this._position.x,
-			pY = this._position.y,
-			menuWidth = this._menuWidth,
-			inst = this,
-			posY = pY,
-			checkSize = 20,
-			offset = (CONTEXT_MENU_LINE_HEIGHT - checkSize) >> 1;
+		var count 		= 0,
+			pX 			= this._position.x,
+			pY 			= this._position.y,
+			menuWidth 	= this._menuWidth,
+			posY 		= pY,
+			checkSize 	= 20,
+			offset 		= (CONTEXT_MENU_LINE_HEIGHT - checkSize) >> 1;
 
 		doRect({
 			position:[pX, pY],
@@ -100,16 +99,16 @@ class ContextMenuManager{
 			draw: true
 		});
 
-		$.each(this._titles, function(i, e){
+		each(this._titles, function(e, i){
 			context.fillStyle = DEFAULT_FONT_COLOR;
 			posY = pY + count * CONTEXT_MENU_LINE_HEIGHT;
-			if(count++ > 0)
+			if(count++)
 				doLine({points: [pX, posY, pX + menuWidth, posY], draw: true});
 
-			if(inst._subMenu && e["key"] == inst._subMenu._key)
-				fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, inst._textColor);
+			if(this._subMenu && e["key"] == this._subMenu._key)
+				fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor);
 			else
-				fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, inst._textColor, [CONTEXT_MENU_OFFSET, 0]);
+				fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor, [CONTEXT_MENU_OFFSET, 0]);
 
 			if(e["type"] == "checkbox")
 				doRect({
@@ -138,8 +137,8 @@ class ContextMenuManager{
 							 pX + menuWidth - offset, posY + (CONTEXT_MENU_LINE_HEIGHT >> 1)],
 					borderWidth: e["name"]
 				});
-		});
-
+		}, this);
+	
 		if(this._subMenu)
 			this._subMenu.draw();
 	};
@@ -269,7 +268,7 @@ class ContextMenuManager{
 
 		var i = parseInt((y - this._position.y) / CONTEXT_MENU_LINE_HEIGHT);
 
-		if(typeof this._titles[i] !== "undefined" && this._titles[i].hasOwnProperty("fields")){
+		if(isDefined(this._titles[i]) && this._titles[i].hasOwnProperty("fields")){
 			var pos = this._position.getClone().add(this._menuWidth, i * CONTEXT_MENU_LINE_HEIGHT);
 			if(pos.x + this._menuWidth > canvas.width)
 				pos.x -= this._menuWidth << 1;

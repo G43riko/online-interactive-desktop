@@ -45,12 +45,12 @@ class ListenersManager{
 			vec 	= new GVector2f(100, 40);
 
 		Scene.forEach(function(e){
-			if(!result && typeof e.doubleClickIn !== "undefined" && e.doubleClickIn(position.x, position.y))
+			if(!result && isDefined(e.doubleClickIn) && e.doubleClickIn(position.x, position.y))
 				result = e;
 		});
 
-		if(result === false)
-			getText("", position, vec, val => val.length > 0 && Scene.addToScene(new Text(val, position, vec)));
+		if(!result)
+			getText("", position, vec, val => val.length && Scene.addToScene(new Text(val, position, vec)));
 
 		draw();
 		return true;
@@ -126,7 +126,7 @@ class ListenersManager{
 				Movement.move(movedObject, movX, movY);
 
 			//ak sú nejaké objekty označené tak sa aktualizuje prehlad posledného označeného ináč iba hýbaného
-			if(selectedObjects.size() > 0)
+			if(selectedObjects.size())
 				updateSelectedObjectView(selectedObjects.getLast());
 			else if(movedObject)
 				updateSelectedObjectView(movedObject);

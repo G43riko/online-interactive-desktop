@@ -28,7 +28,7 @@ function doPolygon(obj){
 		var size = points.length;
 
 		if(res.radius == 0 || isNaN(res.radius))
-			points.forEach((e, i) => i > 0 ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
+			points.forEach((e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
 		else
 			points.forEach(function(e, i){
 				var v1, v2, l1, l2;
@@ -39,7 +39,7 @@ function doPolygon(obj){
 					l2 = v2.getLength();
 					v2.div(l2);
 					v1.div(l1);
-					if(typeof res.radius == "number"){
+					if(isNumber(res.radius)){
 						l1 >>= 1;
 						l2 >>= 1;
 					}
@@ -58,7 +58,7 @@ function doPolygon(obj){
 					l2 = v2.getLength();
 					v2.div(l2);
 					v1.div(l1);
-					if(typeof res.radius == "number"){
+					if(isNumber(res.radius)){
 						l1 >>= 1;
 						l2 >>= 1;
 					}
@@ -72,7 +72,8 @@ function doPolygon(obj){
 			});
 		res.ctx.closePath();
 	};
-	if(Array.isArray(res.points[0]))
+	
+	if(isArray(res.points[0]))
 		res.points.forEach(a => drawLines(a));
 	else
 		drawLines(res.points);
@@ -89,14 +90,15 @@ function doArc(obj){
 	_process(res);
 }
 
+
 function doRect(obj){
 	var def = _checkPosAndSize(obj, "Rect");
 
 	if(!isUndefined(obj["radius"])){
-		if(typeof obj["radius"] === "number")
+		if(isNumber(obj["radius"]))
 			obj["radius"] = {tl: obj["radius"], tr: obj["radius"], br: obj["radius"], bl: obj["radius"]};
 		else
-			$.each(def.radius, i => obj.radius[i] = obj.radius[i] || def.radius[i]);
+			each(def.radius, (e, i) => obj.radius[i] = obj.radius[i] || def.radius[i]);
 	}
 
 	var res = _remakePosAndSize(def, obj);
@@ -120,7 +122,7 @@ function doLine(obj){
 	if(isUndefined(obj.points))
 		Logger.error("chce sa vykresliť " + "Line" + " bez pointov");
 
-	if(obj.points.length < 2)
+	if(!isArray(obj.points[0]) && obj.points.length < 2)
 		Logger.error("chce sa vykresliť " + "Line" + " s 1 bodom");
 
 	var res = $.extend(_initDef(obj), obj),
@@ -131,7 +133,7 @@ function doLine(obj){
 	var drawLines = function(points){
 		if(isNaN(points[0])){
 			if(res.radius == 0 || isNaN(res.radius))
-				points.forEach((e, i) => i > 0 ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
+				points.forEach((e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
 			else
 				points.forEach(function(e, i){
 					if(i == 0)
@@ -143,7 +145,7 @@ function doLine(obj){
 						l2 = v2.getLength();
 						v2.div(l2);
 						v1.div(l1);
-						if(typeof res.radius == "number"){
+						if(isNumber(res.radius)){
 							l1 >>= 1;
 							l2 >>= 1;
 						}
@@ -165,7 +167,7 @@ function doLine(obj){
 		}
 	};
 
-	if(Array.isArray(res.points[0]))
+	if(isArray(res.points[0]))
 		res.points.forEach(a => drawLines(a));
 	else
 		drawLines(res.points);
@@ -193,7 +195,7 @@ function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COL
 	if(align == FONT_ALIGN_NORMAL){
 		ctx.textAlign = FONT_HALIGN_LEFT;
 		ctx.textBaseline = FONT_VALIGN_TOP;
-		if(Array.isArray(offset))
+		if(isArray(offset))
 			ctx.fillText(text, x + offset[0], y + offset[1]);
 		else
 			ctx.fillText(text, x + offset, y + offset);
@@ -211,9 +213,9 @@ function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COL
  */
 
 function getMaxWidth(val, max = 0){
-	if(Array.isArray(val))
+	if(isArray(val))
 		val.forEach(function(e){
-			if(Array.isArray(e))
+			if(isArray(e))
 				e.forEach(a => max = Math.max(calcTextWidth(a), max));
 			else
 				max = Math.max(calcTextWidth(e), max);
@@ -281,13 +283,15 @@ function _initDef(obj){
 		radius : {tl: 0, tr: 0, br: 0, bl: 0},
 		shadow: false,
 		lineCap: LINE_CAP_BUTT,
+		center: false,
 		joinType: LINE_JOIN_MITER,
 		lineStyle: LINE_STYLE_NORMAL,
 		lineType: JOIN_LINEAR,
-		lineDash: []
+		lineDash: [],
+		bgImage: false
 	};
-	def["draw"] = !isUndefined(obj.borderColor) || !isUndefined(obj.borderWidth);
-	def["fill"] = !isUndefined(obj.fillColor);
+	def["draw"] = isDefined(obj.borderColor) || isDefined(obj.borderWidth);
+	def["fill"] = isDefined(obj.fillColor);
 
 	return def;
 }
@@ -309,12 +313,12 @@ function _checkPosAndSize(obj, name){
 function _remakePosAndSize(def, obj){
 	var res = $.extend(def, obj);
 
-	if(!isUndefined(res["size"])){
-		if(typeof res["size"] === "number"){
+	if(isDefined(res["size"])){
+		if(isNumber(res["size"])){
 			res["width"] = res["size"];
 			res["height"] = res["size"];
 		}
-		else if(Array.isArray(res["size"])){
+		else if(isArray(res["size"])){
 			res["width"] = res["size"][0];
 			res["height"] = res["size"][1];
 		}
@@ -324,12 +328,12 @@ function _remakePosAndSize(def, obj){
 		}
 	}
 
-	if(!isUndefined(res["position"])){
-		if(typeof res["position"] === "number"){
+	if(isDefined(res["position"])){
+		if(isNumber(res["position"])){
 			res["x"] = res["position"];
 			res["y"] = res["position"];
 		}
-		else if(Array.isArray(res["position"])){
+		else if(isArray(res["position"])){
 			res["x"] = res["position"][0];
 			res["y"] = res["position"][1];
 		}
@@ -338,6 +342,11 @@ function _remakePosAndSize(def, obj){
 			res["y"] = res["position"].y;
 		}
 	}
+
+	if(res["center"]){
+		res["x"] -= res["width"] >> 1;
+		res["y"] -= res["height"] >> 1;
+	}
 	return res;
 }
 
@@ -345,7 +354,16 @@ function _process(res){
 	if(res.shadow)
 		setShadow(res.shadow);
 
-	if (res.fill){
+	if(res.bgImage){
+		res.ctx.save();
+		res.ctx.clip();
+		if(isObject(res.bgImage))
+			res.ctx.drawImage(res.bgImage.img, res.bgImage.x, res.bgImage.y, res.bgImage.w, res.bgImage.h, res.x, res.y, res.width, res.height);
+		else
+			res.ctx.drawImage(res.bgImage, res.x, res.y, res.width, res.height);
+		res.ctx.restore();
+	}
+	else if (res.fill){
 		res.ctx.fillStyle = res.fillColor;
 		res.ctx.fill();
 	}

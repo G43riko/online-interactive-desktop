@@ -81,8 +81,8 @@ class Class extends Table{
 
 	_makeData(){
 		this.data = [[this._title]];
-		$.each(this._attr, (i, e) => this.data.push([Class._attributeToString(e)]));
-		$.each(this._methods, (i, e) => this.data.push([Class._methodToString(e)]));
+		each(this._attr, e => this.data.push([Class._attributeToString(e)]));
+		each(this._methods, e => this.data.push([Class._methodToString(e)]));
 	}
 
 	getJavaSource(){

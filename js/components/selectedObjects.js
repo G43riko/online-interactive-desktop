@@ -6,7 +6,7 @@ class ObjectsManager{
 		return this._objects.length;
 	};
 	add(o){
-		if((typeof o.locked !== "undefined" && o.locked) || !o)
+		if((isDefined(o.locked) && o.locked) || !o)
 			return;
 
 		this._objects.push(o);
@@ -24,7 +24,7 @@ class ObjectsManager{
 	};
 	clear(){
 		this._objects.forEach(function(e){
-			if(typeof e.moveType !== "undefined")
+			if(isDefined(e.moveType))
 				e.moveType = -1;
 			e.selected = false;
 		});

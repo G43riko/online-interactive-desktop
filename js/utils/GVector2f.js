@@ -33,6 +33,14 @@ class GVector2f{
 		return new GVector2f(this._x, this._y);
 	}
 
+	toArray(){
+		return [this._x, this._y];
+	}
+
+	equal(vec){
+		return vec._x == this._x && vec._y == this._y;
+	}
+
 	getLength(){
 		return Math.sqrt(this._x * this._x + this._y * this._y);
 	};

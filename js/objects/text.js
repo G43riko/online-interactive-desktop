@@ -1,8 +1,8 @@
 class Text extends Entity{
-	constructor(text, position, size, color = DEFAULT_FONT_COLOR){
-		super("Text", position, size, DEFAULT_BACKGROUND_COLOR);
+	constructor(text, position, size, fontColor = DEFAULT_FONT_COLOR){
+		super("Text", position, size, {"fillColor": DEFAULT_BACKGROUND_COLOR, radius: DEFAULT_RADIUS});
 		this._text 		= text;
-		this._textColor = color;
+		this._textColor = fontColor;
 		this._fontSize 	= DEFAULT_FONT_SIZE;
 		this._moveType 	= -1;
 		this.size.x 	= calcTextWidth(text, DEFAULT_FONT_SIZE + "pt " + DEFAULT_FONT) + (DEFAULT_TEXT_OFFSET << 1);
@@ -40,7 +40,7 @@ class Text extends Entity{
 			shadow: this.moving && !this.locked,
 			position: this.position,
 			size: this.size,
-			radius: DEFAULT_RADIUS,
+			radius: this.radius,
 			fillColor: this.fillColor,
 			draw: true,
 			fill: true

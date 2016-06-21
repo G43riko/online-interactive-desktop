@@ -26,9 +26,24 @@ function getId(){
 	return Math.floor(Math.random() * MAX_ID_VALUE);
 }
 
+var messages = [];
+var count = 0;
+
+function messageRecieve(type, msg){
+	if(typeof messages[type] === "undefined"){
+		messages[type] = [];
+		messages[type]["count"] = 0;
+		messages[type]["messages"] = [];
+	}
+
+	messages[type]["count"]++;
+	messages[type]["messages"].push(msg);
+
+	console.log(++count);
+}
+
 io.on('connection', function(socket){
 	console.log('a user connected');
-
 	socket.on("completeAuth", completeAuth);
 	socket.on("broadcastMsg", broadcastMsg);
 	socket.on("sendAllData", sendAllData);
@@ -59,6 +74,7 @@ startShare = function(msg){
 	var id = getId(),
 		data = JSON.parse(msg),
 		socket = this;
+	messageRecieve("startShare", msg);
 	console.log("začina zdielať: ", data, "id: " + id);
 	connections[id] = {
 		owner: socket,
@@ -78,6 +94,7 @@ startShare = function(msg){
 startWatch = function(msg){
 	var data = JSON.parse(msg),
 		socket = this;
+	messageRecieve("startWatch", msg);
 	console.log("client s id " + socket.id + " chce sledovať plochu");
 	connections[data["id"]].watchers[socket.id] = {
 		resolution: data["res"],
@@ -100,7 +117,7 @@ startWatch = function(msg){
 completeAuth = function(msg){
 	var data = JSON.parse(msg),
 		socket = this;
-
+	messageRecieve("completeAuth", msg);
 	console.log("dokoncuje sa authentifikacia s uživatelom: " + socket.id);
 
 	if(data["passwd"] == connections[data["id"]].password || true){
@@ -118,6 +135,7 @@ completeAuth = function(msg){
  */
 disconnect = function(){
 	var socket = this;
+	messageRecieve("disconnect", "");
 	for(var i in connections){
 		if(connections.hasOwnProperty(i)){
 			if(connections[i].owner.id == socket.id){
@@ -146,6 +164,7 @@ disconnect = function(){
  */
 broadcastMsg = function(msg){
 	var data = JSON.parse(msg);
+	messageRecieve("broadcastMsg", msg);
 	writeToWatchers(connections[data.id]["watchers"], "notification", JSON.stringify({msg: data["msg"]}));
 };
 
@@ -155,6 +174,7 @@ broadcastMsg = function(msg){
  */
 sendAllData = function(msg){
 	var data = JSON.parse(msg);
+	messageRecieve("sendAllData", msg);
 	console.log("boly prijatá všetky dáta od sharera a odosielju sa uživatelovy s id " + data.target);
 	connections[data.id]["watchers"][data.target].socket.emit("sendAllData", JSON.stringify(data.content));
 };
@@ -162,6 +182,7 @@ sendAllData = function(msg){
 
 paintAction = function(msg){
 	var data = JSON.parse(msg);
+	messageRecieve("paintAction", msg);
 	//console.log("bola prijatá paintAction");
 	writeToWatchers(connections[data.id].watchers, "paintAction", JSON.stringify(data.msg));
 };
@@ -169,11 +190,13 @@ paintAction = function(msg){
 
 action = function(msg){
 	var data = JSON.parse(msg);
+	messageRecieve("action", msg);
 	//console.log("bola prijatá akcia");
 	writeToWatchers(connections[data.id].watchers, "action", JSON.stringify(data.msg));
 };
 
 mouseData = function(msg){
 	var data = JSON.parse(msg);
+	messageRecieve("mouseMove", msg);
 	writeToWatchers(connections[data.id].watchers, "mouseData", JSON.stringify(data.msg));
 };

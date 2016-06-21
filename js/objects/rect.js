@@ -1,6 +1,6 @@
 class Rect extends Entity {
-	constructor(position, size, color){
-		super("Rect", position, size, color);
+	constructor(position, size, fillColor){
+		super("Rect", position, size, {fillColor: fillColor});
 		this.moveType 	= -1;
 		this._radius	= 0;
 		this.minSize 	= new GVector2f(SELECTOR_SIZE);
@@ -30,18 +30,7 @@ class Rect extends Entity {
 		if(this._selectedConnector)
 			return true;
 
-		if (vec.dist(this.position.x + (this.size.x >> 1), this.position.y) < SELECTOR_SIZE)
-			this.moveType = 0;
-		else if (vec.dist(this.position.x + this.size.x, this.position.y + (this.size.y >> 1)) < SELECTOR_SIZE)
-			this.moveType = 1;
-		else if (vec.dist(this.position.x + (this.size.x >> 1), this.position.y + this.size.y) < SELECTOR_SIZE)
-			this.moveType = 2;
-		else if (vec.dist(this.position.x, this.position.y + (this.size.y >> 1)) < SELECTOR_SIZE)
-			this.moveType = 3;
-		else if (vec.dist(this.position.x + this.size.x, this.position.y + this.size.y) < SELECTOR_SIZE)
-			this.moveType = 5;
-		else if (x > this.position.x && y > this.position.y && x < this.position.x + this.size.x && y < this.position.y + this.size.y)
-			this.moveType = 4;
+		Entity.setMoveType(this, vec);
 
 		return this.moveType >= 0;
 	};

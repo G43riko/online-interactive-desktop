@@ -23,12 +23,11 @@ class MenuManager{
 	init(data){
 		var array = [],
 			counter = new GVector2f(),
-			inst = this,
 			tmp;
-		$.each(data, function(ii){
+		each(data, function(eee, ii){
 			array[ii] = [];
-			$.each(data[ii], function(i, e){
-				if(typeof e["values"] !== "undefined"){
+			each(data[ii], function(e, i){
+				if(isDefined(e["values"])){
 					e.values.forEach(function(ee){
 						tmp = {};
 						tmp["visible"] = e["visible"];
@@ -41,14 +40,14 @@ class MenuManager{
 						tmp["posX"] = counter.x;
 						tmp["posY"] = counter.y;
 						tmp["value"] = ee;
-						inst._tmpDrawArray.push({
+						this._tmpDrawArray.push({
 							x: counter.x,
 							y: counter.y,
 							value:  ee,
 							key: i
 						});
 						array[ii].push(tmp);
-					});
+					}, this);
 					return;
 				}
 
@@ -62,15 +61,15 @@ class MenuManager{
 
 				e["posX"] = counter.x;
 				e["posY"] = counter.y;
-				inst._tmpDrawArray.push({
+				this._tmpDrawArray.push({
 					x: counter.x,
 					y: counter.y,
 					key: i
 				});
 
 				array[ii].push(e);
-			});
-		});
+			}, this);
+		}, this);
 
 
 		this._canvas.width 	= this._tmpDrawArray[this._tmpDrawArray.length - 1].x * this._size.x + this._size.x;

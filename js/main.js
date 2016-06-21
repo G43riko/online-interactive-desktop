@@ -8,6 +8,8 @@ var initTime 		= window.performance.now(),
 	actContextMenu 	= false,
 	Logger 			= new LogManager(),
 	Listeners		= new ListenersManager(),
+	timeLine		= new TimeLine(),
+	FPS				= 60,
 	canvas, context;
 
 $.getJSON("js/json/menu.json", function(data){
@@ -16,6 +18,7 @@ $.getJSON("js/json/menu.json", function(data){
 });
 
 $.getJSON("js/json/context.json", data => ContextMenuManager.items = data);
+$.getJSON("js/json/attributes.json", data => Entity.attr = data);
 
 
 function init(){
@@ -30,6 +33,9 @@ function init(){
 
 	Scene.addToScene(new Polygon([new GVector2f(1200, 100), new GVector2f(1150, 150), new GVector2f(1250, 150)], "#ff69b4"));
 	Scene.addToScene(new Table(new GVector2f(800, 250), new GVector2f(200, 800), [["meno", "vek"], ["gabo", 21], ["maros", 35]]), "test2");
+
+	loadImage(e => Scene.addToScene(new ImageObject(e, new GVector2f(300, 400), new GVector2f(300, 400))));
+
 
 
 	var methods = {
@@ -97,12 +103,12 @@ $(function(){
 	draw();
 });
 
+var drawEvent = new EventManager(realDraw, 16),
+	draw = () => drawEvent.callIfCan();
 
-function draw(){
-	//var startDraw = window.performance.now();
+function realDraw(){
 	drawMousePos = new Date().getMilliseconds();
 	resetCanvas();
-
 	drawGrid(0.1, 10, 50);
 
 	Scene.draw();
@@ -111,5 +117,6 @@ function draw(){
 	if(actContextMenu)
 		actContextMenu.draw();
 
-	//console.log("nakreslilo sa za: ", (window.performance.now() - startDraw));
+	timeLine.draw();
 }
+

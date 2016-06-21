@@ -36,7 +36,7 @@ class Sharer{
 
 		this._socket.on('confirmShare', function(msg){
 			var data = JSON.parse(msg);
-			this._link = "http://192.168.0.139:3000/watch?id=" + data["id"];
+			this._link = location.href + "watch?id=" + data["id"];
 			console.log("zdiela sa na adrese: " + this._link);
 			inst._id = data["id"];
 		});

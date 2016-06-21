@@ -1,31 +1,29 @@
 class Line extends Entity{
-	constructor(points, width, color) {
-		super("Line", new GVector2f(), new GVector2f(), color);
-
-		this.points 			= points;
-		this._borderWidth		= width;
+	constructor(points, width, fillColor, targetA = null, targetConnectionA = null) {
+		super("Line", new GVector2f(), new GVector2f(), {fillColor: fillColor, borderWidth: width});
+		this._points 			= points;
 		this.movingPoint		= -1;
 		this._lineCap			= LINE_CAP_BUTT;
 		this._joinType			= LINE_JOIN_MITER;
 		this._lineStyle			= LINE_STYLE_NORMAL;
 		this._lineType			= JOIN_LINEAR;
-		this._radius			= 0;
 		this._arrow 			= new Image();
 		this._arrow.src 		= "img/arrow.png";
 		this._arrowEndType		= 0;
 		this._arrowStartType	= 0;
+		this._targetA			= targetA;
+		this._targetConnectionA	= targetConnectionA;
+		this._targetB			= null;
+		this._targetConnectionB	= null;
 
 		if(points.length < 2){
 			Logger.warn("vytvoril sa line ktory mal menej ako 2 body a tak sa maže");
 			Scene.remove(this);
 		}
-
-		Entity.findMinAndMax(this.points, this.position, this.size);
+		Entity.findMinAndMax(this._points, this.position, this.size);
 	}
 
-
-
-	set radius(val){this._radius = val;}
+	get points(){return this._points;}
 
 	set lineCap(val){this._lineCap = val;}
 	set arrowEndType(val){this._arrowEndType = val;}
@@ -38,14 +36,14 @@ class Line extends Entity{
 		if(!this.clickInBoundingBox(x, y))
 			return false;
 
-		this.points.forEach(function(e, i){
+		this._points.forEach(function(e, i){
 			if(new GVector2f(x, y).dist(e) < SELECTOR_SIZE){
-				this.points.splice(i, 1);
-				Entity.findMinAndMax(this.points, this.position, this.size);
+				this._points.splice(i, 1);
+				Entity.findMinAndMax(this._points, this.position, this.size);
 			}
 		}, this);
 
-		if(this.points.length < 2)
+		if(this._points.length < 2)
 			Scene.remove(this);
 
 		return true;
@@ -56,22 +54,22 @@ class Line extends Entity{
 			return false;
 
 		this.movingPoint = -1;
-		this.points.forEach(function(e,i, points){
+		this._points.forEach(function(e,i, points){
 			if(this.movingPoint >= 0)
 				return true;
 			if(new GVector2f(x, y).dist(e) < SELECTOR_SIZE)
 				this.movingPoint = i;
 			else if(i + 1 < points.length &&
 				new GVector2f(x, y).dist((e.x + (points[i + 1].x) >> 1),
-										 (e.y + (points[i + 1].y) >> 1)) < SELECTOR_SIZE)
+					(e.y + (points[i + 1].y) >> 1)) < SELECTOR_SIZE)
 				this.movingPoint = parseFloat(i) + 0.5;
 		}, this);
 
 		if(this.movingPoint >= 0)
 			return this.movingPoint >= 0;
 
-		for(var i=1 ; i<this.points.length ; i++)
-			if(Line.determineClick(this.points[i-1], this.points[i], x, y, 10))
+		for(var i=1 ; i<this._points.length ; i++)
+			if(Line.determineClick(this._points[i-1], this._points[i], x, y, 10))
 				return true;
 
 
@@ -111,64 +109,36 @@ class Line extends Entity{
 	};
 
 	updateCreatingPosition(pos){
-		this.points[this.points.length - 1].set(pos);
-		Entity.findMinAndMax(this.points, this.position, this.size);
+		this._points[this._points.length - 1].set(pos);
+		Entity.findMinAndMax(this._points, this.position, this.size);
 	};
 
-	static getArrowPoints(pFrom, pTo, length = 30, angle = Math.PI / 6){
-		var vec = pTo.getClone().sub(pFrom).normalize();
-		var cos = Math.cos(angle);
-		var sin = Math.sin(angle);
-		var result = [[pTo.x - (vec.x * cos - vec.y * sin) * length,
-					   pTo.y - (vec.x * sin + vec.y * cos) * length,
-					   pTo.x,
-					   pTo.y]];
-
-		result.push([pTo.x + (-vec.x * cos - vec.y * sin) * length,
-					 pTo.y + (vec.x * sin - vec.y * cos) * length,
-					 pTo.x,
-					 pTo.y]);
-
-		return result;
-	}
-
 	draw(){
-		var size = this.points.length;
-		//var res = Line.getArrowPoints(this.points[this.points.length - 2], this.points[this.points.length - 1], this._length, this._angle);
-		//res = res.concat(Line.getArrowPoints(this.points[1], this.points[0], this._length, this._angle));
-		//res.push(this.points);
-		
+		var size = this._points.length;
+
 		doLine({
 			shadow: this.moving && !this.locked,
 			lineCap: this._lineCap,
 			joinType: this._joinType,
 			lineStyle: this._lineStyle,
-			//points: res,
-			points: this.points,
+			points: this._points,
 			borderWidth: this.borderWidth,
 			borderColor: this.fillColor,
-			radius: this._radius,
+			radius: this.radius,
 			lineDash: this._lineStyle == LINE_STYLE_STRIPPED ? [15, 5] : []
 		});
 
-		Arrow.drawArrow(this.points[1], this.points[0], this, this._arrowEndType);
-		Arrow.drawArrow(this.points[size - 2], this.points[size - 1], this, this._arrowStartType);
+		Arrow.drawArrow(this._points[1], this._points[0], this, this._arrowEndType);
+		Arrow.drawArrow(this._points[size - 2], this._points[size - 1], this, this._arrowStartType);
 
 		context.lineWidth = DEFAULT_STROKE_WIDTH << 1;
 		if(this.selected){
 			drawBorder(this, {});
-			drawSelectArc(this.points[0].x, this.points[0].y);
+			drawSelectArc(this._points[0].x, this._points[0].y);
 			for(var i=1 ; i<size ; i++){
-				drawSelectArc(this.points[i].x, this.points[i].y);
-				drawSelectArc((this.points[i].x + this.points[i - 1].x) >> 1, (this.points[i].y + this.points[i - 1].y) >> 1);
+				drawSelectArc(this._points[i].x, this._points[i].y);
+				drawSelectArc((this._points[i].x + this._points[i - 1].x) >> 1, (this._points[i].y + this._points[i - 1].y) >> 1);
 			}
 		}
-		/*
-		context.save();
-		context.translate(this.points[0].x, this.points[0].y);
-		context.rotate(Math.PI + Math.atan2(this.points[1].y - this.points[0].y, this.points[1].x - this.points[0].x));
-		context.drawImage(this._arrow, -40, -20, 40, 40);
-		context.restore();
-		*/
 	};
 }

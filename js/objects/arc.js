@@ -1,8 +1,7 @@
 class Arc extends Entity{
-	constructor(position, size, color){
-		super("Arc", position, size, color);
+	constructor(position, size, fillColor){
+		super("Arc", position, size, {fillColor: fillColor, minSize: new GVector2f(SELECTOR_SIZE)});
 		this.moveType 	= -1;
-		this.minSize 	= new GVector2f(SELECTOR_SIZE);
 	};
 
 	updateCreatingPosition(pos){
@@ -21,18 +20,8 @@ class Arc extends Entity{
 		if(this._selectedConnector)
 			return true;
 
-		if (x > this.position.x && y > this.position.y && x < this.position.x + this.size.x && y < this.position.y + this.size.y)
-			this.moveType = 4;
-		else if (vec.dist(this.position.x + (this.size.x >> 1), this.position.y) < SELECTOR_SIZE)
-			this.moveType = 0;
-		else if (vec.dist(this.position.x + this.size.x, this.position.y + (this.size.y >> 1)) < SELECTOR_SIZE)
-			this.moveType = 1;
-		else if (vec.dist(this.position.x + (this.size.x >> 1), this.position.y + this.size.y) < SELECTOR_SIZE)
-			this.moveType = 2;
-		else if (vec.dist(this.position.x, this.position.y + (this.size.y >> 1)) < SELECTOR_SIZE)
-			this.moveType = 3;
-		else if (vec.dist(this.position.x + this.size.x, this.position.y + this.size.y) < SELECTOR_SIZE)
-			this.moveType = 5;
+
+		Entity.setMoveType(this, vec);
 		return this.moveType >= 0;
 	};
 

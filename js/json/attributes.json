@@ -1,0 +1,66 @@
+{
+	"Entity" : {
+		"position" : "object",
+		"size" : "object",
+		"name" : "string",
+		"fillColor" : "string",
+		"borderColor" : "string",
+		"borderWidth" : "number",
+		"selected" : "boolean",
+		"visible" : "boolean",
+		"moving" : "boolean",
+		"locked" : "boolean",
+		"minSize" : "boolean",
+		"selectedConnector" : "boolean",
+		"layer" : "string",
+		"connectors" : "object",
+		"radius" : "number",
+		"moveType" : "number",
+		"id" : "number"
+	},
+	"Rect" : {
+
+	},
+	"Paint" : {
+
+	},
+	"Arc" : {
+
+	},
+	"Table" : {
+		"headerColor" : "string",
+		"bodyColor" : "string",
+		"data" : "object",
+		"fontSize" : "number"
+	},
+	"Text" : {
+
+	},
+	"Class" : {
+
+	},
+	"Line" : {
+		"movingPoint" : "number",
+		"lineStyle" : "number",
+		"joinType" : "number",
+		"points" : "object",
+
+		"lineCap" : "number",
+		"lineType" : "number",
+		"arrowEndType" : "number",
+		"arrowStartType" : "number"
+	},
+	"Polygon" : {
+		"movingPoint" : "number",
+		"lineStyle" : "number",
+		"joinType" : "number",
+		"points" : "object"
+	},
+	"Join" : {
+		"obj1" : "object",
+		"obj1_connector" : "object",
+		"obj2" : "object",
+		"obj2_connector" : "object",
+		"lineType" : "number"
+	}
+}

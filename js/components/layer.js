@@ -45,7 +45,7 @@ class Layer{
 	};
 
 	forEach(func){
-		$.each(this._objects, (i, e) => func(e));
+		each(this._objects, e => func(e));
 		//this._objects.forEach(func);
 	};
 }

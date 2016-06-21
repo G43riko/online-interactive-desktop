@@ -1,9 +1,10 @@
 class objectCreator{
 	constructor(){
-		this._object 	= false;
-		this._fillColor = DEFAULT_COLOR;
-		this._operation = OPERATION_DRAW_RECT;
-		this._lineWidth = DEFAULT_STROKE_WIDTH;
+		this._object 		= false;
+		this._fillColor 	= DEFAULT_FILL_COLOR;
+		this._borderColor 	= DEFAULT_BORDER_COLOR;
+		this._operation 	= OPERATION_DRAW_RECT;
+		this._lineWidth 	= DEFAULT_STROKE_WIDTH;
 	}
 
 	createObject(position){
@@ -35,27 +36,37 @@ class objectCreator{
 	}
 
 	create(obj){
-		if(typeof obj === "string")
-			obj = JSON.parse(obj);
 		var res = {};
 
-		if(obj._name == "Rect")
-			res = new Rect();
-		else if(obj._name == "Arc")
-			res = new Arc();
-		else if(obj._name == "Table")
-			res = new Table();
-		else if(obj._name == "Text")
-			res = new Text("");
-		else if(obj._name == "Polygon")
-			res = new Polygon([0,0,0]);
-		else if(obj._name == "Line")
-			res = new Line([0,0,0]);
-		else
-			Logger.error("snažíš sa vložiť objekt s neznámym menom: " + obj._name);
+		//AK NIEKTO POSLE JSON NAMIESTO OBJEKtU
+		if(typeof obj === "string")
+			obj = JSON.parse(obj);
 
-		$.each(obj, function(i, e){
-			if(typeof e["_x"] !== "undefined" && typeof e["_y"] !== "undefined")
+		switch(obj._name){
+			case "Rect" :
+				res = new Rect();
+				break;
+			case "Arc" :
+				res = new Arc();
+				break;
+			case "Table" :
+				res = new Table();
+				break;
+			case "Text" :
+				res = new Text("");
+				break;
+			case "Polygon" :
+				res = new Polygon([0,0,0]);
+				break;
+			case "Line" :
+				res = new Line([0,0,0]);
+				break;
+			default :
+				Logger.error("snažíš sa vložiť objekt s neznámym menom: " + obj._name);
+		}
+
+		each(obj, function(e, i){
+			if(isDefined(e["_x"]) && typeof isDefined(e["_y"]))
 				res[i] = new GVector2f(e._x, e._y);
 			else if(i == "data")
 				res[i] = e.map(ee => ee.map(eee => eee));
@@ -72,6 +83,7 @@ class objectCreator{
 	get color(){return this._fillColor;}
 	get operation(){return this._operation;}
 	get lineWidth(){return this._lineWidth;}
+	get borderColor(){return this._borderColor;}
 
 	set object(val){this._object = val;}
 	set color(val){this._fillColor = val;}

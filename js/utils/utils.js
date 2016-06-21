@@ -1,12 +1,12 @@
-var getClassOf = Function.prototype.call.bind(Object.prototype.toString);
-
 function round(number, value = DEFAULT_ROUND_VAL){
 	if(value == 1)
 		return number;
 	return Math.floor(number / value) * value;
 }
 
-function isIn(obj){
+function isIn(obj){	
+	//return arguments.some((e, i) => i && e === obj);
+	
 	for(var i=1 ; i<arguments.length ; i++)
 		if(arguments[i] === obj)
 			return true;
@@ -14,91 +14,78 @@ function isIn(obj){
 	return false;
 }
 
-function isFunction(val){
-	return typeof val === "function";
+var isUndefined 	= e => typeof e === "undefined",
+	isDefined 		= e => typeof e !== "undefined",
+	isFunction 		= e => typeof e === "function",
+	isNumber		= e => typeof e === "number",
+	isArray			= e => Array.isArray(e),
+	isNull			= e => e === null,
+	isSharing		= () => typeof Sharer !== "undefined" && Sharer.isSharing,
+	isInt 			= e => Number(e) === e && e % 1 === 0,
+	isFloat 		= e => Number(e) === e && e % 1 !== 0,
+	callIfFunc 		= e => isFunction(e) ? e() : false,
+	angleBetween 	= (a, b) => Math.atan2(b.y, b.x) - Math.atan2(a.y, a.x);
+	getClassOf 		= Function.prototype.call.bind(Object.prototype.toString);
+
+
+function each(obj, func, thisArg){
+	for(var i in obj)
+		if(obj.hasOwnProperty(i))
+			func.call(thisArg, obj[i], i, obj);
 }
 
-function callIfFunc(val){
-	return isFunction(val) ? val() : false;
+function extendObject(){
+	for(var i=1; i<arguments.length; i++)
+		for(var key in arguments[i])
+			if(arguments[i].hasOwnProperty(key))
+				arguments[0][key] = arguments[i][key];
+	return arguments[0];
 }
 
-function isUndefined(val){
-	return typeof val === "undefined";
-}
-
-function isInt(n){
-	return Number(n) === n && n % 1 === 0;
-}
-
-function isFloat(n){
-	return Number(n) === n && n % 1 !== 0;
-}
-
-function angleBetween(a, b) {
-	return Math.atan2(b.y, b.x) - Math.atan2(a.y, a.x);
-}
-
-/*
- * OBJECT
- */
-/*
-Object.prototype.testasdasdad = function(func, thisArg){
-	for(var i in o)
-		if(o.hasOwnProperty(i))
-			func.call(thisArg, o[i], i, o);
-}
-
-Object.prototype.exist = function(key){
-	var o = Object(this);
-	return typeof o[key] !== "undefined";
-}
-
-Object.prototype.size = function(){
-	var res = 0;
-	this.each(() => res++);
-	return res;
-}
-*/
 Movement = {
 	move: function(o, x, y){
-		if(typeof o.locked !== "undefined" && o.locked)
+		if(isDefined(o.locked) && o.locked)
 			return;
 
-		if(typeof o.selectedConnector !== "undefined" && Creator.operation == OPERATION_DRAW_JOIN && o.selectedConnector !== false){
+		if(isDefined(o.selectedConnector) && Creator.operation == OPERATION_DRAW_JOIN && o.selectedConnector){
 
 		}
-		else if(typeof o.moveType !== "undefined"){
-			switch(o.moveType){
-				case 0:
-					o.position.y += y;
-					o.size.y -= y;
-					break;
-				case 1:
-					o.size.x += x;
-					break;
-				case 2:
-					o.size.y += y;
-					break;
-				case 3:
-					o.position.x += x;
-					o.size.x -= x;
-					break;
-				case 4:
-					o.position.add(x, y);
-					break;
-				case 5:
-					if(!o.minSize || o.size.x + x >= o.minSize.x)
+		else if(isDefined(o.moveType)){
+			if(Creator.operation == OPERATION_DRAW_LINE && Menu.isToolActive()){
+				
+			}
+			else{
+				switch(o.moveType){
+					case 0:
+						o.position.y += y;
+						o.size.y -= y;
+						break;
+					case 1:
 						o.size.x += x;
-					if(!o.minSize || o.size.y + y >= o.minSize.y)
+						break;
+					case 2:
 						o.size.y += y;
-					break;
+						break;
+					case 3:
+						o.position.x += x;
+						o.size.x -= x;
+						break;
+					case 4:
+						o.position.add(x, y);
+						break;
+					case 5:
+						if(!o.minSize || o.size.x + x >= o.minSize.x)
+							o.size.x += x;
+						if(!o.minSize || o.size.y + y >= o.minSize.y)
+							o.size.y += y;
+						break;
+				}
 			}
 		}
-		else if(typeof o.movingPoint !== "undefined"){
+		else if(isDefined(o.movingPoint)){
 			var intVal = 0;
-			if(o.movingPoint < 0){
+			if(o.movingPoint < 0)
 				o.points.forEach(a => a.add(x, y));
-			}
 			else if(isInt(o.movingPoint))
 				o.points[o.movingPoint].add(x, y);
 			else{
@@ -111,7 +98,7 @@ Movement = {
 		else
 			o.position.add(x, y);
 
-		if(typeof Sharer !== "undefined")
+		if(isDefined(Sharer) && Sharer.isSharing)
 			Sharer.objectChange(o, ACTION_MOVE);
 	}
 };
@@ -120,8 +107,6 @@ function drawBorder(o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 	if(!o.selected && o.name != "Paint")
 		return;
 	context.save();
-
-	//setLineDash(true);
 
 	doRect({
 		position: o.position,
@@ -163,12 +148,7 @@ function hexToRGBA(color) {
 
 function objectToArray(obj){
 	var result = [];
-	for(var i in obj)
-		if(obj.hasOwnProperty(i)){
-			obj[i]["key"] = i;
-			result.push(obj[i]);
-		}
-
+	each(obj, e => result.push(e));
 	return result;
 }
 
@@ -211,4 +191,34 @@ function getMousePos(canvasDom, mouseEvent) {
 		x: mouseEvent.touches[0].clientX - rect.left,
 		y: mouseEvent.touches[0].clientY - rect.top
 	};
+}
+
+class EventManager{
+	constructor(event, time){
+		this._event = event;
+		this._time = time;
+		this._timeOut = false;
+		this._lastTime = window.performance.now();
+	}
+
+	_callEvent(inst = this){
+		inst._event();
+		if(inst._timeOut){
+			clearTimeout(inst._timeOut);
+			inst._timeOut = false;
+		}
+		inst._lastTime = window.performance.now();
+	}
+
+	_setTimeOut(diff){
+		if(this._timeOut)
+			return;
+		var inst = this;
+		this._timeOut = setTimeout(function(){inst._callEvent(inst);}, this._time - diff);
+	}
+
+	callIfCan(){
+		var diff = window.performance.now() - this._lastTime;
+		diff > this._time ? this._callEvent() : this._setTimeOut(diff);
+	}
 }
