@@ -4,12 +4,18 @@ function round(number, value = DEFAULT_ROUND_VAL){
 	return Math.floor(number / value) * value;
 }
 
-function isIn(obj){	
+function isIn(obj, data){
 	//return arguments.some((e, i) => i && e === obj);
-	
-	for(var i=1 ; i<arguments.length ; i++)
-		if(arguments[i] === obj)
-			return true;
+	var i;
+	if(isArray(data)){
+		for(i=0 ; i<data.length ; i++)
+			if(data[i] == obj)
+				return true;
+	}
+	else
+		for(i=1 ; i<arguments.length ; i++)
+			if(arguments[i] === obj)
+				return true;
 
 	return false;
 }
@@ -18,8 +24,10 @@ var isUndefined 	= e => typeof e === "undefined",
 	isDefined 		= e => typeof e !== "undefined",
 	isFunction 		= e => typeof e === "function",
 	isNumber		= e => typeof e === "number",
+	isObject		= e => typeof e === "object",
 	isArray			= e => Array.isArray(e),
 	isNull			= e => e === null,
+	getLength		= function(obj){var counter = 0; each(obj, e => counter++); return counter;},
 	isSharing		= () => typeof Sharer !== "undefined" && Sharer.isSharing,
 	isInt 			= e => Number(e) === e && e % 1 === 0,
 	isFloat 		= e => Number(e) === e && e % 1 !== 0,

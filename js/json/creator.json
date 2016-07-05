@@ -1,13 +1,85 @@
 {
+	"lineType" : {
+		"allowedFor" : ["Line", "Polygon", "Join"],
+		"label" : "Line type",
+		"action" : "selectLineType" ,
+		"values": [2000, 2001, 2002],
+		"type" : "number"
+	},
+	"lineStyle" : {
+		"allowedFor" : ["Line", "Polygon", "Join"],
+		"label" : "Line style",
+		"action" : "selectLineStyle" ,
+		"values": [2100, 2101, 2102],
+		"type" : "number"
+	},
+	"lineWidth" : {
+		"allowedFor" : ["Line"],
+		"label" : "Line width",
+		"action" : "selectNumber" ,
+		"values": [1, 2, 5, 10, 15, 20],
+		"type" : "number"
+	},
+	"brushSize" : {
+		"allowedFor" : ["Paint"],
+		"label" : "Brush size",
+		"action" : "selectNumber" ,
+		"values": [1, 2, 5, 10, 20],
+		"type" : "number"
+	},
+	"brushType" : {
+		"allowedFor" : ["Paint"],
+		"label" : "Brush type",
+		"action" : "selectBrush" ,
+		"values": ["brush1.png", "brush2.png", "brush3.png"],
+		"type" : "string"
+	},
+	"radius" : {
+		"allowedFor" : ["Rect", "Line", "Polygon", "Text"],
+		"label" : "Radius",
+		"values": [1, 2, 5, 8, 10, 15, 20],
+		"action" : "selectNumber",
+		"type" : "number"
+	},
 	"fillColor" : {
-		"label" : "fillColor",
-		"allower"
+		"label" : "Fill Color",
+		"allowedFor" : ["Rect", "Arc", "Polygon", "Text"],
+		"action" : "chooseColors",
+		"type" : "color"
+	},
+	"borderColor" : {
+		"allowedFor" : ["Line", "Rect", "Arc", "Polygon", "Text"],
+		"label" : "Border color",
+		"action" : "chooseColors",
+		"type" : "color"
+	},
+	"borderWidth" : {
+		"allowedFor" : ["Line", "Rect", "Arc", "Polygon", "Text"],
+		"label" : "Border width",
+		"values": [1, 2, 3, 5, 8, 10, 15],
+		"action" : "selectNumber",
+		"type" : "number"
+	},
+	"fontColor" : {
+		"allowedFor" : ["Text"],
+		"label" : "Font color",
+		"action" : "chooseColors",
+		"type" : "color"
+	},
+	"fontSize" : {
+		"allowedFor" : ["Text"],
+		"label" : "Font size",
+		"values": [10, 15, 17, 20, 23, 25],
+		"action" : "selectNumber",
+		"type" : "number"
 	}
-	borderColor
-	borderWidth
-	radius
-	brushType
-	brushSize
-	lineStyle
-	lineType
 }
+
+
+
+
+
+
+
+
+

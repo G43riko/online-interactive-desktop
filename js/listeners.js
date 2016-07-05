@@ -77,6 +77,9 @@ class ListenersManager{
 		if(Menu.clickIn(position.x, position.y))
 			return;
 
+		if(Creator.clickIn(position.x, position.y))
+			return;
+
 		closeDialog();
 
 		/*

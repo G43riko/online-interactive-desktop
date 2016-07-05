@@ -3,9 +3,36 @@ class objectCreator{
 		this._object 		= false;
 		this._fillColor 	= DEFAULT_FILL_COLOR;
 		this._borderColor 	= DEFAULT_BORDER_COLOR;
+		this._borderWidth 	= DEFAULT_STROKE_WIDTH;
 		this._operation 	= OPERATION_DRAW_RECT;
 		this._lineWidth 	= DEFAULT_STROKE_WIDTH;
+		this._fontSize		= DEFAULT_FONT_SIZE;
+		this._fontColor		= DEFAULT_FONT_COLOR;
+		this._lineType		= DEFAULT_LINE_TYPE;
+		this._lineStyle		= DEFAULT_LINE_STYLE;
+		this._brushSize		= DEFAULT_BRUSH_SIZE;
+		this._brushType		= DEFAULT_BRUSH_TYPE;
+		this._radius		= DEFAULT_RADIUS;
+		this._items 		= null;
+		this._view			= null;
 	}
+
+	set view(val){
+		this._view = val;
+
+		if(this._items !== null)
+			this.init()
+	}
+
+	init(data = false){
+		if(this._items === null && data !== false)
+			this._items = data;
+
+		if(this._view !== null)
+			this._view.init();
+	}
+
+	get items(){return this._items;}
 
 	createObject(position){
 		switch(this._operation){
@@ -33,6 +60,9 @@ class objectCreator{
 	draw(){
 		if(this._object)
 			this._object.draw();
+
+		if(this._view !== null && this._items !== null)
+			this._view.draw();
 	}
 
 	create(obj){
@@ -79,14 +109,38 @@ class objectCreator{
 		draw();
 	}
 
+	set(key, val){
+		if(key[0] != "_")
+			key = "_" + key;
+
+		this[key] = val;
+
+		if(isIn(key, "_fillColor", "_borderColor", "_fontColor") && isDefined(this._view))
+			this._view.init();
+
+	}
+
+	clickIn(x, y){
+		return isDefined(this._view) ? this._view.clickIn(x, y) : false;
+	}
+
 	get object(){return this._object;}
+	get radius(){return this._radius;}
 	get color(){return this._fillColor;}
+	get fillColor(){return this._fillColor;}
+	get fontSize(){return this._fontSize;}
+	get fontColor(){return this._fontColor;}
 	get operation(){return this._operation;}
 	get lineWidth(){return this._lineWidth;}
 	get borderColor(){return this._borderColor;}
+	get borderWidth(){return this._borderWidth;}
+	get lineType(){return this._lineType;}
+	get lineStyle(){return this._lineStyle;}
+	get brushSize(){return this._brushSize;}
+	get brushType(){return this._brushType;}
 
 	set object(val){this._object = val;}
 	set color(val){this._fillColor = val;}
 	set lineWidth(val){this._lineWidth = val;}
-	set operation(val){this._operation = val;}
+	set operation(val){this._operation = val; this._view.changeOperation()}
 }

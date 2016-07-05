@@ -14,6 +14,7 @@ class MenuManager{
 		this._vertical 			= parent != null;
 
 		this._canvas 			= parent == null ? document.createElement("canvas") : parent._canvas;
+		this._context			= null;
 		this._tmpDrawArray		= [];
 
 		this._visibleSubMenu 	= false;
@@ -85,6 +86,8 @@ class MenuManager{
 		this._subMenus["tools"]	= new MenuManager(new GVector2f(0, this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "tools", this);
 		this._subMenus["lineWidth"]	= new MenuManager(new GVector2f(6 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "lineWidth", this);
 		this._subMenus["brushes"]	= new MenuManager(new GVector2f(6 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "brushes", this);
+
+		draw();
 	}
 
 	isToolActive(){
@@ -137,9 +140,7 @@ class MenuManager{
 				this._toolActive = "tools";
 				break;
 			case "color":
-				pickUpColor(function(color){
-					Creator.color = color;
-				});
+				pickUpColor(color => Creator.color = color);
 				break;
 			case "draw":
 				Creator.operation = OPERATION_DRAW_PATH;

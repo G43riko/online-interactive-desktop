@@ -24,6 +24,7 @@
 		<script type="text/javascript" src="js/canvas.js"></script>
 		<script type="text/javascript" src="js/objects/entity.js"></script>
 		<script type="text/javascript" src="js/components/layersViewer.js"></script>
+        <script type="text/javascript" src="js/components/creatorViewer.js"></script>
 		<script type="text/javascript" src="js/objects/text.js"></script>
 		<script type="text/javascript" src="js/objects/table.js"></script>
 		<script type="text/javascript" src="js/objects/class.js"></script>
@@ -59,11 +60,18 @@
         if(typeof type === "undefined")
             type = "text/plain";
         var file = new Blob([text], {type: type}),
-            a = document.getElementById("fileLink");
+            a   = document.getElementById("fileLink");
 
         a.href = URL.createObjectURL(file);
         a.download = name;
         a.click()
+    }
+
+    function saveImage(name, image){
+        var a = document.getElementById("fileLink");
+        a.href = image;
+        a.download = name;
+        a.click();
     }
 
     function loadImage(func){

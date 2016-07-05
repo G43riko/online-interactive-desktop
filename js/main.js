@@ -12,11 +12,8 @@ var initTime 		= window.performance.now(),
 	FPS				= 60,
 	canvas, context;
 
-$.getJSON("js/json/menu.json", function(data){
-	Menu.init(data);
-	draw();
-});
-
+$.getJSON("js/json/menu.json", data =>Menu.init(data));
+$.getJSON("js/json/creator.json", data =>Creator.init(data));
 $.getJSON("js/json/context.json", data => ContextMenuManager.items = data);
 $.getJSON("js/json/attributes.json", data => Entity.attr = data);
 
@@ -99,6 +96,7 @@ $(function(){
 	Input.initListeners(canvas);
 
 	Scene.addToScene(new LayersViewer(), "rightMenu");
+	Creator.view = new CreatorViewer();
 
 	draw();
 });
