@@ -52,7 +52,7 @@ class objectCreator{
 		selectedObjects.clearAndAdd(this._object);
 	}
 
-	finishCreating(position){
+	finishCreating(){
 		Scene.addToScene(this._object);
 		this._object = false;
 	}
@@ -115,7 +115,7 @@ class objectCreator{
 
 		this[key] = val;
 
-		if(isIn(key, "_fillColor", "_borderColor", "_fontColor") && isDefined(this._view))
+		if(isIn(key, "_fillColor", "_borderColor", "_fontColor", "_color") && isDefined(this._view))
 			this._view.init();
 
 	}
@@ -140,7 +140,6 @@ class objectCreator{
 	get brushType(){return this._brushType;}
 
 	set object(val){this._object = val;}
-	set color(val){this._fillColor = val;}
-	set lineWidth(val){this._lineWidth = val;}
+	//set color(val){this._fillColor = val;}
 	set operation(val){this._operation = val; this._view.changeOperation()}
 }

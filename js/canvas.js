@@ -350,6 +350,10 @@ function _remakePosAndSize(def, obj){
 	return res;
 }
 
+function saveCanvasAsFile(){
+	saveImage("canvas_screen_shot", canvas.toDataURL());
+}
+
 function _process(res){
 	if(res.shadow)
 		setShadow(res.shadow);

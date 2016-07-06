@@ -78,6 +78,16 @@ function init(){
 	draw();
 }
 
+function saveSceneAsFile(){
+	saveFile("scene_backup", Scene.toString());
+}
+
+function loadSceneFromFile(){
+	loadFile(function(content){
+		JSON.parse(content).forEach(e => Creator.create(e));
+	});
+}
+
 $(function(){
 	/**
 	 * DOLEZITE!!!
@@ -110,11 +120,11 @@ function realDraw(){
 	drawGrid(0.1, 10, 50);
 
 	Scene.draw();
-	Menu.draw();
 	Creator.draw();
+	Menu.draw();
 	if(actContextMenu)
 		actContextMenu.draw();
 
-	timeLine.draw();
+	//timeLine.draw();
 }
 

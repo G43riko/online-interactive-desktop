@@ -16,13 +16,24 @@
 			"visible" : true
 		},
 		"color" : {
-			"visible" : true
+			"visible" : false
 		},
 		"lineWidth" : {
 			"visible" : false
 		},
 		"brushes" : {
 			"visible" : false
+		}
+	},
+	"file": {
+		"saveImg" : {
+			"visible" : true
+		},
+		"saveXML" : {
+			"visible" : true
+		},
+		"loadXML" : {
+			"visible" : true
 		}
 	},
 	"tools": {

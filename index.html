@@ -124,6 +124,7 @@
         $("#modalWindow ").find("div").each(function(){
             $(this).show();
         });
+        $("#colorPalete").undelegate();
         $("#modalWindow").hide();
         $("canvas").removeClass("blur");
     }
@@ -137,7 +138,6 @@
             func.call(T, $(this).addClass("selected").css("backgroundColor"));
             closeDialog();
             draw();
-            $("#colorPalete").undelegate();
         });
         showColors();
     }

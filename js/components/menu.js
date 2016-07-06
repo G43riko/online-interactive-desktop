@@ -52,7 +52,6 @@ class MenuManager{
 					return;
 				}
 
-
 				e["key"] = i;
 
 				if(counter.x > counter.y)
@@ -84,8 +83,9 @@ class MenuManager{
 		this._allItems 	= array;
 
 		this._subMenus["tools"]	= new MenuManager(new GVector2f(0, this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "tools", this);
-		this._subMenus["lineWidth"]	= new MenuManager(new GVector2f(6 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "lineWidth", this);
-		this._subMenus["brushes"]	= new MenuManager(new GVector2f(6 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "brushes", this);
+		this._subMenus["lineWidth"]	= new MenuManager(new GVector2f(5 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "lineWidth", this);
+		this._subMenus["brushes"]	= new MenuManager(new GVector2f(5 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "brushes", this);
+		this._subMenus["file"]	= new MenuManager(new GVector2f(1 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "file", this);
 
 		draw();
 	}
@@ -140,7 +140,7 @@ class MenuManager{
 				this._toolActive = "tools";
 				break;
 			case "color":
-				pickUpColor(color => Creator.color = color);
+				pickUpColor(color => Creator.set("fillColor", color));
 				break;
 			case "draw":
 				Creator.operation = OPERATION_DRAW_PATH;
@@ -153,6 +153,18 @@ class MenuManager{
 				break;
 			case "brushes":
 				this._visibleSubMenu = key;
+				break;
+			case "file":
+				this._visibleSubMenu = key;
+				break;
+			case "saveImg":
+				saveCanvasAsFile();
+				break;
+			case "saveXML":
+				saveSceneAsFile();
+				break;
+			case "loadXML":
+				loadSceneFromFile();
 				break;
 			case "arc":
 				Creator.operation = OPERATION_DRAW_ARC;
@@ -181,12 +193,15 @@ class MenuManager{
 	 * PRESS
 	 */
 
-	_doPressAct(index){
+	_doPressAct(index, pos){
 		if(!index)
 			return false;
 		switch(index){
 			case "tools":
 				this._visibleSubMenu = index;
+				break;
+			case "file":
+				actContextMenu = new ContextMenuManager(pos, [], false, "file");
 				break;
 		}
 		return index;
@@ -209,7 +224,7 @@ class MenuManager{
 
 			if(x > posX && x < posX + this._size.x && y > posY && y < posY + this._size.y ){
 				result = e;
-				this._doPressAct(e.key);
+				this._doPressAct(e.key, new GVector2f(x, y));
 			}
 
 			if(this._vertical)
@@ -310,6 +325,15 @@ class MenuManager{
 				break;
 			case "file":
 				fillText("FILE", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "saveImg":
+				fillText("SAVE IMG", x + (width >> 1), y + (height >> 1), height / 8, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "saveXML":
+				fillText("SAVE XML", x + (width >> 1), y + (height >> 1), height / 8, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "loadXML":
+				fillText("LOAD XML", x + (width >> 1), y + (height >> 1), height / 8, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "options":
 				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);

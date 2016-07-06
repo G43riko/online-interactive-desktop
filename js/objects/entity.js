@@ -1,5 +1,4 @@
 class Entity{
-	/*name, position, size, /*attr*/
 	constructor(name, position = new GVector2f(), size = new GVector2f(), data = {}){
 		this._position 			= position;
 		this._size 				= size;
@@ -11,39 +10,52 @@ class Entity{
 		this._locked			= false;
 		this._minSize 			= false;
 		this._selectedConnector = false;
-		this._radius 			= 0;
 		this._layer				= "default";
-
-		if(isUndefined(this._connectors))
-			this._connectors 	= [new GVector2f(0.5, 0), new GVector2f(0.5, 1), new GVector2f(0, 0.5), new GVector2f(1, 0.5)];
-		
-		if(isUndefined(this._id))
-			this._id			= Entity.getId();
 
 		Entity.changeAttr(this, data);
 
+		if(isUndefined(this._connectors))	//presunute nižšie lebo chcem priradiť iba ak neexsituju
+			this._connectors 	= [new GVector2f(0.5, 0), new GVector2f(0.5, 1), new GVector2f(0, 0.5), new GVector2f(1, 0.5)];
+
+		if(isUndefined(this._id))	//presunute pod priradenie atributov lebo chcem priradiť ID iba ak nieje ešte
+			this._id			= Entity.getId();
+
 		if(isUndefined(this._borderWidth))
-			this._borderWidth 	= Creator.lineWidth;
+			this._borderWidth 	= Creator.borderWidth;
+
+		if(isUndefined(this._radius))
+			this._radius 		= Creator.radius;
 
 		if(isUndefined(this._fillColor))
 			this._fillColor 	= Creator.color;
 
 		if(isUndefined(this._borderColor))
-			this._borderColor 	= shadeColor1(this._fillColor, -20);
+			this._borderColor 	= Creator.borderColor;
 	}
 
+
+
+	/*
+	 * vygeneruje jedinečný identifikátor
+	 */
 	static getId(){
-		var id;
-		do
+		var id = parseInt(Math.random() * 1000000);
+		while(isDefined(Entity._ides[id]))
 			id = parseInt(Math.random() * 1000000);
-		while(isDefined(Entity._ides[id]));
 		Entity._ides[id] = 1;
 		return id;
 	}
 
+
+
+	/*
+	 * pridá k objektu nový connector
+	 */
 	addConnector(){
 		objectToArray(arguments).forEach(e => this._connectors.push(e), this);
 	}
+
+
 
 	/**
 	 * vráti true ak je šanca že bolo kliknuté na niektorú časť objektu
@@ -53,10 +65,53 @@ class Entity{
 			   y + SELECTOR_SIZE > obj._position.y && y - SELECTOR_SIZE < obj._position.y + obj._size.y;
 	};
 
+
+
+	/*
+	 * zistí či bolo kliknuté na objekt a ak áno zavolá príslušnú funkciu
+	 */
 	clickIn(x, y){return false;};
 
+
+
+	/*
+	 * vykoná príslušnú akciu po kliknutí
+	 */
+	//_doClickAct(index, x, y){};
+
+
+
+	/*
+	 * zistí či bolo pressnuté na objekt a ak áno zavolá príslušnú funkciu
+	 */
+	pressIn(x, y){}
+
+
+
+	/*
+	 * vykoná príslušnú akciu po pressnutí
+	 */
+	//_doPressAct(index, x, y){};
+
+
+
+	/*
+	 * vyčistí objekt (vykonáva sa tesne pred zmazaním)
+	 */
+	cleanUp(){};
+
+
+
+	/*
+	 * vykreslí objekt
+	 */
 	draw(){};
 
+
+
+	/*
+	 * nastavý objektu atribút
+	 */
 	static setAttr(obj, attr, val){
 		if(isUndefined(Entity["attr"]) || isDefined(Entity["attr"]["Entity"][attr]) || isDefined(Entity["attr"][obj.name][attr]))
 			obj["_" + attr] = val;
@@ -64,6 +119,11 @@ class Entity{
 			Logger.error("k objektu " + obj.name + " sa snaží priradiť neplatný atribút: " + attr);
 	}
 
+
+
+	/*
+	 * zmení objektu atribút
+	 */
 	static changeAttr(obj, data, val){
 		if(typeof data == "object")
 			each(data, (e, i) => Entity.setAttr(obj, i, e));
@@ -72,6 +132,11 @@ class Entity{
 		return obj;
 	}
 
+
+
+	/*
+	 * vypočíta maximálnu a minimálnu poziciu z pola bodov
+	 */
 	static findMinAndMax(points, position, size){
 		position.set(points[0]);
 		size.set(points[0]);
@@ -87,6 +152,11 @@ class Entity{
 		size.sub(position);
 	}
 
+
+
+	/*
+	 * skontroluje či sa súradnica nachadza na nejakom connectore
+	 */
 	checkConnectors(vec){
 		if(Creator.operation != OPERATION_DRAW_JOIN)
 			return;
@@ -104,6 +174,11 @@ class Entity{
 		}, this);
 	}
 
+
+
+	/*
+	 * vykreslí všetky connectory
+	 */
 	static drawConnectors(obj){
 		if(Creator.operation != OPERATION_DRAW_JOIN && (Creator.operation != OPERATION_DRAW_LINE || !Menu.isToolActive()))
 			return;
@@ -111,6 +186,11 @@ class Entity{
 		obj._connectors.forEach(e => drawConnector(e, obj));
 	};
 
+
+
+	/*
+	 * animuje pohyb alebo zmenu velkosti
+	 */
 	static animateMove(obj, targetPos, fps = FPS){
 		var vec = targetPos.getClone().sub(obj.position).div(fps),
 			counter = 0,
@@ -124,6 +204,11 @@ class Entity{
 		}, 1000 / fps);
 	}
 
+
+
+	/*
+	 * nastaví konkrétny typ pohybu
+	 */
 	static setMoveType(obj, vec){
 		if (vec.dist(obj.position.x + (obj.size.x >> 1), obj.position.y) < SELECTOR_SIZE)
 			obj.moveType = 0;
@@ -139,9 +224,13 @@ class Entity{
 			obj.moveType = 4;
 	}
 
-	static clone(obj){
-		var copy = Object.create(obj.__proto__);
 
+
+	/*
+	 * vytvorý kópiu objektu
+	 */
+	static getClone(obj){
+		var copy = Object.create(obj.__proto__);
 		each(obj, function(e, i){
 			if(e.constructor.name == "GVector2f")
 				copy[i] = e.getClone();
@@ -161,9 +250,14 @@ class Entity{
 		});
 
 		copy.position.add(obj.size);
-		Scene.addToScene(copy);
+		return  clone;
 	}
 
+
+
+	/*
+	 * GETTERS
+	 */
 	get id(){return this._id;}
 	get name(){return this._name;}
 	get size(){return this._size;}
@@ -179,6 +273,10 @@ class Entity{
 	get borderColor(){return this._borderColor;}
 	get selectedConnector(){return this._selectedConnector;}
 
+
+	/*
+	 * SETTERS
+	 */
 	//set id(val){this._id = val;}
 	set layer(val){this._layer = val;}
 	set locked(val){this._locked = val;}

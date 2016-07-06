@@ -114,7 +114,6 @@ Movement = {
 function drawBorder(o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 	if(!o.selected && o.name != "Paint")
 		return;
-	context.save();
 
 	doRect({
 		position: o.position,
@@ -134,7 +133,6 @@ function drawBorder(o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 
 	if(selectors.hasOwnProperty("br"))
 		drawSelectArc(o.position.x + o.size.x, o.position.y + o.size.y);
-	context.restore();
 }
 
 function shadeColor1(color, percent) {  // deprecated. See below.
@@ -172,25 +170,30 @@ function updateSelectedObjectView(object){
 }
 
 function drawConnector(vec, obj){
-	context.save();
-	context.beginPath();
 	vec = vec.getClone().mul(obj.size);
-	context.fillStyle = "brown";
-	context.arc(obj.position.x + vec.x, obj.position.y + vec.y, 5, 0, PI2);
-	context.fill();
-	context.restore();
+	doArc({
+		x: obj.position.x + vec.x,
+		y: obj.position.y + vec.y,
+		fillColor: "brown",
+		center: true,
+		width: 10,
+		height: 10
+	});
 }
 
-function drawSelectArc(x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE, dots = true){
-	context.save();
-	setLineDash(dots);
-	context.beginPath();
-	context.fillStyle = color;
-	context.arc(x, y, size, size, 0, PI2);
-	context.fill();
-	context.strokeStyle = "black";
-	context.stroke();
-	context.restore();
+function drawSelectArc(x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE << 1 	, dots = true){
+	doArc({
+		x: x,
+		y: y,
+		center: true,
+		width: size,
+		height: size,
+		fillColor: color,
+		borderWidth: DEFAULT_STROKE_WIDTH << 1,
+		lineDash:  dots ? [15, 5] : [],
+		borderColor: "black"
+
+	});
 }
 
 function getMousePos(canvasDom, mouseEvent) {

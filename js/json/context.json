@@ -23,6 +23,18 @@
 			}
 		}
 	},
+	"file" : {
+		"label" : "File options",
+		"type" : "text",
+		"fields" : {
+			"normalLine" : {
+				"label" : "Normal line",
+				"type" : "radio",
+				"group" : "lineStyleValue",
+				"name" : 2100
+			}
+		}
+	},
 	"lineStyle" : {
 		"label" : "Line style",
 		"type" : "text",

@@ -23,6 +23,7 @@ class ContextMenuManager{
 				else if(movedObject.name == "Text")
 					this._addFields("changeFillColor", "changeBorderColor", "delete", "locked", "verticalTextAlign", "horizontalTextAlign", "makeCopy");
 			}
+
 			this._addFields("clearWorkspace");
 		}
 		context.font = (30 - CONTEXT_MENU_OFFSET) + "pt " + DEFAULT_FONT;
@@ -217,7 +218,7 @@ class ContextMenuManager{
 				actContextMenu = false;
 				break;
 			case "makeCopy":
-				Entity.clone(this._selectedObject);
+				Scene.addToScene(Entity.clone(this._selectedObject));;
 				actContextMenu = false;
 				break;
 			default:

@@ -45,7 +45,7 @@ class CreatorViewer extends Entity{
 			});
 
 			if(isDefined(e["values"]))
-				e["values"].forEach(function(ee, ii, array){
+				e["values"].forEach(function(ee, ii){
 					if(posY > 0)
 						doRect({
 							//bgColor: e.image,
@@ -149,7 +149,7 @@ class CreatorViewer extends Entity{
 						arr[i]["itemsSelected"] = !e["itemsSelected"];
 					click = true;
 				}
-				else{
+				else if(e["itemsSelected"]){
 					num = this.position.y + MENU_OFFSET;
 					if(isDefined(e["item"]["values"]))
 						e["item"]["values"].forEach(function(ee, ii){
@@ -170,31 +170,8 @@ class CreatorViewer extends Entity{
 		}, this);
 		return click;
 	}
-	
-	static clickOn(key){
-		switch(key){
-			case "fillColor" :
-				break;
-			case "borderColor" :
-				break;
-			case "borderWidth" :
-				break;
-			case "radius" :
-				break;
-			case "brushType" :
-				break;
-			case "brushSize" :
-				break;
-			case "lineStyle" :
-				break;
-			case "lineType" :
-				break;
-			default :
-				Logger.error("neznámy typ typu creatora");
-		}
-	}
 
-	_allowedOption(operation, allowed){
+	static allowedOption(operation, allowed){
 		switch(operation){
 			case 1000:
 				return isIn("Rect", allowed);
@@ -213,7 +190,7 @@ class CreatorViewer extends Entity{
 	changeOperation(){
 		this._items = [];
 		each(Creator.items, function(e, i){
-			if(!this._allowedOption(Creator.operation, e["allowedFor"]))
+			if(!CreatorViewer.allowedOption(Creator.operation, e["allowedFor"]))
 				return;
 
 			this._items.push({
@@ -227,7 +204,7 @@ class CreatorViewer extends Entity{
 
 	draw(){
 		var counter = MENU_OFFSET;
-		this._items.forEach(function(e, i){
+		this._items.forEach(function(e){
 			doRect({
 				bgImage: {
 					x: e["item"]["offset"],

@@ -5,7 +5,7 @@ class Text extends Entity{
 		this._textColor = fontColor;
 		this._fontSize 	= DEFAULT_FONT_SIZE;
 		this._moveType 	= -1;
-		this.size.x 	= calcTextWidth(text, DEFAULT_FONT_SIZE + "pt " + DEFAULT_FONT) + (DEFAULT_TEXT_OFFSET << 1);
+		this.size.x 	= calcTextWidth(text, this._fontSize + "pt " + DEFAULT_FONT) + (DEFAULT_TEXT_OFFSET << 1);
 		this.minSize 	= this.size.getClone();
 		this._verticalTextAlign = FONT_VALIGN_TOP;
 		this._horizontalTextAlign = FONT_HALIGN_LEFT;
@@ -33,15 +33,13 @@ class Text extends Entity{
 	draw(){
 		var pos = this.position.getClone();
 
-		context.fillStyle = this._fillColor;
-		context.lineWidth = this._borderWidth;
-
 		doRect({
 			shadow: this.moving && !this.locked,
 			position: this.position,
 			size: this.size,
 			radius: this.radius,
 			fillColor: this.fillColor,
+			borderWidth: this._borderWidth,
 			draw: true,
 			fill: true
 		});
@@ -50,7 +48,8 @@ class Text extends Entity{
 		context.textAlign = this._horizontalTextAlign;
 		context.textBaseline = this._verticalTextAlign;
 		context.fillStyle = this._textColor;
-
+		context.font = this._fontSize + "pt " + DEFAULT_FONT;
+		
 		if(this._horizontalTextAlign == FONT_HALIGN_LEFT)
 			pos.x += this._fontOffset;
 		else if(this._horizontalTextAlign == FONT_HALIGN_CENTER)
