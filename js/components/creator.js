@@ -12,6 +12,7 @@ class objectCreator{
 		this._lineStyle		= DEFAULT_LINE_STYLE;
 		this._brushSize		= DEFAULT_BRUSH_SIZE;
 		this._brushType		= DEFAULT_BRUSH_TYPE;
+		this._brushColor	= DEFAULT_BRUSH_COLOR;
 		this._radius		= DEFAULT_RADIUS;
 		this._items 		= null;
 		this._view			= null;
@@ -115,7 +116,12 @@ class objectCreator{
 
 		this[key] = val;
 
-		if(isIn(key, "_fillColor", "_borderColor", "_fontColor", "_color") && isDefined(this._view))
+		if(key === "_brushType"){
+			if(val !== "line")
+				Scene.paint.setImage(val);
+		}
+
+		if(isIn(key, "_fillColor", "_borderColor", "_fontColor", "_color", "_brushColor") && isDefined(this._view))
 			this._view.init();
 
 	}
@@ -138,6 +144,7 @@ class objectCreator{
 	get lineStyle(){return this._lineStyle;}
 	get brushSize(){return this._brushSize;}
 	get brushType(){return this._brushType;}
+	get brushColor(){return this._brushColor;}
 
 	set object(val){this._object = val;}
 	//set color(val){this._fillColor = val;}

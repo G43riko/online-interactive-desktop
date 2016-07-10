@@ -9,11 +9,55 @@ var initTime 		= window.performance.now(),
 	Logger 			= new LogManager(),
 	Listeners		= new ListenersManager(),
 	timeLine		= new TimeLine(),
+	EventHistory 	= new EventSaver(),
+	Content			= new ContentManager(),
 	FPS				= 60,
 	canvas, context;
 
-$.getJSON("js/json/menu.json", data =>Menu.init(data));
-$.getJSON("js/json/creator.json", data =>Creator.init(data));
+function ajax(url, options){
+	if(typeof options !== "object")
+		options = {};
+
+	options["method"] = options["method"] || "GET";
+	options["async"] = options["async"] || true;
+
+	var start = 0;
+	xhttp = window.XMLHttpRequest ?  new XMLHttpRequest() :  new ActiveXObject("Microsoft.XMLHTTP");
+
+	xhttp.onabort = options["abort"];
+	xhttp.onerror = options["error"];
+	xhttp.onprogress = options["progress"];
+	xhttp.ontimeout = options["timeout"];
+	xhttp.onloadend = () => options["loadEnd"]((window.performance.now() - start));
+	xhttp.onloadstart = function(){
+		options["loadStart"]();
+		start = window.performance.now();
+	};
+	xhttp.onreadystatechange = function() {
+		if (xhttp.readyState == 4 && xhttp.status == 200 && isFunction(options["success"]))
+			switch(options["dataType"]){
+				case "json" :
+					options["success"](JSON.parse(xhttp.responseText));
+					break;
+				case "html" :
+					options["success"](new DOMParser().parseFromString(xhttp.responseText, "text/xml"));
+					break;
+				case "xml" :
+					options["success"](new DOMParser().parseFromString(xhttp.responseText, "text/xml"));
+					break;
+				default :
+					options["success"](xhttp.responseText)
+			}
+
+	};
+	xhttp.open(options["method"], url, options["async"]);
+	xhttp.send();
+}
+
+$.getJSON("js/json/menu.json",function(data){
+	Menu.init(data);
+	$.getJSON("js/json/creator.json", data => Creator.init(data));
+});
 $.getJSON("js/json/context.json", data => ContextMenuManager.items = data);
 $.getJSON("js/json/attributes.json", data => Entity.attr = data);
 
@@ -106,7 +150,7 @@ $(function(){
 	Input.initListeners(canvas);
 
 	Scene.addToScene(new LayersViewer(), "rightMenu");
-	Creator.view = new CreatorViewer();
+	Creator.view = new CreatorViewer(new GVector2f(Menu.position.x + (Menu.size.x + MENU_OFFSET) * 6 - MENU_OFFSET, Menu.position.y - MENU_OFFSET));
 
 	draw();
 });

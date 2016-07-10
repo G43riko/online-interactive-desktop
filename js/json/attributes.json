@@ -1,21 +1,21 @@
 {
 	"Entity" : {
-		"position" : "object",
-		"size" : "object",
-		"name" : "string",
-		"fillColor" : "string",
+		"selectedConnector" : "boolean",
 		"borderColor" : "string",
 		"borderWidth" : "number",
+		"connectors" : "object",
+		"fillColor" : "string",
 		"selected" : "boolean",
 		"visible" : "boolean",
+		"position" : "object",
+		"minSize" : "boolean",
+		"moveType" : "number",
 		"moving" : "boolean",
 		"locked" : "boolean",
-		"minSize" : "boolean",
-		"selectedConnector" : "boolean",
-		"layer" : "string",
-		"connectors" : "object",
 		"radius" : "number",
-		"moveType" : "number",
+		"layer" : "string",
+		"size" : "object",
+		"name" : "string",
 		"id" : "number"
 	},
 	"Rect" : {
@@ -30,8 +30,8 @@
 	"Table" : {
 		"headerColor" : "string",
 		"bodyColor" : "string",
-		"data" : "object",
-		"fontSize" : "number"
+		"fontSize" : "number",
+		"data" : "object"
 	},
 	"Text" : {
 
@@ -40,15 +40,14 @@
 
 	},
 	"Line" : {
+		"arrowStartType" : "number",
+		"arrowEndType" : "number",
 		"movingPoint" : "number",
 		"lineStyle" : "number",
 		"joinType" : "number",
-		"points" : "object",
-
-		"lineCap" : "number",
 		"lineType" : "number",
-		"arrowEndType" : "number",
-		"arrowStartType" : "number"
+		"lineCap" : "number",
+		"points" : "object"
 	},
 	"Polygon" : {
 		"movingPoint" : "number",
@@ -57,10 +56,10 @@
 		"points" : "object"
 	},
 	"Join" : {
-		"obj1" : "object",
 		"obj1_connector" : "object",
-		"obj2" : "object",
 		"obj2_connector" : "object",
-		"lineType" : "number"
+		"lineType" : "number",
+		"obj1" : "object",
+		"obj2" : "object"
 	}
 }

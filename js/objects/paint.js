@@ -9,7 +9,6 @@ class Paint extends Entity{
 		this._context 		= this._canvas.getContext('2d');
 		this._action		= PAINT_ACTION_BRUSH;
 		this._brush			= new BrushManager();
-		this._brushSize		= new GVector2f(32);
 		this._editBackup	= [];
 	}
 
@@ -66,7 +65,7 @@ class Paint extends Entity{
 			res.push(e);
 
 			if(this._actColor != e["color"])
-				this._brush.rePaintImage(this._brushSize, e["color"]);
+				this._brush.rePaintImage(Creator.brushSize, e["color"]);
 			this._actColor = e["color"];
 
 			e["points"].forEach(function(ee, ii, arr){
@@ -81,8 +80,6 @@ class Paint extends Entity{
 	}
 
 	undo(){
-
-
 		if(isNull(this._points[this._points.length - 1]["color"]))
 			this._points.pop();
 
@@ -112,14 +109,14 @@ class Paint extends Entity{
 			Sharer.paint.addPoint(point, color);
 
 		if(this._actColor != color)
-			this._brush.rePaintImage(this._brushSize, color);
+			this._brush.rePaintImage(Creator.brushSize, color);
 
 		this._actColor = color;
 
 		if(isNull(lastArr["color"])){
 			lastArr["color"] = color;
 			lastArr["action"] = this._action;
-			lastArr["size"] = this._brushSize.toArray();
+			lastArr["size"] = Creator.brushSize;
 		}
 
 		if(arr.length)
@@ -143,10 +140,10 @@ class Paint extends Entity{
 				angle 	= Math.atan2(pointA.x - pointB.x, pointA.y - pointB.y);
 			for (var i = 0; i < dist; i++)
 				this._context.drawImage(this._brush.selectedBrush,
-					pointB.x + (Math.sin(angle) * i) - (this._brushSize.x >> 1),
-					pointB.y + (Math.cos(angle) * i) - (this._brushSize.y >> 1),
-					this._brushSize.x,
-					this._brushSize.y);
+					pointB.x + (Math.sin(angle) * i) - (Creator.brushSize >> 1),
+					pointB.y + (Math.cos(angle) * i) - (Creator.brushSize >> 1),
+					Creator.brushSize,
+					Creator.brushSize);
 		}
 	}
 
@@ -204,15 +201,15 @@ class BrushManager{
 			this.selectedImage = title;
 	}
 
-	rePaintImage(size = new GVector2f(32), col = "#000000"){
+	rePaintImage(size = 32, col = "#000000"){
 		var c = document.createElement('canvas'),
 			ctx, imgData, data, color, i;
-		c.width = size.x;
-		c.height = size.y;
+		c.width = size;
+		c.height = size;
 
 		ctx = c.getContext('2d');
-		ctx.drawImage(this._selectedImage, 0, 0, size.x, size.y);
-		imgData = ctx.getImageData(0, 0, size.x, size.y);
+		ctx.drawImage(this._selectedImage, 0, 0, size, size);
+		imgData = ctx.getImageData(0, 0, size, size);
 		data = imgData.data;
 		color = col.replace("rgb(", "").replace("rgba(", "").replace(")", "").split(", ").map(a => parseInt(a));
 		for(i=3 ; i<data.length ; i+=4){

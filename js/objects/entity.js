@@ -117,6 +117,7 @@ class Entity{
 			obj["_" + attr] = val;
 		else
 			Logger.error("k objektu " + obj.name + " sa snaží priradiť neplatný atribút: " + attr);
+		return obj;
 	}
 
 
@@ -252,8 +253,6 @@ class Entity{
 		copy.position.add(obj.size);
 		return  clone;
 	}
-
-
 
 	/*
 	 * GETTERS

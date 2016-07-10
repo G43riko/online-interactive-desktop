@@ -20,6 +20,29 @@ function isIn(obj, data){
 	return false;
 }
 
+function roughSizeOfObject(object) {
+	var objectList = [];
+	var stack = [object];
+	var bytes = 0;
+
+	while (stack.length) {
+		var value = stack.pop();
+		if(typeof value === 'boolean')
+			bytes += 4;
+		else if(typeof value === 'string')
+			bytes += value.length << 1;
+		else if(typeof value === 'number')
+			bytes += 8;
+		else if(typeof value === 'object' && objectList.indexOf( value ) === -1){
+			objectList.push(value);
+			for(var i in value)
+				if(value.hasOwnProperty(i))
+					stack.push(value[i]);
+		}
+	}
+	return bytes;
+}
+
 var isUndefined 	= e => typeof e === "undefined",
 	isDefined 		= e => typeof e !== "undefined",
 	isFunction 		= e => typeof e === "function",
@@ -35,11 +58,28 @@ var isUndefined 	= e => typeof e === "undefined",
 	angleBetween 	= (a, b) => Math.atan2(b.y, b.x) - Math.atan2(a.y, a.x);
 	getClassOf 		= Function.prototype.call.bind(Object.prototype.toString);
 
+function each(obj, func, thisArg = false){
+	var i = 0;
+	if(Array.isArray(obj)){
+		if(thisArg)
+			for(; i<obj.length ; i++)
+				func.call(thisArg, obj[i], i, obj);
+		else
+			for(; i<obj.length ; i++)
+				func(obj[i], i, obj);
+	}
+	else{
+		if(thisArg){
+			for(i in obj)
+				if(obj.hasOwnProperty(i))
+					func.call(thisArg, obj[i], i, obj);
+		}
+		else
+			for(i in obj)
+				if(obj.hasOwnProperty(i))
+					func(obj[i], i, obj);
 
-function each(obj, func, thisArg){
-	for(var i in obj)
-		if(obj.hasOwnProperty(i))
-			func.call(thisArg, obj[i], i, obj);
+	}
 }
 
 function extendObject(){
@@ -63,6 +103,8 @@ Movement = {
 				
 			}
 			else{
+				var oldPos = o.position.getClone();
+				var oldSize = o.size.getClone();
 				switch(o.moveType){
 					case 0:
 						o.position.y += y;
@@ -86,8 +128,9 @@ Movement = {
 							o.size.x += x;
 						if(!o.minSize || o.size.y + y >= o.minSize.y)
 							o.size.y += y;
-						break;
+						break
 				}
+				EventHistory.addObjectMoveAction(o, oldPos, oldSize, o.moveType);
 			}
 		}
 		else if(isDefined(o.movingPoint)){
@@ -108,6 +151,7 @@ Movement = {
 
 		if(isDefined(Sharer) && Sharer.isSharing)
 			Sharer.objectChange(o, ACTION_MOVE);
+
 	}
 };
 

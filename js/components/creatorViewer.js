@@ -11,9 +11,9 @@ class CreatorViewer extends Entity{
 		 * - itemsValues - zoznam možností;
 		 */
 		Entity.changeAttr(this,{
-			fillColor: "white",
+			fillColor: "#1abc9c",
 			borderColor: "black",
-			borderWidth: 1,
+			borderWidth: MENU_BORDER_WIDTH,
 			radius: MENU_RADIUS
 		});
 	}
@@ -108,6 +108,39 @@ class CreatorViewer extends Entity{
 					ctx: this._context
 				});
 				break;
+			case "brushType":
+				if(value === "line")
+					doArc({
+						position: [posX + (offset << 1), posY + (offset << 1)],
+						size: [width - (offset << 2), height - (offset << 2)],
+						fillColor: "black",
+						ctx: this._context
+					});
+				else
+					doRect({
+						position: [posX, posY ],
+						size: [width, height],
+						bgImage: Scene.paint.getImage(value),
+						ctx: this._context
+					});
+				break;
+			case "brushColor" :
+				doArc({
+					position: [posX + (offset << 1), posY + (offset << 1)],
+					size: [width - (offset << 2), height - (offset << 2)],
+					fillColor: Creator["brushColor"],
+					ctx: this._context
+				});
+				break;
+			case "brushSize" :
+				doArc({
+					position: [posX + (width >> 1), posY + (height >> 1)],
+					size: [value , value ],
+					center: true,
+					fillColor: "black",
+					ctx: this._context
+				});
+				break;
 			case "borderColor" :
 				doRect({
 					position: [posX + (offset << 1), posY + (offset << 1)],
@@ -178,7 +211,7 @@ class CreatorViewer extends Entity{
 			case 1001:
 				return isIn("Arc", allowed);
 			case 1002:
-				return isIn("Path", allowed);
+				return isIn("Paint", allowed);
 			case 1003:
 				return isIn("Line", allowed);
 			case 1004:

@@ -39,6 +39,8 @@ class SceneManager{
 		object.layer = layer;
 		this._layers[layer].add(object);
 
+
+		EventHistory.objectCreateAction(object);
 		if(resend && isSharing())
 			Sharer.objectChange(object, ACTION_CREATE);
 		else
@@ -71,6 +73,7 @@ class SceneManager{
 		this._layers[layer].remove(obj);
 		if(resend && isSharing())
 			Sharer.objectChange(obj, ACTION_DELETE);
+		EventHistory.objectDeleteAction(obj);
 
 	};
 

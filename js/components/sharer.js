@@ -121,7 +121,7 @@ class Sharer{
 		//console.log("vola sa akcia");
 		var data;
 		switch(action ){
-			case ACTION_MOVE:
+			case ACTION_OBJECT_MOVE:
 				data = {
 					id: this._id,
 					msg:{
@@ -135,7 +135,7 @@ class Sharer{
 					}
 				};
 				break;
-			case ACTION_CHANGE:
+			case ACTION_OBJECT_CHANGE:
 				data = {
 					id: this._id,
 					msg:{
@@ -147,7 +147,7 @@ class Sharer{
 				};
 				keys.forEach((e, i) => data.msg.keys["i"] = o[i]);
 				break;
-			case ACTION_DELETE:
+			case ACTION_OBJECT_DELETE:
 				data = {
 					id: this._id,
 					msg:{
@@ -157,7 +157,7 @@ class Sharer{
 					}
 				};
 				break;
-			case ACTION_CREATE:
+			case ACTION_OBJECT_CREATE:
 				data = {
 					id: this._id,
 					msg: {

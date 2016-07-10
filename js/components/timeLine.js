@@ -66,3 +66,60 @@ class TimeLine{
 		})
 	}
 }
+
+class EventSaver{
+	constructor(/*object*/) {
+		if(arguments.length == 1 && typeof isObject(arguments[0])){
+			if(typeof arguments[0] === "string")
+				arguments[0] = JSON.parse(arguments[0]);
+
+			this._initTime = arguments[0]["_initTime"];
+			this._actions   = arguments[0]["_events"];
+		}
+		else{
+			this._initTime = window.performance.now();
+			this._actions   = [];
+		}
+	}
+
+	addObjectChangeAction(object, oldAttributes){
+		this._actions[window.performance.now() - this._initTime] = {
+			event: ACTION_OBJECT_CHANGE,
+			objectId: object.id,
+			objectLayerName: object.layer,
+			oldAttributes: oldAttributess,
+			newAttributes: oldAttributes.map((e, i) => i)
+		};
+	}
+
+	addObjectMoveAction(object, oldPos, oldSize, moveType, arg){
+			this._actions[window.performance.now() - this._initTime] ={
+				event: ACTION_OBJECT_MOVE,
+				objectId: object.id,
+				objectLayerName: object.layer,
+				oldPos: oldPos,
+				oldSize: oldSize,
+				newPos: object.position,
+				moveType: moveType,
+				arg: isUndefined(arg) ? false : true
+			};
+	}
+
+	objectDeleteAction(object){
+		this._actions[window.performance.now() - this._initTime] = {
+			event: ACTION_OBJECT_DELETE,
+			objectId: object.id,
+			objectLayerName: object.layer
+		};
+	}
+
+	objectCreateAction(object){
+		this._actions[window.performance.now() - this._initTime] = {
+			event: ACTION_OBJECT_CREATE,
+			object: object
+		};
+	}
+
+	toString(){
+	}
+}

@@ -24,15 +24,21 @@
 		"allowedFor" : ["Paint"],
 		"label" : "Brush size",
 		"action" : "selectNumber" ,
-		"values": [1, 2, 5, 10, 20],
+		"values": [10, 20, 30, 40, 50, 58],
 		"type" : "number"
 	},
 	"brushType" : {
 		"allowedFor" : ["Paint"],
 		"label" : "Brush type",
 		"action" : "selectBrush" ,
-		"values": ["brush1.png", "brush2.png", "brush3.png"],
+		"values": ["brush1.png", "brush2.png", "brush3.png", "line"],
 		"type" : "string"
+	},
+	"brushColor" : {
+		"label" : "Brush Color",
+		"allowedFor" : ["Paint"],
+		"action" : "chooseColors",
+		"type" : "color"
 	},
 	"radius" : {
 		"allowedFor" : ["Rect", "Line", "Polygon", "Text"],

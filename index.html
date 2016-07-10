@@ -14,7 +14,9 @@
 		<script type="text/javascript" src="js/components/menu.js"></script>
 		<script type="text/javascript" src="js/components/slider.js"></script>
 		<script type="text/javascript" src="js/components/contextMenu.js"></script>
+        <script type="text/javascript" src="js/components/fileManager.js"></script>
 		<script type="text/javascript" src="js/components/input.js"></script>
+        <script type="text/javascript" src="js/components/contentManager.js"></script>
 		<script type="text/javascript" src="js/components/selectedObjects.js"></script>
 		<script type="text/javascript" src="js/components/layer.js"></script>
 		<script type="text/javascript" src="js/components/scene.js"></script>
@@ -37,64 +39,28 @@
         <script type="text/javascript" src="js/objects/imageObject.js"></script>
 		<script type="text/javascript" src="js/objects/arrow.js"></script>
 		<script type="text/javascript" src="js/utils/test.js"></script>
-
 		<script type="text/javascript" src="js/components/sharer.js"></script>
+
 
 		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
 		<meta name="apple-mobile-web-app-copable" content="yes">
 	</head>
 	<body>
-		<div id="modalWindow" style="display: none">
-				<div id="colorPalete" style="display: none"></div>
+		<div id="modalWindow" class="hide">
+				<div id="colorPalete" class="hide"></div>
 		</div>
+        <div id="content">
+            <img id="contentImage" src="#" class="hide">
+            <div id="contentHTML" class="hide"></div>
+        </div>
 		<canvas class="canvas animated" id="myCanvas">
-			Váš prehliadač nepodporuje Canvas
+            Váš prehliadač nepodporuje Canvas
 		</canvas>
-        <input id="fileInput" type="file" value="files" style="display: none">
-        <a href="" style="display: none" id="fileLink"></a>
+        <input id="fileInput" type="file" value="files" class="hide">
+        <a href="" class="hide" id="fileLink"></a>
 	</body>
 </html>
 <script>
-
-    function saveFile(name, text, type){
-        if(typeof type === "undefined")
-            type = "text/plain";
-        var file = new Blob([text], {type: type}),
-            a   = document.getElementById("fileLink");
-
-        a.href = URL.createObjectURL(file);
-        a.download = name;
-        a.click()
-    }
-
-    function saveImage(name, image){
-        var a = document.getElementById("fileLink");
-        a.href = image;
-        a.download = name;
-        a.click();
-    }
-
-    function loadImage(func){
-        $(document.getElementById("fileInput")).change(function(e){
-            var reader = new FileReader();
-            reader.onload = function(){
-                var image = new Image();
-                image.src = reader.result;
-                func(image);
-            };
-            reader.readAsDataURL(e.target["files"][0]);
-        }).click();
-    }
-
-    function loadFile(func){
-        $(document.getElementById("fileInput")).change(function(e){
-            var reader = new FileReader();
-            reader.onload = function(){
-                func(reader.result);
-            };
-            reader.readAsText(e.target["files"][0]);
-        }).click();
-    }
 
     var colors = ["#191919", "#DFE2DB", "#FFF056", "#FFFFFF", "#C63D0F", "#3B3738", "#FDF3E7",
                   "#7E8F7C", "#005A31", "#A8CD1B", "#CBE32D", "#F3FAB6", "#558C89", "#74AFAD",

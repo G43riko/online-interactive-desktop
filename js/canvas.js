@@ -230,9 +230,8 @@ function resetCanvas(){
 }
 
 function initCanvasSize(){
-	var tmpC = $(canvas);
-	canvas.width = tmpC.width();
-	canvas.height = tmpC.height();
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
 }
 
 function setShadow(variable){
@@ -361,10 +360,16 @@ function _process(res){
 	if(res.bgImage){
 		res.ctx.save();
 		res.ctx.clip();
+		if(res.bgImage instanceof HTMLImageElement)
+			res.ctx.drawImage(res.bgImage, res.x, res.y, res.width, res.height);
+		else
+			res.ctx.drawImage(res.bgImage.img, res.bgImage.x, res.bgImage.y, res.bgImage.w, res.bgImage.h, res.x, res.y, res.width, res.height);
+		/*
 		if(isObject(res.bgImage))
 			res.ctx.drawImage(res.bgImage.img, res.bgImage.x, res.bgImage.y, res.bgImage.w, res.bgImage.h, res.x, res.y, res.width, res.height);
 		else
 			res.ctx.drawImage(res.bgImage, res.x, res.y, res.width, res.height);
+		*/
 		res.ctx.restore();
 	}
 	else if (res.fill){

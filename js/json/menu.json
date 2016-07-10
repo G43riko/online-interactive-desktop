@@ -6,6 +6,9 @@
 		"file": {
 			"visible" : true
 		},
+		"content" : {
+			"visible" : true
+		},
 		"options" : {
 			"visible" : true
 		},
@@ -33,6 +36,20 @@
 			"visible" : true
 		},
 		"loadXML" : {
+			"visible" : true
+		}
+	},
+	"content": {
+		"loadLocalImage" : {
+			"visible" : true
+		},
+		"loadLocalHTML" : {
+			"visible" : true
+		},
+		"loadExternalImage" : {
+			"visible" : true
+		},
+		"loadExternalHTML" : {
 			"visible" : true
 		}
 	},

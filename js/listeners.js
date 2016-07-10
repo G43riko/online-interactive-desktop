@@ -137,7 +137,7 @@ class ListenersManager{
 
 		//ak sa kreslí čiara tak sa nakreslí nové posunutie
 		if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH){
-			Scene.paint.addPoint(position, Creator.color);
+			Scene.paint.addPoint(position, Creator.brushColor);
 			draw();
 		}
 

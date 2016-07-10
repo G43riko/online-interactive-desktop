@@ -7,7 +7,8 @@ class MenuManager{
 		this._parent 			= parent;
 		this._toolActive 		= false;
 		this._fontColor 		= MENU_FONT_COLOR;
-		this._backgroundColor 	= "rgb(153, 217, 234)";
+		//this._backgroundColor 	= "rgb(153, 217, 234)";
+		this._backgroundColor 	= "#1abc9c";
 		this._position 			= position.add(MENU_OFFSET);
 		this._offset 			= MENU_OFFSET;
 		this._size 				= size;
@@ -20,6 +21,9 @@ class MenuManager{
 		this._visibleSubMenu 	= false;
 		this._subMenus			= [];
 	};
+
+	get position(){return this._position;}
+	get size(){return this._size;}
 
 	init(data){
 		var array = [],
@@ -86,6 +90,7 @@ class MenuManager{
 		this._subMenus["lineWidth"]	= new MenuManager(new GVector2f(5 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "lineWidth", this);
 		this._subMenus["brushes"]	= new MenuManager(new GVector2f(5 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "brushes", this);
 		this._subMenus["file"]	= new MenuManager(new GVector2f(1 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "file", this);
+		this._subMenus["content"]	= new MenuManager(new GVector2f(2 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "content", this);
 
 		draw();
 	}
@@ -157,6 +162,15 @@ class MenuManager{
 			case "file":
 				this._visibleSubMenu = key;
 				break;
+			case "content":
+				this._visibleSubMenu = key;
+				break;
+			case "loadLocalImage":
+				Content.setContentImage();
+				break;
+			case "loadLocalHTML":
+				Content.setContentHTML();
+				break;
 			case "saveImg":
 				saveCanvasAsFile();
 				break;
@@ -182,10 +196,6 @@ class MenuManager{
 			case "lineWidth":
 				this._visibleSubMenu = key;
 				break;
-		}
-		if(this._parent != null){
-			this._parent._items.find(e => e.key == "lineWidth").visible = key == "line" || key == "defaultWidth";
-			this._parent._items.find(e => e.key == "brushes").visible = key == "draw" || key == "defaultBrushes";
 		}
 	}
 
@@ -326,14 +336,29 @@ class MenuManager{
 			case "file":
 				fillText("FILE", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
+			case "content":
+				fillText("CONT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "loadLocalImage":
+				fillText("locImg", x + (width >> 1), y + (height >> 1), height / 6, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "loadLocalHTML":
+				fillText("locHTML", x + (width >> 1), y + (height >> 1), height / 6, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "loadExternalImage":
+				fillText("extImg", x + (width >> 1), y + (height >> 1), height / 6, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "loadExternalHTML":
+				fillText("extHTML", x + (width >> 1), y + (height >> 1), height / 6, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
 			case "saveImg":
-				fillText("SAVE IMG", x + (width >> 1), y + (height >> 1), height / 8, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("SAVE IMG", x + (width >> 1), y + (height >> 1), height >> 3, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "saveXML":
-				fillText("SAVE XML", x + (width >> 1), y + (height >> 1), height / 8, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("SAVE XML", x + (width >> 1), y + (height >> 1), height >> 3, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "loadXML":
-				fillText("LOAD XML", x + (width >> 1), y + (height >> 1), height / 8, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("LOAD XML", x + (width >> 1), y + (height >> 1), height >> 3, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "options":
 				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
