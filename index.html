@@ -21,6 +21,7 @@
 		<script type="text/javascript" src="js/components/layer.js"></script>
 		<script type="text/javascript" src="js/components/scene.js"></script>
         <script type="text/javascript" src="js/components/timeLine.js"></script>
+        <script type="text/javascript" src="js/components/BrushManager.js"></script>
 		<script type="text/javascript" src="js/listeners.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>
 		<script type="text/javascript" src="js/canvas.js"></script>
@@ -61,7 +62,6 @@
 	</body>
 </html>
 <script>
-
     var colors = ["#191919", "#DFE2DB", "#FFF056", "#FFFFFF", "#C63D0F", "#3B3738", "#FDF3E7",
                   "#7E8F7C", "#005A31", "#A8CD1B", "#CBE32D", "#F3FAB6", "#558C89", "#74AFAD",
                   "#D9853B", "#ECECEA", "#2B2B2B", "#DE1B1B", "#F6F6F6", "#E9E581", "#7D1935",
@@ -71,9 +71,13 @@
 
     colors = colors.sort().reverse();
     var res = "";
+    for(var i in colors)
+        res += '<div class="colorPatern" style="background-color:' + colors[i] + '"></div>';
+    /*
     colors.forEach(function(e, i){
         res += '<div class="colorPatern" style="background-color:' + colors[i] + '"></div>';
     });
+    */
 
     $("#colorPalete").append(res);
 
@@ -143,5 +147,68 @@
         console.log(f);
         f.click();
     }
-    Sharer = new Sharer();
+
+    if(typeof Sharer !== "undefined")
+        Sharer = new Sharer();
+
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        document.cookie = cname + "=" + cvalue + ";expires="+ d.toUTCString();
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=",
+                ca = document.cookie.split(';'),
+                i, c;
+        for(i = 0; i <ca.length; i++) {
+            c = ca[i];
+            while (c.charAt(0)==' ')
+                c = c.substring(1);
+            if (c.indexOf(name) == 0)
+                return c.substring(name.length,c.length);
+        }
+        return "";
+    }
+
+    function sendAnonymousData(serverAddress){
+        var d = new Date();
+        var date  = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " ";
+        date += d.getHours()  + ":" + d.getMinutes() + ":" + d.getSeconds();
+        var data = {
+            userAgent :  navigator.userAgent,
+            language : navigator.language,
+            platform : navigator.platform,
+            vendor : navigator.vendor,
+            innerHeight : window.innerHeight,
+            innerWidth : window.innerWidth,
+            availHeight : screen.availHeight,
+            availWidth : screen.availWidth,
+            connectedAt : date
+        };
+
+        if (navigator.geolocation)
+            navigator.geolocation.watchPosition(function(position) {
+                        navigator.geolocation.getCurrentPosition(function(a){
+                            data["accuracy"] = a.coords && a.coords.accuracy  || "unknown";
+                        data["position"]   = {
+                            lat : a.coords.latitude,
+                            lon : a.coords.longitude
+                        };
+                        $.post(serverAddress + "/anonymousData", {content: JSON.stringify(data)});
+                    });
+                    },
+                    function (error) {
+                        if (error.code == error.PERMISSION_DENIED)
+                            $.post(serverAddress + "/anonymousData", {content: JSON.stringify(data)});
+                    });
+        else
+            $.post(serverAddress + "/anonymousData", {content: JSON.stringify(data)});
+    }
+
+    if(getCookie("send_data") === ""){
+        sendAnonymousData("http://192.168.0.123:3000");
+        setCookie("send_data", 1);
+    }
+    //window.open(Creator._view._canvas.toDataURL("image/png"), '_blank');
 </script>

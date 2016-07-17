@@ -28,6 +28,10 @@ class MenuManager{
 	init(data){
 		var array = [],
 			counter = new GVector2f(),
+			w = this._size.x + MENU_OFFSET,
+			h = this._size.y + MENU_OFFSET,
+			num = 0,
+			store = {},
 			tmp;
 		each(data, function(eee, ii){
 			array[ii] = [];
@@ -37,10 +41,8 @@ class MenuManager{
 						tmp = {};
 						tmp["visible"] = e["visible"];
 						tmp["key"] = i.replace("XYZ ", "");
-						if(counter.x > counter.y)
-							counter.y++;
-						else
-							counter.x++;
+
+						counter.x > counter.y && counter.y++ || counter.x++;
 
 						tmp["posX"] = counter.x;
 						tmp["posY"] = counter.y;
@@ -58,10 +60,7 @@ class MenuManager{
 
 				e["key"] = i;
 
-				if(counter.x > counter.y)
-					counter.y++;
-				else
-					counter.x++;
+				counter.x > counter.y && counter.y++ || counter.x++;
 
 				e["posX"] = counter.x;
 				e["posY"] = counter.y;
@@ -73,6 +72,11 @@ class MenuManager{
 
 				array[ii].push(e);
 			}, this);
+
+			if(isIn(ii, "tools", "lineWidth", "brushes", "file", "content"))
+				store[ii] = num;
+			if(ii !== "mainMenu" && data["mainMenu"][ii]["visible"])
+				num++;
 		}, this);
 
 
@@ -86,12 +90,9 @@ class MenuManager{
 		this._items 	= array["mainMenu"];
 		this._allItems 	= array;
 
-		this._subMenus["tools"]	= new MenuManager(new GVector2f(0, this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "tools", this);
-		this._subMenus["lineWidth"]	= new MenuManager(new GVector2f(5 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "lineWidth", this);
-		this._subMenus["brushes"]	= new MenuManager(new GVector2f(5 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "brushes", this);
-		this._subMenus["file"]	= new MenuManager(new GVector2f(1 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "file", this);
-		this._subMenus["content"]	= new MenuManager(new GVector2f(2 * (this._size.x + MENU_OFFSET), this._size.y + MENU_OFFSET), new GVector2f(this._size.x, this._size.y), "content", this);
-
+		each(store, (e, i) => {
+			this._subMenus[i] = new MenuManager(new GVector2f(e * w, h), new GVector2f(this._size.x, this._size.y), i, this);
+		}, this);
 		draw();
 	}
 

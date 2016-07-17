@@ -1,9 +1,10 @@
-var express 	= require('express'),
-	app 		= express(),
-	http 		= require('http').Server(app),
-	io 			= require('socket.io')(http),
-	url 		= require('url'),
-	connections = {};
+var express 		= require('express'),
+	app 			= express(),
+	http 			= require('http').Server(app),
+	io 				= require('socket.io')(http),
+	url 			= require('url'),
+	elasticsearch	= require('elasticsearch'),
+	connections 	= {};
 
 const MAX_ID_VALUE 	= 10;
 const PORT 			= 3000;
@@ -12,14 +13,62 @@ app.use("/css", express.static(__dirname + '/css'));
 app.use("/img", express.static(__dirname + '/img'));
 app.use("/js", express.static(__dirname + '/js'));
 
-//app.get('/', (req, res) => res.sendFile('/index.html' , { root : __dirname}));
 app.get('/', function(req, res) {
+	console.log("niekto sa pripája");
+	var cookies = parseCookies(req);
+
+	if(typeof cookies["user_id"] === "undefined"){
+		var id = Math.random() * 1000000;
+		res.cookie("user_id", id).cookie("last_login", Date.now());
+	}
+	else
+		res.cookie("last_login", Date.now());
 	res.sendFile('/index.html' , { root : __dirname});
+
+	console.log("súbor odoslaný");
 });
 
-//app.get('/watch', (req, res) => res.sendFile('/watch.html' , { root : __dirname}));
 app.get('/watch', function(req, res){
 	res.sendFile('/watch.html' , { root : __dirname});
+});
+
+app.post("/anonymousData", function (req, res) {
+	var body = [];
+	req.on("data", function(chunk){
+		body.push(chunk);
+	}).on('end', function() {
+		var data = JSON.parse(decodeURIComponent(Buffer.concat(body).toString()).replace("content=", ""));
+		data["ipAddress"] = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+		data["connectedAt"] = data["connectedAt"].replace("+", " ");
+		new elasticsearch.Client({
+			host: 'localhost:9200'
+		}).create({
+			index: 'plocha_analytics',
+			type: 'anonymous',
+			body: data
+		}, function (error, response) {
+			if(typeof error !== "undefined")
+				console.log("chyba pri vkladani do ES: ", error);
+		});
+	});
+});
+
+app.get('/anonymousData', function(req, res){
+	var client = new elasticsearch.Client({
+		//log: 'trace',
+		host: 'localhost:9200'
+	});
+
+	client.ping({
+		requestTimeout: 3000,
+		hello: "elasticsearch"
+	}, function (error) {
+		if (error)
+			console.error('elasticsearch cluster is down!');
+		else
+			console.log('All is well');
+	});
+	res.send('<h1>Táto stranka slúži len ako príjemca dát</h1>');
 });
 
 function getId(){
@@ -200,3 +249,15 @@ mouseData = function(msg){
 	messageRecieve("mouseMove", msg);
 	writeToWatchers(connections[data.id].watchers, "mouseData", JSON.stringify(data.msg));
 };
+
+function parseCookies (request) {
+	var list = {},
+		rc = request.headers.cookie;
+
+	rc && rc.split(';').forEach(function( cookie ) {
+		var parts = cookie.split('=');
+		list[parts.shift().trim()] = decodeURI(parts.join('='));
+	});
+
+	return list;
+}

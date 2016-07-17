@@ -7,7 +7,7 @@ class ListenersManager{
 			return;
 
 		if(button == LEFT_BUTTON)
-			Scene.forEach(function(o){
+			Scene.forEach((o) => {
 				if(o.clickIn(position.x, position.y, button)){
 					o.moving = true;
 					movedObject = o;
@@ -44,7 +44,7 @@ class ListenersManager{
 		var result	= false,
 			vec 	= new GVector2f(100, 40);
 
-		Scene.forEach(function(e){
+		Scene.forEach((e) => {
 			if(!result && isDefined(e.doubleClickIn) && e.doubleClickIn(position.x, position.y))
 				result = e;
 		});
@@ -74,6 +74,14 @@ class ListenersManager{
 			return;
 		}
 
+		/*
+		 * AK JE VYBRATY NASTROJ KRESBA TAK SA PRERUSI CIARA
+		 */
+		if(Creator.operation == OPERATION_DRAW_PATH){
+			Scene.paint.addPoint(position, Creator.brushColor);
+			Scene.paint.breakLine();
+		}
+
 		if(Menu.clickIn(position.x, position.y))
 			return;
 
@@ -90,15 +98,8 @@ class ListenersManager{
 			movedObject = false;
 		}
 
-		/*
-		 * AK JE VYBRATY NASTROJ KRESBA TAK SA PRERUSI CIARA
-		 */
-		if(Creator.operation == OPERATION_DRAW_PATH){
-			Scene.paint.addPoint(position, Creator.color);
-			Scene.paint.breakLine();
-		}
 
-		Scene.forEach(function(o){
+		Scene.forEach((o) => {
 			if(result)
 				return;
 			if(o.clickIn(position.x, position.y)) {

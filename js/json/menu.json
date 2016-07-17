@@ -28,6 +28,26 @@
 			"visible" : false
 		}
 	},
+	"tools": {
+		"draw": {
+			"visible" : true
+		},
+		"rect": {
+			"visible" : true
+		},
+		"line": {
+			"visible" : true
+		},
+		"arc": {
+			"visible" : true
+		},
+		"text": {
+			"visible" : true
+		},
+		"join": {
+			"visible" : true
+		}
+	},
 	"file": {
 		"saveImg" : {
 			"visible" : true
@@ -50,26 +70,6 @@
 			"visible" : true
 		},
 		"loadExternalHTML" : {
-			"visible" : true
-		}
-	},
-	"tools": {
-		"draw": {
-			"visible" : true
-		},
-		"rect": {
-			"visible" : true
-		},
-		"line": {
-			"visible" : true
-		},
-		"arc": {
-			"visible" : true
-		},
-		"text": {
-			"visible" : true
-		},
-		"join": {
 			"visible" : true
 		}
 	},

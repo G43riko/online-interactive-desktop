@@ -12,7 +12,27 @@ var initTime 		= window.performance.now(),
 	EventHistory 	= new EventSaver(),
 	Content			= new ContentManager(),
 	FPS				= 60,
-	canvas, context;
+	components		= {
+		draw : true,
+		share : true,
+		watch : true,
+		tools : true,
+		save : true,
+		load : true,
+		screen : true,
+		content : true,
+		edit : true
+	}, canvas, context;
+
+var componentDraw		= () => isDefined(components) && isDefined(components["draw"]) && components["draw"] === true,
+	componentShare		= () => isDefined(components) && isDefined(components["share"]) && components["share"] === true,
+	componentWatch		= () => isDefined(components) && isDefined(components["watch"]) && components["watch"] === true,
+	componentTools		= () => isDefined(components) && isDefined(components["tools"]) && components["tools"] === true,
+	componentSave		= () => isDefined(components) && isDefined(components["save"]) && components["save"] === true,
+	componentLoad		= () => isDefined(components) && isDefined(components["load"]) && components["load"] === true,
+	componentScreen		= () => isDefined(components) && isDefined(components["screen"]) && components["screen"] === true,
+	componentContent	= () => isDefined(components) && isDefined(components["content"]) && components["content"] === true,
+	componentEdit		= () => isDefined(components) && isDefined(components["edit"]) && edit["draw"] === true;
 
 function ajax(url, options){
 	if(typeof options !== "object")
@@ -171,4 +191,3 @@ function realDraw(){
 
 	//timeLine.draw();
 }
-
