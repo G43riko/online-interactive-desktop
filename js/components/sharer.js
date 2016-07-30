@@ -4,10 +4,9 @@ class Sharer{
 		this._socket = false;
 		this._sharing = false;
 		this.paint = {
-			addPoint: (point, color) => this._pointOperation(ACTION_PAINT_ADD_POINT, point, color),
-			breakLine: () => this._pointOperation(ACTION_PAINT_BREAK_LINE),
-			clean: () => this._pointOperation(ACTION_PAINT_CLEAN),
-			changeBrush: (brush) => this._pointOperation(ACTION_PAINT_CHANGE_BRUSH, brush)
+			addPoint: (point, layer) => this._paintOperation(ACTION_PAINT_ADD_POINT, point, layer),
+			breakLine: (layer) => this._paintOperation(ACTION_PAINT_BREAK_LINE, layer),
+			clean: (layer) => this._paintOperation(ACTION_PAINT_CLEAN, layer)
 		}
 	}
 
@@ -36,12 +35,10 @@ class Sharer{
 
 		this._socket.on('notification', function(msg){
 			data = JSON.parse(msg);
-			console.log(data["msg"]);
 		});
 
 		this._socket.on('confirmShare', function(msg){
 			var data = JSON.parse(msg);
-
 			inst._id = data["id"];
 
 			var a = document.createElement("a");
@@ -73,48 +70,40 @@ class Sharer{
 		});
 	}
 
+	changeCreator(key, val){
+		var data = {
+			id: this._id,
+			msg: {
+				key: key,
+				val: val
+			}
+		};
+		this._socket.emit('changeCreator', JSON.stringify(data));
+	}
+
 	getWatcherUrl(){
 		return location.href + "watch?id=" + this._id;
 	}
 
-	_pointOperation(action, arg1, arg2){
-		var data;
+	_paintOperation(action, arg1, arg2){
+		var data = {
+			id: this._id,
+			msg : {
+				action: action
+			}
+		};
 		switch(action){
 			case ACTION_PAINT_ADD_POINT :
-				data = {
-					id: this._id,
-					msg: {
-						action: action,
-						pX: arg1.x,
-						pY: arg1.y,
-						color: arg2
-					}
-				};
+				data["msg"]["pX"] = arg1.x;
+				data["msg"]["pY"] = arg1.y;
+				data["msg"]["layer"] = arg2;
 				break;
 			case ACTION_PAINT_BREAK_LINE :
-				data = {
-					id: this._id,
-					msg: {
-						action: action
-					}
-				};
+				data["msg"]["layer"] = arg1;
 				break;
-			case ACTION_PAINT_CHANGE_BRUSH :
-				data = {
-					id: this._id,
-					msg: {
-						action: action,
-						brush: arg1
-					}
-				};
-				break;
+
 			case ACTION_PAINT_CLEAN :
-				data = {
-					id: this._id,
-					msg: {
-						action: action
-					}
-				};
+				data["msg"]["layer"] = arg1;
 				break;
 			default:
 				Logger.error("nastala chyba lebo sa chce vykonať neznáma paintAction: " + action);
@@ -124,6 +113,8 @@ class Sharer{
 	}
 
 	mouseChange(){
+		if(!this._id)
+			return false;
 		var data = {
 			id: this._id,
 			msg: {
@@ -142,7 +133,6 @@ class Sharer{
 	objectChange(o, action, keys){
 		if(!this._socket)
 			return;
-		//console.log("vola sa akcia");
 		var data;
 		switch(action ){
 			case ACTION_OBJECT_MOVE:

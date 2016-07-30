@@ -40,6 +40,11 @@ class Watcher{
 			console.log("sharer je offline");
 		});
 
+		this._socket.on("changeCreator", function(msg){
+			data = JSON.parse(msg);
+			Creator.set(data.key, data.val);
+		});
+
 		this._socket.on("action", function(msg){
 			Watcher.processOperation(JSON.parse(msg));
 		});
@@ -73,16 +78,13 @@ class Watcher{
 	static processPaintAction(data){
 		switch(data.action){
 			case ACTION_PAINT_ADD_POINT :
-				Scene.paint.addPoint(new GVector2f(data.pX, data.pY), data.color);
+				Paints.addPoint(new GVector2f(data.pX, data.pY), data.layer);
 				break;
 			case ACTION_PAINT_BREAK_LINE :
-				Scene.paint.breakLine();
-				break;
-			case ACTION_PAINT_CHANGE_BRUSH :
-				Scene.paint.setImage(data.brush);
+				Paints.breakLine(data.layer);
 				break;
 			case ACTION_PAINT_CLEAN :
-				Scene.paint.clean();
+				Paints.clean(data.layer);
 				break;
 			default :
 				Logger.error("bola prijatá neznáma akcia: " + data.action);
@@ -92,7 +94,6 @@ class Watcher{
 
 	static processOperation(data){
 		//console.log("vykonáva sa akcia");
-		//console.log(data);
 		var obj;
 		switch(data.action){
 			case ACTION_OBJECT_MOVE:

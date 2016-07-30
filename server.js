@@ -87,12 +87,11 @@ function messageRecieve(type, msg){
 
 	messages[type]["count"]++;
 	messages[type]["messages"].push(msg);
-
-	console.log(++count);
 }
 
 io.on('connection', function(socket){
 	console.log('a user connected');
+	socket.on("changeCreator", changeCreator);
 	socket.on("completeAuth", completeAuth);
 	socket.on("broadcastMsg", broadcastMsg);
 	socket.on("sendAllData", sendAllData);
@@ -102,6 +101,7 @@ io.on('connection', function(socket){
 	socket.on('disconnect', disconnect);
 	socket.on('mouseData', mouseData);
 	socket.on("action", action);
+
 });
 
 function writeToWatchers(watchers, type, msg){
@@ -236,7 +236,7 @@ sendAllData = function(msg){
 
 paintAction = function(msg){
 	var data = JSON.parse(msg);
-	messageRecieve("paintAction", msg);
+	console.log(data);
 	//console.log("bola prijatá paintAction");
 	writeToWatchers(connections[data.id].watchers, "paintAction", JSON.stringify(data.msg));
 };
@@ -244,15 +244,23 @@ paintAction = function(msg){
 
 action = function(msg){
 	var data = JSON.parse(msg);
-	messageRecieve("action", msg);
 	//console.log("bola prijatá akcia");
 	writeToWatchers(connections[data.id].watchers, "action", JSON.stringify(data.msg));
 };
 
 mouseData = function(msg){
 	var data = JSON.parse(msg);
-	messageRecieve("mouseMove", msg);
-	writeToWatchers(connections[data.id].watchers, "mouseData", JSON.stringify(data.msg));
+	messageRecieve("mouseData", msg);
+	if(typeof connections[data.id] === "undefined")
+		console.log("id " + data.id + " neexistuje v zozname ideciek");
+	else
+		writeToWatchers(connections[data.id].watchers, "mouseData", JSON.stringify(data.msg));
+};
+
+changeCreator = function(msg){
+	var data = JSON.parse(msg);
+	messageRecieve("changeCreator", msg);
+	writeToWatchers(connections[data.id].watchers, "changeCreator", JSON.stringify(data.msg));
 };
 
 function parseCookies (request) {

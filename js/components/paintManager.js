@@ -11,9 +11,6 @@ class PaintManager{
 
 	set selectedImage(title){
 		this._selectedImage = this._brushes[title];
-
-		if(isSharing())
-			Sharer.paint.changeBrush(title);
 		Menu._redraw();
 	}
 
@@ -26,26 +23,26 @@ class PaintManager{
 		return this._brushes[title];
 	}
 
-	addPoint(position){
+	addPoint(position, activeLayerName = Layers.activeLayerName){
 		if(isSharing())
-			Sharer.paint.addPoint(point);
+			Sharer.paint.addPoint(position, activeLayerName);
 
-		Layers.activeLayer.paint.addPoint(position);
+		Scene.getLayer(activeLayerName).paint.addPoint(position);
 	}
 
-	cleanUp(){
+	cleanUp(activeLayerName = Layers.activeLayerName){
 		if(isSharing())
-			Sharer.paint.clean();
+			Sharer.paint.clean(activeLayerName);
 
-		Layers.activeLayer.paint.cleanUp()
+		Scene.getLayer(activeLayerName).paint.cleanUp();
 	}
 
 
-	breakLine(){
+	breakLine(activeLayerName = Layers.activeLayerName){
 		if(isSharing())
-			Sharer.paint.breakLine();
+			Sharer.paint.breakLine(activeLayerName);
 
-		Layers.activeLayer.paint.breakLine();
+		Scene.getLayer(activeLayerName).paint.breakLine();
 	}
 
 	addBrush(title){

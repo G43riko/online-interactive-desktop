@@ -81,15 +81,25 @@ class objectCreator{
 
 		this[key] = val;
 
+		if(isSharing())
+			Sharer.changeCreator(key, val);
+
+
 		if(key === "_brushType"){
 			if(val !== "line")
 				Paints.selectedImage = val;
 		}
 
+		/*
+		 * Ak sa zmení vlastnosť štetca musí prekresliť štetec aby sa mohlo rovno malovať
+		 */
 		if(isIn(key, "_brushColor", "_brushSize", "_brushType")){
 			Paints.rePaintImage(this.brushSize, this.brushColor);
 		}
 
+		/*
+		 * Ak s zmení nejaká farba musí sa prekresliť aj view zobtrazujúci aktuálnu farbu
+		 */
 		if(isIn(key, "_fillColor", "_borderColor", "_fontColor", "_color", "_brushColor") && isDefined(this._view))
 			this._view.init();
 

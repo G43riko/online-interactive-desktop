@@ -94,7 +94,7 @@ class Paint extends Entity{
 		if(isNull(lastArr["color"])){ //TODO toto nižšie sa bude asi stále prepisovať
 			lastArr["color"] = Creator.brushColor;
 			lastArr["action"] = Paints.action;
-			lastArr["brush"] = Creator.brushType;
+			lastArr["type"] = Creator.brushType;
 			lastArr["size"] = Creator.brushSize;
 		}
 
