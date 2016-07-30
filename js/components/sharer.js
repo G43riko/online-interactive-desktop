@@ -13,7 +13,7 @@ class Sharer{
 
 	get isSharing(){return this._sharing;}
 
-	startShare(password = "1234", limit = 100){
+	startShare(options){
 		this._socket = io();
 		this._sharing = true;
 
@@ -23,8 +23,13 @@ class Sharer{
 					x: window.innerWidth,
 					y: window.innerHeight
 				},
-				pass: password,
-				limit: limit
+				pass: options.password,
+				limit: options.maxWatchers,
+				realTime: options.realTime,
+				detailMovement: options.detailMovement,
+				shareMenu: options.shareMenu,
+				sharePaints: options.sharePaints,
+				shareObjects: options.shareObjects
 			};
 
 		this._socket.emit('startShare', JSON.stringify(data));
@@ -36,9 +41,24 @@ class Sharer{
 
 		this._socket.on('confirmShare', function(msg){
 			var data = JSON.parse(msg);
-			this._link = location.href + "watch?id=" + data["id"];
-			console.log("zdiela sa na adrese: " + this._link);
+
 			inst._id = data["id"];
+
+			var a = document.createElement("a");
+			a.setAttribute("target", "_blank");
+			a.setAttribute("href", inst.getWatcherUrl());
+			a.appendChild(document.createTextNode("adrese"));
+			a.style.float="none";
+
+			var span = document.createElement("span");
+			span.appendChild(document.createTextNode("zdiela sa na "));
+			span.appendChild(a);
+
+			Logger.notif(span);
+			Menu.disabled("sharing", "watch", false);
+			Menu.disabled("sharing", "stopShare", false);
+			Menu.disabled("sharing", "shareOptions", false);
+			Menu.disabled("sharing", "startShare", true);
 		});
 
 		this._socket.on('getAllData', function(recieveData){
@@ -51,6 +71,10 @@ class Sharer{
 			};
 			inst._socket.emit('sendAllData', JSON.stringify(data));
 		});
+	}
+
+	getWatcherUrl(){
+		return location.href + "watch?id=" + this._id;
 	}
 
 	_pointOperation(action, arg1, arg2){

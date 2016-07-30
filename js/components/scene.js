@@ -42,7 +42,7 @@ class SceneManager{
 
 		EventHistory.objectCreateAction(object);
 		if(resend && isSharing())
-			Sharer.objectChange(object, ACTION_CREATE);
+			Sharer.objectChange(object, ACTION_OBJECT_CREATE);
 		else
 			object.selected = false;
 
@@ -72,7 +72,7 @@ class SceneManager{
 	remove(obj, layer = obj.layer, resend = true){
 		this._layers[layer].remove(obj);
 		if(resend && isSharing())
-			Sharer.objectChange(obj, ACTION_DELETE);
+			Sharer.objectChange(obj, ACTION_OBJECT_DELETE);
 		EventHistory.objectDeleteAction(obj);
 
 	};

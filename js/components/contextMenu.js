@@ -218,7 +218,9 @@ class ContextMenuManager{
 				actContextMenu = false;
 				break;
 			case "makeCopy":
-				Scene.addToScene(Entity.clone(this._selectedObject));;
+				var obj = Entity.create(this._selectedObject);
+				obj.position.add(this._selectedObject.size);
+				Scene.addToScene(obj);
 				actContextMenu = false;
 				break;
 			default:

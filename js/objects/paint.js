@@ -26,6 +26,7 @@ class Paint extends Entity{
 	}
 	setImage(title){
 		this._brush.selectedImage = title;
+		this._brush.rePaintImage(Creator.brushSize, this._actColor || Creator.brushColor);
 	}
 	getImage(title){
 		return this._brush.getBrush(title);
@@ -98,7 +99,7 @@ class Paint extends Entity{
 		this.redraw(this._points); // toto nemusí prepisovať celé
 	}
 
-	addPoint(point, color = "#000000"){
+	addPoint(point, color = Creator.brushColor){
 		var lastArr = this._points[this._points.length - 1],
 			arr = lastArr["points"];
 

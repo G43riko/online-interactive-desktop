@@ -131,7 +131,12 @@ startShare = function(msg){
 		resolution: data["res"],
 		password: data["pass"],
 		limit: data["limit"],
-		watchers: []
+		watchers: [],
+		realTime: data["realTime"],
+		detailMovement: data["detailMovement"],
+		shareMenu: data["shareMenu"],
+		sharePaints: data["sharePaints"],
+		shareObjects: data["shareObjects"]
 	};
 	socket.emit("confirmShare", JSON.stringify({id: id}));
 };

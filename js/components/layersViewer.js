@@ -175,6 +175,10 @@ class LayersViewer extends Entity{
 
 		each(Scene._layers, e => this._drawLayer(e, num++), this);
 	}
+
+	get activeLayer(){
+		return Scene.getLayer(this._activeLayer);
+	}
 }
 
 class Button{

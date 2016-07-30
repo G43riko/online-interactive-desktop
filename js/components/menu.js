@@ -3,29 +3,50 @@ class MenuManager{
 		if(parent != null)
 			this._items = parent._allItems[key];
 
-		this._key 				= key;
-		this._parent 			= parent;
-		this._toolActive 		= false;
-		this._fontColor 		= MENU_FONT_COLOR;
-		//this._backgroundColor 	= "rgb(153, 217, 234)";
-		this._backgroundColor 	= "#1abc9c";
-		this._position 			= position.add(MENU_OFFSET);
-		this._offset 			= MENU_OFFSET;
-		this._size 				= size;
-		this._vertical 			= parent != null;
+		this._key 						= key;
+		this._parent 					= parent;
+		this._toolActive 				= false;
+		this._fontColor 				= MENU_FONT_COLOR;
+		//this._backgroundColor 		= "rgb(153, 217, 234)";
+		this._backgroundColor 			= "#1abc9c";
+		this._disabledBackgroundColor 	= "#ABD6BB";
+		this._position 					= position.add(MENU_OFFSET);
+		this._offset 					= MENU_OFFSET;
+		this._size 						= size;
+		this._vertical 					= parent != null;
 
-		this._canvas 			= parent == null ? document.createElement("canvas") : parent._canvas;
-		this._context			= null;
-		this._tmpDrawArray		= [];
+		this._canvas 					= parent == null ? document.createElement("canvas") : parent._canvas;
+		this._context					= null;
+		this._tmpDrawArray				= [];
 
-		this._visibleSubMenu 	= false;
-		this._subMenus			= [];
+		this._visibleSubMenu 			= false;
+		this._subMenus					= {};
 	};
 
 	get position(){return this._position;}
 	get size(){return this._size;}
 
+	_changeDataByComponents(data){
+		if(!Components.tools() && Components.draw()) //ak je kreslenie a nie nastroje musí sa nastaviť kreslenie
+			Creator.operation = OPERATION_DRAW_PATH;
+
+		data.mainMenu.tools.visible = Components.tools();
+		data.mainMenu.content.visible = Components.content();
+		data.mainMenu.sharing.visible = Components.share();
+		if(!Components.load() && !Components.save() && !Components.screen())
+			data.mainMenu.file.visible = false;
+		else{
+			data.file.loadXML.visible = Components.load();
+			data.file.saveXML.visible = Components.save();
+			data.file.saveImg.visible = Components.screen();
+		}
+
+
+		return data;
+	}
 	init(data){
+		console.log(data);
+		data = this._changeDataByComponents(data);
 		var array = [],
 			counter = new GVector2f(),
 			w = this._size.x + MENU_OFFSET,
@@ -40,6 +61,7 @@ class MenuManager{
 					e.values.forEach(function(ee){
 						tmp = {};
 						tmp["visible"] = e["visible"];
+						tmp["disabled"] = e["disabled"];
 						tmp["key"] = i.replace("XYZ ", "");
 
 						counter.x > counter.y && counter.y++ || counter.x++;
@@ -73,7 +95,7 @@ class MenuManager{
 				array[ii].push(e);
 			}, this);
 
-			if(isIn(ii, "tools", "lineWidth", "brushes", "file", "content"))
+			if(isIn(ii, "tools", "file", "content", "sharing"))
 				store[ii] = num;
 			if(ii !== "mainMenu" && data["mainMenu"][ii]["visible"])
 				num++;
@@ -132,15 +154,29 @@ class MenuManager{
 				posY += this._size.y + this._offset;
 			else
 				posX += this._size.x + this._offset;
-
 		}, this);
+
 		if(result)
 			return result;
-
 	};
 
+	disabled(menu, button, value){
+		if(isDefined(this._subMenus[menu]))
+			each(this._subMenus[menu]._items, function(e, i, arr){
+				if(e.key === button)
+					arr[i].disabled = value;
+			});
+	}
+
 	_doClickAct(val){
+		if(val.disabled)
+			return;
+
 		var key = val.key;
+		if(isIn(key, "file", "content", "sharing")){
+			this._visibleSubMenu = key;
+			return;
+		}
 		switch(key){
 			case "tools":
 				this._toolActive = "tools";
@@ -157,14 +193,8 @@ class MenuManager{
 			case "line":
 				Creator.operation = OPERATION_DRAW_LINE;
 				break;
-			case "brushes":
-				this._visibleSubMenu = key;
-				break;
-			case "file":
-				this._visibleSubMenu = key;
-				break;
-			case "content":
-				this._visibleSubMenu = key;
+			case "startShare":
+				showSharingOptions();
 				break;
 			case "loadLocalImage":
 				Content.setContentImage();
@@ -174,6 +204,9 @@ class MenuManager{
 				break;
 			case "saveImg":
 				saveCanvasAsFile();
+				break;
+			case "watch":
+				window.open(Sharer.getWatcherUrl(), '_blank');
 				break;
 			case "saveXML":
 				saveSceneAsFile();
@@ -266,12 +299,14 @@ class MenuManager{
 		this._items.forEach(function(e){
 			if(!e["visible"])
 				return;
-
+			var bgColor = e["disabled"] ? this._disabledBackgroundColor : this._backgroundColor;
+			if(e["key"] == "color" )
+				bgColor = Creator.color;
 			doRect({
 				position: [posX, posY],
 				size: this._size,
 				radius: MENU_RADIUS,
-				fillColor: e["key"] == "color" ? Creator.color : this._backgroundColor,
+				fillColor: bgColor,
 				borderWidth: MENU_BORDER_WIDTH,
 				borderColor: MENU_BORDER_COLOR
 			});
@@ -339,6 +374,21 @@ class MenuManager{
 				break;
 			case "content":
 				fillText("CONT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "watch":
+				fillText("WATCH", x + (width >> 1), y + (height >> 1), height / 6, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "shareOptions":
+				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "stopShare":
+				fillText("STOP", x + (width >> 1), y + (height >> 1), height  / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "startShare":
+				fillText("START", x + (width >> 1), y + (height >> 1), height  / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "sharing":
+				fillText("SHARE", x + (width >> 1), y + (height >> 1), height / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "loadLocalImage":
 				fillText("locImg", x + (width >> 1), y + (height >> 1), height / 6, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);

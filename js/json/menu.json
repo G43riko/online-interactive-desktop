@@ -1,76 +1,128 @@
 {
 	"mainMenu" : {
 		"tools" : {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		},
 		"file": {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		},
 		"content" : {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
+		},
+		"sharing": {
+			"visible" : true,
+			"disabled" : false
 		},
 		"options" : {
-			"visible" : true
+			"visible" : true,
+			"disabled" : true
 		},
 		"help" : {
-			"visible" : true
+			"visible" : true,
+			"disabled" : true
 		},
 		"ctrl": {
-			"visible" : true
-		},
-		"color" : {
-			"visible" : false
+			"visible" : true,
+			"disabled" : true
 		},
 		"lineWidth" : {
-			"visible" : false
+			"visible" : false,
+			"disabled" : true
 		},
 		"brushes" : {
-			"visible" : false
+			"visible" : false,
+			"disabled" : true
 		}
 	},
 	"tools": {
 		"draw": {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		},
 		"rect": {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		},
 		"line": {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		},
 		"arc": {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		},
 		"text": {
-			"visible" : true
+			"visible" : true,
+			"disabled" : true
 		},
 		"join": {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
+		},
+		"table": {
+			"visible" : true,
+			"disabled" : true
+		},
+		"object": {
+			"visible" : true,
+			"disabled" : true
+		},
+		"image": {
+			"visible" : true,
+			"disabled" : true
 		}
 	},
 	"file": {
 		"saveImg" : {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		},
 		"saveXML" : {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		},
 		"loadXML" : {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		}
 	},
 	"content": {
 		"loadLocalImage" : {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		},
 		"loadLocalHTML" : {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		},
 		"loadExternalImage" : {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
 		},
 		"loadExternalHTML" : {
-			"visible" : true
+			"visible" : true,
+			"disabled" : false
+		}
+	},
+	"sharing": {
+		"startShare" : {
+			"visible" : true,
+			"disabled" : false
+		},
+		"stopShare" : {
+			"visible" : true,
+			"disabled" : true
+		},
+		"shareOptions" : {
+			"visible" : true,
+			"disabled" : true
+		},
+		"watch" : {
+			"visible" : true,
+			"disabled" : true
 		}
 	},
 	"lineWidth" : {

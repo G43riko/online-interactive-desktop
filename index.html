@@ -4,6 +4,7 @@
 		<meta charset="UTF-8">
 		<title>Document</title>
 		<link rel="stylesheet" type="text/css" href="css/styles.css">
+        <script type="text/javascript" src="js/lib/alerts.js"></script>
 		<script src="js/lib/jquery.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
 		<script type="text/javascript" src="js/config.js"></script>
@@ -42,13 +43,59 @@
 		<script type="text/javascript" src="js/utils/test.js"></script>
 		<script type="text/javascript" src="js/components/sharer.js"></script>
 
-
 		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
 		<meta name="apple-mobile-web-app-copable" content="yes">
 	</head>
 	<body>
 		<div id="modalWindow" class="hide">
-				<div id="colorPalete" class="hide"></div>
+			<div id="colorPalete" class="hide"></div>
+            <div id="shareForm" class="hide formContent">
+                <form>
+                    <h2>Sharing options</h2>
+                    <br/>
+                    <div>
+                        <label for="idMaxWatchers">Maximálny počet watcherov: </label>
+                        <input id="idMaxWatchers" type="number" value="20" name="maxWatchers">
+                    </div>
+
+                    <div>
+                        <label for="idSharingPassword">Heslo: </label>
+                        <input id="idSharingPassword" type="password" name="sharingPassword">
+                    </div>
+
+                    <div class="panel">
+                        <label for="idRealtimeSharing">Realtime zdielatie: </label>
+                        <input id="idRealtimeSharing" type="checkbox" checked name="realtimeSharing">
+                    </div>
+
+                    <div class="panel">
+                        <label for="idDetailMovement">Odosielať podrobný pohyb: </label>
+                        <input id="idDetailMovement" type="checkbox" checked name="detailMovement">
+                    </div>
+
+                    <div class="panel">
+                        <div>Čo zdielať:</div>
+                        <div>
+                            <div>
+                                <input type="checkbox" id="idShareMenu" name="shareMenu">
+                                <label for="idShareMenu">Menu</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="idSharePaints" name="sharePaints">
+                                <label for="idSharePaints">Kresby</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="idShareObjects" name="shareObjects">
+                                <label for="idShareObjects">Objekty</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <input type="button" value="Začať zdielanie" onclick="processSharingOptionsAndStartShare()">
+                    </div>
+                </form>
+            </div>
+
 		</div>
         <div id="content">
             <img id="contentImage" src="#" class="hide">
@@ -81,22 +128,42 @@
 
     $("#colorPalete").append(res);
 
-
     function showColors(){
-        $("#modalWindow ").find("div").each(function(){
-            $(this).show();
-        });
+        $("#modalWindow ").find("#colorPalete").show();
         $("#modalWindow").show();
         $("canvas").addClass("blur");
     }
 
     function closeDialog(){
-        $("#modalWindow ").find("div").each(function(){
-            $(this).show();
+        $("#modalWindow>div").each(function(){
+            $(this).hide();
         });
         $("#colorPalete").undelegate();
         $("#modalWindow").hide();
         $("canvas").removeClass("blur");
+    }
+
+    function showSharingOptions(){
+        $("#modalWindow ").find("#shareForm").show();
+        $("#modalWindow").show();
+        $("canvas").addClass("blur");
+    }
+
+    function processSharingOptionsAndStartShare(){
+        var getValueIfExists = function(obj){
+            return obj ? (obj.type == "checkbox" ? obj.checked : obj.value) : false
+        };
+        var result = {};
+        result["realTime"] = getValueIfExists(document.getElementById("idRealtimeSharing"));
+        result["maxWatchers"] = getValueIfExists(document.getElementById("idMaxWatchers"));
+        result["password"] = getValueIfExists(document.getElementById("idSharingPassword"));
+        result["detailMovement"] = getValueIfExists(document.getElementById("idDetailMovement"));
+
+        result["shareMenu"] = getValueIfExists(document.getElementById("idShareMenu"));
+        result["sharePaints"] = getValueIfExists(document.getElementById("idSharePaints"));
+        result["shareObjects"] = getValueIfExists(document.getElementById("idShareObjects"));
+        closeDialog();
+        Sharer.startShare(result);
     }
 
     function pickUpColor(func, thisArg){

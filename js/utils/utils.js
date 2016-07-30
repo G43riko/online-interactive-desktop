@@ -47,6 +47,7 @@ var isUndefined 	= e => typeof e === "undefined",
 	isDefined 		= e => typeof e !== "undefined",
 	isFunction 		= e => typeof e === "function",
 	isNumber		= e => typeof e === "number",
+	isString		= e => typeof e === "string",
 	isObject		= e => typeof e === "object",
 	isArray			= e => Array.isArray(e),
 	isNull			= e => e === null,
@@ -150,7 +151,7 @@ Movement = {
 			o.position.add(x, y);
 
 		if(isDefined(Sharer) && Sharer.isSharing)
-			Sharer.objectChange(o, ACTION_MOVE);
+			Sharer.objectChange(o, ACTION_OBJECT_MOVE);
 
 	}
 };

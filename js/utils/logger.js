@@ -22,6 +22,10 @@ class LogManager {
 
 	};
 
+	notif(msg){
+		Alert.info(msg);
+	}
+
 	write(msg){
 		this._data[LogManager.LOGS][Date.now()] = msg;
 		if(this._show[LogManager.LOGS])

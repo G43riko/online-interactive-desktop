@@ -1,4 +1,10 @@
 class Entity{
+	/**
+	 * @param name
+	 * @param position
+	 * @param size
+	 * @param data
+	 */
 	constructor(name, position = new GVector2f(), size = new GVector2f(), data = {}){
 		this._position 			= position;
 		this._size 				= size;
@@ -34,11 +40,15 @@ class Entity{
 	}
 
 
-
-	/*
-	 * vygeneruje jedinečný identifikátor
+	/**
+	 * Vygeneruje jedinečný identifikátor
+	 *
+	 * @returns {Number}
 	 */
 	static getId(){
+		if(isUndefined(Entity._ides))
+			Entity._ides = [];
+
 		var id = parseInt(Math.random() * 1000000);
 		while(isDefined(Entity._ides[id]))
 			id = parseInt(Math.random() * 1000000);
@@ -47,18 +57,21 @@ class Entity{
 	}
 
 
-
-	/*
-	 * pridá k objektu nový connector
+	/**
+	 * Pridá k objektu nový connector
 	 */
 	addConnector(){
 		objectToArray(arguments).forEach(e => this._connectors.push(e), this);
 	}
 
 
-
 	/**
-	 * vráti true ak je šanca že bolo kliknuté na niektorú časť objektu
+	 * Vráti true ak je šanca že bolo kliknuté na niektorú časť objektu
+	 *
+	 * @param x
+	 * @param y
+	 * @param obj
+	 * @returns {boolean}
 	 */
 	clickInBoundingBox(x, y, obj = this){
 		return x + SELECTOR_SIZE > obj._position.x && x - SELECTOR_SIZE < obj._position.x + obj._size.x &&
@@ -66,23 +79,25 @@ class Entity{
 	};
 
 
-
-	/*
-	 * zistí či bolo kliknuté na objekt a ak áno zavolá príslušnú funkciu
+	/**
+	 * Zistí či bolo kliknuté na objekt a ak áno zavolá príslušnú funkciu
+	 * @param x
+	 * @param y
+	 * @returns {boolean}
 	 */
 	clickIn(x, y){return false;};
 
 
-
-	/*
-	 * vykoná príslušnú akciu po kliknutí
+	/**
+	 * Vykoná príslušnú akciu po kliknutí
 	 */
 	//_doClickAct(index, x, y){};
 
 
-
-	/*
-	 * zistí či bolo pressnuté na objekt a ak áno zavolá príslušnú funkciu
+	/**
+	 * Zistí či bolo pressnuté na objekt a ak áno zavolá príslušnú funkciu
+	 * @param x
+	 * @param y
 	 */
 	pressIn(x, y){}
 
@@ -94,23 +109,25 @@ class Entity{
 	//_doPressAct(index, x, y){};
 
 
-
-	/*
-	 * vyčistí objekt (vykonáva sa tesne pred zmazaním)
+	/**
+	 * Vyčistí objekt (vykonáva sa tesne pred zmazaním)
 	 */
 	cleanUp(){};
 
 
-
-	/*
-	 * vykreslí objekt
+	/**
+	 * Vykreslí objekt
 	 */
 	draw(){};
 
 
-
-	/*
-	 * nastavý objektu atribút
+	/**
+	 * Nastavý objektu atribút
+	 *
+	 * @param obj
+	 * @param attr
+	 * @param val
+	 * @returns {*}
 	 */
 	static setAttr(obj, attr, val){
 		if(isUndefined(Entity["attr"]) || isDefined(Entity["attr"]["Entity"][attr]) || isDefined(Entity["attr"][obj.name][attr]))
@@ -121,9 +138,13 @@ class Entity{
 	}
 
 
-
-	/*
-	 * zmení objektu atribút
+	/**
+	 * Zmení objektu atribút
+	 *
+	 * @param obj
+	 * @param data
+	 * @param val
+	 * @returns {*}
 	 */
 	static changeAttr(obj, data, val){
 		if(typeof data == "object")
@@ -134,9 +155,12 @@ class Entity{
 	}
 
 
-
-	/*
-	 * vypočíta maximálnu a minimálnu poziciu z pola bodov
+	/**
+	 * Vypočíta maximálnu a minimálnu poziciu z pola bodov
+	 *
+	 * @param points
+	 * @param position
+	 * @param size
 	 */
 	static findMinAndMax(points, position, size){
 		position.set(points[0]);
@@ -154,9 +178,10 @@ class Entity{
 	}
 
 
-
-	/*
-	 * skontroluje či sa súradnica nachadza na nejakom connectore
+	/**
+	 * Skontroluje či sa súradnica nachadza na nejakom connectore
+	 *
+	 * @param vec
 	 */
 	checkConnectors(vec){
 		if(Creator.operation != OPERATION_DRAW_JOIN)
@@ -176,9 +201,10 @@ class Entity{
 	}
 
 
-
-	/*
-	 * vykreslí všetky connectory
+	/**
+	 * Vykreslí všetky connectory
+	 *
+	 * @param obj
 	 */
 	static drawConnectors(obj){
 		if(Creator.operation != OPERATION_DRAW_JOIN && (Creator.operation != OPERATION_DRAW_LINE || !Menu.isToolActive()))
@@ -188,9 +214,12 @@ class Entity{
 	};
 
 
-
-	/*
-	 * animuje pohyb alebo zmenu velkosti
+	/**
+	 * Animuje pohyb alebo zmenu velkosti
+	 *
+	 * @param obj
+	 * @param targetPos
+	 * @param fps
 	 */
 	static animateMove(obj, targetPos, fps = FPS){
 		var vec = targetPos.getClone().sub(obj.position).div(fps),
@@ -206,9 +235,11 @@ class Entity{
 	}
 
 
-
-	/*
-	 * nastaví konkrétny typ pohybu
+	/**
+	 * Nastaví konkrétny typ pohybu
+	 *
+	 * @param obj
+	 * @param vec
 	 */
 	static setMoveType(obj, vec){
 		if (vec.dist(obj.position.x + (obj.size.x >> 1), obj.position.y) < SELECTOR_SIZE)
@@ -226,11 +257,75 @@ class Entity{
 	}
 
 
+	/**
+	 * Vráti nový objekt buď podla stringu alebo podla objektu ktorý obsahuje typ inštancie
+	 *
+	 * @param obj
+	 * @returns {*}
+	 */
+	static createInstance(obj){
+		var type = isString(obj) ? obj : obj._name;
+		switch(type){
+			case "Rect" :
+				return new Rect();
+			case "Arc" :
+				return new Arc();
+			case "Table" :
+				return new Table();
+			case "Text" :
+				return new Text("");
+			case "Polygon" :
+				return new Polygon([0,0,0]);
+			case "Line" :
+				return new Line([0,0,0]);
+			default :
+				Logger.error("snažíš sa vložiť objekt s neznámym menom: " + obj._name);
+				return null;
+		}
+	};
 
-	/*
+	/**
+	 * Vytvorým nový objekt
+	 *
+	 * @param obj
+	 * @param generateId
+	 * @returns
+	 */
+	static create(obj, generateId = true){
+		//ak niekto pošle JSON ako konštruktor
+		if(isString(obj))
+			obj = JSON.parse(obj);
+
+		//vytvorím novú inštanciue
+		var result = Entity.createInstance(obj);
+
+		if(result){
+			//nakopírujem atributy
+			each(obj, function(e, i){
+				if(isDefined(e["_x"]) && typeof isDefined(e["_y"]))
+					result[i] = new GVector2f(e._x, e._y);
+				else if(i == "data")
+					result[i] = e.map(ee => ee.map(eee => eee));
+				else if(i == "points")
+					result[i] = e.map(ee => new GVector2f(ee._x, ee._y));
+				else if(i == "_id" && generateId)
+					result[i] = Entity.getId();
+				else
+					result[i] = e;
+			});
+			Logger.notif("objekt bol úspešne vytvorený");
+		}
+		return result;
+	}
+
+	/**
 	 * vytvorý kópiu objektu
 	 */
+	/*
 	static getClone(obj){
+		var res = Entity.create(obj);
+			res.position.add(obj.size);
+		return res;
 		var copy = Object.create(obj.__proto__);
 		each(obj, function(e, i){
 			if(e.constructor.name == "GVector2f")
@@ -253,9 +348,11 @@ class Entity{
 		copy.position.add(obj.size);
 		return  clone;
 	}
-
-	/*
+	*/
+	/**
 	 * GETTERS
+	 *
+	 * @returns {*}
 	 */
 	get id(){return this._id;}
 	get name(){return this._name;}
@@ -273,8 +370,9 @@ class Entity{
 	get selectedConnector(){return this._selectedConnector;}
 
 
-	/*
+	/**
 	 * SETTERS
+	 *
 	 */
 	//set id(val){this._id = val;}
 	set layer(val){this._layer = val;}
