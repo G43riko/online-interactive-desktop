@@ -27,7 +27,6 @@ class Paint extends Entity{
 
 	setImage(title){
 		this._selectedImg = this._images[title];
-		this.rePaintImage();
 		if(typeof Sharer === "object" && Sharer.isSharing)
 			Sharer.paint.changeBrush(title);
 		Menu._redraw();

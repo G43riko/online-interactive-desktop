@@ -203,7 +203,8 @@ class MenuManager{
 				Content.setContentHTML();
 				break;
 			case "saveImg":
-				saveCanvasAsFile();
+				//saveCanvasAsFile();
+				showSavingOptions();
 				break;
 			case "watch":
 				window.open(Sharer.getWatcherUrl(), '_blank');
@@ -218,7 +219,7 @@ class MenuManager{
 				Creator.operation = OPERATION_DRAW_ARC;
 				break;
 			case "defaultBrushes":
-				Scene.paint.setImage(val.value);
+				Paints.setImage(val.value);
 				break;
 			case "defaultWidth":
 				Creator.lineWidth = val.value;
@@ -429,7 +430,7 @@ class MenuManager{
 				});
 				break;
 			case "brushes":
-				img = Scene.paint.selectedImg;
+				img = Paints.selectedImg;
 				if(img == null)
 					return;
 				this._context.drawImage(img, 0, 0, img.width, img.height, x , y, width, height);
@@ -444,8 +445,8 @@ class MenuManager{
 
 				break;
 			case "defaultBrushes":
-				Scene.paint.addImage(type.value);
-				img = Scene.paint.getImage(type.value);
+				Paints.addBrush(type.value);
+				img = Paints.getBrush(type.value);
 				this._context.drawImage(img, 0, 0, img.width, img.height, x , y, width, height);
 				break;
 			case "draw":

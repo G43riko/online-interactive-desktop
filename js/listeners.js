@@ -78,8 +78,8 @@ class ListenersManager{
 		 * AK JE VYBRATY NASTROJ KRESBA TAK SA PRERUSI CIARA
 		 */
 		if(Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
-			Scene.paint.addPoint(position, Creator.brushColor);
-			Scene.paint.breakLine();
+			Paints.addPoint(position);
+			Paints.breakLine();
 		}
 
 		if(Menu.clickIn(position.x, position.y))
@@ -138,7 +138,7 @@ class ListenersManager{
 
 		//ak sa kreslí čiara tak sa nakreslí nové posunutie
 		if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
-			Scene.paint.addPoint(position, Creator.brushColor);
+			Paints.addPoint(position);
 			draw();
 		}
 

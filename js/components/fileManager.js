@@ -43,6 +43,8 @@ class FileManager{
 		};
 		this._input.click();
 	}
+
+
 }
 
 function saveFile(name, text, type){

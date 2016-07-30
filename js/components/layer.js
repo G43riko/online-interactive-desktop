@@ -3,11 +3,17 @@ class Layer{
 		this._objects = {};
 		this._visible = true;
 		this._title = title;
+		this._paint = null;
 	};
 
 	get visible(){return this._visible;}
 	get objects(){return this._objects}
 	get title(){return this._title;}
+	get paint(){
+		if(isNull(this._paint))
+			this._paint = new Paint("black", 5);
+		return this._paint;
+	};
 
 	set visible(val){this._visible = val;}
 	set objects(val){this._objects = val;}
@@ -25,27 +31,21 @@ class Layer{
 	draw(){
 		if(!this.visible)
 			return;
-		//this._objects.forEach(e => callIfFunc(e.draw));
+
 		this.forEach(e => e.draw());
+
+		this.paint.draw();
 	};
 
 	add(element){
 		this._objects[element.id] = element;
-		//this._objects.push(element);
 	};
 
 	remove(element){
 		delete this._objects[element.id];
-		/*
-		for(var i = this._objects.length; i--;) {
-			if(this._objects[i] === element)
-				this._objects.splice(i, 1);
-		}
-		*/
 	};
 
 	forEach(func){
 		each(this._objects, e => func(e));
-		//this._objects.forEach(func);
 	};
 }

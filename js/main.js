@@ -12,6 +12,8 @@ var initTime 		= window.performance.now(),
 	EventHistory 	= new EventSaver(),
 	Content			= new ContentManager(),
 	FPS				= 60,
+	Files			= new FileManager(),
+	Paints			= new PaintManager(),
 	components		= {
 		draw : true,
 		share : true,
@@ -172,8 +174,10 @@ $(function(){
 
 	$.getJSON("js/json/menu.json",function(data){
 		Menu.init(data);
-		$.getJSON("js/json/creator.json", data => Creator.init(data));
-		//ajax("js/json/creator.json", data => Creator.init(data), "json");
+		$.getJSON("js/json/creator.json", data => {
+			Creator.init(data);
+			Paints.rePaintImage(Creator.brushSize, Creator.brushColor);
+		});
 	});
 
 	Scene.createLayer("default");

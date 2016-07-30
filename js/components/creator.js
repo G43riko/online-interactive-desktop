@@ -83,7 +83,11 @@ class objectCreator{
 
 		if(key === "_brushType"){
 			if(val !== "line")
-				Scene.paint.setImage(val);
+				Paints.selectedImage = val;
+		}
+
+		if(isIn(key, "_brushColor", "_brushSize", "_brushType")){
+			Paints.rePaintImage(this.brushSize, this.brushColor);
 		}
 
 		if(isIn(key, "_fillColor", "_borderColor", "_fontColor", "_color", "_brushColor") && isDefined(this._view))

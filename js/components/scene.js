@@ -1,12 +1,11 @@
 class SceneManager{
 	constructor(){
 		this._layers = {};
-		this._paint = null;
 		this._layersCount = 0;
 	};
 
 	forEach(func){
-		each(this._layers, e	=> e.visible && e.forEach(func));
+		each(this._layers, e => e.visible && e.forEach(func));
 	};
 
 	cleanUp(){
@@ -33,7 +32,7 @@ class SceneManager{
 		this._layersCount--;
 	};
 
-	addToScene(object, layer = "default", resend = true){
+	addToScene(object, layer = Layers.activeLayerName, resend = true){
 		if(!this._layers.hasOwnProperty(layer))
 			Logger.error("ide sa načítať neexistujúca vrstva: " + layer);
 		object.layer = layer;
@@ -49,6 +48,8 @@ class SceneManager{
 		draw();
 	};
 
+	get layers(){return this._layers}
+
 	get layersNumber(){
 		return this._layersCount;
 	}
@@ -59,14 +60,11 @@ class SceneManager{
 
 	draw(){
 		//this.forEach(e => callIfFunc(e.draw));
-		this.forEach(e => isFunction(e.draw) && e.draw());
-		this.paint.draw();
+		each(this._layers, e => e.draw());
 	};
 
 	get paint(){
-		if(isNull(this._paint))
-			this._paint = new Paint("black", 5);
-		return this._paint;
+		return Layers.activeLayer.paint;
 	};
 
 	remove(obj, layer = obj.layer, resend = true){

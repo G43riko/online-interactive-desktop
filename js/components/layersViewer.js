@@ -175,9 +175,11 @@ class LayersViewer extends Entity{
 
 		each(Scene._layers, e => this._drawLayer(e, num++), this);
 	}
-
+	get activeLayerName(){
+		return this._activeLayer;
+	}
 	get activeLayer(){
-		return Scene.getLayer(this._activeLayer);
+		return Scene.getLayer(this.activeLayerName);
 	}
 }
 

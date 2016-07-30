@@ -20,6 +20,10 @@ function isIn(obj, data){
 	return false;
 }
 
+function nvl(obj1, obj2){
+	return obj1 ? obj1 : obj2;
+}
+
 function roughSizeOfObject(object) {
 	var objectList = [];
 	var stack = [object];

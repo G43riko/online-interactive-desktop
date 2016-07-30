@@ -22,7 +22,7 @@
 		<script type="text/javascript" src="js/components/layer.js"></script>
 		<script type="text/javascript" src="js/components/scene.js"></script>
         <script type="text/javascript" src="js/components/timeLine.js"></script>
-        <script type="text/javascript" src="js/components/BrushManager.js"></script>
+        <script type="text/javascript" src="js/components/paintManager.js"></script>
 		<script type="text/javascript" src="js/listeners.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>
 		<script type="text/javascript" src="js/canvas.js"></script>
@@ -95,7 +95,38 @@
                     </div>
                 </form>
             </div>
+            <div id="saveForm" class="hide formContent">
+                <form>
+                    <h2>Saving options</h2>
+                    <br/>
+                    <div>
+                        <label for="idImageName">Názov súboru: </label>
+                        <input id="idImageName" type="text" placeholder="desktopScreen" name="imageName">
+                    </div>
+                    <div>
+                        <label for="idImageFormat">Formát: </label>
+                        <select name="imageFormat" id="idImageFormat">
+                            <option value="" disabled selected>Vyber</option>
+                            <option value="image/jpeg">JPG</option>
+                            <option value="image/png">PNG</option>
+                            <option value="image/gif">GIF</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="idImageWidth">Width:</label>
+                        <input type="number" id="idImageWidth" value="800">
+                        <label for="idImageHeight">Height:</label>
+                        <input type="number" id="idImageHeight" value="600">
+                    </div>
+                    <div class="panel">
+                        <div>Vrstvy:</div>
+                        <div id="layersSavionOptions">
 
+                        </div>
+                    </div>
+                    <input type="button" value="Uložiť obrázok" onclick="processAndSaveImage()">
+                </form>
+            </div>
 		</div>
         <div id="content">
             <img id="contentImage" src="#" class="hide">
@@ -135,7 +166,7 @@
     }
 
     function closeDialog(){
-        $("#modalWindow>div").each(function(){
+        $("#modalWindow > div").each(function(){
             $(this).hide();
         });
         $("#colorPalete").undelegate();
@@ -147,6 +178,76 @@
         $("#modalWindow ").find("#shareForm").show();
         $("#modalWindow").show();
         $("canvas").addClass("blur");
+    }
+
+    function showSavingOptions(){
+        document.getElementById("idImageWidth").value = canvas.width;
+        document.getElementById("idImageHeight").value = canvas.height;
+        var div, el, counter = 0, parent = document.getElementById("layersSavionOptions");
+        parent.innerHTML = "";
+        each(Scene.layers, function (a){
+            div = document.createElement("div");
+
+            el = document.createElement("input");
+            el.setAttribute("type", "checkbox");
+            el.setAttribute("class", "layerVisibility");
+            el.setAttribute("id", "layer" + counter);
+            el.setAttribute("checked", "true");
+
+            el.setAttribute("name", a.title);
+            div.appendChild(el);
+
+            el = document.createElement("label");
+            el.setAttribute("for", "layer" + (counter++));
+            el.appendChild(document.createTextNode(a.title));
+            div.appendChild(el);
+            parent.appendChild(div);
+        });
+
+        $("#modalWindow ").find("#saveForm").show();
+        $("#modalWindow").show();
+        $("canvas").addClass("blur");
+    }
+
+    function processAndSaveImage(){
+        var getValueIfExists = function(obj, val = false){
+            return obj ? (obj.type == "checkbox" ? obj.checked : obj.value) : val
+        };
+        /*
+         * velký canvas kde sa všetko nakreslí
+         */
+        var ca = document.createElement("canvas");
+        ca.width = canvas.width;
+        ca.height = canvas.height;
+        var resContext = ca.getContext("2d");
+
+        //TODO nakresliť pozadie ak nemá byť priesvitné
+
+        var layerCheckboxes = document.getElementsByClassName("layerVisibility");
+        for(var i in layerCheckboxes)
+            if(layerCheckboxes.hasOwnProperty(i)){
+                //TODO vykreslenie jednotlivých vrstiev
+            }
+
+        resContext.drawImage(canvas, 0, 0);
+
+        /*
+         * malý canvas kde sa prekreslí velký canvas
+         */
+        var resCanvas =  document.createElement("canvas");
+        resCanvas.width = getValueIfExists(document.getElementById("idImageWidth"), canvas.width);
+        resCanvas.height = getValueIfExists(document.getElementById("idImageHeight", canvas.height));
+        resContext = resCanvas.getContext("2d");
+        resContext.drawImage(ca, 0, 0, resCanvas.width, resCanvas.height);
+
+
+        /*
+         * uloženie súboru
+         */
+        var obj = document.getElementById("idImageFormat");
+        obj = obj.options && obj.selectedIndex && obj.options[obj.selectedIndex] && obj.options[obj.selectedIndex].value;
+        Files.saveImage(getValueIfExists(document.getElementById("idImageName"), "desktopScreen"), resCanvas.toDataURL(obj));
+        closeDialog();
     }
 
     function processSharingOptionsAndStartShare(){

@@ -120,7 +120,7 @@ class CreatorViewer extends Entity{
 					doRect({
 						position: [posX, posY ],
 						size: [width, height],
-						bgImage: Scene.paint.getImage(value),
+						bgImage: Paints.getBrush(value),
 						ctx: this._context
 					});
 				break;
