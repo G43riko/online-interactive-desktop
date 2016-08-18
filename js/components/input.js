@@ -63,7 +63,7 @@ class InputManager{
 			};
 			e.target.onmousemove = function(e){
 				inst._mouseMove(e);
-				Listeners.mouseMove(new GVector2f(e.offsetX, e.offsetY), e.movementX, e.movementY);
+				Listeners.mouseMove(new GVector2f(e.offsetX, e.offsetY), e["movementX"], e["movementY"]);
 			}
 		};
 

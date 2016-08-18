@@ -63,7 +63,6 @@ class ContextMenuManager{
 		objectToArray(arguments).forEach(function(e){
 			res = ContextMenuManager.items[e];
 			res["key"] = e;
-
 			this._titles.push(res);
 		}, this);
 	};
@@ -99,12 +98,12 @@ class ContextMenuManager{
 			shadow: true,
 			draw: true
 		});
-
-		each(this._titles, function(e, i){
+		each(this._titles, function(e){
 			context.fillStyle = DEFAULT_FONT_COLOR;
 			posY = pY + count * CONTEXT_MENU_LINE_HEIGHT;
 			if(count++)
 				doLine({points: [pX, posY, pX + menuWidth, posY], draw: true});
+
 
 			if(this._subMenu && e["key"] == this._subMenu._key)
 				fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor);

@@ -71,11 +71,11 @@ class Color{
 		this._int = Color._RGB2INT(this._r, this._g, this._b);
 	}
 
-	darker(val){
+	darker(val){//TODO dorobiť
 
 	}
 
-	brighter(val){
+	brighter(val){//TODO dorobiť
 
 	}
 

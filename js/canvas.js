@@ -1,4 +1,4 @@
-function drawGrid(width = 0.1, dist = 50, strong = 0){
+function drawGrid(width = 0.1, dist = 50){
 	var i = 0;
 	context.beginPath();
 	context.lineWidth = width;

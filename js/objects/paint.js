@@ -46,13 +46,17 @@ class Paint extends Entity{
 		this.cleanUp();
 		var res = [];
 		points.forEach(function(e, i){
-			if(i > limit)
+			if(i > limit || isNull(e["color"]))
 				return;
 			res.push(e);
 
-			if(this._actColor != e["color"])
-				this._brush.rePaintImage(Creator.brushSize, e["color"]);
-			this._actColor = e["color"];
+
+			if(Creator.brushColor !== e["color"])
+				Creator.set("brushColor", e["color"]);
+			if(Creator.brushSize !== e["size"])
+				Creator.set("brushSize", e["size"]);
+			if(Creator.brushType !== e["type"])
+				Creator.set("brushType", e["type"]);
 
 			e["points"].forEach(function(ee, ii, arr){
 				if(ii)
@@ -84,6 +88,12 @@ class Paint extends Entity{
 		this.redraw(this._points); // toto nemusí prepisovať celé
 	}
 
+
+	/**
+	 * Pridá nový pod do malby podla aktualne nakresleneho štetca
+	 *
+	 * @param point
+	 */
 	addPoint(point){
 		var lastArr = this._points[this._points.length - 1],
 			arr = lastArr["points"];
@@ -101,6 +111,21 @@ class Paint extends Entity{
 		if(arr.length)
 			this._drawLine(arr[arr.length - 1], point);
 		arr.push(point);
+	}
+
+	fromObject(content){
+		each(content, ee => each(ee["points"], (e, i , arr) => arr[i] = new GVector2f(e._x, e._y)));
+
+		each(content, ee => {
+			each(ee["points"], (e, i , arr) => {
+				arr[i] = new GVector2f(e._x, e._y);
+			})
+		});
+		this.redraw(content);
+	}
+
+	toObject(){
+		return this._points;
 	}
 
 	_drawLine(pointA, pointB){
@@ -133,7 +158,10 @@ class Paint extends Entity{
 	}
 
 	breakLine(){
-		this._points.push(Paint.defArray());
+		if(this._points[this._points.length - 1].points.length < 2)
+			this._points[this._points.length - 1] = Paint.defArray();
+		else
+			this._points.push(Paint.defArray());
 	}
 
 	draw() {

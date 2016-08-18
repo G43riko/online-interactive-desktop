@@ -19,6 +19,12 @@ class SceneManager{
 			Logger.error("ide sa vytvoriť vrstva ktorá už existuje: " + title);
 		this._layers[title] = new Layer(title);
 		this._layersCount++;
+
+
+		if(isDefined(Layers))
+			Layers.createLayer(this._layers[title]);
+
+		return this._layers[title];
 	};
 
 	getLayer(layer){
@@ -28,8 +34,14 @@ class SceneManager{
 	deleteLayer(title){
 		if(!this._layers.hasOwnProperty(title))
 			Logger.error("ide sa vymazať vrstva ktorá už neexistuje: " + title);
-		//TODO vymazať vrstvu
+
+		this._layers[title].cleanUp();
+		delete this._layers[title];
+
 		this._layersCount--;
+
+		if(isDefined(Layers))
+			Layers.deleteLayer(title);
 	};
 
 	addToScene(object, layer = Layers.activeLayerName, resend = true){
@@ -76,8 +88,17 @@ class SceneManager{
 	};
 
 	toString(){
+		return JSON.stringify(this.toObject());
+	}
+
+	fromObject(content){
+		each(content, e => Creator.create(e));
+		//content.forEach(e => Creator.create(e));
+	}
+
+	toObject(){
 		var result = [];
 		this.forEach(e => e.name == "LayerViewer" || result.push(e));
-		return JSON.stringify(result);
+		return result;
 	}
 }

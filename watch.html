@@ -50,10 +50,10 @@
         <div id="modalWindow" style="display: none">
             <div id="colorPalete" style="display: none"></div>
         </div>
-        <canvas class="canvas" id="myCanvas" class="animated">
+        <canvas class="canvas animated" id="myCanvas" >
             Váš prehliadač nepodporuje Canvas
         </canvas>
-        <canvas class="canvas" id="pointerCanvas" class="animated">
+        <canvas class="canvas animated" id="pointerCanvas">
             Váš prehliadač nepodporuje Canvas
         </canvas>
     </body>
@@ -142,5 +142,5 @@
         console.log(f);
         f.click();
     }
-    Watcher = new Watcher();
+    Watcher = new WatcherManager();
 </script>

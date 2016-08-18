@@ -230,13 +230,13 @@ sendAllData = function(msg){
 	var data = JSON.parse(msg);
 	messageRecieve("sendAllData", msg);
 	console.log("boly prijatá všetky dáta od sharera a odosielju sa uživatelovy s id " + data.target);
-	connections[data.id]["watchers"][data.target].socket.emit("sendAllData", JSON.stringify(data.content));
+	connections[data.id]["watchers"][data.target].socket.emit("sendAllData", JSON.stringify(data.msg));
 };
 
 
 paintAction = function(msg){
 	var data = JSON.parse(msg);
-	console.log(data);
+	//console.log(data);
 	//console.log("bola prijatá paintAction");
 	writeToWatchers(connections[data.id].watchers, "paintAction", JSON.stringify(data.msg));
 };

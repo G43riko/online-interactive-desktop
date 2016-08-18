@@ -1,4 +1,4 @@
-class Watcher{
+class WatcherManager{
 	constructor(){
 		this._mouseData = {
 			posX: window.innerWidth << 1,
@@ -14,7 +14,7 @@ class Watcher{
 
 
 		this._socket = io();
-		this._id = Watcher.processParameters();
+		this._id = WatcherManager.processParameters();
 		var inst = this,
 			data = {
 				resolution: {
@@ -46,11 +46,11 @@ class Watcher{
 		});
 
 		this._socket.on("action", function(msg){
-			Watcher.processOperation(JSON.parse(msg));
+			WatcherManager.processOperation(JSON.parse(msg));
 		});
 
 		this._socket.on("paintAction", function(msg){
-			Watcher.processPaintAction(JSON.parse(msg));
+			WatcherManager.processPaintAction(JSON.parse(msg));
 		});
 
 
@@ -68,11 +68,16 @@ class Watcher{
 			})
 		});
 
-		this._socket.on('sendAllData', msg => inst.processContent(JSON.parse(JSON.parse(msg))));
+		this._socket.on('sendAllData', msg => WatcherManager.processContent(JSON.parse(msg)));
 	}
 
-	processContent(content){
-		content.forEach(e => Creator.create(e));
+	static processContent(content){
+		Scene.fromObject(content.scene);
+		//content.scene.forEach(e => Creator.create(e));
+		Creator.fromObject(content.creator);
+		Paints.fromObject(content.paint);
+
+		Logger.notif("Všetky dáta boly úspešne načítané");
 	}
 
 	static processPaintAction(data){

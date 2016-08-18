@@ -1,4 +1,4 @@
-class Sharer{
+class SharerManager{
 	constructor(){
 		this._id = false;
 		this._socket = false;
@@ -63,7 +63,11 @@ class Sharer{
 			var recData = JSON.parse(recieveData);
 			var data = {
 				id: inst._id,
-				content: Sharer._getContent(),
+				msg: {
+					scene: Scene.toObject(),
+					creator: Creator.toObject(),
+					pain: Paints.toObject()
+				},
 				target: recData.target
 			};
 			inst._socket.emit('sendAllData', JSON.stringify(data));
@@ -126,59 +130,36 @@ class Sharer{
 		this._socket.emit('mouseData', JSON.stringify(data));
 	}
 
-	static _getContent(){
-		return Scene.toString();
-	}
-
 	objectChange(o, action, keys){
 		if(!this._socket)
 			return;
-		var data;
+		var data = {
+			id: this._id,
+			msg:{
+				action: action
+			}
+		};
 		switch(action ){
 			case ACTION_OBJECT_MOVE:
-				data = {
-					id: this._id,
-					msg:{
-						action: action,
-						oId: o.id,
-						oL: o.layer,
-						oX: o.position.x,
-						oY: o.position.y,
-						oW: o.size.x,
-						oH: o.size.y
-					}
-				};
+				data["msg"]["oId"] = o.id;
+				data["msg"]["oL"] = o.layer;
+				data["msg"]["oX"] = o.position.x;
+				data["msg"]["oY"] = o.position.y;
+				data["msg"]["oW"] = o.size.x;
+				data["msg"]["oH"] = o.size.y;
 				break;
 			case ACTION_OBJECT_CHANGE:
-				data = {
-					id: this._id,
-					msg:{
-						action: action,
-						oId: o.id,
-						oL: o.layer,
-						keys: {}
-					}
-				};
+				data["msg"]["oId"] = o.id;
+				data["msg"]["oL"] = o.layer;
+				data["msg"]["keys"] = {};
 				keys.forEach((e, i) => data.msg.keys["i"] = o[i]);
 				break;
 			case ACTION_OBJECT_DELETE:
-				data = {
-					id: this._id,
-					msg:{
-						action: action,
-						oId: o.id,
-						oL: o.layer
-					}
-				};
+				data["msg"]["oId"] = o.id;
+				data["msg"]["oL"] = o.layer;
 				break;
 			case ACTION_OBJECT_CREATE:
-				data = {
-					id: this._id,
-					msg: {
-						action: action,
-						o: o
-					}
-				};
+				data["msg"]["o"] = o;
 				break;
 			default:
 				Logger.error("nastala chyba lebo sa chce vykonať neznáma akcia: " + action);

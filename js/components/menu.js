@@ -26,27 +26,26 @@ class MenuManager{
 	get position(){return this._position;}
 	get size(){return this._size;}
 
-	_changeDataByComponents(data){
+	static _changeDataByComponents(data){
 		if(!Components.tools() && Components.draw()) //ak je kreslenie a nie nastroje musí sa nastaviť kreslenie
 			Creator.operation = OPERATION_DRAW_PATH;
 
-		data.mainMenu.tools.visible = Components.tools();
-		data.mainMenu.content.visible = Components.content();
-		data.mainMenu.sharing.visible = Components.share();
+		data["mainMenu"]["tools"]["visible"] = Components.tools();
+		data["mainMenu"]["content"]["visible"] = Components.content();
+		data["mainMenu"]["sharing"]["visible"] = Components.share();
 		if(!Components.load() && !Components.save() && !Components.screen())
-			data.mainMenu.file.visible = false;
+			data["mainMenu"]["file"]["visible"] = false;
 		else{
-			data.file.loadXML.visible = Components.load();
-			data.file.saveXML.visible = Components.save();
-			data.file.saveImg.visible = Components.screen();
+			data["file"]["loadXML"]["visible"] = Components.load();
+			data["file"]["saveXML"]["visible"] = Components.save();
+			data["file"]["saveImg"]["visible"] = Components.screen();
 		}
 
 
 		return data;
 	}
 	init(data){
-		console.log(data);
-		data = this._changeDataByComponents(data);
+		data = MenuManager._changeDataByComponents(data);
 		var array = [],
 			counter = new GVector2f(),
 			w = this._size.x + MENU_OFFSET,
@@ -414,6 +413,15 @@ class MenuManager{
 				break;
 			case "options":
 				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "table":
+				fillText("TAB", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "class":
+				fillText("CLASS", x + (width >> 1), y + (height >> 1), height / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "image":
+				fillText("IMG", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "tools":
 				fillText("TOOLS", x + (width >> 1), y + (height >> 1), height / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);

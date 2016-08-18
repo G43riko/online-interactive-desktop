@@ -19,33 +19,37 @@ class LayersViewer extends Entity{
 		this._layers 			= {};
 		this._offset			= 1;
 		this._buttonSize 		= 40;
+		this._layersCount 		= 0;
 
-
-		var num = this._offset;
-		each(Scene._layers, e => this.createLayer(num++, e), this);
+		each(Scene._layers, e => this.createLayer(e), this);
 	}
 
-	createLayer(order, layer){
-		this._layers[order] = {
-			posY: this.position.y + order * this._layerPanelHeight,
+
+	/**
+	 * vytvorý novú vrstvu v LayerVieweri a v scéne
+	 *
+	 * @param title - názov vrstvy
+	 */
+	createLayer(layer){
+		var order = this._offset + this._layersCount++;
+		this._layers[layer.title] = {
+			posY: this._layerPanelHeight * order,
+			offset : order,
 			posX: this.position.x,
 			layer: layer
 		};
 	}
 
 	clickIn(x, y){
-		if(!this.clickInBoundingBox(x, y))
+		if(!this.clickInBoundingBox(x, y) || !Input.isButtonDown(LEFT_BUTTON))
 			return false;
-
 		var i = this._getLayerOfYPos(y),
 			offsetX = (this.size.x - this._buttonSize * 3) >> 2,
 			offsetY = (this._layerPanelHeight - this._buttonSize) >> 1,
 			j, xx, yy;
 
-		if(isDefined(this._layers[i]))
-			this._clickInLayer(i, x, y);
-		else if(i == 0 && false)
-			for(j=0 ; i<3 ; j++){
+		if(i == 0){
+			for(j=0 ; j<3 ; j++){
 				xx = this.position.x + this._buttonSize * j + offsetX * (j + 1);
 				yy = this.position.y + offsetY;
 				if(x > xx && y > yy && x < xx + this._buttonSize && y < yy + this._buttonSize){
@@ -53,27 +57,62 @@ class LayersViewer extends Entity{
 					break;
 				}
 			}
+		}
+		else
+			each(this._layers, function(e){
+				if(e.offset === i)
+					this._activeLayer = e.layer.title;
+			}, this);
 		return true;
 	}
 
+
+	/**
+	 * Vymaže vrstvu s LayerViewera a zo scény
+	 *
+	 * @param title - názov vrstvy ktorá sa má vymazař
+	 */
+	deleteLayer(title){
+		each(this._layers, function(e){
+			if(e.offset > this._layers[title].offset){
+				e.offset--;
+				e.posY -= this._layerPanelHeight;
+			}
+
+			if(e.offset === this._layers[title].offset)
+				this._activeLayer = e.layer.title;
+		}, this);
+
+		this._layersCount--;
+
+		/*
+		 * Ak sa maže posledná vrstva nastaví sa ako aktualna defaultná vrstva
+		 */
+		if(this._activeLayer === title)
+			this._activeLayer = "default";
+
+		delete this._layers[title];
+	}
+
+	/**
+	 * Vykoná operácie po kliknutí na tlačítko
+	 *
+	 * @param order - poradie tlačítka na ktorá bolo kliknuté
+	 * @private
+	 */
 	_buttonClick(order){
 		switch(order){
-			case 0:
-				var title = this._offset + Scene.layersNumber;
-				Scene.createLayer(title);
-				this.createLayer(title, Scene.getLayer(title));
+			case 0://create layer
+				Scene.createLayer("layer" + (this._offset + this._layersCount));
 				break;
-			case 1:
+			case 1://remove layer
+				Scene.deleteLayer(this._activeLayer);
 				break;
 			case 2:
 				break;
 			default:
 				Logger.error("neznáme tlačítko v layerManagerovy");
 		}
-	}
-
-	_clickInLayer(order, x, y){
-		this._activeLayer = this._layers[order].layer.title;
 	}
 
 	_getLayerOfYPos(num){
@@ -92,13 +131,18 @@ class LayersViewer extends Entity{
 
 	toggleVisibilityOfLayer(num){
 		var i = this._getLayerOfYPos(num);
-		this._layers[i].layer.visible = !this._layers[i].layer.visible;
+
+		each(this._layers, function(e){
+			if(e.offset === i)
+				e.layer.visible = !e.layer.visible;
+		}, this);
+		//this._layers[i].layer.visible = !this._layers[i].layer.visible;
 	}
 
-	_drawLayer(layer, order){
-		var checkColor 	= layer._visible ? "green" : "red",
-			posY 		= this.position.y + order * this._layerPanelHeight;
-
+	_drawLayer(layer){
+		var checkColor 	= layer.layer._visible ? "green" : "red",
+			//posY 		= this.position.y + order * this._layerPanelHeight;
+			posY 		= this.position.y + layer.posY;
 		doRect({
 			position: [this.position.x, posY],
 			size: [this.size.x, this._layerPanelHeight],
@@ -106,10 +150,10 @@ class LayersViewer extends Entity{
 			draw: true,
 			borderColor: this._borderColor,
 			borderWidth: this.borderWidth,
-			fillColor: this._activeLayer == layer.title ? "gray" : "white"
+			fillColor: this._activeLayer == layer.layer.title ? "gray" : "white"
 		});
 
-		fillText(layer.title, this.position.x, posY, this._fontSize, this._fontColor, [7, 5]);
+		fillText(layer.layer.title, this.position.x, posY, this._fontSize, this._fontColor, [7, 5]);
 
 		doRect({
 			x: this.position.x + this.size.x - this._checkBoxSize - this._checkYOffset,
@@ -122,8 +166,6 @@ class LayersViewer extends Entity{
 	}
 
 	draw(){
-		var num = this._offset;
-
 		doRect({
 			position: this.position,
 			size: this.size,
@@ -173,22 +215,12 @@ class LayersViewer extends Entity{
 			})
 		}
 
-		each(Scene._layers, e => this._drawLayer(e, num++), this);
+		each(this._layers, e => this._drawLayer(e), this);
 	}
 	get activeLayerName(){
 		return this._activeLayer;
 	}
 	get activeLayer(){
 		return Scene.getLayer(this.activeLayerName);
-	}
-}
-
-class Button{
-	constructor(parent, x, y, type, _buttonSize = 40){
-		this.__buttonSize = _buttonSize;
-		this._parent = parent;
-		this._type = type;
-		this._x = x;
-		this._y = y;
 	}
 }

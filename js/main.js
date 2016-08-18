@@ -1,4 +1,4 @@
-var initTime 		= window.performance.now(),
+var initTime 		= window["performance"].now(),
 	movedObject 	= false,
 	Scene 			= new SceneManager(),
 	Creator 		= new objectCreator(),
@@ -35,7 +35,7 @@ var Components = {
 	load	: () => isDefined(components) && isDefined(components["load"]) && components["load"] === true,
 	screen	: () => isDefined(components) && isDefined(components["screen"]) && components["screen"] === true,
 	content	: () => isDefined(components) && isDefined(components["content"]) && components["content"] === true,
-	edit	: () => isDefined(components) && isDefined(components["edit"]) && edit["draw"] === true
+	edit	: () => isDefined(components) && isDefined(components["edit"]) && components["edit"] === true
 };
 
 function ajax(url, options, dataType){
@@ -51,7 +51,7 @@ function ajax(url, options, dataType){
 	options["async"] = options["async"] || true;
 
 	var start = 0;
-	xhttp = window.XMLHttpRequest ?  new XMLHttpRequest() :  new ActiveXObject("Microsoft.XMLHTTP");
+	var xhttp = window.XMLHttpRequest ?  new XMLHttpRequest() :  new ActiveXObject("Microsoft.XMLHTTP");
 
 	if(isFunction(options["abort"]))
 		xhttp.onabort = options["abort"];
@@ -62,11 +62,11 @@ function ajax(url, options, dataType){
 	if(isFunction(options["timeout"]))
 		xhttp.ontimeout = options["timeout"];
 	if(isFunction(options["loadEnd"]))
-		xhttp.onloadend = () => options["loadEnd"]((window.performance.now() - start));
+		xhttp.onloadend = () => options["loadEnd"]((window["performance"].now() - start));
 	if(isFunction(options["loadStart"]))
 		xhttp.onloadstart = function(){
 			options["loadStart"]();
-			start = window.performance.now();
+			start = window["performance"].now();
 		};
 	if(isFunction(options["success"])){
 		xhttp.onreadystatechange = function() {
@@ -155,12 +155,27 @@ function init(){
 }
 
 function saveSceneAsFile(){
-	saveFile("scene_backup", Scene.toString());
+	var result = {
+		scene: Scene.toObject(),
+		creator: Creator.toObject(),
+		paints: Paints.toObject()
+	};
+
+	saveFile("scene_backup", JSON.stringify(result));
 }
 
 function loadSceneFromFile(){
 	loadFile(function(content){
-		JSON.parse(content).forEach(e => Creator.create(e));
+		try{
+			var data = JSON.parse(content);
+			Scene.fromObject(data.scene);
+			Creator.fromObject(data.creator);
+			Paints.fromObject(data.paints);
+		}
+		catch(err){
+			Logger.error("nepodarilo sa načítať súbor s dôvodu: ", err.message);
+		}
+
 	});
 }
 
@@ -183,7 +198,7 @@ $(function(){
 	Scene.createLayer("default");
 	Scene.createLayer("rightMenu");
 	Scene.createLayer("test2");
-	console.log("stranka sa nacítala za: ", (window.performance.now() - initTime) + " ms");
+	console.log("stranka sa nacítala za: ", (window["performance"].now() - initTime) + " ms");
 
 
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
@@ -198,7 +213,8 @@ $(function(){
 });
 
 var drawEvent = new EventManager(realDraw, 16),
-	draw = () => drawEvent.callIfCan();
+	draw = () => drawEvent.callIfCan(),
+	drawMousePos, Layers;
 
 function realDraw(){
 	drawMousePos = new Date().getMilliseconds();

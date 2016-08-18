@@ -64,13 +64,13 @@ var isUndefined 	= e => typeof e === "undefined",
 	getClassOf 		= Function.prototype.call.bind(Object.prototype.toString);
 
 function each(obj, func, thisArg = false){
-	var i = 0;
+	var i;
 	if(Array.isArray(obj)){
 		if(thisArg)
-			for(; i<obj.length ; i++)
+			for(i=0 ; i<obj.length ; i++)
 				func.call(thisArg, obj[i], i, obj);
 		else
-			for(; i<obj.length ; i++)
+			for(i=0 ; i<obj.length ; i++)
 				func(obj[i], i, obj);
 	}
 	else{
@@ -248,8 +248,8 @@ function drawSelectArc(x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE << 1 	
 function getMousePos(canvasDom, mouseEvent) {
 	var rect = canvasDom.getBoundingClientRect();
 	return {
-		x: mouseEvent.touches[0].clientX - rect.left,
-		y: mouseEvent.touches[0].clientY - rect.top
+		x: mouseEvent["touches"][0].clientX - rect.left,
+		y: mouseEvent["touches"][0].clientY - rect.top
 	};
 }
 
@@ -258,7 +258,7 @@ class EventManager{
 		this._event = event;
 		this._time = time;
 		this._timeOut = false;
-		this._lastTime = window.performance.now();
+		this._lastTime = window["performance"].now();
 	}
 
 	_callEvent(inst = this){
@@ -267,7 +267,7 @@ class EventManager{
 			clearTimeout(inst._timeOut);
 			inst._timeOut = false;
 		}
-		inst._lastTime = window.performance.now();
+		inst._lastTime = window["performance"].now();
 	}
 
 	_setTimeOut(diff){
@@ -278,7 +278,7 @@ class EventManager{
 	}
 
 	callIfCan(){
-		var diff = window.performance.now() - this._lastTime;
+		var diff = window["performance"].now() - this._lastTime;
 		diff > this._time ? this._callEvent() : this._setTimeOut(diff);
 	}
 }

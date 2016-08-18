@@ -16,8 +16,17 @@ class objectCreator{
 		this._radius		= DEFAULT_RADIUS;
 		this._items 		= null;
 		this._view			= null;
+		this._allowedItems 	= ["_fillColor", "_borderColor", "_borderWidth", "_operation", "_lineWidth", "_fontSize",
+							   "_fontColor", "_lineType", "_lineStyle", "_brushSize", "_brushType", "_brushColor",
+							   "_radius"];
 	}
 
+
+	/**
+	 * Nastaví view pre creator
+	 *
+	 * @param val - view ktorý sa má priradiť
+	 */
 	set view(val){
 		this._view = val;
 
@@ -25,6 +34,12 @@ class objectCreator{
 			this.init()
 	}
 
+
+	/**
+	 * Načíta dáta pre CreatorView
+	 *
+	 * @param data - objekt ktorý vznikol s parsovaním načítaneho súboru s dátami pre CreatorView
+	 */
 	init(data = false){
 		if(this._items === null && data !== false)
 			this._items = data;
@@ -33,8 +48,12 @@ class objectCreator{
 			this._view.init();
 	}
 
-	get items(){return this._items;}
 
+	/**
+	 * Vytvorí dočasný objekt ktorý sa má vytvoriť a uloží sa do Creatora
+	 *
+	 * @param position - pozícia kde sa má objaviť objekt
+	 */
 	createObject(position){
 		switch(this._operation){
 			case OPERATION_DRAW_RECT:
@@ -50,14 +69,45 @@ class objectCreator{
 				this._object = new Join(position);
 				break;
 		}
-		selectedObjects.clearAndAdd(this._object);
+		selectedObjects.clearAndAdd(this._object);//TODO toto nesposobuje to rýchle pohybocanie objektt???
 	}
 
+
+	/**
+	 * Dokončí vytváranie objektu
+	 */
 	finishCreating(){
 		Scene.addToScene(this._object);
 		this._object = false;
 	}
 
+
+	/**
+	 * Načíta všetky dáta potrebné pre creator s jedného objektu
+	 *
+	 * @param content
+	 */
+	fromObject(content){
+		each(content, function(e, i){
+			if(isIn(i, this._allowedItems))
+				this.set(i, e);
+		}, this);
+	}
+
+
+	/**
+	 * Uloží Creator to jedného objektu
+	 */
+	toObject(){
+		var result = {};
+		each(this, (e, i) => result[i] = e);
+		return result;
+	}
+
+
+	/**
+	 * Nakreslí akuálne vytváraný objekt a takisto aj view ak existuje
+	 */
 	draw(){
 		if(this._object)
 			this._object.draw();
@@ -66,6 +116,13 @@ class objectCreator{
 			this._view.draw();
 	}
 
+
+	/**
+	 * Vytvorý objekt bud s objektu alebo s JSON stringu a vloží ho do scény
+	 *
+	 * @param obj - objekt alebo JSON string s dátami potrebnými pre vytvorenie objektu
+	 * @returns {obj} - vráci novo vytvorený objekt alebo NULL ak sa vytvorenie nepodarí
+	 */
 	create(obj){
 		var result = Entity.create(obj, false);
 		if(result){
@@ -75,6 +132,13 @@ class objectCreator{
 		return result;
 	}
 
+
+	/**
+	 * Nastavý vlastnosť creatora na určitú hodnotu
+	 *
+	 * @param key
+	 * @param val
+	 */
 	set(key, val){
 		if(key[0] != "_")
 			key = "_" + key;
@@ -105,25 +169,34 @@ class objectCreator{
 
 	}
 
+	/**
+	 * Zistí či bolo kliknuté na CreatorViewer alebo nie
+	 *
+	 * @param x
+	 * @param y
+	 * @returns {*} - vráti TRUE alebo FALSE
+	 */
 	clickIn(x, y){
 		return isDefined(this._view) ? this._view.clickIn(x, y) : false;
 	}
 
+	get items(){return this._items;}
 	get object(){return this._object;}
+
 	get radius(){return this._radius;}
 	get color(){return this._fillColor;}
-	get fillColor(){return this._fillColor;}
+	get lineType(){return this._lineType;}
 	get fontSize(){return this._fontSize;}
+	get fillColor(){return this._fillColor;}
 	get fontColor(){return this._fontColor;}
 	get operation(){return this._operation;}
 	get lineWidth(){return this._lineWidth;}
-	get borderColor(){return this._borderColor;}
-	get borderWidth(){return this._borderWidth;}
-	get lineType(){return this._lineType;}
 	get lineStyle(){return this._lineStyle;}
 	get brushSize(){return this._brushSize;}
 	get brushType(){return this._brushType;}
 	get brushColor(){return this._brushColor;}
+	get borderColor(){return this._borderColor;}
+	get borderWidth(){return this._borderWidth;}
 
 	set object(val){this._object = val;}
 	set operation(val){this._operation = val; this._view.changeOperation()}
