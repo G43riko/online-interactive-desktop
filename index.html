@@ -42,6 +42,8 @@
 		<script type="text/javascript" src="js/objects/arrow.js"></script>
 		<script type="text/javascript" src="js/utils/test.js"></script>
 		<script type="text/javascript" src="js/components/sharer.js"></script>
+        <script type="text/javascript" src="js/components/taskManager.js"></script>
+        <script type="text/javascript" src="js/components/projectManager.js"></script>
 
 		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
 		<meta name="apple-mobile-web-app-copable" content="yes">
@@ -124,7 +126,8 @@
 
                         </div>
                     </div>
-                    <input type="button" value="Uložiť obrázok" onclick="processAndSaveImage()">
+                    <!--<input type="button" value="Uložiť obrázok" onclick="processAndSaveImage()">-->
+                    <input type="button" value="Uložiť obrázok" onclick="serializeSaveData()">
                 </form>
             </div>
 		</div>
@@ -209,10 +212,40 @@
         $("canvas").addClass("blur");
     }
 
-    function processAndSaveImage(){
-        var getValueIfExists = function(obj, val = false){
-            return obj ? (obj.type == "checkbox" ? obj.checked : obj.value) : val
-        };
+    function serializeSaveData(){
+        var getValueIfExist = (e, val = false) => e ? (e.type == "checkbox" ? e.checked : e.value) : val;
+        var result = [];
+        result["width"] = getValueIfExist(document.getElementById("idImageWidth"), canvas.width);
+        result["height"] = getValueIfExist(document.getElementById("idImageHeight"), canvas.height);
+        result["name"] = getValueIfExist(document.getElementById("idImageName"));
+
+        result["format"] = document.getElementById("idImageFormat");
+        result["format"] = result["format"].options && 
+                           result["format"].selectedIndex && 
+                           result["format"].options[result["format"].selectedIndex] && 
+                           result["format"].options[result["format"].selectedIndex].value;
+
+        var layerCheckboxes = document.getElementsByClassName("layerVisibility");
+        result["selectedLayers"] = [];
+        for(var i=0 ; i<layerCheckboxes.length ; i++)
+            if(layerCheckboxes[i].checked)
+                result["selectedLayers"].push(layerCheckboxes[i].name);
+
+
+        //TODO načítať farbu pozadia
+        result["background"] = KEYWORD_TRANSPARENT;
+
+        procesAndSaveImage(result);
+    }
+
+    function procesAndSaveImage(data){
+        data["name"] = isString(data["name"]) || "desktopScreen";
+        data["format"] = isString(data["format"]) || IMAGE_FORMAT_PNG;
+        data["width"] = data["width"] || canvas.width;
+        data["height"] = data["height"] || canvas.height;
+        data["selectedLayers"] = data["selectedLayers"] || [];
+
+
         /*
          * velký canvas kde sa všetko nakreslí
          */
@@ -221,22 +254,38 @@
         ca.height = canvas.height;
         var resContext = ca.getContext("2d");
 
-        //TODO nakresliť pozadie ak nemá byť priesvitné
+        /*
+         * prekreslí pozadie ak je nastavene a nieje priesvitné
+         */
+        if(isString(data["background"]) && data["background"] !== KEYWORD_TRANSPARENT){
+            doRect({
+                x: 0,
+                y: 0,
+                width: ca.width,
+                height: ca.height,
+                fillColor: data["background"],
+                ctx: resContext
+            });
+        }
 
-        var layerCheckboxes = document.getElementsByClassName("layerVisibility");
-        for(var i in layerCheckboxes)
-            if(layerCheckboxes.hasOwnProperty(i)){
+        /*
+         * Vykreslí vrstvy určené na vykresleni
+         */
+        for(var i in data["selectedLayers"]){
+            if(data["selectedLayers"].hasOwnProperty(i)){
                 //TODO vykreslenie jednotlivých vrstiev
             }
+        }
 
+        //TODO toto zakomentovať lebo to prekresluje všetko
         resContext.drawImage(canvas, 0, 0);
 
         /*
          * malý canvas kde sa prekreslí velký canvas
          */
         var resCanvas =  document.createElement("canvas");
-        resCanvas.width = getValueIfExists(document.getElementById("idImageWidth"), canvas.width);
-        resCanvas.height = getValueIfExists(document.getElementById("idImageHeight", canvas.height));
+        resCanvas.width = data["width"];
+        resCanvas.height = data["height"];
         resContext = resCanvas.getContext("2d");
         resContext.drawImage(ca, 0, 0, resCanvas.width, resCanvas.height);
 
@@ -244,9 +293,7 @@
         /*
          * uloženie súboru
          */
-        var obj = document.getElementById("idImageFormat");
-        obj = obj.options && obj.selectedIndex && obj.options[obj.selectedIndex] && obj.options[obj.selectedIndex].value;
-        Files.saveImage(getValueIfExists(document.getElementById("idImageName"), "desktopScreen"), resCanvas.toDataURL(obj));
+        Files.saveImage(data["name"], resCanvas.toDataURL(data["format"]));
         closeDialog();
     }
 
@@ -321,14 +368,14 @@
 
     function setCookie(cname, cvalue, exdays) {
         var d = new Date();
-        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
         document.cookie = cname + "=" + cvalue + ";expires="+ d.toUTCString();
     }
 
     function getCookie(cname) {
         var name = cname + "=",
-                ca = document.cookie.split(';'),
-                i, c;
+            ca = document.cookie.split(';'),
+            i, c;
         for(i = 0; i <ca.length; i++) {
             c = ca[i];
             while (c.charAt(0)==' ')

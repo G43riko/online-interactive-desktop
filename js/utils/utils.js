@@ -55,6 +55,8 @@ var isUndefined 	= e => typeof e === "undefined",
 	isObject		= e => typeof e === "object",
 	isArray			= e => Array.isArray(e),
 	isNull			= e => e === null,
+	isEmptyObject   = e => e && Object.keys(e).length === 0 && e.constructor === Object,
+	isEmptyArray    = e => isArray(e) && e.length === 0,
 	getLength		= function(obj){var counter = 0; each(obj, e => counter++); return counter;},
 	isSharing		= () => typeof Sharer !== "undefined" && Sharer.isSharing,
 	isInt 			= e => Number(e) === e && e % 1 === 0,
@@ -83,7 +85,6 @@ function each(obj, func, thisArg = false){
 			for(i in obj)
 				if(obj.hasOwnProperty(i))
 					func(obj[i], i, obj);
-
 	}
 }
 

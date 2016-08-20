@@ -13,7 +13,9 @@ var initTime 		= window["performance"].now(),
 	Content			= new ContentManager(),
 	FPS				= 60,
 	Files			= new FileManager(),
+	Project			= new ProjectManager(),
 	Paints			= new PaintManager(),
+	Task 			= null,
 	components		= {
 		draw : true,
 		share : true,
@@ -154,28 +156,63 @@ function init(){
 	draw();
 }
 
-function saveSceneAsFile(){
-	var result = {
+function saveSceneAsFile(fileName = "scene_backup"){
+	var data = {
 		scene: Scene.toObject(),
 		creator: Creator.toObject(),
-		paints: Paints.toObject()
+		paints: Paints.toObject(),
+		type: 2500
 	};
 
-	saveFile("scene_backup", JSON.stringify(result));
+	saveFile(fileName, JSON.stringify(data));
+}
+
+function saveSceneAsTask(fileName = "default_task"){
+	var result = {};
+
+	if(Scene.getTaskObject(result)){
+		var data = {
+			scene: result["content"],
+			results:  result["results"],
+			title: fileName,
+			type: 2501
+		};
+		saveFile(fileName, JSON.stringify(data));
+	}
+	else
+		Alert.warning(result.error);
+}
+
+function loadTask(scene, results, title){
+	if(Task)
+		return Logger.error("načítava sa task ked už jeden existuje");
+
+	var layer = Scene.createLayer(title, true);
+	each(scene, e => {
+		e.layer = layer.title
+		Creator.create(e);
+	});
+	Task = new TaskManager(results, title, layer);
+	Logger.notif("Task " + title + " bol úspešne vytvorený");
 }
 
 function loadSceneFromFile(){
 	loadFile(function(content){
-		try{
+		//try{
 			var data = JSON.parse(content);
-			Scene.fromObject(data.scene);
-			Creator.fromObject(data.creator);
-			Paints.fromObject(data.paints);
+			if(data["type"] && data["type"] === 2501)
+				loadTask(data["scene"], data["results"], data["title"]);
+			else{
+				Scene.fromObject(data.scene);
+				Creator.fromObject(data.creator);
+				Paints.fromObject(data.paints);
+			}
+		/*
 		}
 		catch(err){
-			Logger.error("nepodarilo sa načítať súbor s dôvodu: ", err.message);
+			Logger.error("nepodarilo sa načítať súbor s dôvodu: ", err);
 		}
-
+		*/
 	});
 }
 

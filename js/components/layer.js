@@ -1,13 +1,17 @@
 class Layer{
-	constructor(title){
+	constructor(title, taskLayer){
 		this._objects = {};
 		this._visible = true;
 		this._title = title;
 		this._paint = null;
+		this._locked = false;
+		this._isTaskLayer = taskLayer === true;
 	};
-
+	
+	get locked(){return this._locked || this._isTaskLayer;}
+	get taskLayer(){return this._isTaskLayer;}
 	get visible(){return this._visible;}
-	get objects(){return this._objects}
+	get objects(){return this._objects;}
 	get title(){return this._title;}
 	get paint(){
 		if(isNull(this._paint))

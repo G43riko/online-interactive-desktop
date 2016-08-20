@@ -278,6 +278,8 @@ class Entity{
 				return new Polygon([0,0,0]);
 			case "Line" :
 				return new Line([0,0,0]);
+			case "Class" :
+				return new Class();
 			default :
 				Logger.error("snažíš sa vložiť objekt s neznámym menom: " + obj._name);
 				return null;
@@ -302,7 +304,7 @@ class Entity{
 		if(result){
 			//nakopírujem atributy
 			each(obj, function(e, i){
-				if(isDefined(e["_x"]) && typeof isDefined(e["_y"]))
+				if(e && isDefined(e["_x"]) && typeof isDefined(e["_y"]))
 					result[i] = new GVector2f(e._x, e._y);
 				else if(i == "data")
 					result[i] = e.map(ee => ee.map(eee => eee));

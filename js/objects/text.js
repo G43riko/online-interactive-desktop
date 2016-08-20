@@ -1,7 +1,7 @@
 class Text extends Entity{
 	constructor(text, position, size, fontColor = DEFAULT_FONT_COLOR){
 		super("Text", position, size, {"fillColor": DEFAULT_BACKGROUND_COLOR, radius: DEFAULT_RADIUS});
-		this._text 		= text;
+		this._text 		= text || "";
 		this._textColor = fontColor;
 		this._fontSize 	= DEFAULT_FONT_SIZE;
 		this._moveType 	= -1;
@@ -28,6 +28,10 @@ class Text extends Entity{
 
 	set horizontalTextAlign(val){
 		this._horizontalTextAlign = val;
+	}
+
+	get text(){
+		return this._text;
 	}
 
 	draw(){

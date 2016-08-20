@@ -96,11 +96,11 @@ const TABLE_WIDTH 			= 300;
 const TABLE_RADIUS 			= 10;
 const TABLE_TEXT_OFFSET		= 5;
 
-const PI2 = Math.PI * 2;
+/*R*/const PI2 = Math.PI * 2;
 
-const PUBLIC_ACCESS 	= "+";
-const PRIVATE_ACCESS 	= "-";
-const PROTECTED_ACCESS 	= "#";
+/*R*/const PUBLIC_ACCESS 	= "+";
+/*R*/const PRIVATE_ACCESS 	= "-";
+/*R*/const PROTECTED_ACCESS 	= "#";
 
 const ACTION_OBJECT_MOVE 		= 2310;
 const ACTION_OBJECT_CREATE		= 2311;
@@ -113,3 +113,9 @@ const ACTION_PAINT_CHANGE_BRUSH	= 2317;
 
 const PAINT_ACTION_BRUSH	= 2400;
 const PAINT_ACTION_LINE		= 2401;
+
+const KEYWORD_TRANSPARENT	= "transparent";
+
+const IMAGE_FORMAT_JPG = "image/jpeg";
+const IMAGE_FORMAT_PNG = "image/png";
+const IMAGE_FORMAT_GIF = "image/gif";

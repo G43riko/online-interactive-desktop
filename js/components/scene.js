@@ -14,10 +14,10 @@ class SceneManager{
 		this._layersCount = 0;
 	};
 
-	createLayer(title){
+	createLayer(title, taskLayer = false){
 		if(this._layers.hasOwnProperty(title))
 			Logger.error("ide sa vytvoriť vrstva ktorá už existuje: " + title);
-		this._layers[title] = new Layer(title);
+		this._layers[title] = new Layer(title, taskLayer);
 		this._layersCount++;
 
 
@@ -43,6 +43,52 @@ class SceneManager{
 		if(isDefined(Layers))
 			Layers.deleteLayer(title);
 	};
+
+	getTaskObject(data){
+		var findAssignment = false;
+
+		data["error"] = data["error"] === "" ? data["error"] : "";
+		data["results"] = isEmptyObject(data["results"]) ? data["results"] : {};
+		data["content"] = isEmptyArray(data["content"]) ? data["content"] : [];
+
+		each(this.layers, function(e, i){
+			if(e.visible){
+				e.forEach(function(e){
+					if(e === Layers)
+						return;
+					if(e.visible){
+						if(e.name === "Text"){
+							if(e.text === "")
+								return;
+							data["results"][e.id] = e.text;
+						}
+						data["content"].push(e);
+					}
+				});
+			}
+		});
+
+		//TODO treba nejako posielať zadanie
+		findAssignment = true;
+
+		//preloopuje vrstvy
+			//preskočí neviditelne
+			//preloopuje objekty
+				//preskočí neviditelne
+
+				//ak je textInput
+					//ak je prazdny tak vymaže
+
+					//ak nie tak podla do resultov pridá podla idečtka texfieldu spravny vysledok
+					//vymaže obsah
+				
+				//pridá to scene
+		if(isEmptyObject(data["results"])){
+			data["error"] += "nieje zadaný žiadny text pre výsledok"
+		}
+
+		return data["error"] === "" && findAssignment;
+	}
 
 	addToScene(object, layer = Layers.activeLayerName, resend = true){
 		if(!this._layers.hasOwnProperty(layer))

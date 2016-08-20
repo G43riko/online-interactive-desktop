@@ -208,6 +208,9 @@ class MenuManager{
 			case "watch":
 				window.open(Sharer.getWatcherUrl(), '_blank');
 				break;
+			case "saveTask":
+				saveSceneAsTask();
+				break;
 			case "saveXML":
 				saveSceneAsFile();
 				break;
@@ -407,6 +410,9 @@ class MenuManager{
 				break;
 			case "saveXML":
 				fillText("SAVE XML", x + (width >> 1), y + (height >> 1), height >> 3, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "saveTask":
+				fillText("SAVE TASK", x + (width >> 1), y + (height >> 1), height >> 3, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "loadXML":
 				fillText("LOAD XML", x + (width >> 1), y + (height >> 1), height >> 3, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
