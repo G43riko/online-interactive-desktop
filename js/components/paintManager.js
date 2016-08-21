@@ -4,9 +4,12 @@ class PaintManager{
 		this._selectedImage	= null;
 		this._selectedBrush	= null;
 		this._action		= PAINT_ACTION_BRUSH;
+		this._paintHistory	= [];
+		this._undoHistory	= [];
 
 		//this.paintEvents = [];
 		//this.history = [];
+		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
 
@@ -71,6 +74,8 @@ class PaintManager{
 		if(isSharing())
 			Sharer.paint.breakLine(activeLayerName);
 
+		this._paintHistory.push(activeLayerName);
+
 		Scene.getLayer(activeLayerName).paint.breakLine();
 	}
 
@@ -116,11 +121,20 @@ class PaintManager{
 	}
 
 	undo(){
-
+		if(this._paintHistory.length === 0)
+			return false;
+		var layer = this._paintHistory.pop();
+		Scene.getLayer(layer).paint.undo();
+		this._undoHistory.push(layer);
 	}
 
 	redo(){
-
+		if(this._undoHistory.length === 0)
+			return false;
+		
+		var layer = this._undoHistory.pop();
+		Scene.getLayer(layer).paint.redo();
+		this._paintHistory.push(layer);
 	}
 
 	//GETTERS
@@ -144,5 +158,4 @@ class PaintManager{
 		this._selectedImage = this._brushes[title];
 		Menu._redraw();
 	}
-
 }

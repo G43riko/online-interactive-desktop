@@ -20,6 +20,7 @@ class TimeLine{
 			inst._val = Date.now();
 			draw();
 		}, 1000)
+		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
 	animateToVal(goalVal, frames = 100, speed = 1000 / FPS){

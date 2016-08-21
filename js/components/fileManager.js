@@ -8,6 +8,7 @@ class FileManager{
 		this._link = document.createElement("a");
 		this._link.setAttribute("class", "hide");
 		this._link.setAttribute("href", "");
+		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
 	saveFile(name, text, type = "text/plain"){

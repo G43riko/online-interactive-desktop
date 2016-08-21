@@ -22,6 +22,15 @@ class ListenersManager{
 		draw();
 	}
 
+	keyUp(key, isCtrlDown){
+		if(isCtrlDown){
+			if(key === Z_KEY)
+				Paints.undo();
+			else if(key === Y_KEY)
+				Paints.redo();
+		}
+	}
+
 	mousePress(position){
 		if(Menu.pressIn(position.x, position.y)){
 			draw();

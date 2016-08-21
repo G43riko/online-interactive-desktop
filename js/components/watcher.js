@@ -69,6 +69,7 @@ class WatcherManager{
 		});
 
 		this._socket.on('sendAllData', msg => WatcherManager.processContent(JSON.parse(msg)));
+		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
 	static processContent(content){

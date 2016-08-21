@@ -1,6 +1,7 @@
 class ObjectsManager{
 	constructor(){
 		this._objects = [];
+		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 	size(){
 		return this._objects.length;

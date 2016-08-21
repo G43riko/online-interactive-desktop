@@ -5,6 +5,8 @@ const L_CTRL_KEY 	= 17;
 const L_ALT_KEY 	= 18;
 const ESCAPE_KEY 	= 27;
 const ENTER_KEY 	= 13;
+const Z_KEY 		= 90;
+const Y_KEY 		= 89;
 
 const FONT_HALIGN_LEFT		= "left";
 const FONT_HALIGN_CENTER	= "center";
@@ -37,6 +39,7 @@ const OPERATION_DRAW_ARC	= 1001;
 const OPERATION_DRAW_PATH	= 1002;
 const OPERATION_DRAW_LINE	= 1003;
 const OPERATION_DRAW_JOIN	= 1004;
+const OPERATION_DRAW_IMAGE	= 1005;
 
 const JOIN_LINEAR		= 2000;
 const JOIN_BAZIER		= 2001;
@@ -78,13 +81,13 @@ const CONTEXT_MENU_WIDTH 		= 240;
 const TOUCH_DURATION 	= 500;
 const TOUCH_VARIATION 	= 5;
 
-const MENU_OFFSET 		= 20;
+const MENU_OFFSET 		= 10;//20
 const MENU_RADIUS		= 10;
 const MENU_BORDER_WIDTH = 2;
 const MENU_FONT_COLOR 	= 2;
 const MENU_BORDER_COLOR = "#000000";
-const MENU_WIDTH 		= 60;
-const MENU_HEIGHT 		= 60;
+const MENU_WIDTH 		= 50;//60
+const MENU_HEIGHT 		= 50;//60
 const MENU_POSITION 	= MENU_OFFSET;
 
 const TABLE_BORDER_WIDTH 	= 1;
@@ -119,3 +122,11 @@ const KEYWORD_TRANSPARENT	= "transparent";
 const IMAGE_FORMAT_JPG = "image/jpeg";
 const IMAGE_FORMAT_PNG = "image/png";
 const IMAGE_FORMAT_GIF = "image/gif";
+
+const LOGGER_MENU_CLICK 		= 2600;
+const LOGGER_CREATOR_CHANGE 	= 2601;
+const LOGGER_CONTEXT_CLICK		= 2602;
+const LOGGER_LAYER_CHANGE		= 2603;
+const LOGGER_OBJECT_CREATED		= 2604;
+const LOGGER_OBJECT_ADDED		= 2605;
+const LOGGER_COMPONENT_CREATE	= 2606;

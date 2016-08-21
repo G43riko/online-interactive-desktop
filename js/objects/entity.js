@@ -316,6 +316,7 @@ class Entity{
 					result[i] = e;
 			});
 			Logger.notif("objekt bol úspešne vytvorený");
+			Logger.log("Vytvoril sa objekt " + (result.name || "Neznámy"), LOGGER_OBJECT_CREATED);
 		}
 		return result;
 	}

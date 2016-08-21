@@ -19,6 +19,8 @@ class objectCreator{
 		this._allowedItems 	= ["_fillColor", "_borderColor", "_borderWidth", "_operation", "_lineWidth", "_fontSize",
 							   "_fontColor", "_lineType", "_lineStyle", "_brushSize", "_brushType", "_brushColor",
 							   "_radius"];
+		
+		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
 
@@ -68,6 +70,9 @@ class objectCreator{
 			case OPERATION_DRAW_JOIN:
 				this._object = new Join(position);
 				break;
+			case OPERATION_DRAW_IMAGE:
+				this._object = new ImageObject(position, new GVector2f());
+				break;
 		}
 		selectedObjects.clearAndAdd(this._object);//TODO toto nesposobuje to rýchle pohybocanie objektt???
 	}
@@ -77,8 +82,16 @@ class objectCreator{
 	 * Dokončí vytváranie objektu
 	 */
 	finishCreating(){
-		Scene.addToScene(this._object);
-		this._object = false;
+		if(this._object.name === "Image")
+			loadImage(e => {
+				this._object.image = e;
+				Scene.addToScene(this._object);
+				this._object = false;
+			});
+		else{
+			Scene.addToScene(this._object);
+			this._object = false;
+		}
 	}
 
 
@@ -90,7 +103,7 @@ class objectCreator{
 	fromObject(content){
 		each(content, function(e, i){
 			if(isIn(i, this._allowedItems))
-				this.set(i, e);
+				this.setOpt(i, e);
 		}, this);
 	}
 
@@ -139,7 +152,7 @@ class objectCreator{
 	 * @param key
 	 * @param val
 	 */
-	set(key, val){
+	setOpt(key, val){
 		if(key[0] != "_")
 			key = "_" + key;
 
@@ -153,6 +166,8 @@ class objectCreator{
 			if(val !== "line")
 				Paints.selectedImage = val;
 		}
+
+		Logger.log("Creatorovi sa nastavuje " + key + " na " + val, LOGGER_CREATOR_CHANGE);
 
 		/*
 		 * Ak sa zmení vlastnosť štetca musí prekresliť štetec aby sa mohlo rovno malovať

@@ -1,9 +1,20 @@
 class ImageObject extends Entity{
-	constructor(image, position, size, data){
+	constructor(position, size, image, data){
 		super("Image", position, size, data);
 		this._radius = 20;
-		this._image = image;
+
+		this._image = image || null;
+
+		//if(!image)
+		//	loadImage(e => this._image = e);
 	}
+
+	set image(img){this._image = img;}
+
+	updateCreatingPosition(pos){
+		this.size.x = pos.x - this.position.x;
+		this.size.y = pos.y - this.position.y;
+	};
 
 	clickIn(x, y){
 		if (!this.clickInBoundingBox(x, y))
@@ -23,9 +34,9 @@ class ImageObject extends Entity{
 
 	draw(){
 		//context.drawImage(this._image, this.position.x, this.position.y, this.size.x, this.size.y);
-
-		doArc({
-			bgImage: this._image,
+		doRect({
+			bgImage: this._image || false,
+			fill: this._image === null,
 			position: this._position,
 			size: this.size,
 			radius: this.radius,

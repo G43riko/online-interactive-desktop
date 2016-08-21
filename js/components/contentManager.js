@@ -2,6 +2,7 @@ class ContentManager{
 	constructor(){
 		this._contentImage = null;
 		this._contentHTML  = null;
+		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 	setContentImage(src = false){
 		if(this._contentImage === null)

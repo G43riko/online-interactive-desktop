@@ -4,6 +4,7 @@ class LogManager {
 		LogManager.WARNS = "warns";
 		LogManager.ERRORS = "errors";
 
+		this._logs = [];
 		this._data = {};
 		this._data[LogManager.LOGS] = {};
 		this._data[LogManager.WARNS] = {};
@@ -13,6 +14,10 @@ class LogManager {
 		this._show = {};
 		this._show[LogManager.LOGS] = this._show[LogManager.WARNS] = this._show[LogManager.ERRORS] = true;
 	};
+
+	log(msg, type){
+		this._logs.push([Date.now(), msg, type]);
+	}
 
 	set(val, type = false){
 		if(type)

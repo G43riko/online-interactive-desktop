@@ -10,6 +10,8 @@ class LayersViewer extends Entity{
 			borderColor: "blue",
 			borderWidth: 2
 		});
+
+		this._minimalized		= false;
 		this._layerPanelHeight 	= 50;
 		this._fontSize 			= 20;
 		this._fontColor 		= "black";
@@ -22,8 +24,12 @@ class LayersViewer extends Entity{
 		this._layersCount 		= 0;
 
 		each(Scene._layers, e => this.createLayer(e), this);
+		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
+	_toggleMinimalize(){
+		this._minimalized = !this._minimalized;
+	}
 
 	/**
 	 * vytvorý novú vrstvu v LayerVieweri a v scéne
@@ -48,6 +54,9 @@ class LayersViewer extends Entity{
 			offsetY = (this._layerPanelHeight - this._buttonSize) >> 1,
 			j, xx, yy;
 
+		if(i !== 0 && this._minimalized)
+			return false;
+
 		if(i == 0){
 			for(j=0 ; j<3 ; j++){
 				xx = this.position.x + this._buttonSize * j + offsetX * (j + 1);
@@ -58,7 +67,7 @@ class LayersViewer extends Entity{
 				}
 			}
 		}
-		else
+		else 
 			each(this._layers, function(e){
 				if(e.offset === i)
 					this._activeLayer = e.layer.title;
@@ -103,12 +112,13 @@ class LayersViewer extends Entity{
 	_buttonClick(order){
 		switch(order){
 			case 0://create layer
-				Scene.createLayer("layer" + (this._offset + this._layersCount));
+				this._minimalized || Scene.createLayer("layer" + (this._offset + this._layersCount));
 				break;
 			case 1://remove layer
-				Scene.deleteLayer(this._activeLayer);
+				this._minimalized || Scene.deleteLayer(this._activeLayer);
 				break;
 			case 2:
+				this._toggleMinimalize();
 				break;
 			default:
 				Logger.error("neznáme tlačítko v layerManagerovy");
@@ -168,7 +178,9 @@ class LayersViewer extends Entity{
 	draw(){
 		doRect({
 			position: this.position,
-			size: this.size,
+			width: this.size.x,
+			height: this._minimalized ? this._layerPanelHeight : this.size.y,
+			//size: this.size,
 			radius: MENU_RADIUS,
 			fillColor: this.fillColor,
 			borderColor: this.borderColor,
@@ -214,8 +226,8 @@ class LayersViewer extends Entity{
 				borderWidth: this.borderWidth
 			})
 		}
-
-		each(this._layers, e => this._drawLayer(e), this);
+		if(!this._minimalized)
+			each(this._layers, e => this._drawLayer(e), this);
 	}
 	get activeLayerName(){
 		return this._activeLayer;

@@ -2,6 +2,7 @@ class SceneManager{
 	constructor(){
 		this._layers = {};
 		this._layersCount = 0;
+		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	};
 
 	forEach(func){
@@ -9,12 +10,14 @@ class SceneManager{
 	};
 
 	cleanUp(){
-		each(this._layers, e => e.cleanUp());
-		this.paint.cleanUp();
-		this._layersCount = 0;
+		each(this._layers, e => {
+			e.cleanUp();
+			if(e.title !== "default")
+				this.deleteLayer(e.title);
+		});
 	};
 
-	createLayer(title, taskLayer = false){
+	createLayer(title = "default", taskLayer = false){
 		if(this._layers.hasOwnProperty(title))
 			Logger.error("ide sa vytvoriť vrstva ktorá už existuje: " + title);
 		this._layers[title] = new Layer(title, taskLayer);
@@ -23,7 +26,7 @@ class SceneManager{
 
 		if(isDefined(Layers))
 			Layers.createLayer(this._layers[title]);
-
+		Logger.log("Vytvorila sa vrstva " + title, LOGGER_LAYER_CHANGE);
 		return this._layers[title];
 	};
 
@@ -42,6 +45,8 @@ class SceneManager{
 
 		if(isDefined(Layers))
 			Layers.deleteLayer(title);
+
+		Logger.log("Vymazala sa vrstva " + title, LOGGER_LAYER_CHANGE);
 	};
 
 	getTaskObject(data){

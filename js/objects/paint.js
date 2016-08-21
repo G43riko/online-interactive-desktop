@@ -64,18 +64,23 @@ class Paint extends Entity{
 			}, this);
 		}, this);
 		this._points = res;
-		if(points[points.length - 1]["points"].length)
+		if(points.length > 0 && points[points.length - 1]["points"].length)
 			this.breakLine();
 		draw();
 	}
 
 	undo(){
+		if(this._points.length === 1)
+			return false;
+
 		if(isNull(this._points[this._points.length - 1]["color"]))
 			this._points.pop();
 
 		this._editBackup.push(this._points.pop());
 
 		this.redraw(this._points);
+		if(this._points.length === 0)
+			this._points.push(Paint.defArray());
 	}
 
 	redo(){

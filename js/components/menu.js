@@ -21,6 +21,7 @@ class MenuManager{
 
 		this._visibleSubMenu 			= false;
 		this._subMenus					= {};
+		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	};
 
 	get position(){return this._position;}
@@ -168,10 +169,13 @@ class MenuManager{
 	}
 
 	_doClickAct(val){
-		if(val.disabled)
+		if(val.disabled){
+			Logger.log("Klikol v menu na disablovanu položku " + key, LOGGER_MENU_CLICK);
 			return;
+		}
 
 		var key = val.key;
+		Logger.log("Klikol v menu na položku " + key, LOGGER_MENU_CLICK);
 		if(isIn(key, "file", "content", "sharing")){
 			this._visibleSubMenu = key;
 			return;
@@ -188,6 +192,9 @@ class MenuManager{
 				break;
 			case "rect":
 				Creator.operation = OPERATION_DRAW_RECT;
+				break;
+			case "image":
+				Creator.operation = OPERATION_DRAW_IMAGE;
 				break;
 			case "line":
 				Creator.operation = OPERATION_DRAW_LINE;
@@ -421,7 +428,27 @@ class MenuManager{
 				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "table":
-				fillText("TAB", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				var lines = 4;
+				var line = (height - (offset << 1)) / lines;
+				var points = [[x + (width >> 1), y + offset, x + (width >> 1), y - offset + height]];
+				for(var i=1, data = line ; i<lines ; i++, data += line)
+					points.push([x + offset, y + offset + data, x - offset + width, y + offset + data]);
+
+				doRect({
+					position: [x + offset, y + offset],
+					size: [width - (offset << 1), height - (offset << 1)],
+					borderWidth: strokeWidth,
+					borderColor: strokeColor,
+					ctx: this._context
+				});
+				
+				doLine({
+					points: points,
+					borderWidth: strokeWidth,
+					borderColor: strokeColor,
+					ctx: this._context
+				})
+				//fillText("TAB", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "class":
 				fillText("CLASS", x + (width >> 1), y + (height >> 1), height / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
@@ -432,6 +459,10 @@ class MenuManager{
 			case "tools":
 				fillText("TOOLS", x + (width >> 1), y + (height >> 1), height / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
+			case "polygon":
+				fillText("POLY", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+
 			case "help":
 				fillText("HELP", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;

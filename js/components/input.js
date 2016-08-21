@@ -6,6 +6,7 @@ class InputManager{
 		this._pressPosition = new GVector2f();
 		this._mousePos = new GVector2f();
 		this._lastTouch = false;
+		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	};
 
 	get mousePos(){return this._mousePos;}
@@ -111,6 +112,8 @@ class InputManager{
 
 	_keyUp(val){
 		this._keys[val] = false;
+
+		Listeners.keyUp(val, this.isKeyDown(L_CTRL_KEY));
 	};
 
 	isKeyDown(val){

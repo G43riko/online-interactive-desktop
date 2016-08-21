@@ -72,6 +72,10 @@
 		},
 		"image": {
 			"visible" : true,
+			"disabled" : false
+		},
+		"polygon": {
+			"visible" : true,
 			"disabled" : true
 		}
 	},

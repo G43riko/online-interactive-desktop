@@ -8,23 +8,34 @@ class ContextMenuManager{
 		this._selectedObject 	= parent ? parent._selectedObject : movedObject;
 		this._titles 			= titles;
 
+		//TODO toto prerobiť do JSON suboru
 		if(this._titles.length == 0){
 			if(movedObject){
-				if(isIn(movedObject.name, "Rect", "Polygon"))
-					this._addFields("changeFillColor", "changeBorderColor", "delete", "locked", "makeCopy", "radius");
-				else if(movedObject.name ==  "Arc")
-					this._addFields("changeFillColor", "changeBorderColor", "delete", "locked", "makeCopy");
-				else if(movedObject.name == "Line")
-					this._addFields("joinType", "lineCap", "lineStyle", "lineType", "makeCopy", "lineWidth", "delete", "arrowEndType", "arrowStartType", "radius");
-				else if(movedObject.name == "Table")
-					this._addFields("editTable", "locked", "delete", "makeCopy");
-				else if(movedObject.name == "LayerViewer")
-					this._addFields("visible", "deleteLayer", "renameLayer", "clearLayer");
-				else if(movedObject.name == "Text")
-					this._addFields("changeFillColor", "changeBorderColor", "delete", "locked", "verticalTextAlign", "horizontalTextAlign", "makeCopy");
-			}
+				if(isIn(movedObject.name, "Rect", "Polygon", "Arc","Line", "Table", "Image", "Text"))
+					this._addFields("delete", "locked", "makeCopy", "changeLayer", "changeOpacity");
 
-			this._addFields("clearWorkspace");
+				if(isIn(movedObject.name, "Rect", "Polygon", "Text", "Arc"))
+					this._addFields("changeFillColor", "changeBorderColor");
+
+				if(isIn(movedObject.name, "Rect", "Polygon", "Text", "Line"))
+					this._addFields("radius");
+
+				if(movedObject.name == "Line")
+					this._addFields("joinType", "lineCap", "lineStyle", "lineType", "lineWidth", "arrowEndType", "arrowStartType");
+				else if(movedObject.name == "Table")
+					this._addFields("editTable");
+				else if(movedObject.name == "Text")
+					this._addFields("verticalTextAlign", "horizontalTextAlign");
+				else if(movedObject.name == "Image")
+					this._addFields("changeImage");
+				else if(movedObject.name == "LayerViewer"){
+					this._addFields("visible", "lockLayer");
+					if(!movedObject.locked)
+						this._addFields("deleteLayer", "renameLayer", "clearLayer");
+				}
+			}
+			else
+				this._addFields("clearWorkspace");
 		}
 		context.font = (30 - CONTEXT_MENU_OFFSET) + "pt " + DEFAULT_FONT;
 
@@ -52,6 +63,7 @@ class ContextMenuManager{
 			this._menuWidth += 30;
 
 		this._size = new GVector2f(this._menuWidth, this._titles.length * CONTEXT_MENU_LINE_HEIGHT);
+		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	};
 
 	get position(){
@@ -145,6 +157,9 @@ class ContextMenuManager{
 
 	_doClickAct(opt) {
 		var act = opt.key;
+
+
+		Logger.log("Klikol v contextMenu na položku " + act, LOGGER_CONTEXT_CLICK);
 		switch (act) {
 			case "changeFillColor":
 				pickUpColor(color => Entity.changeAttr(this._selectedObject, "fillColor", color), this);

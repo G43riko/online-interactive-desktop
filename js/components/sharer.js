@@ -8,6 +8,7 @@ class SharerManager{
 			breakLine: (layer) => this._paintOperation(ACTION_PAINT_BREAK_LINE, layer),
 			clean: (layer) => this._paintOperation(ACTION_PAINT_CLEAN, layer)
 		}
+		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
 	get isSharing(){return this._sharing;}

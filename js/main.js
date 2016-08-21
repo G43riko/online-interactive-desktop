@@ -1,3 +1,4 @@
+
 var initTime 		= window["performance"].now(),
 	movedObject 	= false,
 	Scene 			= new SceneManager(),
@@ -110,7 +111,7 @@ function init(){
 	Scene.addToScene(new Polygon([new GVector2f(1200, 100), new GVector2f(1150, 150), new GVector2f(1250, 150)], "#ff69b4"));
 	Scene.addToScene(new Table(new GVector2f(800, 250), new GVector2f(200, 800), [["meno", "vek"], ["gabo", 21], ["maros", 35]]), "test2");
 
-	loadImage(e => Scene.addToScene(new ImageObject(e, new GVector2f(300, 400), new GVector2f(300, 400))));
+	loadImage(e => Scene.addToScene(new ImageObject(new GVector2f(300, 400), new GVector2f(300, 400), e)));
 
 
 
@@ -232,7 +233,7 @@ $(function(){
 		});
 	});
 
-	Scene.createLayer("default");
+	Scene.createLayer();
 	Scene.createLayer("rightMenu");
 	Scene.createLayer("test2");
 	console.log("stranka sa nacítala za: ", (window["performance"].now() - initTime) + " ms");

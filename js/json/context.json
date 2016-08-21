@@ -107,6 +107,18 @@
 			}
 		}
 	},
+	"changeLayer" : {
+		"label" : "Change layer",
+		"type" : "text"
+	},
+	"changeOpacity" : {
+		"label" : "Change opacity",
+		"type" : "text"
+	},
+	"changeImage" : {
+		"label" : "Change Image",
+		"type" : "text"
+	},
 	"delete" : {
 		"label" : "Delete",
 		"type" : "text"
@@ -181,6 +193,10 @@
 	"renameLayer" : {
 		"label" : "Rename layer",
 		"type" : "text"
+	},
+	"lockLayer" : {
+		"label" : "Lock layer",
+		"type" : "checkbox"
 	},
 	"clearLayer" : {
 		"label" : "Clear layer",

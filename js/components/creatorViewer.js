@@ -16,6 +16,7 @@ class CreatorViewer extends Entity{
 			borderWidth: MENU_BORDER_WIDTH,
 			radius: MENU_RADIUS
 		});
+		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 	init(){
 		this.size.x = (MENU_WIDTH + MENU_OFFSET) * getLength(Creator.items) + MENU_OFFSET;
@@ -177,7 +178,7 @@ class CreatorViewer extends Entity{
 			if(!click && x > counter && x < counter + MENU_WIDTH){
 				if(y < this.position.y + MENU_OFFSET + MENU_HEIGHT){
 					if(e["item"]["type"] == "color")
-						pickUpColor(color => Creator.set(e["key"], color));
+						pickUpColor(color => Creator.setOpt(e["key"], color));
 					else
 						arr[i]["itemsSelected"] = !e["itemsSelected"];
 					click = true;
@@ -188,7 +189,7 @@ class CreatorViewer extends Entity{
 						e["item"]["values"].forEach(function(ee, ii){
 							num += MENU_HEIGHT + MENU_OFFSET;
 							if(!click && y > num && y < num + MENU_HEIGHT){
-								Creator.set(e["key"], ee);
+								Creator.setOpt(e["key"], ee);
 								arr[i]["item"]["selectedIndex"] = ii;
 								click = true;
 								arr[i]["itemsSelected"] = !arr[i]["itemsSelected"];
