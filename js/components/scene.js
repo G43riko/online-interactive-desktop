@@ -18,10 +18,10 @@ class SceneManager{
 		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	};
 
-	createLayer(title = "default", taskLayer = false){
+	createLayer(title = "default", layerType = ""){
 		if(this._layers.hasOwnProperty(title))
 			Logger.error("ide sa vytvoriť vrstva ktorá už existuje: " + title);
-		this._layers[title] = new Layer(title, taskLayer);
+		this._layers[title] = new Layer(title, layerType);
 		this._layersCount++;
 
 
@@ -38,6 +38,11 @@ class SceneManager{
 	deleteLayer(title){
 		if(!this._layers.hasOwnProperty(title))
 			Logger.error("ide sa vymazať vrstva ktorá už neexistuje: " + title);
+
+		if(this._layers[title].guiLayer){
+			Logger.notif("nemože sa zmazať gui vrstva");
+			return false;
+		}
 
 		this._layers[title].cleanUp();
 		delete this._layers[title];

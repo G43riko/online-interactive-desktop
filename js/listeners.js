@@ -8,7 +8,7 @@ class ListenersManager{
 
 		if(button == LEFT_BUTTON)
 			Scene.forEach((o) => {
-				if(o.clickIn(position.x, position.y, button)){
+				if(o.visible && o.clickIn(position.x, position.y, button)){
 					o.moving = true;
 					movedObject = o;
 					return true;
@@ -33,6 +33,8 @@ class ListenersManager{
 					break;
 			}
 		}
+		else if(ESCAPE_KEY === key)
+			closeDialog();
 	}
 
 	mousePress(position){

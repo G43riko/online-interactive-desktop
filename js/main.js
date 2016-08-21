@@ -1,4 +1,3 @@
-
 var initTime 		= window["performance"].now(),
 	movedObject 	= false,
 	Scene 			= new SceneManager(),
@@ -17,6 +16,7 @@ var initTime 		= window["performance"].now(),
 	Project			= new ProjectManager(),
 	Paints			= new PaintManager(),
 	Task 			= null,
+	Options 		= new OptionsManager(),
 	components		= {
 		draw : true,
 		share : true,
@@ -188,7 +188,7 @@ function loadTask(scene, results, title){
 	if(Task)
 		return Logger.error("načítava sa task ked už jeden existuje");
 
-	var layer = Scene.createLayer(title, true);
+	var layer = Scene.createLayer(title, "task");
 	each(scene, e => {
 		e.layer = layer.title
 		Creator.create(e);
@@ -234,11 +234,11 @@ $(function(){
 	});
 
 	Scene.createLayer();
-	Scene.createLayer("rightMenu");
+	Scene.createLayer("rightMenu", "gui");
 	Scene.createLayer("test2");
 	console.log("stranka sa nacítala za: ", (window["performance"].now() - initTime) + " ms");
 
-
+	Options.init();
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
 	Input.initListeners(canvas);
 
@@ -259,7 +259,12 @@ function realDraw(){
 	if(!isObject(context))
 		return Logger.notif("context počas kreslenia nieje definovaný");
 	resetCanvas();
-	drawGrid(0.1, 10, 50);
+
+	if(Options.grid)
+		drawGrid(0.1, 10, 50);
+
+	//if(Options.showLayersViewer)
+	//	Layers.draw();
 
 	Scene.draw();
 	Creator.draw();

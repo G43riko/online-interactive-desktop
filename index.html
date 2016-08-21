@@ -16,6 +16,7 @@
 		<script type="text/javascript" src="js/components/slider.js"></script>
 		<script type="text/javascript" src="js/components/contextMenu.js"></script>
         <script type="text/javascript" src="js/components/fileManager.js"></script>
+        <script type="text/javascript" src="js/components/optionManager.js"></script>
 		<script type="text/javascript" src="js/components/input.js"></script>
         <script type="text/javascript" src="js/components/contentManager.js"></script>
 		<script type="text/javascript" src="js/components/selectedObjects.js"></script>
@@ -104,7 +105,7 @@
                     <div>
                         <label for="idAllowedSnapping">Prichytávanie: </label>
                         <select name="allowedSnapping" id="idAllowedSnapping">
-                            <option value="none" selected>Žiadne</option>
+                            <option value="0" >Žiadne</option>
                             <option value="90">90 stupnov</option>
                             <option value="45">45 stupnov</option>
                             <option value="30">30 stupnov</option>
@@ -118,7 +119,6 @@
                         <label for="idShowLayersViewer">Zobraziť správcu vrstiev: </label>
                         <input id="idShowLayersViewer" type="checkbox" checked name="showLayersViewer">
                     </div>
-                    <input type="button" value="Použiť nastavenia" onclick="serializeOptionsData()">
                 </form>
             </div>
             <div id="saveForm" class="hide formContent">
@@ -257,9 +257,6 @@
         $("#modalWindow ").find("#saveForm").show();
         $("#modalWindow").show();
         $("canvas").addClass("blur");
-    }
-
-    function serializeOptionsData(){
     }
 
     function serializeSaveData(){

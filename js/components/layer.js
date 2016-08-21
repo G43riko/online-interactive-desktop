@@ -1,17 +1,18 @@
 class Layer{
-	constructor(title, taskLayer, guiLayer){
+	constructor(title, layerType = ""){
 		this._objects = {};
 		this._visible = true;
 		this._title = title;
 		this._paint = null;
 		this._locked = false;
-		this._isTaskLayer = taskLayer === true;
-		this._isGuiLayer = guiLayer === true;
+
+		this._layerType = layerType;
 	};
 
-	get locked(){return this._locked || this._isTaskLayer || this._isGuiLayer;}
-	get taskLayer(){return this._isTaskLayer;}
-	get guiLayer(){return this._isGuiLayer;}
+	get layerType(){return this._layerType;}
+	get locked(){return this._locked || this._layerType !== ""}
+	get taskLayer(){return this._layerType === "layer";}
+	get guiLayer(){return this._layerType === "gui";}
 	get visible(){return this._visible;}
 	get objects(){return this._objects;}
 	get title(){return this._title;}
@@ -39,7 +40,7 @@ class Layer{
 		if(!this.visible)
 			return;
 
-		this.forEach(e => e.draw());
+		this.forEach(e => e.visible && e.draw());
 
 		this.paint.draw();
 	};
