@@ -9,6 +9,8 @@ class Paint extends Entity{
 		this._context 		= this._canvas.getContext('2d');
 		this._action		= PAINT_ACTION_BRUSH;
 		this._editBackup	= [];
+
+
 	}
 
 	static defArray(){
@@ -66,7 +68,9 @@ class Paint extends Entity{
 		this._points = res;
 		if(points.length > 0 && points[points.length - 1]["points"].length)
 			this.breakLine();
+		Logger.log("prekresluje sa " + this.constructor.name, LOGGER_DRAW);
 		draw();
+
 	}
 
 	undo(){
@@ -160,6 +164,7 @@ class Paint extends Entity{
 		this._points[this._actColor] = [[]];
 		this._count = 0;
 		this._context.clearRect(0, 0, canvas.width, canvas.height);
+		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	}
 
 	breakLine(){

@@ -97,6 +97,30 @@
                     </div>
                 </form>
             </div>
+            <div id="optionsForm" class="hide formContent">
+                <form>
+                    <h2>Options</h2>
+                    <br/>
+                    <div>
+                        <label for="idAllowedSnapping">Prichytávanie: </label>
+                        <select name="allowedSnapping" id="idAllowedSnapping">
+                            <option value="none" selected>Žiadne</option>
+                            <option value="90">90 stupnov</option>
+                            <option value="45">45 stupnov</option>
+                            <option value="30">30 stupnov</option>
+                        </select>
+                    </div>
+                    <div class="panel">
+                        <label for="idShowGrid">Zobraziť mriežku: </label>
+                        <input id="idShowGrid" type="checkbox" checked name="showGrid">
+                    </div>
+                    <div class="panel">
+                        <label for="idShowLayersViewer">Zobraziť správcu vrstiev: </label>
+                        <input id="idShowLayersViewer" type="checkbox" checked name="showLayersViewer">
+                    </div>
+                    <input type="button" value="Použiť nastavenia" onclick="serializeOptionsData()">
+                </form>
+            </div>
             <div id="saveForm" class="hide formContent">
                 <form>
                     <h2>Saving options</h2>
@@ -188,6 +212,12 @@
         $("canvas").removeClass("blur");
     }
 
+    function showOptions(){
+        $("#modalWindow ").find("#optionsForm").show();
+        $("#modalWindow").show();
+        $("canvas").addClass("blur");
+    }
+
     function showColors(){
         $("#modalWindow ").find("#colorPalete").show();
         $("#modalWindow").show();
@@ -227,6 +257,9 @@
         $("#modalWindow ").find("#saveForm").show();
         $("#modalWindow").show();
         $("canvas").addClass("blur");
+    }
+
+    function serializeOptionsData(){
     }
 
     function serializeSaveData(){

@@ -15,6 +15,7 @@ class SceneManager{
 			if(e.title !== "default")
 				this.deleteLayer(e.title);
 		});
+		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	};
 
 	createLayer(title = "default", taskLayer = false){

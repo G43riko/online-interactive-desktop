@@ -266,6 +266,6 @@ function realDraw(){
 	Menu.draw();
 	if(actContextMenu)
 		actContextMenu.draw();
-
+	Logger.log("kreslí sa všetko", LOGGER_DRAW);
 	//timeLine.draw();
 }

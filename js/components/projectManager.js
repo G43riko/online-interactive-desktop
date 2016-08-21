@@ -9,11 +9,10 @@ class ProjectManager{
 		//ALLOWED_COMPONENTS
 		
 		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
-		console.log(this._analyzeBrowser());
 
 		/*
 		if(getCookie("send_data") === ""){
-	        this._sendAnonymousData();
+	        this._sendAnonymousData(this._analyzeBrowser());
 	        setCookie("send_data", 1);
 	    }
 	    */

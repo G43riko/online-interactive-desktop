@@ -187,6 +187,9 @@ class MenuManager{
 			case "color":
 				pickUpColor(color => Creator.set("fillColor", color));
 				break;
+			case "options":
+				showOptions();
+				break;
 			case "draw":
 				Creator.operation = OPERATION_DRAW_PATH;
 				break;
@@ -339,6 +342,8 @@ class MenuManager{
 		this._tmpDrawArray.forEach(function(e){
 			this._drawIcon(e, e.x * this._size.x, e.y * this._size.y, 5, this._size.x, this._size.y);
 		}, this);
+
+		Logger.log("prekresluje sa " + this.constructor.name, LOGGER_DRAW);
 	}
 
 	_drawIcon(type, x, y, offset = 5, width = this._size.x, height = this._size.y, strokeColor = DEFAUL_STROKE_COLOR, strokeWidth = DEFAULT_STROKE_WIDTH){

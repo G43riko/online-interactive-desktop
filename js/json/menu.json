@@ -18,7 +18,7 @@
 		},
 		"options" : {
 			"visible" : true,
-			"disabled" : true
+			"disabled" : false
 		},
 		"help" : {
 			"visible" : true,

@@ -108,12 +108,14 @@ class InputManager{
 
 	_keyDown(val){
 		this._keys[val] = true;
+
+		Logger.log("stlačené klavesa " + val, LOGGER_KEY_EVENT);
 	};
 
 	_keyUp(val){
 		this._keys[val] = false;
-
 		Listeners.keyUp(val, this.isKeyDown(L_CTRL_KEY));
+		Logger.log("pustená klavesa " + val, LOGGER_KEY_EVENT);
 	};
 
 	isKeyDown(val){
@@ -127,6 +129,8 @@ class InputManager{
 			position: inst._pressPosition,
 			button: button
 		});
+		Logger.log("podržané tlačítko myši ::" + button + "::" + inst._pressPosition.x + "::"+ inst._pressPosition.y, LOGGER_MOUSE_EVENT);
+
 		if(this._timer){}
 		this._clearTimer();
 	};
@@ -156,6 +160,8 @@ class InputManager{
 			this._clearTimer();
 		this._timer = setTimeout(function(){t._checkPress(val.button)}, TOUCH_DURATION);
 		this._pressPosition.set(val.offsetX, val.offsetY);
+
+		Logger.log("stlačené tlačítko myši ::" + val.button + "::" + val.offsetX + "::"+ val.offsetY, LOGGER_MOUSE_EVENT);
 	};
 
 	_buttonUp(val){
@@ -164,6 +170,7 @@ class InputManager{
 		this._buttons[val.button] = false;
 		if(val.button == LEFT_BUTTON && typeof Sharer === "object" && Sharer.isSharing)
 			Sharer.mouseChange();
+		Logger.log("pustené tlačítko myši ::" + val.button + "::" + val.offsetX + "::"+ val.offsetY, LOGGER_MOUSE_EVENT);
 	};
 
 	isButtonDown(val){

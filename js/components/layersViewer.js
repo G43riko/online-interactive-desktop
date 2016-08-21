@@ -6,11 +6,13 @@ class LayersViewer extends Entity{
 	constructor(){
 		super("LayerViewer", new GVector2f(1300, 100), new GVector2f(180, 500));
 		Entity.changeAttr(this, {
-			fillColor: "white",
-			borderColor: "blue",
+			fillColor: "#1abc9c",
+			borderColor: "black",
 			borderWidth: 2
 		});
 
+		this._buttonFillColor 	= "#ABD6BB";
+		this._activeLayerColor  = "#ABD6BB";
 		this._minimalized		= false;
 		this._layerPanelHeight 	= 50;
 		this._fontSize 			= 20;
@@ -160,7 +162,8 @@ class LayersViewer extends Entity{
 			draw: true,
 			borderColor: this._borderColor,
 			borderWidth: this.borderWidth,
-			fillColor: this._activeLayer == layer.layer.title ? "gray" : "white"
+			fill: this._activeLayer == layer.layer.title,
+			fillColor: this._activeLayerColor
 		});
 
 		fillText(layer.layer.title, this.position.x, posY, this._fontSize, this._fontColor, [7, 5]);
@@ -218,7 +221,8 @@ class LayersViewer extends Entity{
 				height: this._buttonSize,
 				draw:true,
 				borderColor: this.borderColor,
-				borderWidth: this.borderWidth
+				borderWidth: this.borderWidth,
+				fillColor: this._buttonFillColor
 			});
 			doLine({
 				points: getLinesSur(i, x, y),

@@ -24,10 +24,14 @@ class ListenersManager{
 
 	keyUp(key, isCtrlDown){
 		if(isCtrlDown){
-			if(key === Z_KEY)
-				Paints.undo();
-			else if(key === Y_KEY)
-				Paints.redo();
+			switch(key){
+				case Z_KEY:
+					Paints.undo();
+					break;
+				case Y_KEY:
+					Paints.redo();
+					break;
+			}
 		}
 	}
 
@@ -53,7 +57,7 @@ class ListenersManager{
 		var result	= false,
 			vec 	= new GVector2f(100, 40);
 
-		Scene.forEach((e) => {
+		Scene.forEach(e => {
 			if(!result && isDefined(e.doubleClickIn) && e.doubleClickIn(position.x, position.y))
 				result = e;
 		});
@@ -91,6 +95,9 @@ class ListenersManager{
 			Paints.breakLine();
 		}
 
+		/*
+		 * SKONTROLUJE SA MENU A CREATOR
+		 */
 		if(Menu.clickIn(position.x, position.y))
 			return;
 
@@ -107,8 +114,7 @@ class ListenersManager{
 			movedObject = false;
 		}
 
-
-		Scene.forEach((o) => {
+		Scene.forEach(o => {
 			if(result)
 				return;
 			if(o.clickIn(position.x, position.y)) {

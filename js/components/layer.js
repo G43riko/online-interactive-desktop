@@ -28,6 +28,7 @@ class Layer{
 	cleanUp(){
 		this.forEach(e => callIfFunc(e.cleanUp));
 		this._objects = [];
+		Logger.log("Bol vyčistený objekt " + this.constructor.name + "[" + this._title + "]", LOGGER_OBJECT_CLEANED);
 	};
 
 	get(id){

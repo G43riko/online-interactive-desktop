@@ -37,6 +37,7 @@ class PaintManager{
 			Sharer.paint.clean(activeLayerName);
 
 		Scene.getLayer(activeLayerName).paint.cleanUp();
+		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	}
 
 
@@ -77,6 +78,8 @@ class PaintManager{
 		this._paintHistory.push(activeLayerName);
 
 		Scene.getLayer(activeLayerName).paint.breakLine();
+
+		Logger.log("bola ukončená čiara vo vrstve " + activeLayerName, LOGGER_PAINT_ACTION);
 	}
 
 	/**
@@ -91,6 +94,7 @@ class PaintManager{
 
 		if(isNull(this._selectedImage))
 			this.selectedImage = title;
+		Logger.log("pridal sa nový štetec: " + title, LOGGER_PAINT_ACTION);
 	}
 
 	/**
@@ -126,15 +130,17 @@ class PaintManager{
 		var layer = this._paintHistory.pop();
 		Scene.getLayer(layer).paint.undo();
 		this._undoHistory.push(layer);
+		Logger.log("bolo zavolane undo na vrstvu " + layer, LOGGER_PAINT_HISTORY);
 	}
 
 	redo(){
 		if(this._undoHistory.length === 0)
 			return false;
-		
+
 		var layer = this._undoHistory.pop();
 		Scene.getLayer(layer).paint.redo();
 		this._paintHistory.push(layer);
+		Logger.log("bolo zavolane redo na vrstvu " + layer, LOGGER_PAINT_HISTORY);
 	}
 
 	//GETTERS
