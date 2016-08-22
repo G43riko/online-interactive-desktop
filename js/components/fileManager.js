@@ -95,3 +95,64 @@ function loadFile(func){
 	};
 	el.click();
 }
+
+
+function saveSceneAsFile(fileName = "scene_backup"){
+	var data = {
+		scene: Scene.toObject(),
+		creator: Creator.toObject(),
+		paints: Paints.toObject(),
+		type: 2500
+	};
+
+	saveFile(fileName, JSON.stringify(data));
+}
+
+function saveSceneAsTask(fileName = "default_task"){
+	var result = {};
+
+	if(Scene.getTaskObject(result)){
+		var data = {
+			scene: result["content"],
+			results:  result["results"],
+			title: fileName,
+			type: 2501
+		};
+		saveFile(fileName, JSON.stringify(data));
+	}
+	else
+		Alert.warning(result.error);
+}
+
+function loadTask(scene, results, title){
+	if(Task)
+		return Logger.error("načítava sa task ked už jeden existuje");
+
+	var layer = Scene.createLayer(title, "task");
+	each(scene, e => {
+		e.layer = layer.title;
+		Creator.create(e);
+	});
+	Task = new TaskManager(results, title, layer);
+	Logger.notif("Task " + title + " bol úspešne vytvorený");
+}
+
+function loadSceneFromFile(){
+	loadFile(function(content){
+		//try{
+		var data = JSON.parse(content);
+		if(data["type"] && data["type"] === 2501)
+			loadTask(data["scene"], data["results"], data["title"]);
+		else{
+			Scene.fromObject(data.scene);
+			Creator.fromObject(data.creator);
+			Paints.fromObject(data.paints);
+		}
+		/*
+		 }
+		 catch(err){
+		 Logger.error("nepodarilo sa načítať súbor s dôvodu: ", err);
+		 }
+		 */
+	});
+}

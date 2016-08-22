@@ -54,11 +54,11 @@ class Paint extends Entity{
 
 
 			if(Creator.brushColor !== e["color"])
-				Creator.set("brushColor", e["color"]);
+				Creator.setOpt("brushColor", e["color"]);
 			if(Creator.brushSize !== e["size"])
-				Creator.set("brushSize", e["size"]);
+				Creator.setOpt("brushSize", e["size"]);
 			if(Creator.brushType !== e["type"])
-				Creator.set("brushType", e["type"]);
+				Creator.setOpt("brushType", e["type"]);
 
 			e["points"].forEach(function(ee, ii, arr){
 				if(ii)

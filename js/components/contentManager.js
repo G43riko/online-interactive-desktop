@@ -8,7 +8,6 @@ class ContentManager{
 		if(this._contentImage === null)
 			this._contentImage = document.getElementById("contentImage");
 
-		//var inst = this;
 		if(src)
 			this._contentImage.src = src;
 		else{

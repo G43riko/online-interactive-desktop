@@ -17,6 +17,8 @@ var initTime 		= window["performance"].now(),
 	Paints			= new PaintManager(),
 	Task 			= null,
 	Options 		= new OptionsManager(),
+	drawEvent 		= new EventManager(realDraw, 16),
+	draw 			= () => drawEvent.callIfCan(),
 	components		= {
 		draw : true,
 		share : true,
@@ -27,7 +29,8 @@ var initTime 		= window["performance"].now(),
 		screen : true,
 		content : true,
 		edit : true
-	}, canvas, context;
+	},
+	drawMousePos, Layers, canvas, context;
 
 var Components = {
 	draw	: () => isDefined(components) && isDefined(components["draw"]) && components["draw"] === true,
@@ -157,66 +160,6 @@ function init(){
 	draw();
 }
 
-function saveSceneAsFile(fileName = "scene_backup"){
-	var data = {
-		scene: Scene.toObject(),
-		creator: Creator.toObject(),
-		paints: Paints.toObject(),
-		type: 2500
-	};
-
-	saveFile(fileName, JSON.stringify(data));
-}
-
-function saveSceneAsTask(fileName = "default_task"){
-	var result = {};
-
-	if(Scene.getTaskObject(result)){
-		var data = {
-			scene: result["content"],
-			results:  result["results"],
-			title: fileName,
-			type: 2501
-		};
-		saveFile(fileName, JSON.stringify(data));
-	}
-	else
-		Alert.warning(result.error);
-}
-
-function loadTask(scene, results, title){
-	if(Task)
-		return Logger.error("načítava sa task ked už jeden existuje");
-
-	var layer = Scene.createLayer(title, "task");
-	each(scene, e => {
-		e.layer = layer.title
-		Creator.create(e);
-	});
-	Task = new TaskManager(results, title, layer);
-	Logger.notif("Task " + title + " bol úspešne vytvorený");
-}
-
-function loadSceneFromFile(){
-	loadFile(function(content){
-		//try{
-			var data = JSON.parse(content);
-			if(data["type"] && data["type"] === 2501)
-				loadTask(data["scene"], data["results"], data["title"]);
-			else{
-				Scene.fromObject(data.scene);
-				Creator.fromObject(data.creator);
-				Paints.fromObject(data.paints);
-			}
-		/*
-		}
-		catch(err){
-			Logger.error("nepodarilo sa načítať súbor s dôvodu: ", err);
-		}
-		*/
-	});
-}
-
 $(function(){
 	/**
 	 * DOLEZITE!!!
@@ -250,10 +193,6 @@ $(function(){
 	draw();
 });
 
-var drawEvent = new EventManager(realDraw, 16),
-	draw = () => drawEvent.callIfCan(),
-	drawMousePos, Layers;
-
 function realDraw(){
 	drawMousePos = new Date().getMilliseconds();
 	if(!isObject(context))
@@ -262,9 +201,6 @@ function realDraw(){
 
 	if(Options.grid)
 		drawGrid(0.1, 10, 50);
-
-	//if(Options.showLayersViewer)
-	//	Layers.draw();
 
 	Scene.draw();
 	Creator.draw();

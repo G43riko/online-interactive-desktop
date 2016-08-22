@@ -2,7 +2,7 @@ class ProjectManager{
 	constructor(title = "Default Title"){
 		this._createdAt = Date.now();
 		this._title = title;
-		this._url = "http://192.168.0.123:3000/anonymousData";
+		ProjectManager.url = "http://192.168.0.123:3000/anonymousData";
 		//PAINT_MANAGER
 		//CREATOR
 		//TYPE 
@@ -10,12 +10,10 @@ class ProjectManager{
 		
 		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 
-		/*
 		if(getCookie("send_data") === ""){
 	        this._sendAnonymousData(this._analyzeBrowser());
 	        setCookie("send_data", 1);
 	    }
-	    */
 	}
 
 	_analyzeBrowser(){
@@ -49,13 +47,10 @@ class ProjectManager{
 		}
 	}
 
-	_sendAnonymousData(serverAddress, data = {}){
-        var date  = this._createdAt.getDate() + "-" + 
-        			(this._createdAt.getMonth() + 1) + "-" + 
-        			this._createdAt.getFullYear() + " " +
-        			this._createdAt.getHours()  + ":" + 
-        			this._createdAt.getMinutes() + ":" + 
-        			this._createdAt.getSeconds();
+	_sendAnonymousData(data = {}){
+		var date = new Date();
+        var createdTime  = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear() + " " +
+			date.getHours()  + ":" + date.getMinutes() + ":" + date.getSeconds();
 
 		data["userAgent"] = navigator.userAgent;
 		data["language"] = navigator.language;
@@ -65,25 +60,25 @@ class ProjectManager{
 		data["innerWidth"] = window.innerWidth;
 		data["availHeight"] = screen.availHeight;
 		data["availWidth"] = screen.availWidth;
-		data["connectedAt"] = date;
+		data["connectedAt"] = createdTime;
 
         if (navigator.geolocation)
-            navigator.geolocation.watchPosition(function(position) {
-                        navigator.geolocation.getCurrentPosition(function(a){
-                            data["accuracy"] = a.coords && a.coords.accuracy  || "unknown";
-                        data["position"]   = {
-                            lat : a.coords.latitude,
-                            lon : a.coords.longitude
-                        };
-                        $.post(this._url, {content: JSON.stringify(data)});
-                    });
-                    },
-                    function (error) {
-                        if (error.code == error.PERMISSION_DENIED)
-                            $.post(this._url, {content: JSON.stringify(data)});
-                    });
+            navigator.geolocation.watchPosition(position => {
+            	navigator.geolocation.getCurrentPosition(a => {
+					data["accuracy"] = a.coords && a.coords.accuracy  || "unknown";
+					data["position"]   = {
+						lat : a.coords.latitude,
+						lon : a.coords.longitude
+					};
+					$.post(ProjectManager.url, {content: JSON.stringify(data)});
+				});
+			},
+			function (error) {
+				if (error.code == error.PERMISSION_DENIED)
+					$.post(ProjectManager.url, {content: JSON.stringify(data)});
+			});
         else
-            $.post(this._url, {content: JSON.stringify(data)});
+            $.post(ProjectManager.url, {content: JSON.stringify(data)});
     }
 
 	get title(){return this._title;}

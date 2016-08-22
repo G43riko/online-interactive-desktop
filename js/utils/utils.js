@@ -161,6 +161,68 @@ Movement = {
 	}
 };
 
+function closeDialog(){
+	//$("#modalWindow > div").each((e) => $(e).hide());
+
+	$("#modalWindow > div").each(function(){
+		$(this).hide();
+	});
+	$("#colorPalete").undelegate();
+	$("#modalWindow").hide();
+	$("canvas").removeClass("blur");
+}
+
+function getText(text, position, size, func, thisArg){
+	var T, x = $(document.createElement("INPUT"));
+
+	if (arguments.length > 1)
+		T = thisArg;
+
+	x.attr({
+		type: "text",
+		value: text,
+		id: "staticInput"
+	}).css({
+		left: position.x + 'px',
+		top: position.y + 'px',
+		width: size.x,
+		height: size.y,
+		fontSize: size.y * 0.6
+	}).blur(function(){
+		func.call(T, x.val());
+		x.remove();
+		draw();
+	}).keyup(function(e){
+		if(e.keyCode == ENTER_KEY){
+			x.onblur = false;
+			func.call(T, x.val());
+			x.remove();
+			draw();
+		}
+	}).appendTo("body");
+	x.select().focus();
+}
+
+function setCookie(cname, cvalue, exdays) {
+	var d = new Date();
+	d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+	document.cookie = cname + "=" + cvalue + ";expires="+ d.toUTCString();
+}
+
+function getCookie(cname) {
+	var name = cname + "=",
+		ca = document.cookie.split(';'),
+		i, c;
+	for(i = 0; i <ca.length; i++) {
+		c = ca[i];
+		while (c.charAt(0)==' ')
+			c = c.substring(1);
+		if (c.indexOf(name) == 0)
+			return c.substring(name.length,c.length);
+	}
+	return "";
+}
+
 function drawBorder(o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 	if(!o.selected && o.name != "Paint")
 		return;

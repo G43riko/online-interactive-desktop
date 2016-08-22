@@ -16,7 +16,7 @@ class OptionsManager{
 				attr: "checked",
 				val: true
 			}
-		}
+		};
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 	_processAndSetValueIfExistById(id, val, attr){

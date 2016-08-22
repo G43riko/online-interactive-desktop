@@ -34,7 +34,7 @@ class ListenersManager{
 			}
 		}
 		else if(ESCAPE_KEY === key)
-			closeDialog();
+			closeDialog();	
 	}
 
 	mousePress(position){
