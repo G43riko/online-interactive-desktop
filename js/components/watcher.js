@@ -1,5 +1,7 @@
 class WatcherManager{
 	constructor(){
+		WatcherManager._tryPasswordCounter = 0;
+		WatcherManager._maxPasswordTries = 3;
 		this._mouseData = {
 			posX: window.innerWidth << 1,
 			posY: window.innerHeight << 1,
@@ -25,15 +27,36 @@ class WatcherManager{
 			};
 		this._socket.emit('startWatch', JSON.stringify(data));
 
+		this._socket.on('chatMessage',function(msg){
+			data = JSON.parse(msg);
+			chatViewer.recieveMessage(data["text"], data["sender"]);
+		});
+
 		this._socket.on('notification', function(msg){
 			data = JSON.parse(msg);
+			Logger.notif("prijatá správa: " + data["msg"]);
 			console.log(data["msg"]);
 		});
 
 		this._socket.on('auth', function(){
 			//ZOBRAZI SA HESLO AK JE ZADANE
-			console.log("odosiela sa heslo");
-			inst._socket.emit('completeAuth', JSON.stringify({passwd: "pass", id: inst._id}));
+			var diff = WatcherManager._maxPasswordTries - WatcherManager._tryPasswordCounter;
+			if(WatcherManager._tryPasswordCounter){
+
+				var text = "Bolo zadané zlé heslo\n";
+				text += "Prajete si skusiť zadať heslo znovu?\n";
+				text += "Počet zostávajúcich pokusov: " + diff;
+				if(!diff || !confirm(text)){
+					Logger.notif("nepodarilo sa pripojiť k zdielaniu");
+					return false;
+				}
+			}
+			var pass = prompt("Prosím zadajte heslo pre zdielanie");
+			console.log("odosiela sa heslo", WatcherManager._tryPasswordCounter);
+
+
+			WatcherManager._tryPasswordCounter++;
+			inst._socket.emit('completeAuth', JSON.stringify({passwd: pass, id: inst._id}));
 		});
 
 		this._socket.on('endShare', function(){
@@ -42,7 +65,7 @@ class WatcherManager{
 
 		this._socket.on("changeCreator", function(msg){
 			data = JSON.parse(msg);
-			Creator.set(data.key, data.val);
+			Creator.setOpt(data.key, data.val);
 		});
 
 		this._socket.on("action", function(msg){
@@ -52,8 +75,6 @@ class WatcherManager{
 		this._socket.on("paintAction", function(msg){
 			WatcherManager.processPaintAction(JSON.parse(msg));
 		});
-
-
 
 		this._socket.on("mouseData", function(msg){
 			inst._mouseData = JSON.parse(msg);
@@ -72,11 +93,31 @@ class WatcherManager{
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
+	sendMessage(text, sender){
+		var data = {
+			id: this._id,
+			msg: {
+				text: text,
+				sender: sender
+			}
+		};
+		this._socket.emit('chatMessage', JSON.stringify(data));
+	}
+
 	static processContent(content){
-		Scene.fromObject(content.scene);
-		//content.scene.forEach(e => Creator.create(e));
-		Creator.fromObject(content.creator);
-		Paints.fromObject(content.paint);
+		console.log("content: ", content);
+		var options = content.shareOptions;
+
+		if(options.share.objects)
+			Scene.fromObject(content.scene);
+		if(options.share.creator)
+			Creator.fromObject(content.creator);
+		if(options.share.paints)
+			Paints.fromObject(content.paint);
+
+		Menu.visible = options.share.menu;
+		Creator.visibleView = options.share.menu;
+		Options.setOpt("showLayersViewer", options.share.layers);
 
 		Logger.notif("Všetky dáta boly úspešne načítané");
 	}

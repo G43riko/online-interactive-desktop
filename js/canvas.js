@@ -354,7 +354,7 @@ function saveCanvasAsFile(){
 }
 
 function _process(res){
-	if(res.shadow)
+	if(res.shadow && Options.shadows)
 		setShadow(res.shadow);
 
 	if(res.bgImage){

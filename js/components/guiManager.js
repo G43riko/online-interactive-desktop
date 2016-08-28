@@ -143,6 +143,9 @@ function serializeShareData(){
 	result["shareMenu"] = getValueIfExists(document.getElementById("idShareMenu"));
 	result["sharePaints"] = getValueIfExists(document.getElementById("idSharePaints"));
 	result["shareObjects"] = getValueIfExists(document.getElementById("idShareObjects"));
+	result["shareCreator"] = getValueIfExists(document.getElementById("idShareCreator"));
+	result["shareLayers"] = getValueIfExists(document.getElementById("idShareLayers"));
+	
 	closeDialog();
 	Sharer.startShare(result);
 }

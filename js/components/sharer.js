@@ -17,6 +17,10 @@ class SharerManager{
 		this._socket = io();
 		this._sharing = true;
 
+		this._sharePaints = options.sharePaints;
+		this._shareCreator = options.shareCreator;
+		this._shareObjects = options.shareObjects;
+
 		var inst = this,
 			data = {
 				res: {
@@ -27,15 +31,25 @@ class SharerManager{
 				limit: options.maxWatchers,
 				realTime: options.realTime,
 				detailMovement: options.detailMovement,
-				shareMenu: options.shareMenu,
-				sharePaints: options.sharePaints,
-				shareObjects: options.shareObjects
+				share: {
+					menu: options.shareMenu,
+					paints: this._sharePaints,
+					creator: this._shareCreator,
+					objects: this._shareObjects
+				}
 			};
+
+		this._socket.on('chatMessage',function(msg){
+			data = JSON.parse(msg);
+			chatViewer.recieveMessage(data["text"], data["sender"]);
+		});
 
 		this._socket.emit('startShare', JSON.stringify(data));
 
 		this._socket.on('notification', function(msg){
 			data = JSON.parse(msg);
+			Logger.notif("prijatá správa: " + data["msg"]);
+			console.log(data["msg"]);
 		});
 
 		this._socket.on('confirmShare', function(msg){
@@ -57,6 +71,7 @@ class SharerManager{
 			Menu.disabled("sharing", "stopShare", false);
 			Menu.disabled("sharing", "shareOptions", false);
 			Menu.disabled("sharing", "startShare", true);
+			chatViewer.show();
 		});
 
 		this._socket.on('getAllData', function(recieveData){
@@ -67,7 +82,7 @@ class SharerManager{
 				msg: {
 					scene: Scene.toObject(),
 					creator: Creator.toObject(),
-					pain: Paints.toObject()
+					paint: Paints.toObject()
 				},
 				target: recData.target
 			};
@@ -91,6 +106,9 @@ class SharerManager{
 	}
 
 	_paintOperation(action, arg1, arg2){
+		if(!this._sharePaints)
+			return false;
+
 		var data = {
 			id: this._id,
 			msg : {
@@ -115,6 +133,17 @@ class SharerManager{
 				return;
 		}
 		this._socket.emit('paintAction', JSON.stringify(data));
+	}
+
+	sendMessage(text, sender){
+		var data = {
+			id: this._id,
+			msg: {
+				text: text,
+				sender: sender
+			}
+		};
+		this._socket.emit('chatMessage', JSON.stringify(data));
 	}
 
 	mouseChange(){

@@ -16,6 +16,7 @@
 		<script type="text/javascript" src="js/utils/utils.js"></script>
 		<script type="text/javascript" src="js/components/menu.js"></script>
 		<script type="text/javascript" src="js/components/slider.js"></script>
+        <script type="text/javascript" src="js/components/chatViewer.js"></script>
 		<script type="text/javascript" src="js/components/contextMenu.js"></script>
         <script type="text/javascript" src="js/components/fileManager.js"></script>
         <script type="text/javascript" src="js/components/optionManager.js"></script>
@@ -43,6 +44,7 @@
 		<script type="text/javascript" src="js/objects/line.js"></script>
 		<script type="text/javascript" src="js/objects/arc.js"></script>
         <script type="text/javascript" src="js/objects/imageObject.js"></script>
+        <script type="text/javascript" src="js/objects/textArea.js"></script>
 		<script type="text/javascript" src="js/objects/arrow.js"></script>
 		<script type="text/javascript" src="js/utils/test.js"></script>
 		<script type="text/javascript" src="js/components/sharer.js"></script>
@@ -93,6 +95,14 @@
                                 <input type="checkbox" id="idShareObjects" name="shareObjects">
                                 <label for="idShareObjects">Objekty</label>
                             </div>
+                            <div>
+                                <input type="checkbox" id="idShareCreator" name="shareCreator">
+                                <label for="idShareCreator">Creator</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="idShareLayers" name="shareLayers">
+                                <label for="idShareLayers">Správcu vrstiev</label>
+                            </div>
                         </div>
                     </div>
                     <div class="panel">
@@ -115,11 +125,19 @@
                     </div>
                     <div class="panel">
                         <label for="idShowGrid">Zobraziť mriežku: </label>
-                        <input id="idShowGrid" type="checkbox" checked name="showGrid">
+                        <input id="idShowGrid" type="checkbox" name="showGrid">
                     </div>
                     <div class="panel">
                         <label for="idShowLayersViewer">Zobraziť správcu vrstiev: </label>
-                        <input id="idShowLayersViewer" type="checkbox" checked name="showLayersViewer">
+                        <input id="idShowLayersViewer" type="checkbox" name="showLayersViewer">
+                    </div>
+                    <div class="panel">
+                        <label for="idShadows">Zobraziť tiene: </label>
+                        <input id="idShadows" type="checkbox" name="shadows">
+                    </div>
+                    <div class="panel">
+                        <label for="idMovingSilhouette">Obraziť pri pohybe iba siluetu: </label>
+                        <input id="idMovingSilhouette" type="checkbox" name="movingSilhouette">
                     </div>
                 </form>
             </div>
@@ -152,7 +170,6 @@
 
                         </div>
                     </div>
-                    <!--<input type="button" value="Uložiť obrázok" onclick="processAndSaveImage()">-->
                     <input type="button" value="Uložiť obrázok" onclick="serializeSaveData()">
                 </form>
             </div>
@@ -161,6 +178,7 @@
             <img id="contentImage" src="#" class="hide">
             <div id="contentHTML" class="hide"></div>
         </div>
+        <!--<div id="selectedEditor" class="temp" contenteditable="true"></div>-->
 		<canvas class="canvas animated" id="myCanvas">
             Váš prehliadač nepodporuje Canvas
 		</canvas>
@@ -176,7 +194,7 @@
                   "#B71427", "#FFE658", "#585858", "#118C4E", "#C1E1A6", "#FF9009", "#DF3D82",
                   "#F361C2", "#EBED5B", "#3C007B"].sort().reverse();
 
-    $("#colorPalete").append(colors.map(e => '<div class="colorPatern" style="background-color:' + e + '"></div>').join());
+    $("#colorPalete").append(colors.map(e => '<div class="colorPatern" style="background-color:' + e + '"></div>').join(""));
 
     if(SharerManager)
         Sharer = new SharerManager();

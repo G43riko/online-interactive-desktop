@@ -13,9 +13,10 @@ var initTime 		= window["performance"].now(),
 	Content			= new ContentManager(),
 	FPS				= 60,
 	Files			= new FileManager(),
-	Project			= new ProjectManager(),
+	Project			= new ProjectManager("Gabriel Csollei"),
 	Paints			= new PaintManager(),
 	Task 			= null,
+	SelectedText	= null,
 	Options 		= new OptionsManager(),
 	drawEvent 		= new EventManager(realDraw, 16),
 	draw 			= () => drawEvent.callIfCan(),
@@ -30,7 +31,7 @@ var initTime 		= window["performance"].now(),
 		content : true,
 		edit : true
 	},
-	drawMousePos, Layers, canvas, context;
+	drawMousePos, Layers, canvas, context, chatViewer;
 
 var Components = {
 	draw	: () => isDefined(components) && isDefined(components["draw"]) && components["draw"] === true,
@@ -43,6 +44,16 @@ var Components = {
 	content	: () => isDefined(components) && isDefined(components["content"]) && components["content"] === true,
 	edit	: () => isDefined(components) && isDefined(components["edit"]) && components["edit"] === true
 };
+
+function sendMessage(message){
+	if(typeof Watcher !== "undefined")
+		Watcher.sendMessage(message, Project.autor);
+
+	if(typeof Sharer !== "undefined" && Sharer.isSharing)
+		Sharer.sendMessage(message, Project.autor);
+
+	chatViewer.recieveMessage(message, Project.autor);
+}
 
 function ajax(url, options, dataType){
 	if(isFunction(options)){
@@ -185,6 +196,12 @@ $(function(){
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
 	Input.initListeners(canvas);
 
+	if(typeof Watcher !== "undefined")
+		Project._autor = "Watcher";
+
+	chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
+	if(typeof Watcher !== "undefined")
+		chatViewer.show();
 
 	Layers = new LayersViewer();
 	Scene.addToScene(Layers, "rightMenu");

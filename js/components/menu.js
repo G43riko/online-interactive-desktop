@@ -18,7 +18,7 @@ class MenuManager{
 		this._canvas 					= parent == null ? document.createElement("canvas") : parent._canvas;
 		this._context					= null;
 		this._tmpDrawArray				= [];
-
+		this._visible 					= true;
 		this._visibleSubMenu 			= false;
 		this._subMenus					= {};
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
@@ -26,6 +26,7 @@ class MenuManager{
 
 	get position(){return this._position;}
 	get size(){return this._size;}
+	set visible(val){this._visible = val;}
 
 	static _changeDataByComponents(data){
 		if(!Components.tools() && Components.draw()) //ak je kreslenie a nie nastroje musí sa nastaviť kreslenie
@@ -129,6 +130,9 @@ class MenuManager{
 	 */
 
 	clickIn(x, y) {
+		if(!this._visible)
+			return false;
+
 		var posY = this._position.y,
 			posX = this._position.x,
 			result = false;
@@ -185,7 +189,7 @@ class MenuManager{
 				this._toolActive = "tools";
 				break;
 			case "color":
-				pickUpColor(color => Creator.set("fillColor", color));
+				pickUpColor(color => Creator.setOpt("fillColor", color));
 				break;
 			case "options":
 				showOptions();
@@ -265,6 +269,8 @@ class MenuManager{
 	};
 
 	pressIn(x, y){
+		if(!this._visible)
+			return false;
 		var posY = this._position.y,
 			posX = this._position.x,
 			result = false;
@@ -299,7 +305,7 @@ class MenuManager{
 	 */
 
 	draw(){
-		if(!this._items)
+		if(!this._items || !this._visible)
 			return;
 		var posY = this._position.y,
 			posX = this._position.x;

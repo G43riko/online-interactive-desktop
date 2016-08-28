@@ -2,34 +2,37 @@ var express 		= require('express'),
 	app 			= express(),
 	http 			= require('http').Server(app),
 	io 				= require('socket.io')(http),
-	url 			= require('url'),
+	//url 			= require('url'),
 	elasticsearch	= require('elasticsearch'),
-	connections 	= {};
+	serverLogs		= require('./js/utils/serverLogs'),
+	connection 		= require('./js/utils/connectionManager');
 
-const MAX_ID_VALUE 	= 10;
-const PORT 			= 3000;
+const MAX_CHAT_ID_VALUE = 10;
+const MAX_USER_ID_VALUE = 1000000;
+const PORT 				= 3000;
+const REQUEST_TIMEOUT	= 3000;
+const ELASTIC_HOST_URL	= 'localhost:9200';
 
 app.use("/css", express.static(__dirname + '/css'));
 app.use("/img", express.static(__dirname + '/img'));
 app.use("/js", express.static(__dirname + '/js'));
 
 app.get('/', function(req, res) {
-	console.log("niekto sa pripája");
+	serverLogs.increase("pageLoad");
 	var cookies = parseCookies(req);
 
 	if(typeof cookies["user_id"] === "undefined"){
-		var id = Math.random() * 1000000;
+		var id = getUserId();
 		res.cookie("user_id", id).cookie("last_login", Date.now());
 	}
 	else
 		res.cookie("last_login", Date.now());
 	res.sendFile('/index.html' , { root : __dirname});
-
-	console.log("súbor odoslaný");
 });
 
 app.get('/watch', function(req, res){
 	res.sendFile('/watch.html' , { root : __dirname});
+	serverLogs.increase("watchLoad");
 });
 
 app.post("/anonymousData", function (req, res) {
@@ -56,11 +59,11 @@ app.post("/anonymousData", function (req, res) {
 app.get('/anonymousData', function(req, res){
 	var client = new elasticsearch.Client({
 		//log: 'trace',
-		host: 'localhost:9200'
+		host: ELASTIC_HOST_URL
 	});
 
 	client.ping({
-		requestTimeout: 3000,
+		requestTimeout: REQUEST_TIMEOUT,
 		hello: "elasticsearch"
 	}, function (error) {
 		if (error)
@@ -71,26 +74,8 @@ app.get('/anonymousData', function(req, res){
 	res.send('<h1>Táto stranka slúži len ako príjemca dát</h1>');
 });
 
-function getId(){
-	return Math.floor(Math.random() * MAX_ID_VALUE);
-}
-
-var messages = [];
-var count = 0;
-
-function messageRecieve(type, msg){
-	if(typeof messages[type] === "undefined"){
-		messages[type] = [];
-		messages[type]["count"] = 0;
-		messages[type]["messages"] = [];
-	}
-
-	messages[type]["count"]++;
-	messages[type]["messages"].push(msg);
-}
-
 io.on('connection', function(socket){
-	console.log('a user connected');
+	serverLogs.increase("connected");
 	socket.on("changeCreator", changeCreator);
 	socket.on("completeAuth", completeAuth);
 	socket.on("broadcastMsg", broadcastMsg);
@@ -100,45 +85,28 @@ io.on('connection', function(socket){
 	socket.on("startWatch", startWatch);
 	socket.on('disconnect', disconnect);
 	socket.on('mouseData', mouseData);
+	socket.on('chatMessage', chatMessage);
 	socket.on("action", action);
 
 });
-
-function writeToWatchers(watchers, type, msg){
-	for(var i in watchers)
-		if(watchers.hasOwnProperty(i))
-			watchers[i].socket.emit(type, msg);
-}
 
 http.listen(PORT, function(){
 	console.log('listening on *:' + PORT);
 });
 
-var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect, action, mouseData, paintAction;
+var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect, action, mouseData, paintAction, chatMessage;
 
 /*
  * dostane správu že uživaťel chce začať zdielať obrazovku
  */
 startShare = function(msg){
-	var id = getId(),
-		data = JSON.parse(msg),
-		socket = this;
-	messageRecieve("startShare", msg);
+	var id = getChatId(),
+		data = JSON.parse(msg);
+	serverLogs.increase("startShare");
+	serverLogs.messageRecieve("startShare", msg);
 	console.log("začina zdielať: ", data, "id: " + id);
-	connections[id] = {
-		owner: socket,
-		id: id,
-		resolution: data["res"],
-		password: data["pass"],
-		limit: data["limit"],
-		watchers: [],
-		realTime: data["realTime"],
-		detailMovement: data["detailMovement"],
-		shareMenu: data["shareMenu"],
-		sharePaints: data["sharePaints"],
-		shareObjects: data["shareObjects"]
-	};
-	socket.emit("confirmShare", JSON.stringify({id: id}));
+	connection.startShare(id, this, data);
+	this.emit("confirmShare", JSON.stringify({id: id}));
 };
 
 
@@ -146,22 +114,14 @@ startShare = function(msg){
  * dostane spravu že client chce začať sledovať obrazovku
  */
 startWatch = function(msg){
-	var data = JSON.parse(msg),
-		socket = this;
-	messageRecieve("startWatch", msg);
-	console.log("client s id " + socket.id + " chce sledovať plochu");
-	connections[data["id"]].watchers[socket.id] = {
-		resolution: data["res"],
-		valid: false,
-		socket: socket,
-		connected: true
-	};
+	var data = JSON.parse(msg);
+	serverLogs.increase("startWatch");
+	serverLogs.messageRecieve("startWatch", msg);
+	console.log("client s id " + this.id + " chce sledovať plochu");
+	connection.startWatch(data["id"], this, data)
 
-	if(connections[data["id"]].password != "")
-		socket.emit("auth", "zadaj heslo");
-	else
-		socket.emit("notification", JSON.stringify({msg: "pripojenie bolo uspešne - bez zadanie hesla"}));
-	connections[data["id"]].owner.emit("notification", JSON.stringify({msg: "novy watcher sa pripojil"}));
+	this.emit("auth", "zadaj heslo");
+	connection.getOwner(data["id"]).emit("notification", JSON.stringify({msg: "novy watcher sa pripojil"}));
 };
 
 
@@ -169,18 +129,19 @@ startWatch = function(msg){
  * client úspešne zadá heslo
  */
 completeAuth = function(msg){
-	var data = JSON.parse(msg),
-		socket = this;
-	messageRecieve("completeAuth", msg);
-	console.log("dokoncuje sa authentifikacia s uživatelom: " + socket.id);
+	var data = JSON.parse(msg);
+	serverLogs.messageRecieve("completeAuth", msg);
+	console.log("dokoncuje sa authentifikacia s uživatelom: " + this.id);
 
-	if(data["passwd"] == connections[data["id"]].password || true){
-		socket.emit("notification", JSON.stringify({msg: "pripojenie bolo uspešne - zo zadanim hesla"}));
-		connections[data["id"]].watchers[socket.id].valid = true;
-		connections[data["id"]].owner.emit("getAllData", JSON.stringify({target: socket.id}));
+	if(connection.checkPassword(data["id"], data["passwd"])){
+		this.emit("notification", JSON.stringify({msg: "pripojenie bolo uspešne - zo zadanim hesla"}));
+		connection.getWatcher(data["id"], this).valid = true
+		connection.getOwner(data["id"]).emit("getAllData", JSON.stringify({target: this.id}));
 	}
-	else
-		socket.emit("notification", JSON.stringify({msg: "zlé heslo"}));
+	else{
+		this.emit("notification", JSON.stringify({msg: "zlé heslo"}));
+		this.emit("auth", "zadaj heslo");//TODO nejaké počítadlo lebo toto nechceme stále
+	}
 };
 
 
@@ -188,28 +149,9 @@ completeAuth = function(msg){
  * odpoji watchera alebo sharera
  */
 disconnect = function(){
-	var socket = this;
-	messageRecieve("disconnect", "");
-	for(var i in connections){
-		if(connections.hasOwnProperty(i)){
-			if(connections[i].owner.id == socket.id){
-				//ODPOJIL SA SHARER
-				for(var j in connections[i].watchers)
-					if(connections[i].watchers.hasOwnProperty(j))
-						connections[i].watchers[j].socket.emit("endShare", "endShare");
-				console.log("SHARER s id " + socket.id + " sa odpojil");
-				break;
-			}
-			else{
-				if(typeof connections[i].watchers[socket.id] !== "undefined"){
-					//ODPOJIL SA WATCHER
-					delete connections[i].watchers[socket.id];
-					console.log("watcher s id " + socket.id + " sa odpojil");
-					break;
-				}
-			}
-		}
-	}
+	serverLogs.increase("disconnect");
+	serverLogs.messageRecieve("disconnect", "");
+	connection.disconnect(this);
 };
 
 
@@ -218,8 +160,8 @@ disconnect = function(){
  */
 broadcastMsg = function(msg){
 	var data = JSON.parse(msg);
-	messageRecieve("broadcastMsg", msg);
-	writeToWatchers(connections[data.id]["watchers"], "notification", JSON.stringify({msg: data["msg"]}));
+	serverLogs.messageRecieve("broadcastMsg", msg);
+	writeToWatchers(connection.getWatchers(data.id), "notification", JSON.stringify({msg: data["msg"]}));
 };
 
 
@@ -228,40 +170,68 @@ broadcastMsg = function(msg){
  */
 sendAllData = function(msg){
 	var data = JSON.parse(msg);
-	messageRecieve("sendAllData", msg);
+	serverLogs.messageRecieve("sendAllData", msg);
+	data.msg["shareOptions"] = connection.getShareOptions(data.id);
 	console.log("boly prijatá všetky dáta od sharera a odosielju sa uživatelovy s id " + data.target);
-	connections[data.id]["watchers"][data.target].socket.emit("sendAllData", JSON.stringify(data.msg));
+	connection.getWatcher(data.id, data.target).socket.emit("sendAllData", JSON.stringify(data.msg));
 };
 
 
 paintAction = function(msg){
 	var data = JSON.parse(msg);
-	//console.log(data);
-	//console.log("bola prijatá paintAction");
-	writeToWatchers(connections[data.id].watchers, "paintAction", JSON.stringify(data.msg));
+	serverLogs.messageRecieve("paintAction", msg);
+	writeToWatchers(connection.getWatchers(data.id), "paintAction", JSON.stringify(data.msg));
 };
+
+chatMessage = function(msg){
+	var data = JSON.parse(msg);
+	serverLogs.messageRecieve("chatMessage", msg);
+
+	writeToAllExcept(data.id, this, "chatMessage", JSON.stringify(data.msg));
+}
+
+function writeToAllExcept(id, socket, type, msg){
+	var watchers = connection.getWatchers(id);
+	for(var i in watchers)
+		if(watchers.hasOwnProperty(i) && watchers[i].socket != socket)
+			watchers[i].socket.emit(type, msg);
+
+	var owner = connection.getOwner(id);
+	if(owner != socket)
+		owner.emit(type, msg)
+}
 
 
 action = function(msg){
 	var data = JSON.parse(msg);
-	//console.log("bola prijatá akcia");
-	writeToWatchers(connections[data.id].watchers, "action", JSON.stringify(data.msg));
+	serverLogs.messageRecieve("action", msg);
+	writeToWatchers(connection.getWatchers(data.id), "action", JSON.stringify(data.msg));
 };
 
 mouseData = function(msg){
 	var data = JSON.parse(msg);
-	messageRecieve("mouseData", msg);
-	if(typeof connections[data.id] === "undefined")
-		console.log("id " + data.id + " neexistuje v zozname ideciek");
+	serverLogs.messageRecieve("mouseData", msg);
+	if(connection.existChat(data.id))
+		writeToWatchers(connection.getWatchers(data.id), "mouseData", JSON.stringify(data.msg));
 	else
-		writeToWatchers(connections[data.id].watchers, "mouseData", JSON.stringify(data.msg));
+		console.log("id " + data.id + " neexistuje v zozname ideciek");
 };
 
 changeCreator = function(msg){
 	var data = JSON.parse(msg);
-	messageRecieve("changeCreator", msg);
-	writeToWatchers(connections[data.id].watchers, "changeCreator", JSON.stringify(data.msg));
+	serverLogs.messageRecieve("changeCreator", msg);
+	writeToWatchers(connection.getWatchers(data.id), "changeCreator", JSON.stringify(data.msg));
 };
+
+//UTILS
+
+function getChatId(){
+	return Math.floor(Math.random() * MAX_CHAT_ID_VALUE);
+}
+
+function getUserId(){
+	return Math.floor(Math.random() * MAX_USER_ID_VALUE);
+}
 
 function parseCookies (request) {
 	var list = {},
@@ -273,4 +243,10 @@ function parseCookies (request) {
 	});
 
 	return list;
+}
+
+function writeToWatchers(watchers, type, msg){
+	for(var i in watchers)
+		if(watchers.hasOwnProperty(i))
+			watchers[i].socket.emit(type, msg);
 }

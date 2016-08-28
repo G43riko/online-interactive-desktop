@@ -1,5 +1,14 @@
 class ListenersManager{
 	mouseDown(position, button){
+		if(SelectedText){
+			var area = document.getElementById("selectedEditor");
+			if(area){
+				console.log("res: " + parseInt(window.getComputedStyle(area).fontSize, 10));
+				SelectedText.text = area.innerText;
+				document.body.removeChild(area);
+			}
+		}
+
 		if($(canvas).hasClass("blur"))
 			return false;
 

@@ -1,7 +1,8 @@
 class ProjectManager{
-	constructor(title = "Default Title"){
+	constructor(author, title = "OIP Project"){
 		this._createdAt = Date.now();
 		this._title = title;
+		this._autor = author;
 		ProjectManager.url = "http://192.168.0.123:3000/anonymousData";
 		//PAINT_MANAGER
 		//CREATOR
@@ -82,6 +83,7 @@ class ProjectManager{
     }
 
 	get title(){return this._title;}
+	get autor(){return this._autor;}
 
 	get time(){return Date.now() - this._createdAt; }
 }

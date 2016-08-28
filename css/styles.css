@@ -1,5 +1,6 @@
 @import "alerts.css";
 @import "form.css";
+@import "chat.css";
 
 *{
 	margin: 0;
@@ -105,4 +106,10 @@ body{
 	width: 56px;
 	height: 56px;
 	border: 3px solid black;
+}
+
+#selectedEditor{
+	position: relative;
+	background-color: pink;
+	box-sizing: border-box;
 }

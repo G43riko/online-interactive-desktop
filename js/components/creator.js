@@ -16,6 +16,7 @@ class objectCreator{
 		this._radius		= DEFAULT_RADIUS;
 		this._items 		= null;
 		this._view			= null;
+		this._visibleView	= true;
 		this._allowedItems 	= ["_fillColor", "_borderColor", "_borderWidth", "_operation", "_lineWidth", "_fontSize",
 							   "_fontColor", "_lineType", "_lineStyle", "_brushSize", "_brushType", "_brushColor",
 							   "_radius"];
@@ -23,7 +24,7 @@ class objectCreator{
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
-
+	set visibleView(val){this._visibleView = val;}
 	/**
 	 * Nastaví view pre creator
 	 *
@@ -125,7 +126,7 @@ class objectCreator{
 		if(this._object)
 			this._object.draw();
 
-		if(this._view !== null && this._items !== null)
+		if(this._view !== null && this._items !== null && this._visibleView)
 			this._view.draw();
 	}
 
@@ -192,7 +193,7 @@ class objectCreator{
 	 * @returns {*} - vráti TRUE alebo FALSE
 	 */
 	clickIn(x, y){
-		return isDefined(this._view) ? this._view.clickIn(x, y) : false;
+		return isDefined(this._view) && this._visibleView ? this._view.clickIn(x, y) : false;
 	}
 
 	get items(){return this._items;}

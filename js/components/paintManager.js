@@ -47,9 +47,7 @@ class PaintManager{
 	 * @param content - objekt obsahujúci všetky malby
 	 */
 	fromObject(content){
-		each(content, function(e, i){
-			Scene.getLayer(i).paint.fromObject(e);
-		});
+		each(content, (e, i) =>	Scene.getLayer(i).paint.fromObject(e));
 	}
 
 

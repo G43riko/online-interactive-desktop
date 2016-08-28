@@ -30,9 +30,10 @@ class InputManager{
 		window.onkeydown = function(e){
 			inst._keyDown(e.keyCode);
 
-			e.target.onkeyup = function(e){
-				inst._keyUp(e.keyCode);
-			}
+			if(!e.target.onkeyup)
+				e.target.onkeyup = function(e){
+					inst._keyUp(e.keyCode);
+				}
 		};
 
 		window.addEventListener('orientationchange', initCanvasSize, false)
@@ -123,6 +124,8 @@ class InputManager{
 	};
 
 	_checkPress(button){
+		if(SelectedText)
+			return;
 		var inst = this;
 		this._buttons[button] = false;
 		canvas.onmousepress({
