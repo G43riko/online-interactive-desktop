@@ -49,10 +49,9 @@ class ProjectManager{
 	}
 
 	_sendAnonymousData(data = {}){
-		var date = new Date();
-        var createdTime  = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear() + " " +
-			date.getHours()  + ":" + date.getMinutes() + ":" + date.getSeconds();
-
+		var sendData = function(content){
+			$.post(ProjectManager.url, {content: JSON.stringify(content)});
+		}
 		data["userAgent"] = navigator.userAgent;
 		data["language"] = navigator.language;
 		data["platform"] = navigator.platform;
@@ -61,7 +60,7 @@ class ProjectManager{
 		data["innerWidth"] = window.innerWidth;
 		data["availHeight"] = screen.availHeight;
 		data["availWidth"] = screen.availWidth;
-		data["connectedAt"] = createdTime;
+		data["connectedAt"] = getFormattedDate();
 
         if (navigator.geolocation)
             navigator.geolocation.watchPosition(position => {
@@ -71,15 +70,15 @@ class ProjectManager{
 						lat : a.coords.latitude,
 						lon : a.coords.longitude
 					};
-					$.post(ProjectManager.url, {content: JSON.stringify(data)});
+					sendData(data);
 				});
 			},
 			function (error) {
 				if (error.code == error.PERMISSION_DENIED)
-					$.post(ProjectManager.url, {content: JSON.stringify(data)});
+					sendData(data);
 			});
         else
-            $.post(ProjectManager.url, {content: JSON.stringify(data)});
+            sendData(data);
     }
 
 	get title(){return this._title;}

@@ -35,6 +35,11 @@ app.get('/watch', function(req, res){
 	serverLogs.increase("watchLoad");
 });
 
+app.get('/overview', function(req, res){
+	res.sendFile('/overview.html' , { root : __dirname});
+});
+
+
 app.post("/anonymousData", function (req, res) {
 	var body = [];
 	req.on("data", function(chunk){
@@ -43,6 +48,8 @@ app.post("/anonymousData", function (req, res) {
 		var data = JSON.parse(decodeURIComponent(Buffer.concat(body).toString()).replace("content=", ""));
 		data["ipAddress"] = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 		data["connectedAt"] = data["connectedAt"].replace("+", " ");
+		serverLogs.addAnonymData(data);
+		return;
 		new elasticsearch.Client({
 			host: 'localhost:9200'
 		}).create({
@@ -81,12 +88,14 @@ io.on('connection', function(socket){
 	socket.on("broadcastMsg", broadcastMsg);
 	socket.on("sendAllData", sendAllData);
 	socket.on("paintAction", paintAction);
+	socket.on('chatMessage', chatMessage);
+	socket.on("dataReqiere", dataReqiere);
 	socket.on("startShare", startShare);
 	socket.on("startWatch", startWatch);
 	socket.on('disconnect', disconnect);
 	socket.on('mouseData', mouseData);
-	socket.on('chatMessage', chatMessage);
 	socket.on("action", action);
+	
 
 });
 
@@ -94,7 +103,7 @@ http.listen(PORT, function(){
 	console.log('listening on *:' + PORT);
 });
 
-var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect, action, mouseData, paintAction, chatMessage;
+var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect, action, mouseData, paintAction, chatMessage, dataReqiere;
 
 /*
  * dostane správu že uživaťel chce začať zdielať obrazovku
@@ -222,6 +231,11 @@ changeCreator = function(msg){
 	serverLogs.messageRecieve("changeCreator", msg);
 	writeToWatchers(connection.getWatchers(data.id), "changeCreator", JSON.stringify(data.msg));
 };
+
+dataReqiere = function(msg){
+	var data = JSON.parse(msg);
+	serverLogs.addOverviewSocket(this);
+}
 
 //UTILS
 

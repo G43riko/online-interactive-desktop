@@ -10,6 +10,15 @@ function showColors(){
 	$("canvas").addClass("blur");
 }
 
+function shareALl(el){
+	Options.setOpt("grid", el.checked);
+	document.getElementById("idShareMenu").checked = el.checked;
+	document.getElementById("idSharePaints").checked = el.checked;
+	document.getElementById("idShareObjects").checked = el.checked;
+	document.getElementById("idShareCreator").checked = el.checked;
+	document.getElementById("idShareLayers").checked = el.checked;
+}
+
 function showSharingOptions(){
 	$("#modalWindow ").find("#shareForm").show();
 	$("#modalWindow").show();

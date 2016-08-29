@@ -209,8 +209,8 @@ function setCookie(cname, cvalue, exdays) {
 	document.cookie = cname + "=" + cvalue + ";expires="+ d.toUTCString();
 }
 
-function getFormattedDate() {
-	var date = new Date();
+function getFormattedDate(ms = Date.now()) {
+	var date = new Date(ms);
 	return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 }
 

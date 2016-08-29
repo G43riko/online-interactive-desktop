@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Overview</title>
+	<script src="/socket.io/socket.io.js"></script>
+	<style type="text/css">
+		table, th, td {
+			border: 1px solid black;
+		}
+		table {
+			border-collapse: collapse;
+		}
+
+		#anonymTable{
+			width: 100%;
+		}
+
+		th {
+			height: 50px;
+			text-align: left;
+			background-color: #4CAF50;
+			color: white;
+		}
+		td {
+			vertical-align: bottom;
+		}
+		th, td {
+			padding: 10px;
+			text-align: left;
+		}
+
+		tr:hover {
+			background-color: #f5f5f5;
+		}
+
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+	</style>
+</head>
+<body>
+	<table id="logTable">
+		<tr>
+			<th>Key</th>
+			<th>Value</th>
+		</tr>
+		<tbody id="logTableBody"></tbody>
+	</table>
+
+	<div style="overflow-x:auto;">
+		<table id="anonymTable">
+		</table>
+	</div>
+
+	<script type="text/javascript">
+		var socket = io();
+		var wasInit = false;
+		var logTableBody = document.getElementById("logTableBody");
+
+		function init(msg){
+			wasInit = true;
+			var result = "";
+			for(var i in msg.logs){
+				if(msg.logs.hasOwnProperty(i)){
+					result += '<tr><td>' + i + ': </td>';
+					result += '<td id="' + i + '">' + msg.logs[i] + '</td></tr>';
+				}
+			}
+			logTableBody.innerHTML += result;
+		}
+
+		function getOrCreate(id){
+			var el = document.getElementById("msg_" + id);
+			if(!el)
+				logTableBody.innerHTML += '<tr><td>msg_' + id + ': </td><td id="msg_' + id + '"></td></tr>';
+			
+			return document.getElementById("msg_" + id);;
+		}
+
+		function setAnonymData(data){
+			var string = "<tr><th>accuraci</th><th>availHeight</th><th>availWidth</th><th>browser</th><th>ConnectedTime</th><th>innerHeight</th><th>innerWidth</th><th>IP</th><th>lang</th><th>mobile</th><th>OS</th><th>platform</th><th>tablet</th><th>touch</th><th>vendor</th></tr>";
+
+			for(var i in data)
+				if(data.hasOwnProperty(i)){
+					string += "<tr><td>" + data[i].accuracy + "</td>";
+					string += "<td>" + data[i].availHeight + "</td>";
+					string += "<td>" + data[i].availWidth + "</td>";
+					string += "<td>" + data[i].browser + "</td>";
+					string += "<td>" + data[i].connectedAt + "</td>";
+					string += "<td>" + data[i].innerHeight + "</td>";
+					string += "<td>" + data[i].innerWidth + "</td>";
+					string += "<td>" + data[i].ipAddress + "</td>";
+					string += "<td>" + data[i].language + "</td>";
+					string += "<td>" + data[i].mobile + "</td>";
+					string += "<td>" + data[i].os + "</td>";
+					string += "<td>" + data[i].platform + "</td>";
+					string += "<td>" + data[i].tablet + "</td>";
+					string += "<td>" + data[i].touch + "</td>";
+					string += "<td>" + data[i].vendor + "</td>";
+					//string += "<td>" + data[i].userAgent + "</td></tr>";
+				}
+
+			document.getElementById("anonymTable").innerHTML = string;
+		}
+
+		socket.on("dataRecieve", function(msg){
+			if(!wasInit)
+				init(msg);
+			console.log(msg);
+
+			for(var i in msg.logs){
+				if(msg.logs.hasOwnProperty(i)){
+					document.getElementById(i).innerHTML = msg.logs[i];
+				}
+			}
+
+			for(var i in msg.messages){
+				if(msg.messages.hasOwnProperty(i)){
+					getOrCreate(i).innerHTML = msg.messages[i].count;
+				}
+			}
+
+			setAnonymData(msg.anonym);
+		})
+		socket.emit('dataReqiere', JSON.stringify({user:"user",passw: "user"}));
+	</script>
+</body>
+</html>
