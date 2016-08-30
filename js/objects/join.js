@@ -1,6 +1,6 @@
 class Join extends Entity{
 	constructor(obj1, type = JOIN_LINEAR){
-		super("Join");
+		super(OBJECT_JOIN);
 		this._obj1 				= obj1;
 		this._obj1_connector 	= obj1.selectedConnector;
 		this._obj2 				= null;

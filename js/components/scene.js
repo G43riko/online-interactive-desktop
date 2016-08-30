@@ -15,6 +15,8 @@ class SceneManager{
 			if(e.title !== "default")
 				this.deleteLayer(e.title);
 		});
+
+		Events.sceneCleanUp();
 		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	};
 
@@ -27,7 +29,8 @@ class SceneManager{
 
 		if(isDefined(Layers))
 			Layers.createLayer(this._layers[title]);
-		Logger.log("Vytvorila sa vrstva " + title, LOGGER_LAYER_CHANGE);
+
+		Events.layerCreate(title, layerType);
 		return this._layers[title];
 	};
 
@@ -52,7 +55,7 @@ class SceneManager{
 		if(isDefined(Layers))
 			Layers.deleteLayer(title);
 
-		Logger.log("Vymazala sa vrstva " + title, LOGGER_LAYER_CHANGE);
+		Events.layerDelete(title);
 	};
 
 	getTaskObject(data){
@@ -68,7 +71,7 @@ class SceneManager{
 					if(e === Layers)
 						return;
 					if(e.visible){
-						if(e.name === "Text"){
+						if(e.name === OBJECT_TEXT){
 							if(e.text === "")
 								return;
 							data["results"][e.id] = e.text;
@@ -104,14 +107,13 @@ class SceneManager{
 	addToScene(object, layer = Layers.activeLayerName, resend = true){
 		if(!this._layers.hasOwnProperty(layer))
 			Logger.error("ide sa načítať neexistujúca vrstva: " + layer);
+
 		object.layer = layer;
 		this._layers[layer].add(object);
 
+		Events.objectAdded(resend, object);
 
-		EventHistory.objectCreateAction(object);
-		if(resend && isSharing())
-			Sharer.objectChange(object, ACTION_OBJECT_CREATE);
-		else
+		if(!resend)
 			object.selected = false;
 
 		draw();
@@ -128,7 +130,6 @@ class SceneManager{
 	}
 
 	draw(){
-		//this.forEach(e => callIfFunc(e.draw));
 		each(this._layers, e => e.draw());
 	};
 
@@ -138,9 +139,7 @@ class SceneManager{
 
 	remove(obj, layer = obj.layer, resend = true){
 		this._layers[layer].remove(obj);
-		if(resend && isSharing())
-			Sharer.objectChange(obj, ACTION_OBJECT_DELETE);
-		EventHistory.objectDeleteAction(obj);
+		Events.objectDeleted(resend, obj);
 
 	};
 
@@ -150,7 +149,6 @@ class SceneManager{
 
 	fromObject(content){
 		each(content, e => Creator.create(e));
-		//content.forEach(e => Creator.create(e));
 	}
 
 	toObject(){

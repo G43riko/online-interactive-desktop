@@ -12,6 +12,8 @@
         <script type="text/javascript" src="js/utils/logger.js"></script>
         <script type="text/javascript" src="js/utils/GVector2f.js"></script>
         <script type="text/javascript" src="js/utils/utils.js"></script>
+        <script type="text/javascript" src="js/components/guiManager.js"></script>
+        <script type="text/javascript" src="js/components/colorManager.js"></script>
         <script type="text/javascript" src="js/components/menu.js"></script>
         <script type="text/javascript" src="js/components/slider.js"></script>
         <script type="text/javascript" src="js/components/chatViewer.js"></script>
@@ -23,6 +25,7 @@
         <script type="text/javascript" src="js/components/selectedObjects.js"></script>
         <script type="text/javascript" src="js/components/layer.js"></script>
         <script type="text/javascript" src="js/components/scene.js"></script>
+        <script type="text/javascript" src="js/components/eventManager.js"></script>
         <script type="text/javascript" src="js/components/timeLine.js"></script>
         <script type="text/javascript" src="js/components/projectManager.js"></script>
         <script type="text/javascript" src="js/components/paintManager.js"></script>
@@ -35,7 +38,7 @@
         <script type="text/javascript" src="js/objects/text.js"></script>
         <script type="text/javascript" src="js/objects/table.js"></script>
         <script type="text/javascript" src="js/objects/class.js"></script>
-        <script type="text/javascript" src="js/objects/polygon.js"></script>
+        <script type="text/javascriptq" src="js/objects/polygon.js"></script>
         <script type="text/javascript" src="js/objects/join.js"></script>
         <script type="text/javascript" src="js/objects/rect.js"></script>
         <script type="text/javascript" src="js/objects/paint.js"></script>
@@ -62,84 +65,14 @@
     </body>
 </html>
 <script>
-
     var colors = ["#191919", "#DFE2DB", "#FFF056", "#FFFFFF", "#C63D0F", "#3B3738", "#FDF3E7",
-        "#7E8F7C", "#005A31", "#A8CD1B", "#CBE32D", "#F3FAB6", "#558C89", "#74AFAD",
-        "#D9853B", "#ECECEA", "#2B2B2B", "#DE1B1B", "#F6F6F6", "#E9E581", "#7D1935",
-        "#4A96AD", "#F5F3EE", "#E44424", "#67BCDB", "#A2AB58", "#404040", "#6DBDD6",
-        "#B71427", "#FFE658", "#585858", "#118C4E", "#C1E1A6", "#FF9009", "#DF3D82",
-        "#F361C2", "#EBED5B", "#3C007B"];
+                  "#7E8F7C", "#005A31", "#A8CD1B", "#CBE32D", "#F3FAB6", "#558C89", "#74AFAD",
+                  "#D9853B", "#ECECEA", "#2B2B2B", "#DE1B1B", "#F6F6F6", "#E9E581", "#7D1935",
+                  "#4A96AD", "#F5F3EE", "#E44424", "#67BCDB", "#A2AB58", "#404040", "#6DBDD6",
+                  "#B71427", "#FFE658", "#585858", "#118C4E", "#C1E1A6", "#FF9009", "#DF3D82",
+                  "#F361C2", "#EBED5B", "#3C007B"].sort().reverse();
 
-    colors = colors.sort().reverse();
-    var res = "";
-    colors.forEach(function(e, i){
-        res += '<div class="colorPatern" style="background-color:' + colors[i] + '"></div>';
-    });
-
-    $("#colorPalete").append(res);
-
-
-    function showColors(){
-        $("#modalWindow ").find("div").each(function(){
-            $(this).show();
-        });
-        $("#modalWindow").show();
-        $("canvas").addClass("blur");
-    }
-
-    function closeDialog(){
-        $("#modalWindow ").find("div").each(function(){
-            $(this).show();
-        });
-        $("#modalWindow").hide();
-        $("canvas").removeClass("blur");
-    }
-
-    function pickUpColor(func, thisArg){
-        var T;
-        if (arguments.length > 1)
-            T = thisArg;
-        $("#colorPalete").delegate(".colorPatern", "click", function(){
-            $(".selected").removeClass("selected");
-            func.call(T, $(this).addClass("selected").css("backgroundColor"));
-            closeDialog();
-            draw();
-            $("#colorPalete").undelegate();
-        });
-        showColors();
-    }
-
-    function getText(text, position, size, func, thisArg){
-        var T,
-                x = $(document.createElement("INPUT"));
-
-        if (arguments.length > 1)
-            T = thisArg;
-
-        x.attr({
-            type: "text",
-            value: text,
-            id: "staticInput"
-        }).css({
-            left: position.x + 'px',
-            top: position.y + 'px',
-            width: size.x,
-            height: size.y,
-            fontSize: size.y * 0.6
-        }).blur(function(){
-            func.call(T, x.val());
-            x.remove();
-            draw();
-        }).keyup(function(e){
-            if(e.keyCode == ENTER_KEY){
-                x.onblur = false;
-                func.call(T, x.val());
-                x.remove();
-                draw();
-            }
-        }).appendTo("body");
-        x.select().focus();
-    }
+    $("#colorPalete").append(colors.map(e => '<div class="colorPatern" style="background-color:' + e + '"></div>').join(""));
 
     Watcher = new WatcherManager();
 </script>

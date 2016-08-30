@@ -83,7 +83,7 @@ class objectCreator{
 	 * Dokončí vytváranie objektu
 	 */
 	finishCreating(){
-		if(this._object.name === "Image")
+		if(this._object.name === OBJECT_IMAGE)
 			loadImage(e => {
 				this._object.image = e;
 				Scene.addToScene(this._object);
@@ -159,8 +159,7 @@ class objectCreator{
 
 		this[key] = val;
 
-		if(isSharing())
-			Sharer.changeCreator(key, val);
+
 
 
 		if(key === "_brushType"){
@@ -168,7 +167,7 @@ class objectCreator{
 				Paints.selectedImage = val;
 		}
 
-		Logger.log("Creatorovi sa nastavuje " + key + " na " + val, LOGGER_CREATOR_CHANGE);
+		Events.creatorChange(key, val);
 
 		/*
 		 * Ak sa zmení vlastnosť štetca musí prekresliť štetec aby sa mohlo rovno malovať

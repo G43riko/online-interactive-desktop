@@ -108,47 +108,44 @@ var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect,
 /*
  * dostane správu že uživaťel chce začať zdielať obrazovku
  */
-startShare = function(msg){
-	var id = getChatId(),
-		data = JSON.parse(msg);
+startShare = function(data){
+	var id = getChatId();
 	serverLogs.increase("startShare");
-	serverLogs.messageRecieve("startShare", msg);
+	serverLogs.messageRecieve("startShare", data);
 	console.log("začina zdielať: ", data, "id: " + id);
 	connection.startShare(id, this, data);
-	this.emit("confirmShare", JSON.stringify({id: id}));
+	this.emit("confirmShare", {id: id});
 };
 
 
 /*
  * dostane spravu že client chce začať sledovať obrazovku
  */
-startWatch = function(msg){
-	var data = JSON.parse(msg);
+startWatch = function(data){
 	serverLogs.increase("startWatch");
-	serverLogs.messageRecieve("startWatch", msg);
+	serverLogs.messageRecieve("startWatch", data);
 	console.log("client s id " + this.id + " chce sledovať plochu");
 	connection.startWatch(data["id"], this, data)
 
 	this.emit("auth", "zadaj heslo");
-	connection.getOwner(data["id"]).emit("notification", JSON.stringify({msg: "novy watcher sa pripojil"}));
+	connection.getOwner(data["id"]).emit("notification", {msg: "novy watcher sa pripojil"});
 };
 
 
 /*
  * client úspešne zadá heslo
  */
-completeAuth = function(msg){
-	var data = JSON.parse(msg);
-	serverLogs.messageRecieve("completeAuth", msg);
+completeAuth = function(data){
+	serverLogs.messageRecieve("completeAuth", data);
 	console.log("dokoncuje sa authentifikacia s uživatelom: " + this.id);
 
 	if(connection.checkPassword(data["id"], data["passwd"])){
-		this.emit("notification", JSON.stringify({msg: "pripojenie bolo uspešne - zo zadanim hesla"}));
+		this.emit("notification", {msg: "pripojenie bolo uspešne - zo zadanim hesla"});
 		connection.getWatcher(data["id"], this).valid = true
-		connection.getOwner(data["id"]).emit("getAllData", JSON.stringify({target: this.id}));
+		connection.getOwner(data["id"]).emit("getAllData", {target: this.id});
 	}
 	else{
-		this.emit("notification", JSON.stringify({msg: "zlé heslo"}));
+		this.emit("notification", {msg: "zlé heslo"});
 		this.emit("auth", "zadaj heslo");//TODO nejaké počítadlo lebo toto nechceme stále
 	}
 };
@@ -160,43 +157,39 @@ completeAuth = function(msg){
 disconnect = function(){
 	serverLogs.increase("disconnect");
 	serverLogs.messageRecieve("disconnect", "");
-	connection.disconnect(this);
+	connection.disconnect(this, () => serverLogs.increase("disconnectWatcher"), () => serverLogs.increase("disconnectSharer"));
 };
 
 
 /*
  * odošle spravu všetkym pripojeným
  */
-broadcastMsg = function(msg){
-	var data = JSON.parse(msg);
-	serverLogs.messageRecieve("broadcastMsg", msg);
-	writeToWatchers(connection.getWatchers(data.id), "notification", JSON.stringify({msg: data["msg"]}));
+broadcastMsg = function(data){
+	serverLogs.messageRecieve("broadcastMsg", data);
+	writeToWatchers(connection.getWatchers(data.id), "notification", {msg: data["msg"]});
 };
 
 
 /*
  * prijme od sharera všetky aktualne dáta
  */
-sendAllData = function(msg){
-	var data = JSON.parse(msg);
-	serverLogs.messageRecieve("sendAllData", msg);
+sendAllData = function(data){
+	serverLogs.messageRecieve("sendAllData", data);
 	data.msg["shareOptions"] = connection.getShareOptions(data.id);
 	console.log("boly prijatá všetky dáta od sharera a odosielju sa uživatelovy s id " + data.target);
-	connection.getWatcher(data.id, data.target).socket.emit("sendAllData", JSON.stringify(data.msg));
+	connection.getWatcher(data.id, data.target).socket.emit("sendAllData", data.msg);
 };
 
 
-paintAction = function(msg){
-	var data = JSON.parse(msg);
-	serverLogs.messageRecieve("paintAction", msg);
-	writeToWatchers(connection.getWatchers(data.id), "paintAction", JSON.stringify(data.msg));
+paintAction = function(data){
+	serverLogs.messageRecieve("paintAction", data);
+	writeToWatchers(connection.getWatchers(data.id), "paintAction", data.msg);
 };
 
-chatMessage = function(msg){
-	var data = JSON.parse(msg);
-	serverLogs.messageRecieve("chatMessage", msg);
+chatMessage = function(data){
+	serverLogs.messageRecieve("chatMessage", data);
 
-	writeToAllExcept(data.id, this, "chatMessage", JSON.stringify(data.msg));
+	writeToAllExcept(data.id, this, "chatMessage", data.msg);
 }
 
 function writeToAllExcept(id, socket, type, msg){
@@ -211,29 +204,25 @@ function writeToAllExcept(id, socket, type, msg){
 }
 
 
-action = function(msg){
-	var data = JSON.parse(msg);
-	serverLogs.messageRecieve("action", msg);
-	writeToWatchers(connection.getWatchers(data.id), "action", JSON.stringify(data.msg));
+action = function(data){
+	serverLogs.messageRecieve("action", data);
+	writeToWatchers(connection.getWatchers(data.id), "action", data.msg);
 };
 
-mouseData = function(msg){
-	var data = JSON.parse(msg);
-	serverLogs.messageRecieve("mouseData", msg);
+mouseData = function(data){
+	serverLogs.messageRecieve("mouseData", data);
 	if(connection.existChat(data.id))
-		writeToWatchers(connection.getWatchers(data.id), "mouseData", JSON.stringify(data.msg));
+		writeToWatchers(connection.getWatchers(data.id), "mouseData", data.msg);
 	else
 		console.log("id " + data.id + " neexistuje v zozname ideciek");
 };
 
-changeCreator = function(msg){
-	var data = JSON.parse(msg);
-	serverLogs.messageRecieve("changeCreator", msg);
-	writeToWatchers(connection.getWatchers(data.id), "changeCreator", JSON.stringify(data.msg));
+changeCreator = function(data){
+	serverLogs.messageRecieve("changeCreator", data);
+	writeToWatchers(connection.getWatchers(data.id), "changeCreator", data.msg);
 };
 
-dataReqiere = function(msg){
-	var data = JSON.parse(msg);
+dataReqiere = function(data){
 	serverLogs.addOverviewSocket(this);
 }
 

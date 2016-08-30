@@ -186,6 +186,10 @@
 		"label" : "Visible",
 		"type" : "checkbox"
 	},
+	"showPaint" : {
+		"label" : "Show paint",
+		"type" : "checkbox"
+	},
 	"deleteLayer" : {
 		"label" : "Delete layer",
 		"type" : "text"

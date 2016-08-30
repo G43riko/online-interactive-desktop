@@ -1,6 +1,6 @@
 class Rect extends Entity {
 	constructor(position, size, fillColor){
-		super("Rect", position, size, {fillColor: fillColor});
+		super(OBJECT_RECT, position, size, {fillColor: fillColor});
 		this.moveType 	= -1;
 		this.minSize 	= new GVector2f(SELECTOR_SIZE);
 		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1))

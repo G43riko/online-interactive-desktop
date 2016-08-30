@@ -1,7 +1,7 @@
 class Class extends Table{
 	constructor(position, size, title, attributes = {}, methods = {}, access = PUBLIC_ACCESS){
 		super(position, size, [[]]);
-		this._name = "Class";
+		this._name = OBJECT_CLASS;
 		this._title = title;
 		this._access = access;
 		this._methods = methods;
@@ -10,7 +10,7 @@ class Class extends Table{
 		this._lineHeight = 30;
 		this._headerColor = "#24D330";
 		this._bodyColor = "#CCFFCC";
-		Entity.changeAttr(this, "borderColor", shadeColor1(this._headerColor, -20));
+		Entity.changeAttr(this, ATTRIBUTE_BORDER_COLOR, shadeColor1(this._headerColor, -20));
 
 		this._makeData();
 

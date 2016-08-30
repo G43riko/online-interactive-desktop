@@ -7,7 +7,7 @@ class SharerManager{
 			addPoint: (point, layer) => this._paintOperation(ACTION_PAINT_ADD_POINT, point, layer),
 			breakLine: (layer) => this._paintOperation(ACTION_PAINT_BREAK_LINE, layer),
 			clean: (layer) => this._paintOperation(ACTION_PAINT_CLEAN, layer)
-		}
+		};
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
@@ -39,21 +39,18 @@ class SharerManager{
 				}
 			};
 
-		this._socket.on('chatMessage',function(msg){
-			data = JSON.parse(msg);
+		this._socket.on('chatMessage',function(data){
 			chatViewer.recieveMessage(data["text"], data["sender"]);
 		});
 
-		this._socket.emit('startShare', JSON.stringify(data));
+		this._socket.emit('startShare', data);
 
-		this._socket.on('notification', function(msg){
-			data = JSON.parse(msg);
+		this._socket.on('notification', function(data){
 			Logger.notif("prijatá správa: " + data["msg"]);
 			console.log(data["msg"]);
 		});
 
-		this._socket.on('confirmShare', function(msg){
-			var data = JSON.parse(msg);
+		this._socket.on('confirmShare', function(data){
 			inst._id = data["id"];
 
 			var a = document.createElement("a");
@@ -74,9 +71,8 @@ class SharerManager{
 			chatViewer.show();
 		});
 
-		this._socket.on('getAllData', function(recieveData){
+		this._socket.on('getAllData', function(recData){
 			console.log("prišla žiadosť o odoslanie všetkých dát");
-			var recData = JSON.parse(recieveData);
 			var data = {
 				id: inst._id,
 				msg: {
@@ -86,7 +82,7 @@ class SharerManager{
 				},
 				target: recData.target
 			};
-			inst._socket.emit('sendAllData', JSON.stringify(data));
+			inst._socket.emit('sendAllData', data);
 		});
 	}
 
@@ -98,7 +94,7 @@ class SharerManager{
 				val: val
 			}
 		};
-		this._socket.emit('changeCreator', JSON.stringify(data));
+		this._socket.emit('changeCreator', data);
 	}
 
 	getWatcherUrl(){
@@ -132,7 +128,7 @@ class SharerManager{
 				Logger.error("nastala chyba lebo sa chce vykonať neznáma paintAction: " + action);
 				return;
 		}
-		this._socket.emit('paintAction', JSON.stringify(data));
+		this._socket.emit('paintAction', data);
 	}
 
 	sendMessage(text, sender){
@@ -143,7 +139,7 @@ class SharerManager{
 				sender: sender
 			}
 		};
-		this._socket.emit('chatMessage', JSON.stringify(data));
+		this._socket.emit('chatMessage', data);
 	}
 
 	mouseChange(){
@@ -157,7 +153,7 @@ class SharerManager{
 				buttonDown: Input.isButtonDown(LEFT_BUTTON)
 			}
 		};
-		this._socket.emit('mouseData', JSON.stringify(data));
+		this._socket.emit('mouseData', data);
 	}
 
 	objectChange(o, action, keys){
@@ -195,10 +191,10 @@ class SharerManager{
 				Logger.error("nastala chyba lebo sa chce vykonať neznáma akcia: " + action);
 				return;
 		}
-		this._socket.emit('action', JSON.stringify(data));
+		this._socket.emit('action', data);
 	}
 
 	write(msg){
-		this._socket.emit('broadcastMsg', JSON.stringify({id: this._id, msg: msg}));
+		this._socket.emit('broadcastMsg', {id: this._id, msg: msg});
 	}
 }

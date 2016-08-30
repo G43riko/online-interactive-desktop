@@ -42,7 +42,7 @@ module.exports.startWatch = function (id, socket, data){
 	};
 }
 
-module.exports.disconnect = function(socket){
+module.exports.disconnect = function(socket, isWatcher, isSharer){
 	for(var i in connections){
 		if(connections.hasOwnProperty(i)){
 			if(connections[i].owner.id == socket.id){
@@ -50,6 +50,8 @@ module.exports.disconnect = function(socket){
 				for(var j in connections[i].watchers)
 					if(connections[i].watchers.hasOwnProperty(j))
 						connections[i].watchers[j].socket.emit("endShare", "endShare");
+				if(typeof isSharer === "function")
+					isSharer(socket);
 				console.log("SHARER s id " + socket.id + " sa odpojil");
 				break;
 			}
@@ -58,6 +60,8 @@ module.exports.disconnect = function(socket){
 					//ODPOJIL SA WATCHER
 					delete connections[i].watchers[socket.id];
 					console.log("watcher s id " + socket.id + " sa odpojil");
+					if(typeof isWatcher === "function")
+						isWatcher(socket);
 					break;
 				}
 			}

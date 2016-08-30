@@ -134,6 +134,8 @@ class Entity{
 			obj["_" + attr] = val;
 		else
 			Logger.error("k objektu " + obj.name + " sa snaží priradiť neplatný atribút: " + attr);
+
+		Events.objectChange(obj, attr, val);
 		return obj;
 	}
 

@@ -1,6 +1,6 @@
 class Polygon extends Entity{
 	constructor(points, color){
-		super("Polygon", new GVector2f(), new GVector2f(), {fillColor: color});
+		super(OBJECT_POLYGON, new GVector2f(), new GVector2f(), {fillColor: color});
 		this.points 		= points;
 		this.movingPoint	= -1;
 		if(points.length < 3){

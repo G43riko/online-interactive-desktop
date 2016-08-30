@@ -1,6 +1,6 @@
 class Paint extends Entity{
 	constructor(){
-		super("Paint", new GVector2f(), new GVector2f());
+		super(OBJECT_PAINT, new GVector2f(), new GVector2f());
 		this._points 		= [Paint.defArray()];
 		this._count 		= 0;
 		this._canvas 		= document.createElement("canvas");

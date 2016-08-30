@@ -1,13 +1,16 @@
 var messages	= {},
 	startTime   = Date.now();
 	logs		= {
-		startWatch	: 0,
-		startShare	: 0,
-		connected 	: 0,
-		disconnect	: 0,
-		pageLoad	: 0,
-		overViews	: 0,
-		watchLoad	: 0
+		startWatch			: 0,
+		startShare			: 0,
+		connected 			: 0,
+		disconnect			: 0,
+		pageLoad			: 0,
+		overViews			: 0,
+		disconnectWatcher	: 0,
+		disconnectSharer	: 0,
+		overViews			: 0,
+		watchLoad			: 0
 	},
 	anonymData = [],
 	overviewSockets = [];
@@ -37,7 +40,7 @@ module.exports.messageRecieve = function (type, msg){
 	}
 
 	messages[type]["count"]++;
-	messages[type]["messages"].push(msg);
+	messages[type]["messages"].push(typeof msg === "string" ? msg : JSON.stringify(msg));
 	updateOverviews();
 }
 

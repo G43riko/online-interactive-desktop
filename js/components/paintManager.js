@@ -1,11 +1,12 @@
 class PaintManager{
 	constructor(){
-		this._brushes		= [];
-		this._selectedImage	= null;
-		this._selectedBrush	= null;
-		this._action		= PAINT_ACTION_BRUSH;
-		this._paintHistory	= [];
-		this._undoHistory	= [];
+		this._brushes			= [];
+		this._selectedImage		= null;
+		this._selectedImageName	= null;
+		this._selectedBrush		= null;
+		this._action			= PAINT_ACTION_BRUSH;
+		this._paintHistory		= [];
+		this._undoHistory		= [];
 
 		//this.paintEvents = [];
 		//this.history = [];
@@ -20,8 +21,7 @@ class PaintManager{
 	 * @param activeLayerName - názov vrstvy kde sa má bod pridať
 	 */
 	addPoint(position, activeLayerName = Layers.activeLayerName){
-		if(isSharing())
-			Sharer.paint.addPoint(position, activeLayerName);
+		Events.paintAddPoint(position, activeLayerName);
 
 		Scene.getLayer(activeLayerName).paint.addPoint(position);
 	}
@@ -33,11 +33,8 @@ class PaintManager{
 	 * @param activeLayerName - nazov vrstvy ktorá sa má vyčistiť
 	 */
 	cleanUp(activeLayerName = Layers.activeLayerName){
-		if(isSharing())
-			Sharer.paint.clean(activeLayerName);
-
+		Events.paintCleanUp(activeLayerName);
 		Scene.getLayer(activeLayerName).paint.cleanUp();
-		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	}
 
 
@@ -70,14 +67,12 @@ class PaintManager{
 	 * @param activeLayerName - vrstva na ktorej sa má ťah prerušiť
 	 */
 	breakLine(activeLayerName = Layers.activeLayerName){
-		if(isSharing())
-			Sharer.paint.breakLine(activeLayerName);
-
 		this._paintHistory.push(activeLayerName);
 
 		Scene.getLayer(activeLayerName).paint.breakLine();
 
-		Logger.log("bola ukončená čiara vo vrstve " + activeLayerName, LOGGER_PAINT_ACTION);
+		Events.paintBreakLine(activeLayerName);
+
 	}
 
 	/**
@@ -120,6 +115,8 @@ class PaintManager{
 		}
 		ctx.putImageData(imgData, 0, 0);
 		this._selectedBrush = c;
+
+		Events.paintBrushChange(size, col, this._selectedImageName);
 	}
 
 	undo(){
@@ -128,7 +125,9 @@ class PaintManager{
 		var layer = this._paintHistory.pop();
 		Scene.getLayer(layer).paint.undo();
 		this._undoHistory.push(layer);
-		Logger.log("bolo zavolane undo na vrstvu " + layer, LOGGER_PAINT_HISTORY);
+
+		Events.paintUndo(layer);
+		
 	}
 
 	redo(){
@@ -138,7 +137,8 @@ class PaintManager{
 		var layer = this._undoHistory.pop();
 		Scene.getLayer(layer).paint.redo();
 		this._paintHistory.push(layer);
-		Logger.log("bolo zavolane redo na vrstvu " + layer, LOGGER_PAINT_HISTORY);
+
+		Events.paintRedo(layer);
 	}
 
 	//GETTERS
@@ -160,6 +160,7 @@ class PaintManager{
 	 */
 	set selectedImage(title){
 		this._selectedImage = this._brushes[title];
+		this._selectedImageName = title;
 		Menu._redraw();
 	}
 }

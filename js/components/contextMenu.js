@@ -11,25 +11,25 @@ class ContextMenuManager{
 		//TODO toto prerobiť do JSON suboru
 		if(this._titles.length == 0){
 			if(movedObject){
-				if(isIn(movedObject.name, "Rect", "Polygon", "Arc","Line", "Table", "Image", "Text"))
+				if(isIn(movedObject.name, OBJECT_RECT, OBJECT_POLYGON, OBJECT_ARC, OBJECT_LINE, OBJECT_TABLE, OBJECT_IMAGE, OBJECT_TEXT))
 					this._addFields("delete", "locked", "makeCopy", "changeLayer", "changeOpacity");
 
-				if(isIn(movedObject.name, "Rect", "Polygon", "Text", "Arc"))
+				if(isIn(movedObject.name, OBJECT_RECT, OBJECT_POLYGON, OBJECT_TEXT, OBJECT_ARC))
 					this._addFields("changeFillColor", "changeBorderColor");
 
-				if(isIn(movedObject.name, "Rect", "Polygon", "Text", "Line"))
+				if(isIn(movedObject.name, OBJECT_RECT, OBJECT_POLYGON, OBJECT_TEXT, OBJECT_LINE))
 					this._addFields("radius");
 
-				if(movedObject.name == "Line")
+				if(movedObject.name == OBJECT_LINE)
 					this._addFields("joinType", "lineCap", "lineStyle", "lineType", "lineWidth", "arrowEndType", "arrowStartType");
-				else if(movedObject.name == "Table")
+				else if(movedObject.name == OBJECT_TABLE)
 					this._addFields("editTable");
-				else if(movedObject.name == "Text")
+				else if(movedObject.name == OBJECT_TEXT)
 					this._addFields("verticalTextAlign", "horizontalTextAlign");
-				else if(movedObject.name == "Image")
+				else if(movedObject.name == OBJECT_IMAGE)
 					this._addFields("changeImage");
 				else if(movedObject.name == "LayerViewer"){
-					this._addFields("visible", "lockLayer");
+					this._addFields("visible", "lockLayer", "showPaint");
 					if(!movedObject.locked)
 						this._addFields("deleteLayer", "renameLayer", "clearLayer");
 				}
@@ -43,17 +43,19 @@ class ContextMenuManager{
 
 		if(titles.length)
 			titles.forEach(function(e, i, arr){
-				if(e["type"] == "radio"){
+				if(e["type"] == INPUT_TYPE_RADIO){
 					hasExtension = true;
 					arr[i]["value"] = this._selectedObject["_" + this._key] == e["name"];
 				}
 
-				if(e["type"] == "checkbox"){
+				if(e["type"] == INPUT_TYPE_CHECKBOX){
 					hasExtension = true;
 					if(e["key"] == "locked")
 						arr[i]["value"] = movedObject.locked;
 					else if(e["key"] == "visible")
 						arr[i]["value"] = movedObject.visible;
+					else if(e["key"] == "showPaint")
+						arr[i]["value"] = movedObject.showPaint;
 				}
 			}, this);
 
@@ -122,7 +124,7 @@ class ContextMenuManager{
 			else
 				fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor, [CONTEXT_MENU_OFFSET, 0]);
 
-			if(e["type"] == "checkbox")
+			if(e["type"] == INPUT_TYPE_CHECKBOX)
 				doRect({
 					x: pX + menuWidth - offset - checkSize,
 					y: posY + offset,
@@ -130,10 +132,10 @@ class ContextMenuManager{
 					radius: 5,
 					borderColor: this.borderColor,
 					borderWidth: this.borderWidth,
-					fillColor: e["value"] ? "green" : "red",
+					fillColor: e["value"] ? CHECKBOX_COLOR_TRUE : CHECKBOX_COLOR_FALSE,
 					draw: true
 				});
-			else if(e["type"] == "radio")
+			else if(e["type"] == INPUT_TYPE_RADIO)
 				doArc({
 					x: pX + menuWidth - offset - checkSize,
 					y: posY + offset,
@@ -162,11 +164,11 @@ class ContextMenuManager{
 		Logger.log("Klikol v contextMenu na položku " + act, LOGGER_CONTEXT_CLICK);
 		switch (act) {
 			case "changeFillColor":
-				pickUpColor(color => Entity.changeAttr(this._selectedObject, "fillColor", color), this);
+				pickUpColor(color => Entity.changeAttr(this._selectedObject, ATTRIBUTE_FILL_COLOR, color), this);
 				actContextMenu = false;
 				break;
 			case "changeBorderColor":
-				pickUpColor(color => Entity.changeAttr(this._selectedObject, "borderColor", color), this);
+				pickUpColor(color => Entity.changeAttr(this._selectedObject, ATTRIBUTE_BORDER_COLOR, color), this);
 				actContextMenu = false;
 				break;
 			case "delete":
@@ -219,6 +221,10 @@ class ContextMenuManager{
 				this._selectedObject.clear(null, "table");
 				actContextMenu = false;
 				break;
+			case "showPaint":
+				this._selectedObject.toggleVisibilityOfPaint(this._position.y);
+				actContextMenu = false;
+				break;
 			case "visible":
 				this._selectedObject.toggleVisibilityOfLayer(this._position.y);
 				actContextMenu = false;
@@ -239,7 +245,7 @@ class ContextMenuManager{
 				break;
 			default:
 				if(opt.group == "roundRadius"){
-					Entity.changeAttr(this._selectedObject, "radius", opt.name, false);
+					Entity.changeAttr(this._selectedObject, ATTRIBUTE_RADIUS, opt.name, false);
 					actContextMenu = false;
 				}
 				else if(opt.group == "lineCapValue"){
@@ -255,7 +261,7 @@ class ContextMenuManager{
 					actContextMenu = false;
 				}
 				else if(opt.group == "widthValue"){
-					Entity.changeAttr(this._selectedObject, "borderWidth", opt.name);
+					Entity.changeAttr(this._selectedObject, ATTRIBUTE_BORDER_WIDTH, opt.name);
 					//this._selectedObject.borderWidth = opt.name;
 					actContextMenu = false;
 				}

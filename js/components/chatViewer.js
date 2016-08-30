@@ -46,19 +46,19 @@ class ChatViewer{
 						var backup = window.onmousemove;
 						window.onmousemove = e => this._check(e, ee, this._chatW);
 						window.onmouseup = e => window.onmousemove = backup;
-					}
+					};
 
 		 			this._textC.onkeydown = e => {
-		 				if(e.keyCode === 16)
+		 				if(e.keyCode === SHIFT_KEY)
 							this._isShifDown = true;
 
 						e.target.onkeyup = e => {
-			 				if(e.keyCode === 16)
+			 				if(e.keyCode === SHIFT_KEY)
 			 					this._isShifDown = false;
 			 				this._updateData();
 			 			};
 
-		 				if(e.keyCode == 13 && !this._isShifDown){
+		 				if(e.keyCode == ENTER_KEY && !this._isShifDown){
 		 					this._prepareMessage();	
 		 					return false;
 		 				}
@@ -84,7 +84,7 @@ class ChatViewer{
 							this._chatW.style.height  = height + "px";
 							this._histC.style.display = display;
 							this._textC.style.display = display;
-					}
+					};
 					this._chatW.style.height == "28px" ? toggle(404, "block") : toggle(28, "none");
 				}
 
@@ -107,7 +107,6 @@ class ChatViewer{
 	 			}
 
 	 			_prepareMessage(){
-	 				var message = this._textC.innerText;
 	 				var context = this._textC.innerHTML;
 	 				this._sendMessage(context);
 

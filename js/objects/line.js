@@ -1,6 +1,6 @@
 class Line extends Entity{
 	constructor(points, width, fillColor, targetA = null, targetConnectionA = null) {
-		super("Line", new GVector2f(), new GVector2f(), {fillColor: fillColor, borderWidth: width});
+		super(OBJECT_LINE, new GVector2f(), new GVector2f(), {fillColor: fillColor, borderWidth: width});
 		this._points 			= points;
 		this.movingPoint		= -1;
 		this._lineCap			= LINE_CAP_BUTT;

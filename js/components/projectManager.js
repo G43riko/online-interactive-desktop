@@ -49,9 +49,7 @@ class ProjectManager{
 	}
 
 	_sendAnonymousData(data = {}){
-		var sendData = function(content){
-			$.post(ProjectManager.url, {content: JSON.stringify(content)});
-		}
+		var sendData = c =>	$.post(ProjectManager.url, {content: JSON.stringify(c)});
 		data["userAgent"] = navigator.userAgent;
 		data["language"] = navigator.language;
 		data["platform"] = navigator.platform;

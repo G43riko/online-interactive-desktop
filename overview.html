@@ -40,11 +40,6 @@
 </head>
 <body>
 	<table id="logTable">
-		<tr>
-			<th>Key</th>
-			<th>Value</th>
-		</tr>
-		<tbody id="logTableBody"></tbody>
 	</table>
 
 	<div style="overflow-x:auto;">
@@ -52,74 +47,179 @@
 		</table>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript">	
+		var obj2 = [
+			{
+				label: "Avail. height",
+				key: "availHeight",
+				visible: true
+			},
+			{
+				label: "Avail. width",
+				key: "availWidth",
+				visible: true
+			},
+			{
+				label: "Accuracy",
+				key: "accuracy",
+				visible: true
+			},
+			{
+				label: "Browser",
+				key: "browser",
+				visible: true
+			},
+			{
+				label: "Connect time",
+				key: "connectedAt",
+				visible: true
+			},
+			{
+				label: "Inner height",
+				key: "innerHeight",
+				visible: true
+			},
+			{
+				label: "Inner width",
+				key: "innerWidth",
+				visible: true
+			},
+			{
+				label: "IP",
+				key: "ipAddress",
+				visible: true
+			},
+			{
+				label: "Language",
+				key: "language",
+				visible: true
+			},
+			{
+				label: "Mobile",
+				key: "mobile",
+				visible: true
+			},
+			{
+				label: "OS",
+				key: "os",
+				visible: true
+			},
+			{
+				label: "User agent",
+				key: "userAgent",
+				visible: false
+			},
+			{
+				label: "Platform",
+				key: "platform",
+				visible: true
+			},
+			{
+				label: "Tablet",
+				key: "tablet",
+				visible: true
+			},
+			{
+				label: "Touch",
+				key: "touch",
+				visible: true
+			},
+			{
+				label: "Vendor",
+				key: "vendor",
+				visible: true
+			}
+		]
+		var obj = [
+			{
+				label: "Začatých sledovaní",
+				key: "startWatch"
+			},{
+				label: "Začatých zdielaní",
+				key: "startShare"
+			},{
+				label: "Pripojených",
+				key: "connected"
+			},{
+				label: "Odpojených",
+				key: "disconnect"
+			},{
+				label: "Načítaných stránok",
+				key: "pageLoad"
+			},{
+				label: "Načítaných prehladov",
+				key: "overViews"
+			},{
+				label: "Odpojených Watcherow",
+				key: "disconnectWatcher"
+			},{
+				label: "Odpojených Sharerow",
+				key: "disconnectSharer"
+			},{
+				label: "Načítanych watchov",
+				key: "watchLoad"
+			}
+		]
+
 		var socket = io();
 		var wasInit = false;
-		var logTableBody = document.getElementById("logTableBody");
+		var logTable = document.getElementById("logTable");
 
-		function init(msg){
-			wasInit = true;
-			var result = "";
-			for(var i in msg.logs){
-				if(msg.logs.hasOwnProperty(i)){
-					result += '<tr><td>' + i + ': </td>';
-					result += '<td id="' + i + '">' + msg.logs[i] + '</td></tr>';
+		function setLogData(data){
+			var result = "<tr><th>Key</th><th>Value</th></tr>";
+			for(var i in obj)
+				if(obj.hasOwnProperty(i)){
+					result += '<tr><td>' + obj[i].label + ': </td>';
+					result += '<td id="' + obj[i].key + '">' + data[obj[i].key] + '</td></tr>';
 				}
-			}
-			logTableBody.innerHTML += result;
+			logTable.innerHTML = result;
 		}
 
 		function getOrCreate(id){
 			var el = document.getElementById("msg_" + id);
 			if(!el)
-				logTableBody.innerHTML += '<tr><td>msg_' + id + ': </td><td id="msg_' + id + '"></td></tr>';
+				logTable.innerHTML += '<tr><td>msg_' + id + ': </td><td id="msg_' + id + '"></td></tr>';
 			
 			return document.getElementById("msg_" + id);;
 		}
 
 		function setAnonymData(data){
-			var string = "<tr><th>accuraci</th><th>availHeight</th><th>availWidth</th><th>browser</th><th>ConnectedTime</th><th>innerHeight</th><th>innerWidth</th><th>IP</th><th>lang</th><th>mobile</th><th>OS</th><th>platform</th><th>tablet</th><th>touch</th><th>vendor</th></tr>";
+			var string = "<tr>";
 
-			for(var i in data)
+			for(var i in obj2)
+				if(obj2.hasOwnProperty(i) && obj2[i].visible)
+					string += "<th>" + obj2[i].label + "</th>";
+			string += "</tr>";
+
+			for(var i in data){
 				if(data.hasOwnProperty(i)){
-					string += "<tr><td>" + data[i].accuracy + "</td>";
-					string += "<td>" + data[i].availHeight + "</td>";
-					string += "<td>" + data[i].availWidth + "</td>";
-					string += "<td>" + data[i].browser + "</td>";
-					string += "<td>" + data[i].connectedAt + "</td>";
-					string += "<td>" + data[i].innerHeight + "</td>";
-					string += "<td>" + data[i].innerWidth + "</td>";
-					string += "<td>" + data[i].ipAddress + "</td>";
-					string += "<td>" + data[i].language + "</td>";
-					string += "<td>" + data[i].mobile + "</td>";
-					string += "<td>" + data[i].os + "</td>";
-					string += "<td>" + data[i].platform + "</td>";
-					string += "<td>" + data[i].tablet + "</td>";
-					string += "<td>" + data[i].touch + "</td>";
-					string += "<td>" + data[i].vendor + "</td>";
-					//string += "<td>" + data[i].userAgent + "</td></tr>";
+					string += "<tr>";
+					for(var j in obj2)
+						if(obj2.hasOwnProperty(j) && obj2[j].visible){
+							var d = data[i][obj2[j].key];
+							if(d === 0 || d === false)
+								d = "Nie";
+							else if(d === 1 || d === true)
+								d = "Áno";
+							string += "<td>" + d + "</td>";
+						}
+					string += "</tr>";
 				}
+			}
 
 			document.getElementById("anonymTable").innerHTML = string;
 		}
 
 		socket.on("dataRecieve", function(msg){
-			if(!wasInit)
-				init(msg);
 			console.log(msg);
 
-			for(var i in msg.logs){
-				if(msg.logs.hasOwnProperty(i)){
-					document.getElementById(i).innerHTML = msg.logs[i];
-				}
-			}
 
-			for(var i in msg.messages){
-				if(msg.messages.hasOwnProperty(i)){
+			for(var i in msg.messages)
+				if(msg.messages.hasOwnProperty(i))
 					getOrCreate(i).innerHTML = msg.messages[i].count;
-				}
-			}
+				
 
+			setLogData(msg.logs);
 			setAnonymData(msg.anonym);
 		})
 		socket.emit('dataReqiere', JSON.stringify({user:"user",passw: "user"}));

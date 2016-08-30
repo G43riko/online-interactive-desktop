@@ -4,15 +4,10 @@ class CreatorViewer extends Entity{
 		this._items 		= [];
 		this._canvas		= document.createElement("canvas");
 		this._context 		= this._canvas.getContext('2d');
-		/*
-		 * - itemName - názov možnosti(borderColor);
-		 * - itemValue - hodnota (#FFFFFF);
-		 * - itemsSelected = false - či sa majú zpbrazovať aj možnosti;
-		 * - itemsValues - zoznam možností;
-		 */
+		
 		Entity.changeAttr(this,{
-			fillColor: "#1abc9c",
-			borderColor: "black",
+			fillColor: MENU_BACKGROUND_COLOR,
+			borderColor: MENU_BORDER_COLOR,
 			borderWidth: MENU_BORDER_WIDTH,
 			radius: MENU_RADIUS
 		});
@@ -67,7 +62,7 @@ class CreatorViewer extends Entity{
 					this._drawIcon(i, ee, counter, posY);
 					posY += MENU_HEIGHT;
 				}, this);
-			else if(i == "fontColor")
+			else if(i == ATTRIBUTE_FONT_COLOR)
 				fillText("Abc", counter + (MENU_WIDTH >> 1), posY + (MENU_HEIGHT >> 1), DEFAULT_FONT_SIZE, Creator.fontColor, 0, FONT_ALIGN_CENTER, this._context);
 			else{
 				arr[i]["selectedIndex"] = 0;
@@ -81,40 +76,40 @@ class CreatorViewer extends Entity{
 
 	_drawIcon(key, value, posX, posY, width = MENU_WIDTH, height = MENU_HEIGHT,  offset = 5){
 		switch(key){
-			case "lineWidth" :
+			case ATTRIBUTE_LINE_WIDTH :
 				doLine({
 					points: [posX + offset, posY + (height >> 1), posX + width - offset, posY + (height >> 1)],
 					borderWidth: value,
-					borderColor: "black",
+					borderColor: MENU_BORDER_COLOR,
 					ctx: this._context
 				});
 				break;
-			case "radius" :
+			case ATTRIBUTE_RADIUS :
 				doRect({
 					position: [posX + (offset << 1), posY + (offset << 1)],
 					size: [width - (offset << 2), height - (offset << 2)],
 					borderWidth: 5,
-					borderColor: "black",
+					borderColor: MENU_BORDER_COLOR,
 					radius: value,
 					ctx: this._context
 				});
 				break;
-			case "fillColor" :
+			case ATTRIBUTE_FILL_COLOR :
 				doRect({
 					position: [posX + (offset << 1), posY + (offset << 1)],
 					size: [width - (offset << 2), height - (offset << 2)],
 					borderWidth: 5,
-					borderColor: "black",
-					fillColor: Creator["fillColor"],
+					borderColor: MENU_BORDER_COLOR,
+					fillColor: Creator[ATTRIBUTE_FILL_COLOR],
 					ctx: this._context
 				});
 				break;
-			case "brushType":
+			case ATTRIBUTE_BRUSH_TYPE:
 				if(value === "line")
 					doArc({
 						position: [posX + (offset << 1), posY + (offset << 1)],
 						size: [width - (offset << 2), height - (offset << 2)],
-						fillColor: "black",
+						fillColor: MENU_BACKGROUND_COLOR,
 						ctx: this._context
 					});
 				else
@@ -125,46 +120,46 @@ class CreatorViewer extends Entity{
 						ctx: this._context
 					});
 				break;
-			case "brushColor" :
+			case ATTRIBUTE_BRUSH_COLOR :
 				doArc({
 					position: [posX + (offset << 1), posY + (offset << 1)],
 					size: [width - (offset << 2), height - (offset << 2)],
-					fillColor: Creator["brushColor"],
+					fillColor: Creator[ATTRIBUTE_BRUSH_COLOR],
 					ctx: this._context
 				});
 				break;
-			case "brushSize" :
+			case ATTRIBUTE_BRUSH_SIZE :
 				doArc({
 					position: [posX + (width >> 1), posY + (height >> 1)],
 					size: [value , value ],
 					center: true,
-					fillColor: "black",
+					fillColor: MENU_BORDER_COLOR,
 					ctx: this._context
 				});
 				break;
-			case "borderColor" :
+			case ATTRIBUTE_BORDER_COLOR :
 				doRect({
 					position: [posX + (offset << 1), posY + (offset << 1)],
 					size: [width - (offset << 2), height - (offset << 2)],
 					borderWidth: 5,
-					borderColor: Creator["borderColor"],
+					borderColor: Creator[ATTRIBUTE_BORDER_COLOR],
 					ctx: this._context
 				});
 				break;
-			case "borderWidth" :
+			case ATTRIBUTE_BORDER_WIDTH :
 				doRect({
 					position: [posX + (offset << 1), posY + (offset << 1)],
 					size: [width - (offset << 2), height - (offset << 2)],
 					borderWidth: value,
-					borderColor: "black",
+					borderColor: MENU_BORDER_COLOR,
 					ctx: this._context
 				});
 				break;
-			case "fontSize" :
-				fillText("Abc", posX + (width >> 1), posY + (height >> 1), value, "black", 0, FONT_ALIGN_CENTER, this._context);
+			case ATTRIBUTE_FONT_SIZE :
+				fillText("Abc", posX + (width >> 1), posY + (height >> 1), value, MENU_BACKGROUND_COLOR, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			default :
-				fillText(key, posX + (width >> 1), posY + (height >> 1), 7, "black", 0, FONT_ALIGN_CENTER, this._context);
+				fillText(key, posX + (width >> 1), posY + (height >> 1), 7, MENU_FONT_COLOR, 0, FONT_ALIGN_CENTER, this._context);
 		}
 	}
 
@@ -208,15 +203,15 @@ class CreatorViewer extends Entity{
 	static allowedOption(operation, allowed){
 		switch(operation){
 			case 1000:
-				return isIn("Rect", allowed);
+				return isIn(OBJECT_RECT, allowed);
 			case 1001:
-				return isIn("Arc", allowed);
+				return isIn(OBJECT_ARC, allowed);
 			case 1002:
-				return isIn("Paint", allowed);
+				return isIn(OBJECT_PAINT, allowed);
 			case 1003:
-				return isIn("Line", allowed);
+				return isIn(OBJECT_LINE, allowed);
 			case 1004:
-				return isIn("Join", allowed);
+				return isIn(OBJECT_JOIN, allowed);
 		}
 		return false;
 	}
@@ -256,7 +251,7 @@ class CreatorViewer extends Entity{
 				borderWidth: this._borderWidth
 			});
 
-			fillText(e["key"], this.position.x + counter + (MENU_WIDTH >> 1), this.position.y + MENU_OFFSET + (MENU_HEIGHT >> 1), 7, "black", 0, FONT_ALIGN_CENTER);
+			fillText(e["key"], this.position.x + counter + (MENU_WIDTH >> 1), this.position.y + MENU_OFFSET + (MENU_HEIGHT >> 1), 7, MENU_FONT_COLOR, 0, FONT_ALIGN_CENTER);
 
 			if(e["itemsSelected"] && isDefined(e["item"]["values"])){
 				var num = this.position.y + MENU_OFFSET;
@@ -286,11 +281,3 @@ class CreatorViewer extends Entity{
 		}, this);
 	}
 }
-/*
- items{
- image: image,
- allowedFor["paint"],
- type: nazov attributu,
- values: [values]
- }
- */

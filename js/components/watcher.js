@@ -25,15 +25,13 @@ class WatcherManager{
 				},
 				id: this._id
 			};
-		this._socket.emit('startWatch', JSON.stringify(data));
+		this._socket.emit('startWatch', data);
 
-		this._socket.on('chatMessage',function(msg){
-			data = JSON.parse(msg);
+		this._socket.on('chatMessage',function(data){
 			chatViewer.recieveMessage(data["text"], data["sender"]);
 		});
 
-		this._socket.on('notification', function(msg){
-			data = JSON.parse(msg);
+		this._socket.on('notification', function(data){
 			Logger.notif("prijatá správa: " + data["msg"]);
 			console.log(data["msg"]);
 		});
@@ -56,28 +54,27 @@ class WatcherManager{
 
 
 			WatcherManager._tryPasswordCounter++;
-			inst._socket.emit('completeAuth', JSON.stringify({passwd: pass, id: inst._id}));
+			inst._socket.emit('completeAuth', {passwd: pass, id: inst._id});
 		});
 
 		this._socket.on('endShare', function(){
 			console.log("sharer je offline");
 		});
 
-		this._socket.on("changeCreator", function(msg){
-			data = JSON.parse(msg);
+		this._socket.on("changeCreator", function(data){
 			Creator.setOpt(data.key, data.val);
 		});
 
 		this._socket.on("action", function(msg){
-			WatcherManager.processOperation(JSON.parse(msg));
+			WatcherManager.processOperation(msg);
 		});
 
 		this._socket.on("paintAction", function(msg){
-			WatcherManager.processPaintAction(JSON.parse(msg));
+			WatcherManager.processPaintAction(msg);
 		});
 
-		this._socket.on("mouseData", function(msg){
-			inst._mouseData = JSON.parse(msg);
+		this._socket.on("mouseData", function(data){
+			inst._mouseData = data;
 			inst._context.clearRect(0, 0, inst._canvas.width, inst._canvas.height);
 			doArc({
 				x: inst._mouseData.posX - 20,
@@ -89,7 +86,7 @@ class WatcherManager{
 			})
 		});
 
-		this._socket.on('sendAllData', msg => WatcherManager.processContent(JSON.parse(msg)));
+		this._socket.on('sendAllData', msg => WatcherManager.processContent(msg));
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
@@ -101,7 +98,7 @@ class WatcherManager{
 				sender: sender
 			}
 		};
-		this._socket.emit('chatMessage', JSON.stringify(data));
+		this._socket.emit('chatMessage', data);
 	}
 
 	static processContent(content){

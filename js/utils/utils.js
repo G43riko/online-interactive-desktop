@@ -1,9 +1,3 @@
-function round(number, value = DEFAULT_ROUND_VAL){
-	if(value == 1)
-		return number;
-	return Math.floor(number / value) * value;
-}
-
 function isIn(obj, data){
 	//return arguments.some((e, i) => i && e === obj);
 	var i;
@@ -18,10 +12,6 @@ function isIn(obj, data){
 				return true;
 
 	return false;
-}
-
-function nvl(obj1, obj2){
-	return obj1 ? obj1 : obj2;
 }
 
 function roughSizeOfObject(object) {
@@ -62,8 +52,10 @@ var isUndefined 	= e => typeof e === "undefined",
 	isInt 			= e => Number(e) === e && e % 1 === 0,
 	isFloat 		= e => Number(e) === e && e % 1 !== 0,
 	callIfFunc 		= e => isFunction(e) ? e() : false,
-	angleBetween 	= (a, b) => Math.atan2(b.y, b.x) - Math.atan2(a.y, a.x);
-	getClassOf 		= Function.prototype.call.bind(Object.prototype.toString);
+	angleBetween 	= (a, b) => Math.atan2(b.y, b.x) - Math.atan2(a.y, a.x),
+	getClassOf 		= Function.prototype.call.bind(Object.prototype.toString),
+	nvl				= (obj1, obj2) => obj1 ? obj1 : obj2,
+	round 			= (num, val = DEFAULT_ROUND_VAL) => val === 1 ? num : Math.floor(num / val) * val;
 
 function each(obj, func, thisArg = false){
 	var i;
@@ -136,7 +128,7 @@ Movement = {
 							o.size.y += y;
 						break
 				}
-				EventHistory.addObjectMoveAction(o, oldPos, oldSize, o.moveType);
+				//EventHistory.addObjectMoveAction(o, oldPos, oldSize, o.moveType);
 			}
 		}
 		else if(isDefined(o.movingPoint)){
@@ -155,9 +147,7 @@ Movement = {
 		else
 			o.position.add(x, y);
 
-		if(isDefined(Sharer) && Sharer.isSharing)
-			Sharer.objectChange(o, ACTION_OBJECT_MOVE);
-
+		Events.objectMove(o);
 	}
 };
 
@@ -203,15 +193,15 @@ function getText(text, position, size, func, thisArg){
 	x.select().focus();
 }
 
+function getFormattedDate(ms = Date.now()) {
+	var date = new Date(ms);
+	return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+}
+
 function setCookie(cname, cvalue, exdays) {
 	var d = new Date();
 	d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
 	document.cookie = cname + "=" + cvalue + ";expires="+ d.toUTCString();
-}
-
-function getFormattedDate(ms = Date.now()) {
-	var date = new Date(ms);
-	return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 }
 
 function getCookie(cname) {
@@ -252,23 +242,6 @@ function drawBorder(o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 		drawSelectArc(o.position.x + o.size.x, o.position.y + o.size.y);
 }
 
-function shadeColor1(color, percent) {  // deprecated. See below.
-	var num = parseInt(color.slice(1), 16),
-		amt = Math.round(2.55 * percent), 
-		R = (num >> 16) + amt, 
-		G = (num >> 8 & 0x00FF) + amt,
-		B = (num & 0x0000FF) + amt;
-	return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + 
-							  (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + 
-							  (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
-}
-
-function hexToRGBA(color) {
-	var num = parseInt(color.slice(1), 16);
-	return [num >> 16, num >> 8 & 0x00FF, num & 0x0000FF];
-}
-
-
 function objectToArray(obj){
 	var result = [];
 	each(obj, e => result.push(e));
@@ -308,7 +281,7 @@ function drawSelectArc(x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE << 1 	
 		fillColor: color,
 		borderWidth: DEFAULT_STROKE_WIDTH << 1,
 		lineDash:  dots ? [15, 5] : [],
-		borderColor: "black"
+		borderColor: SELECTOR_BORDER_COLOR
 
 	});
 }
@@ -321,7 +294,7 @@ function getMousePos(canvasDom, mouseEvent) {
 	};
 }
 
-class EventManager{
+class EventTimer{
 	constructor(event, time){
 		this._event = event;
 		this._time = time;

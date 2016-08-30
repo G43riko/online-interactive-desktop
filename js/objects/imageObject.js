@@ -1,6 +1,6 @@
 class ImageObject extends Entity{
 	constructor(position, size, image, data){
-		super("Image", position, size, data);
+		super(OBJECT_IMAGE, position, size, data);
 		this._radius = 20;
 
 		this._image = image || null;

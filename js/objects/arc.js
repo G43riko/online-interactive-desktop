@@ -1,6 +1,6 @@
 class Arc extends Entity{
 	constructor(position, size, fillColor){
-		super("Arc", position, size, {fillColor: fillColor, minSize: new GVector2f(SELECTOR_SIZE)});
+		super(OBJECT_ARC, position, size, {fillColor: fillColor, minSize: new GVector2f(SELECTOR_SIZE)});
 		this.moveType 	= -1;
 	};
 

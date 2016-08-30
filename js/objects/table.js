@@ -1,6 +1,6 @@
 class Table extends Entity{
 	constructor(position, size, data = [[]]){
-		super("Table", position, size, {borderColor: shadeColor1(TABLE_HEADER_COLOR, -20), radius: TABLE_RADIUS});
+		super(OBJECT_TABLE, position, size, {borderColor: shadeColor1(TABLE_HEADER_COLOR, -20), radius: TABLE_RADIUS});
 		this.data = data;
 		this._headerColor 	= TABLE_HEADER_COLOR;
 		this.moveType 		= -1;

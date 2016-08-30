@@ -6,17 +6,17 @@ class LayersViewer extends Entity{
 	constructor(){
 		super("LayerViewer", new GVector2f(1300, 100), new GVector2f(180, 500));
 		Entity.changeAttr(this, {
-			fillColor: "#1abc9c",
-			borderColor: "black",
+			fillColor: MENU_BACKGROUND_COLOR,
+			borderColor: MENU_BORDER_COLOR,
 			borderWidth: 2
 		});
 
-		this._buttonFillColor 	= "#ABD6BB";
-		this._activeLayerColor  = "#ABD6BB";
+		this._buttonFillColor 	= MENU_DISABLED_BG_COLOR;
+		this._activeLayerColor  = MENU_DISABLED_BG_COLOR;
 		this._minimalized		= false;
 		this._layerPanelHeight 	= 50;
 		this._fontSize 			= 20;
-		this._fontColor 		= "black";
+		this._fontColor 		= MENU_FONT_COLOR;
 		this._checkBoxSize 		= 30;
 		this._checkYOffset 		= ((this._layerPanelHeight - this._checkBoxSize) >> 1);
 		this._activeLayer		= "default";
@@ -36,7 +36,7 @@ class LayersViewer extends Entity{
 	/**
 	 * vytvorý novú vrstvu v LayerVieweri a v scéne
 	 *
-	 * @param title - názov vrstvy
+	 * @param layer - novovytvorená vrstva
 	 */
 	createLayer(layer){
 		var order = this._offset + this._layersCount++;
@@ -141,6 +141,15 @@ class LayersViewer extends Entity{
 		getText(layer.title, this.position.x, this.position.y + i * this._layerPanelHeight, val => layer.title = val);
 	}
 
+	toggleVisibilityOfPaint(num){
+		var i = this._getLayerOfYPos(num);
+
+		each(this._layers, function(e){
+			if(e.offset === i)
+				e.layer.drawPaint = !e.layer.drawPaint;
+		}, this);
+	}
+
 	toggleVisibilityOfLayer(num){
 		var i = this._getLayerOfYPos(num);
 
@@ -152,7 +161,7 @@ class LayersViewer extends Entity{
 	}
 
 	_drawLayer(layer){
-		var checkColor 	= layer.layer._visible ? "green" : "red",
+		var checkColor 	= layer.layer._visible ? CHECKBOX_COLOR_TRUE : CHECKBOX_COLOR_FALSE,
 			//posY 		= this.position.y + order * this._layerPanelHeight;
 			posY 		= this.position.y + layer.posY;
 		doRect({

@@ -8,8 +8,8 @@ class MenuManager{
 		this._toolActive 				= false;
 		this._fontColor 				= MENU_FONT_COLOR;
 		//this._backgroundColor 		= "rgb(153, 217, 234)";
-		this._backgroundColor 			= "#1abc9c";
-		this._disabledBackgroundColor 	= "#ABD6BB";
+		this._backgroundColor 			= MENU_BACKGROUND_COLOR;
+		this._disabledBackgroundColor 	= MENU_DISABLED_BG_COLOR;
 		this._position 					= position.add(MENU_OFFSET);
 		this._offset 					= MENU_OFFSET;
 		this._size 						= size;
@@ -173,12 +173,13 @@ class MenuManager{
 	}
 
 	_doClickAct(val){
+		var key = val.key;
+
 		if(val.disabled){
 			Logger.log("Klikol v menu na disablovanu položku " + key, LOGGER_MENU_CLICK);
 			return;
 		}
 
-		var key = val.key;
 		Logger.log("Klikol v menu na položku " + key, LOGGER_MENU_CLICK);
 		if(isIn(key, "file", "content", "sharing")){
 			this._visibleSubMenu = key;
@@ -189,7 +190,7 @@ class MenuManager{
 				this._toolActive = "tools";
 				break;
 			case "color":
-				pickUpColor(color => Creator.setOpt("fillColor", color));
+				pickUpColor(color => Creator.setOpt(ATTRIBUTE_FILL_COLOR, color));
 				break;
 			case "options":
 				showOptions();
@@ -346,7 +347,7 @@ class MenuManager{
 	_redraw(){
 		this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
 		this._tmpDrawArray.forEach(function(e){
-			this._drawIcon(e, e.x * this._size.x, e.y * this._size.y, 5, this._size.x, this._size.y);
+			this._drawIcon(e, e.x * this._size.x, e.y * this._size.y, 5, this._size.x, this._size.y, this._fontColor);
 		}, this);
 
 		Logger.log("prekresluje sa " + this.constructor.name, LOGGER_DRAW);
@@ -379,64 +380,64 @@ class MenuManager{
 							 new GVector2f(x + width - (offset << 1), y + (height >> 1)),
 							 new GVector2f(x + offset, y +  height - (offset << 1)),
 							 new GVector2f(x + width - (offset << 1), y + offset)],
-					borderWidth: DEFAULT_STROKE_WIDTH,
-					borderColor: "black",
+					borderWidth: strokeWidth,
+					borderColor: strokeColor,
 					ctx: this._context
 				});
 				break;
 			case "text":
-				fillText("TEXT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("TEXT", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "ctrl":
-				fillText("CTRL", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("CTRL", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "file":
-				fillText("FILE", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("FILE", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "content":
-				fillText("CONT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("CONT", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "watch":
-				fillText("WATCH", x + (width >> 1), y + (height >> 1), height / 6, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("WATCH", x + (width >> 1), y + (height >> 1), height / 6, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "shareOptions":
-				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "stopShare":
-				fillText("STOP", x + (width >> 1), y + (height >> 1), height  / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("STOP", x + (width >> 1), y + (height >> 1), height  / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "startShare":
-				fillText("START", x + (width >> 1), y + (height >> 1), height  / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("START", x + (width >> 1), y + (height >> 1), height  / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "sharing":
-				fillText("SHARE", x + (width >> 1), y + (height >> 1), height / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("SHARE", x + (width >> 1), y + (height >> 1), height / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "loadLocalImage":
-				fillText("locImg", x + (width >> 1), y + (height >> 1), height / 6, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("locImg", x + (width >> 1), y + (height >> 1), height / 6, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "loadLocalHTML":
-				fillText("locHTML", x + (width >> 1), y + (height >> 1), height / 6, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("locHTML", x + (width >> 1), y + (height >> 1), height / 6, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "loadExternalImage":
-				fillText("extImg", x + (width >> 1), y + (height >> 1), height / 6, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("extImg", x + (width >> 1), y + (height >> 1), height / 6, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "loadExternalHTML":
-				fillText("extHTML", x + (width >> 1), y + (height >> 1), height / 6, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("extHTML", x + (width >> 1), y + (height >> 1), height / 6, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "saveImg":
-				fillText("SAVE IMG", x + (width >> 1), y + (height >> 1), height >> 3, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("SAVE IMG", x + (width >> 1), y + (height >> 1), height >> 3, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "saveXML":
-				fillText("SAVE XML", x + (width >> 1), y + (height >> 1), height >> 3, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("SAVE XML", x + (width >> 1), y + (height >> 1), height >> 3, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "saveTask":
-				fillText("SAVE TASK", x + (width >> 1), y + (height >> 1), height >> 3, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("SAVE TASK", x + (width >> 1), y + (height >> 1), height >> 3, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "loadXML":
-				fillText("LOAD XML", x + (width >> 1), y + (height >> 1), height >> 3, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("LOAD XML", x + (width >> 1), y + (height >> 1), height >> 3, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "options":
-				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "table":
 				var lines = 4;
@@ -458,30 +459,30 @@ class MenuManager{
 					borderWidth: strokeWidth,
 					borderColor: strokeColor,
 					ctx: this._context
-				})
+				});
 				//fillText("TAB", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "class":
-				fillText("CLASS", x + (width >> 1), y + (height >> 1), height / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("CLASS", x + (width >> 1), y + (height >> 1), height / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "image":
-				fillText("IMG", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("IMG", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "tools":
-				fillText("TOOLS", x + (width >> 1), y + (height >> 1), height / 5, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("TOOLS", x + (width >> 1), y + (height >> 1), height / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "polygon":
-				fillText("POLY", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("POLY", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 
 			case "help":
-				fillText("HELP", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("HELP", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "defaultWidth":
 				doLine({
 					points: [x + offset, y + (height >> 1), x + width - offset, y + (height >> 1)],
 					borderWidth: type.value,
-					borderColor: "black",
+					borderColor: strokeColor,
 					ctx: this._context
 				});
 				break;
@@ -495,7 +496,7 @@ class MenuManager{
 				doLine({
 					points: [x + offset, y + (height >> 1), x + width - offset, y + (height >> 1)],
 					borderWidth: Creator.lineWidth,
-					borderColor: "black",
+					borderColor: this._fontColor,
 					ctx: this._context
 				});
 
@@ -510,10 +511,10 @@ class MenuManager{
 					[new GVector2f(x + offset, y +  height - (offset << 1)), new GVector2f(x + width - (offset << 1), y + (height >> 1))],
 					[new GVector2f(x + offset, y + offset), new GVector2f(x + offset, y +  height - (offset << 1))],
 					[new GVector2f(x + width - (offset << 1), y + (height >> 1)), new GVector2f(x + width - (offset << 1), y + offset)],
-					[new GVector2f(x + offset, y +  height - (offset << 1)), new GVector2f(x + offset, y + offset)]], DEFAULT_STROKE_WIDTH, "black", this._context);
+					[new GVector2f(x + offset, y +  height - (offset << 1)), new GVector2f(x + offset, y + offset)]], strokeWidth, strokeColor, this._context);
 				break;
 			case "join":
-				fillText("JOIN", x + (width >> 1), y + (height >> 1), height >> 2, this._fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("JOIN", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 		}
 	}
