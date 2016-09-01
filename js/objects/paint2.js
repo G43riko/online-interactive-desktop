@@ -1,7 +1,7 @@
 class Paint extends Entity{
 	constructor(color, width){
 		super("Paint", new GVector2f(), new GVector2f());
-		Entity.changeAttr(this, "borderWidth", width);
+		Entity.changeAttr(this, ATTRIBUTE_BORDER_WIDTH, width);
 		this._points 		= {};
 		this._points[color] = [[]];
 		this._count 		= 0;

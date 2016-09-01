@@ -22,6 +22,9 @@ const FONT_VALIGN_BOTT		= "bottom";
 const FONT_ALIGN_CENTER = 10;
 const FONT_ALIGN_NORMAL = 11;
 
+const FOLDER_IMAGE = "/img";
+const FOLDER_JSON = "/js/json";
+
 const SELECTOR_SIZE 		= 10;
 const SELECTOR_COLOR		= "orange";
 const SELECTOR_BORDER_COLOR	= "black";
@@ -90,6 +93,7 @@ const DEFAULT_LINE_STYLE		= LINE_STYLE_NORMAL;
 const DEFAULT_BRUSH_SIZE		= 20;
 const DEFAULT_BRUSH_TYPE 		= "brush1.png";
 const DEFAULT_BRUSH_COLOR 		= "#000000";
+const DEFAULT_LAYER_TITLE 		= "default";
 
 const CONTEXT_MENU_LINE_HEIGHT 	= 40;
 const CONTEXT_MENU_FONT_COLOR 	= DEFAULT_FONT_COLOR;
@@ -120,9 +124,9 @@ const TABLE_RADIUS 			= 10;
 const TABLE_TEXT_OFFSET		= 5;
 
 
-/*R*/const PUBLIC_ACCESS 	= "+";
-/*R*/const PRIVATE_ACCESS 	= "-";
-/*R*/const PROTECTED_ACCESS = "#";
+const ACCESS_PUBLIC 	= "+";
+const ACCESS_PRIVATE 	= "-";
+const ACCESS_PROTECTED = "#";
 
 const ACTION_OBJECT_MOVE 		= 2310;
 const ACTION_OBJECT_CREATE		= 2311;
@@ -136,6 +140,12 @@ const ACTION_PAINT_CHANGE_BRUSH	= 2317;
 const PAINT_ACTION_BRUSH	= 2400;
 const PAINT_ACTION_LINE		= 2401;
 
+const KEYWORD_OBJECT		= "object";
+const KEYWORD_STRING		= "string";
+const KEYWORD_NUMBER		= "number";
+const KEYWORD_BOOLEAN		= "boolean";
+const KEYWORD_FUNCTION		= "function";
+const KEYWORD_UNDEFINED		= "undefined";
 const KEYWORD_TRANSPARENT	= "transparent";
 /*R*/const PI2 = Math.PI * 2;
 

@@ -19,7 +19,7 @@ class LayersViewer extends Entity{
 		this._fontColor 		= MENU_FONT_COLOR;
 		this._checkBoxSize 		= 30;
 		this._checkYOffset 		= ((this._layerPanelHeight - this._checkBoxSize) >> 1);
-		this._activeLayer		= "default";
+		this._activeLayer		= DEFAULT_LAYER_TITLE;
 		this._layers 			= {};
 		this._offset			= 1;
 		this._buttonSize 		= 40;
@@ -100,7 +100,7 @@ class LayersViewer extends Entity{
 		 * Ak sa maže posledná vrstva nastaví sa ako aktualna defaultná vrstva
 		 */
 		if(this._activeLayer === title)
-			this._activeLayer = "default";
+			this._activeLayer = DEFAULT_LAYER_TITLE;
 
 		delete this._layers[title];
 	}

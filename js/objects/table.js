@@ -120,7 +120,7 @@ class Table extends Entity{
 	_calcMaxTextWidth(value = 0){
 		var w;
 		context.font = this._fontSize + "pt " + DEFAULT_FONT;
-		if(typeof value === "string"){
+		if(isString(value)){
 			w = context.measureText(value).width + (this._textOffset << 1);
 			if(w > this._maxTextWidth){
 				this._maxTextWidth = w;

@@ -12,7 +12,7 @@ class SceneManager{
 	cleanUp(){
 		each(this._layers, e => {
 			e.cleanUp();
-			if(e.title !== "default")
+			if(e.title !== DEFAULT_LAYER_TITLE)
 				this.deleteLayer(e.title);
 		});
 
@@ -20,7 +20,7 @@ class SceneManager{
 		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	};
 
-	createLayer(title = "default", layerType = ""){
+	createLayer(title = DEFAULT_LAYER_TITLE, layerType = ""){
 		if(this._layers.hasOwnProperty(title))
 			Logger.error("ide sa vytvoriť vrstva ktorá už existuje: " + title);
 		this._layers[title] = new Layer(title, layerType);

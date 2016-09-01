@@ -1,5 +1,5 @@
 class Class extends Table{
-	constructor(position, size, title, attributes = {}, methods = {}, access = PUBLIC_ACCESS){
+	constructor(position, size, title, attributes = {}, methods = {}, access = ACCESS_PUBLIC){
 		super(position, size, [[]]);
 		this._name = OBJECT_CLASS;
 		this._title = title;
@@ -42,7 +42,7 @@ class Class extends Table{
 		};
 	}
 
-	addMethod(name, returnType = "void", args = "void", access = PUBLIC_ACCESS){
+	addMethod(name, returnType = "void", args = "void", access = ACCESS_PUBLIC){
 		this._methods[name] = {
 			name: name,
 			retType: returnType,
@@ -54,14 +54,14 @@ class Class extends Table{
 
 	static toAccess(access){
 		switch(access){
-			case "+": return "public";
-			case "-": return "private";
-			case "#": return "protected";
+			case ACCESS_PUBLIC: return "public";
+			case ACCESS_PRIVATE: return "private";
+			case ACCESS_PROTECTED: return "protected";
 			default : return "";
 		}
 	}
 
-	addAttribute(name, type, access = PUBLIC_ACCESS){
+	addAttribute(name, type, access = ACCESS_PUBLIC){
 		this._attr[name] = {
 			name: name,
 			type: type,

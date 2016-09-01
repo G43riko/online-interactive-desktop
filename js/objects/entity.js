@@ -149,7 +149,7 @@ class Entity{
 	 * @returns {*}
 	 */
 	static changeAttr(obj, data, val){
-		if(typeof data == "object")
+		if(isObject(data))
 			each(data, (e, i) => Entity.setAttr(obj, i, e));
 		else 
 			Entity.setAttr(obj, data, val);
@@ -268,19 +268,19 @@ class Entity{
 	static createInstance(obj){
 		var type = isString(obj) ? obj : obj._name;
 		switch(type){
-			case "Rect" :
+			case OBJECT_RECT :
 				return new Rect();
-			case "Arc" :
+			case OBJECT_ARC :
 				return new Arc();
-			case "Table" :
+			case OBJECT_TABLE :
 				return new Table();
-			case "Text" :
+			case OBJECT_TEXT :
 				return new Text("");
-			case "Polygon" :
+			case OBJECT_POLYGON :
 				return new Polygon([0,0,0]);
-			case "Line" :
+			case OBJECT_LINE :
 				return new Line([0,0,0]);
-			case "Class" :
+			case OBJECT_CLASS :
 				return new Class();
 			default :
 				Logger.error("snažíš sa vložiť objekt s neznámym menom: " + obj._name);

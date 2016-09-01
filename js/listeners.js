@@ -93,7 +93,7 @@ class ListenersManager{
 				return
 		}
 
-		if(Creator.object && Creator.object.name != "Join"){
+		if(Creator.object && Creator.object.name != OBJECT_JOIN){
 			Creator.finishCreating(position);
 			return;
 		}

@@ -21,13 +21,13 @@ function roughSizeOfObject(object) {
 
 	while (stack.length) {
 		var value = stack.pop();
-		if(typeof value === 'boolean')
+		if(isBoolean(value))
 			bytes += 4;
-		else if(typeof value === 'string')
+		else if(isString(value))
 			bytes += value.length << 1;
-		else if(typeof value === 'number')
+		else if(isNumber(value))
 			bytes += 8;
-		else if(typeof value === 'object' && objectList.indexOf( value ) === -1){
+		else if(isObject(value) && objectList.indexOf( value ) === -1){
 			objectList.push(value);
 			for(var i in value)
 				if(value.hasOwnProperty(i))
@@ -37,18 +37,19 @@ function roughSizeOfObject(object) {
 	return bytes;
 }
 
-var isUndefined 	= e => typeof e === "undefined",
-	isDefined 		= e => typeof e !== "undefined",
-	isFunction 		= e => typeof e === "function",
-	isNumber		= e => typeof e === "number",
-	isString		= e => typeof e === "string",
-	isObject		= e => typeof e === "object",
+var isUndefined 	= e => typeof e === KEYWORD_UNDEFINED,
+	isDefined 		= e => typeof e !== KEYWORD_UNDEFINED,
+	isFunction 		= e => typeof e === KEYWORD_FUNCTION,
+	isNumber		= e => typeof e === KEYWORD_NUMBER,
+	isString		= e => typeof e === KEYWORD_STRING,
+	isObject		= e => typeof e === KEYWORD_OBJECT,
+	isBoolean		= e => typeof e === KEYWORD_BOOLEAN,
 	isArray			= e => Array.isArray(e),
 	isNull			= e => e === null,
 	isEmptyObject   = e => e && Object.keys(e).length === 0 && e.constructor === Object,
 	isEmptyArray    = e => isArray(e) && e.length === 0,
 	getLength		= function(obj){var counter = 0; each(obj, e => counter++); return counter;},
-	isSharing		= () => typeof Sharer !== "undefined" && Sharer.isSharing,
+	isSharing		= () => isDefined(Sharer) && Sharer.isSharing,
 	isInt 			= e => Number(e) === e && e % 1 === 0,
 	isFloat 		= e => Number(e) === e && e % 1 !== 0,
 	callIfFunc 		= e => isFunction(e) ? e() : false,

@@ -1,6 +1,6 @@
 class Text extends Entity{
 	constructor(text, position, size, fontColor = DEFAULT_FONT_COLOR){
-		super("Text", position, size, {"fillColor": DEFAULT_BACKGROUND_COLOR, radius: DEFAULT_RADIUS});//TODO premenovať na input
+		super("Text", position, size, {fillColor: DEFAULT_BACKGROUND_COLOR, radius: DEFAULT_RADIUS});//TODO premenovať na input
 		this._text 		= text || "";
 		this._textColor = fontColor;
 		this._fontSize 	= DEFAULT_FONT_SIZE;

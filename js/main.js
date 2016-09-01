@@ -16,7 +16,7 @@ var initTime 		= window["performance"].now(),
 	Project			= new ProjectManager("Gabriel Csollei"),
 	Paints			= new PaintManager(),
 	Task 			= null,
-	Events 			= typeof EventManager !== "undefined" ? new EventManager() : null,
+	Events 			= typeof EventManager !== KEYWORD_UNDEFINED ? new EventManager() : null,
 	SelectedText	= null,
 	Options 		= new OptionsManager(),
 	drawEvent 		= new EventTimer(realDraw, 16),
@@ -109,8 +109,8 @@ function ajax(url, options, dataType){
 	xhttp.send();
 }
 
-$.getJSON("js/json/context.json", data => ContextMenuManager.items = data);
-$.getJSON("js/json/attributes.json", data => Entity.attr = data);
+$.getJSON(FOLDER_JSON + "/context.json", data => ContextMenuManager.items = data);
+$.getJSON(FOLDER_JSON + "/attributes.json", data => Entity.attr = data);
 
 
 function init(){
@@ -134,13 +134,13 @@ function init(){
 		getArea: {
 			name: "getArea",
 			retType: "number",
-			access: PUBLIC_ACCESS,
+			access: ACCESS_PUBLIC,
 			args: "void"
 		},
 		getPosition:{
 			name: "getPosition",
 			retType: "GVector2f",
-			access: PROTECTED_ACCESS,
+			access: ACCESS_PROTECTED,
 			args: "void"
 		}
 	};
@@ -148,22 +148,22 @@ function init(){
 	var attrs = {
 		x : {
 			name: "x",
-			access: PROTECTED_ACCESS,
+			access: ACCESS_PROTECTED,
 			type: "number"
 		},
 		y : {
 			name: "y",
-			access: PROTECTED_ACCESS,
+			access: ACCESS_PROTECTED,
 			type: "number"
 		},
 		width : {
 			name: "width",
-			access: PROTECTED_ACCESS,
+			access: ACCESS_PROTECTED,
 			type: "number"
 		},
 		height : {
 			name: "height",
-			access: PROTECTED_ACCESS,
+			access: ACCESS_PROTECTED,
 			type: "number"
 		}
 	};
@@ -180,9 +180,9 @@ $(function(){
 	initCanvasSize();
 	context = canvas.getContext("2d");
 
-	$.getJSON("js/json/menu.json",function(data){
+	$.getJSON(FOLDER_JSON + "/menu.json",function(data){
 		Menu.init(data);
-		$.getJSON("js/json/creator.json", data => {
+		$.getJSON(FOLDER_JSON + "/creator.json", data => {
 			Creator.init(data);
 			Paints.rePaintImage(Creator.brushSize, Creator.brushColor);
 		});
@@ -197,11 +197,11 @@ $(function(){
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
 	Input.initListeners(canvas);
 
-	if(typeof Watcher !== "undefined")
+	if(typeof Watcher !== KEYWORD_UNDEFINED)
 		Project._autor = "Watcher";
 
 	chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
-	if(typeof Watcher !== "undefined")
+	if(typeof Watcher !== KEYWORD_UNDEFINED)
 		chatViewer.show();
 
 	Layers = new LayersViewer();

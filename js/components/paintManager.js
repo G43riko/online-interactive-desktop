@@ -82,7 +82,7 @@ class PaintManager{
 	 */
 	addBrush(title){
 		var img = new Image();
-		img.src = "img/" + title;
+		img.src = FOLDER_IMAGE + "/" + title;
 		this._brushes[title] = img;
 
 		if(isNull(this._selectedImage))
