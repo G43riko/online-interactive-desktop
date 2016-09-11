@@ -1,12 +1,12 @@
-/*R*/const LEFT_BUTTON 	= 0;
-/*R*/const RIGHT_BUTTON = 2;
-/*R*/const SHIFT_KEY 	= 16;
-/*R*/const L_CTRL_KEY 	= 17;
-/*R*/const L_ALT_KEY 	= 18;
-/*R*/const ESCAPE_KEY 	= 27;
-/*R*/const ENTER_KEY 	= 13;
-/*R*/const Z_KEY 		= 90;
-/*R*/const Y_KEY 		= 89;
+/*R*/const LEFT_BUTTON	= 0;
+/*R*/const RIGHT_BUTTON	= 2;
+/*R*/const SHIFT_KEY	= 16;
+/*R*/const L_CTRL_KEY	= 17;
+/*R*/const L_ALT_KEY	= 18;
+/*R*/const ESCAPE_KEY	= 27;
+/*R*/const ENTER_KEY	= 13;
+/*R*/const Z_KEY		= 90;
+/*R*/const Y_KEY		= 89;
 
 const FONT_HALIGN_LEFT		= "left";
 const FONT_HALIGN_CENTER	= "center";
@@ -22,23 +22,23 @@ const FONT_VALIGN_BOTT		= "bottom";
 const FONT_ALIGN_CENTER = 10;
 const FONT_ALIGN_NORMAL = 11;
 
-const FOLDER_IMAGE = "/img";
-const FOLDER_JSON = "/js/json";
+const FOLDER_IMAGE	= "/img";
+const FOLDER_JSON	= "/js/json";
 
-const SELECTOR_SIZE 		= 10;
+const SELECTOR_SIZE			= 10;
 const SELECTOR_COLOR		= "orange";
 const SELECTOR_BORDER_COLOR	= "black";
 
-const LINE_CAP_BUTT 	= "butt";
-const LINE_CAP_ROUND 	= "round";
-const LINE_CAP_SQUARE 	= "square";
+const LINE_CAP_BUTT		= "butt";
+const LINE_CAP_ROUND	= "round";
+const LINE_CAP_SQUARE	= "square";
 
 const LINE_JOIN_MITER	= "miter";
 const LINE_JOIN_ROUND	= "round";
 const LINE_JOIN_BEVEL	= "bevel";
 
 
-const OPERATION_DRAW_RECT 	= 1000;
+const OPERATION_DRAW_RECT	= 1000;
 const OPERATION_DRAW_ARC	= 1001;
 const OPERATION_DRAW_PATH	= 1002;
 const OPERATION_DRAW_LINE	= 1003;
@@ -91,17 +91,22 @@ const DEFAULT_BORDER_WIDTH		= 2;
 const DEFAULT_LINE_TYPE			= JOIN_LINEAR;
 const DEFAULT_LINE_STYLE		= LINE_STYLE_NORMAL;
 const DEFAULT_BRUSH_SIZE		= 20;
-const DEFAULT_BRUSH_TYPE 		= "brush1.png";
-const DEFAULT_BRUSH_COLOR 		= "#000000";
-const DEFAULT_LAYER_TITLE 		= "default";
+const DEFAULT_BRUSH_TYPE		= "brush1.png";
+const DEFAULT_BRUSH_COLOR		= "#000000";
+const DEFAULT_LAYER_TITLE		= "default";
 
-const CONTEXT_MENU_LINE_HEIGHT 	= 40;
-const CONTEXT_MENU_FONT_COLOR 	= DEFAULT_FONT_COLOR;
+const CONTEXT_MENU_LINE_HEIGHT	= 40;
+const CONTEXT_MENU_FONT_COLOR	= DEFAULT_FONT_COLOR;
 const CONTEXT_MENU_OFFSET 		= 10;
 const CONTEXT_MENU_WIDTH 		= 240;
 
-const TOUCH_DURATION 	= 500;
-const TOUCH_VARIATION 	= 5;
+const GRID_COLOR	= "Black";
+const GRID_WIDTH	= 0.1;
+const GRID_DIST		= 10;
+const GRID_NTH_BOLD	= 5;
+
+const TOUCH_DURATION	= 500;
+const TOUCH_VARIATION	= 5;
 
 const MENU_OFFSET 				= 10;//20
 const MENU_RADIUS				= 10;
@@ -109,24 +114,31 @@ const MENU_BORDER_WIDTH 		= 2;
 const MENU_FONT_COLOR 			= "#000000";
 const MENU_BORDER_COLOR 		= "#000000";
 const MENU_WIDTH 				= 50;//60
-const MENU_HEIGHT 				= 50;//60
-const MENU_POSITION 			= MENU_OFFSET;
-const MENU_BACKGROUND_COLOR 	= "#1abc9c";
+const MENU_HEIGHT				= 50;//60
+const MENU_POSITION				= MENU_OFFSET;
+const MENU_BACKGROUND_COLOR		= "#1abc9c";
 const MENU_DISABLED_BG_COLOR	= "#abd6bb";
 
-const TABLE_BORDER_WIDTH 	= 1;
-const TABLE_HEADER_COLOR 	= "#53cfff";
+const TABLE_BORDER_WIDTH	= 1;
+const TABLE_HEADER_COLOR	= "#53cfff";
 const TABLE_BODY_COLOR		= "#5bf2ff";
 const TABLE_LINE_HEIGHT		= 40;
 const TABLE_BORDER_COLOR	= "#000000";
 const TABLE_WIDTH 			= 300;
-const TABLE_RADIUS 			= 10;
+const TABLE_RADIUS			= 10;
 const TABLE_TEXT_OFFSET		= 5;
 
+const TIMELINE_HEIGHT				= 60;
+const TIMELINE_SLIDER_HEIGHT		= 5;
+const TIMELINE_SLIDER_COLOR			= "purple";
+const TIMELINE_SLIDER_OFFSET		= 30;
+const TIMELINE_BUTTON_SIZE			= 20;
+const TIMELINE_BUTTON_COLOR			= "HotPink";
+const TIMELINE_BUTTON_BORDER_COLOR	= "IndianRed";
 
-const ACCESS_PUBLIC 	= "+";
-const ACCESS_PRIVATE 	= "-";
-const ACCESS_PROTECTED = "#";
+const ACCESS_PUBLIC		= "+";
+const ACCESS_PRIVATE	= "-";
+const ACCESS_PROTECTED	= "#";
 
 const ACTION_OBJECT_MOVE 		= 2310;
 const ACTION_OBJECT_CREATE		= 2311;
@@ -149,9 +161,9 @@ const KEYWORD_UNDEFINED		= "undefined";
 const KEYWORD_TRANSPARENT	= "transparent";
 /*R*/const PI2 = Math.PI * 2;
 
-const IMAGE_FORMAT_JPG = "image/jpeg";
-const IMAGE_FORMAT_PNG = "image/png";
-const IMAGE_FORMAT_GIF = "image/gif";
+const IMAGE_FORMAT_JPG	= "image/jpeg";
+const IMAGE_FORMAT_PNG	= "image/png";
+const IMAGE_FORMAT_GIF	= "image/gif";
 
 const ATTRIBUTE_FILL_COLOR		= "fillColor";
 const ATTRIBUTE_BORDER_COLOR	= "borderColor";
@@ -172,8 +184,8 @@ const INPUT_TYPE_RADIO		= "radio";
 const CHECKBOX_COLOR_TRUE	= "green";
 const CHECKBOX_COLOR_FALSE	= "red";
 
-const LOGGER_MENU_CLICK 		= 2600;
-const LOGGER_CREATOR_CHANGE 	= 2601;
+const LOGGER_MENU_CLICK			= 2600;
+const LOGGER_CREATOR_CHANGE		= 2601;
 const LOGGER_CONTEXT_CLICK		= 2602;
 const LOGGER_LAYER_CHANGE		= 2603;
 const LOGGER_OBJECT_CREATED		= 2604;
@@ -184,8 +196,8 @@ const LOGGER_PAINT_ACTION		= 2608;
 const LOGGER_OBJECT_CLEANED		= 2609;
 const LOGGER_MOUSE_EVENT		= 2610;
 const LOGGER_KEY_EVENT			= 2611;
-const LOGGER_DRAW				= 2612;
-const LOGGER_CHANGE_OPTION 		= 2613;
+const LOGGER_DRAW				= 2612;		
+const LOGGER_CHANGE_OPTION		= 2613;
 
 const OBJECT_ARC		= "Arc";
 const OBJECT_ARROW		= "Arrow";

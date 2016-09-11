@@ -117,7 +117,7 @@ class Table extends Entity{
 		return this.moveType >= 0;
 	}
 
-	_calcMaxTextWidth(value = 0){
+	_calcMaxTextWidth(value){
 		var w;
 		context.font = this._fontSize + "pt " + DEFAULT_FONT;
 		if(isString(value)){

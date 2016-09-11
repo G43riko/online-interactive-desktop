@@ -5,32 +5,32 @@ class ContextMenuManager{
 		this._parent 			= parent;
 		this._key 				= key;
 		this._textColor 		= CONTEXT_MENU_FONT_COLOR;
-		this._selectedObject 	= parent ? parent._selectedObject : movedObject;
+		this._selectedObject 	= parent ? parent._selectedObject : selectedObjects.movedObject;
 		this._titles 			= titles;
 
 		//TODO toto prerobiť do JSON suboru
 		if(this._titles.length == 0){
-			if(movedObject){
-				if(isIn(movedObject.name, OBJECT_RECT, OBJECT_POLYGON, OBJECT_ARC, OBJECT_LINE, OBJECT_TABLE, OBJECT_IMAGE, OBJECT_TEXT))
+			if(selectedObjects.movedObject){
+				if(isIn(selectedObjects.movedObject.name, OBJECT_RECT, OBJECT_POLYGON, OBJECT_ARC, OBJECT_LINE, OBJECT_TABLE, OBJECT_IMAGE, OBJECT_TEXT))
 					this._addFields("delete", "locked", "makeCopy", "changeLayer", "changeOpacity");
 
-				if(isIn(movedObject.name, OBJECT_RECT, OBJECT_POLYGON, OBJECT_TEXT, OBJECT_ARC))
+				if(isIn(selectedObjects.movedObject.name, OBJECT_RECT, OBJECT_POLYGON, OBJECT_TEXT, OBJECT_ARC))
 					this._addFields("changeFillColor", "changeBorderColor");
 
-				if(isIn(movedObject.name, OBJECT_RECT, OBJECT_POLYGON, OBJECT_TEXT, OBJECT_LINE))
+				if(isIn(selectedObjects.movedObject.name, OBJECT_RECT, OBJECT_POLYGON, OBJECT_TEXT, OBJECT_LINE))
 					this._addFields("radius");
 
-				if(movedObject.name == OBJECT_LINE)
+				if(selectedObjects.movedObject.name == OBJECT_LINE)
 					this._addFields("joinType", "lineCap", "lineStyle", "lineType", "lineWidth", "arrowEndType", "arrowStartType");
-				else if(movedObject.name == OBJECT_TABLE)
+				else if(selectedObjects.movedObject.name == OBJECT_TABLE)
 					this._addFields("editTable");
-				else if(movedObject.name == OBJECT_TEXT)
+				else if(selectedObjects.movedObject.name == OBJECT_TEXT)
 					this._addFields("verticalTextAlign", "horizontalTextAlign");
-				else if(movedObject.name == OBJECT_IMAGE)
+				else if(selectedObjects.movedObject.name == OBJECT_IMAGE)
 					this._addFields("changeImage");
-				else if(movedObject.name == "LayerViewer"){
+				else if(selectedObjects.movedObject.name == "LayerViewer"){
 					this._addFields("visible", "lockLayer", "showPaint");
-					if(!movedObject.locked)
+					if(!selectedObjects.movedObject.locked)
 						this._addFields("deleteLayer", "renameLayer", "clearLayer");
 				}
 			}
@@ -51,11 +51,11 @@ class ContextMenuManager{
 				if(e["type"] == INPUT_TYPE_CHECKBOX){
 					hasExtension = true;
 					if(e["key"] == "locked")
-						arr[i]["value"] = movedObject.locked;
+						arr[i]["value"] = selectedObjects.movedObject.locked;
 					else if(e["key"] == "visible")
-						arr[i]["value"] = movedObject.visible;
+						arr[i]["value"] = selectedObjects.movedObject.visible;
 					else if(e["key"] == "showPaint")
-						arr[i]["value"] = movedObject.showPaint;
+						arr[i]["value"] = selectedObjects.movedObject.showPaint;
 				}
 			}, this);
 
@@ -245,7 +245,7 @@ class ContextMenuManager{
 				break;
 			default:
 				if(opt.group == "roundRadius"){
-					Entity.changeAttr(this._selectedObject, ATTRIBUTE_RADIUS, opt.name, false);
+					Entity.changeAttr(this._selectedObject, ATTRIBUTE_RADIUS, opt.name);
 					actContextMenu = false;
 				}
 				else if(opt.group == "lineCapValue"){

@@ -1,4 +1,4 @@
-class Text extends Entity{
+class TextField extends Entity{
 	constructor(text, position, size, fontColor = DEFAULT_FONT_COLOR){
 		super("Text", position, size, {fillColor: DEFAULT_BACKGROUND_COLOR, radius: DEFAULT_RADIUS});//TODO premenovať na input
 		this._text 		= text || "";

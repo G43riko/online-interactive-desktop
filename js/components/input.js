@@ -6,13 +6,13 @@ class InputManager{
 		this._pressPosition = new GVector2f();
 		this._mousePos = new GVector2f();
 		this._lastTouch = false;
+		this._hist = {};
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	};
 
 	get mousePos(){return this._mousePos;}
 
 	_initWindowListeners(){
-		var inst = this;
 		window.onresize = function(){
 			initCanvasSize();
 			draw();
@@ -27,12 +27,13 @@ class InputManager{
 			event.returnValue = "Nazoaj chceš odísť s tejto stránky???!!!";
 		};
 
-		window.onkeydown = function(e){
-			inst._keyDown(e.keyCode);
+		window.onkeydown = e => {
+			this._keyDown(e.keyCode);
 
 			if(!e.target.onkeyup)
-				e.target.onkeyup = function(e){
-					inst._keyUp(e.keyCode);
+				e.target.onkeyup = e => {
+					this._keyUp(e.keyCode);
+					e.target.onkeyup = false;
 				}
 		};
 
@@ -40,7 +41,6 @@ class InputManager{
 	}
 
 	initListeners(target){
-		var inst = this;
 		this._initWindowListeners();
 
 		target.onclick = function(){draw();};
@@ -53,57 +53,59 @@ class InputManager{
 			Listeners.mouseDoubleClick(new GVector2f(e.offsetX, e.offsetY), e.button);
 		};
 
-		target.onmousedown = function(e){
-			inst._buttonDown(e);
+		target.onmousedown = e => {
+			this._buttonDown(e);
 			Listeners.mouseDown(new GVector2f(e.offsetX, e.offsetY), e.button);
 
-			e.target.onmouseup = function(e){
-				if(!inst.isButtonDown(e.button))
+			e.target.onmouseup = e => {
+				if(!this.isButtonDown(e.button))
 					return  false;
-				inst._buttonUp(e);
+				this._buttonUp(e);
+
+				e.target.onmousemove = false;
+				e.target.onmouseup = false;
+
 				Listeners.mouseUp(new GVector2f(e.offsetX, e.offsetY), e.button);
 			};
-			e.target.onmousemove = function(e){
-				inst._mouseMove(e);
+			e.target.onmousemove = e => {
+				this._mouseMove(e);
 				Listeners.mouseMove(new GVector2f(e.offsetX, e.offsetY), e["movementX"], e["movementY"]);
 			}
 		};
 
-		$(target).bind('contextmenu', function(){
-			return false;
-		});
+		$(target).bind('contextmenu', () => false);
 
 
-		target.addEventListener("touchstart", function(e){
+		target.addEventListener("touchstart", e => {
 			this._lastTouch = getMousePos(target, e);
 			Input._buttonDown({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
 
 			Listeners.mouseDown(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
-			e.target.addEventListener("touchmove", function(e){
-				Input._mouseMove({offsetX: inst._lastTouch.x, offsetY: inst._lastTouch.y});
+			
+			e.target.addEventListener("touchmove", e => {
+				Input._mouseMove({offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
 				var mov = getMousePos(target, e);
-				mov.x -=  inst._lastTouch.x;
-				mov.y -=  inst._lastTouch.y;
-				inst._lastTouch = getMousePos(target, e);
-				Listeners.mouseMove(new GVector2f(inst._lastTouch.x, inst._lastTouch.y), mov.x, mov.y);
+				mov.x -=  this._lastTouch.x;
+				mov.y -=  this._lastTouch.y;
+				this._lastTouch = getMousePos(target, e);
+				Listeners.mouseMove(new GVector2f(this._lastTouch.x, this._lastTouch.y), mov.x, mov.y);
 
 			}, false);
 
 
-			e.target.addEventListener("touchend", function(){
+			e.target.addEventListener("touchend", () => {
 				if(!Input.isButtonDown(LEFT_BUTTON))
 					return false;
-				Input._buttonUp({button: LEFT_BUTTON, offsetX: inst._lastTouch.x, offsetY: inst._lastTouch.y});
-				Listeners.mouseUp(new GVector2f(inst._lastTouch.x, inst._lastTouch.y), LEFT_BUTTON);
+				Input._buttonUp({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
+				Listeners.mouseUp(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
 			}, false);
 
-			e.target.addEventListener("touchcancel", function(){
+			e.target.addEventListener("touchcancel", () => {
 				if(!Input.isButtonDown(LEFT_BUTTON))
 					return false;
-				Input._buttonUp({button: LEFT_BUTTON, offsetX: inst._lastTouch.x, offsetY: inst._lastTouch.y});
-				Listeners.mouseUp(new GVector2f(inst._lastTouch.x, inst._lastTouch.y), LEFT_BUTTON);
+				Input._buttonUp({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
+				Listeners.mouseUp(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
 			}, false);
-
 		}, false);
 	}
 
@@ -116,6 +118,12 @@ class InputManager{
 	_keyUp(val){
 		this._keys[val] = false;
 		Listeners.keyUp(val, this.isKeyDown(L_CTRL_KEY));
+
+		if(!this._hist[val])
+			this._hist[val] = 0;
+
+		this._hist[val]++;
+
 		Logger.log("pustená klavesa " + val, LOGGER_KEY_EVENT);
 	};
 

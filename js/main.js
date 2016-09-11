@@ -185,6 +185,7 @@ $(function(){
 		$.getJSON(FOLDER_JSON + "/creator.json", data => {
 			Creator.init(data);
 			Paints.rePaintImage(Creator.brushSize, Creator.brushColor);
+			draw();
 		});
 	});
 
@@ -206,7 +207,7 @@ $(function(){
 
 	Layers = new LayersViewer();
 	Scene.addToScene(Layers, "rightMenu");
-	Creator.view = new CreatorViewer(new GVector2f(Menu.position.x + (Menu.size.x + MENU_OFFSET) * 8 - MENU_OFFSET, Menu.position.y - MENU_OFFSET));
+	Creator.view = new CreatorViewer(new GVector2f(Menu.position.x + (Menu.size.x + MENU_OFFSET) * 9 - MENU_OFFSET, Menu.position.y - MENU_OFFSET));
 
 	draw();
 });
@@ -218,7 +219,7 @@ function realDraw(){
 	resetCanvas();
 
 	if(Options.grid)
-		drawGrid(0.1, 10, 50);
+		drawGrid();
 
 	Scene.draw();
 	Creator.draw();
@@ -226,5 +227,6 @@ function realDraw(){
 	if(actContextMenu)
 		actContextMenu.draw();
 	Logger.log("kreslí sa všetko", LOGGER_DRAW);
-	//timeLine.draw();
+	if(typeof timeLine !== "undefined")
+		timeLine.draw();
 }

@@ -49,7 +49,7 @@ var isUndefined 	= e => typeof e === KEYWORD_UNDEFINED,
 	isEmptyObject   = e => e && Object.keys(e).length === 0 && e.constructor === Object,
 	isEmptyArray    = e => isArray(e) && e.length === 0,
 	getLength		= function(obj){var counter = 0; each(obj, e => counter++); return counter;},
-	isSharing		= () => isDefined(Sharer) && Sharer.isSharing,
+	isSharing		= () => typeof Sharer !== "undefined" && Sharer.isSharing,
 	isInt 			= e => Number(e) === e && e % 1 === 0,
 	isFloat 		= e => Number(e) === e && e % 1 !== 0,
 	callIfFunc 		= e => isFunction(e) ? e() : false,
@@ -57,6 +57,19 @@ var isUndefined 	= e => typeof e === KEYWORD_UNDEFINED,
 	getClassOf 		= Function.prototype.call.bind(Object.prototype.toString),
 	nvl				= (obj1, obj2) => obj1 ? obj1 : obj2,
 	round 			= (num, val = DEFAULT_ROUND_VAL) => val === 1 ? num : Math.floor(num / val) * val;
+
+
+function toHHMMSS(time, decimals = 0) {
+    var sec_num = parseInt(time, 10) / 1000;
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) hours   = "0" + hours;
+    if (minutes < 10) minutes = "0" + minutes;
+    if (seconds < 10) seconds = "0" + decimals ? seconds.toFixed(decimals) : seconds;
+    return hours + ':' + minutes + ':' + seconds;
+}
 
 function each(obj, func, thisArg = false){
 	var i;
@@ -315,8 +328,7 @@ class EventTimer{
 	_setTimeOut(diff){
 		if(this._timeOut)
 			return;
-		var inst = this;
-		this._timeOut = setTimeout(function(){inst._callEvent(inst);}, this._time - diff);
+		this._timeOut = setTimeout(() => this._callEvent(this) , this._time - diff);
 	}
 
 	callIfCan(){

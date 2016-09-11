@@ -1,5 +1,16 @@
 class ListenersManager{
+	constructor(){
+		this._movedObject = null;
+	}
 	mouseDown(position, button){
+
+		if(isDefined(timeLine) && timeLine.clickIn(position.x, position.y)){
+			this._movedObject = timeLine;
+			return;
+		}
+
+
+
 		if(SelectedText){
 			var area = document.getElementById("selectedEditor");
 			if(area){
@@ -19,14 +30,17 @@ class ListenersManager{
 			Scene.forEach((o) => {
 				if(o.visible && o.clickIn(position.x, position.y, button)){
 					o.moving = true;
-					movedObject = o;
+					selectedObjects.movedObject = o;
+					this._movedObject = selectedObjects;
 					return true;
 				}
 			});
 
 
-		if(Menu.isToolActive() && !Creator.object)
+		if(Menu.isToolActive() && !Creator.object){
 			Creator.createObject(position);
+			this._movedObject = Creator;
+		}
 
 		draw();
 	}
@@ -55,9 +69,10 @@ class ListenersManager{
 		actContextMenu = new ContextMenuManager(position);
 
 
-		if(movedObject){
-			movedObject.moving = false;
-			movedObject = false;
+		if(selectedObjects.movedObject){
+			selectedObjects.movedObject.moving = false;
+			selectedObjects.movedObject = false;
+			this._movedObject = null;
 		}
 
 		draw();
@@ -74,13 +89,15 @@ class ListenersManager{
 		});
 
 		if(!result)
-			getText("", position, vec, val => val.length && Scene.addToScene(new Text(val, position, vec)));
+			getText("", position, vec, val => val.length && Scene.addToScene(new TextField(val, position, vec)));
 
 		draw();
 		return true;
 	}
 
 	mouseUp(position){
+		this._movedObject = null;
+
 		var result = false;
 
 		/*
@@ -120,9 +137,10 @@ class ListenersManager{
 		/*
 		 * AK SA HYBALO S NEJAKYM OBJEKTOM TAK SA DOKONCI POHYB
 		 */
-		if(movedObject){
-			movedObject.moving = false;
-			movedObject = false;
+		if(selectedObjects.movedObject){
+			selectedObjects.movedObject.moving = false;
+			selectedObjects.movedObject = false;
+			this._movedObject = null;
 		}
 
 		Scene.forEach(o => {
@@ -146,21 +164,37 @@ class ListenersManager{
 	}
 
 	mouseMove(position, movX, movY){
+		if(this._movedObject && isFunction(this._movedObject.onMouseMove)){
+			this._movedObject.onMouseMove(position, movX, movY);
+			draw();
+		}
+		else if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
+			Paints.addPoint(position);
+			draw();
+		}
+
+		return false;
+		/*
+		/////OBJEKTY PRI POHYBE
+
 		//ak sa hýbe nejakým objektom
-		if(movedObject && Creator.operation != OPERATION_DRAW_PATH){
+		if(selectedObjects.movedObject && Creator.operation != OPERATION_DRAW_PATH){
 			//prejdu sa všetky označené objekty a pohne sa nimi
 			selectedObjects.forEach(e => Movement.move(e, movX, movY));
 
 			//ak objekt s ktorým sa hýbe nieje označený(už sa sním pohlo) tak sa sním tiež pohne
-			if(!movedObject.selected)
-				Movement.move(movedObject, movX, movY);
+			if(!selectedObjects.movedObject.selected)
+				Movement.move(selectedObjects.movedObject, movX, movY);
 
 			//ak sú nejaké objekty označené tak sa aktualizuje prehlad posledného označeného ináč iba hýbaného
 			if(selectedObjects.size())
 				updateSelectedObjectView(selectedObjects.getLast());
-			else if(movedObject)
-				updateSelectedObjectView(movedObject);
+			else if(selectedObjects.movedObject)
+				updateSelectedObjectView(selectedObjects.movedObject);
 		}
+
+
+		/////ČIARA
 
 		//ak sa kreslí čiara tak sa nakreslí nové posunutie
 		if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
@@ -168,13 +202,16 @@ class ListenersManager{
 			draw();
 		}
 
+		/////CREATOR
+
 		//ak sa vytvára objekt tak sa nakreslí nové posunutie
 		if(Creator.object){
 			updateSelectedObjectView(Creator.object);
 			Creator.object.updateCreatingPosition(position);
 		}
 
-		if(movedObject || Input.isKeyDown(SHIFT_KEY) || Creator.object)
+		if(selectedObjects.movedObject || Input.isKeyDown(SHIFT_KEY) || Creator.object)
 			draw();
+		*/
 	}
 }

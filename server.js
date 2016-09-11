@@ -13,6 +13,9 @@ const PORT 				= 3000;
 const REQUEST_TIMEOUT	= 3000;
 const ELASTIC_HOST_URL	= 'localhost:9200';
 
+connection.callLogInit(serverLogs.init);
+
+
 app.use("/css", express.static(__dirname + '/css'));
 app.use("/img", express.static(__dirname + '/img'));
 app.use("/js", express.static(__dirname + '/js'));
@@ -49,7 +52,7 @@ app.post("/anonymousData", function (req, res) {
 		data["ipAddress"] = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 		data["connectedAt"] = data["connectedAt"].replace("+", " ");
 		serverLogs.addAnonymData(data);
-		return;
+		/*
 		new elasticsearch.Client({
 			host: 'localhost:9200'
 		}).create({
@@ -60,6 +63,7 @@ app.post("/anonymousData", function (req, res) {
 			if(typeof error !== "undefined")
 				console.log("chyba pri vkladani do ES: ", error);
 		});
+		*/
 	});
 });
 
@@ -125,7 +129,7 @@ startWatch = function(data){
 	serverLogs.increase("startWatch");
 	serverLogs.messageRecieve("startWatch", data);
 	console.log("client s id " + this.id + " chce sledovať plochu");
-	connection.startWatch(data["id"], this, data)
+	connection.startWatch(data["id"], this, data);
 
 	this.emit("auth", "zadaj heslo");
 	connection.getOwner(data["id"]).emit("notification", {msg: "novy watcher sa pripojil"});
@@ -141,7 +145,7 @@ completeAuth = function(data){
 
 	if(connection.checkPassword(data["id"], data["passwd"])){
 		this.emit("notification", {msg: "pripojenie bolo uspešne - zo zadanim hesla"});
-		connection.getWatcher(data["id"], this).valid = true
+		connection.getWatcher(data["id"], this).valid = true;
 		connection.getOwner(data["id"]).emit("getAllData", {target: this.id});
 	}
 	else{
@@ -190,7 +194,7 @@ chatMessage = function(data){
 	serverLogs.messageRecieve("chatMessage", data);
 
 	writeToAllExcept(data.id, this, "chatMessage", data.msg);
-}
+};
 
 function writeToAllExcept(id, socket, type, msg){
 	var watchers = connection.getWatchers(id);
@@ -224,7 +228,7 @@ changeCreator = function(data){
 
 dataReqiere = function(data){
 	serverLogs.addOverviewSocket(this);
-}
+};
 
 //UTILS
 

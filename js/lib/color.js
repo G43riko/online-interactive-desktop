@@ -74,8 +74,7 @@
 		this.subscribe(Events.INT_UPDATED, this._INTUpdated);
 
 		this.parse(value);
-
-	};
+	}
 
 	Color.prototype._decimal = 0;
 	Color.prototype._hex = '#000000';
@@ -89,9 +88,8 @@
 	Color.prototype._alpha = 1;
 
 	Color.prototype.parse = function(value){
-		if(typeof value == 'undefined'){
+		if(typeof value == 'undefined')
 			return this;
-		};
 		switch(true){
 			case isFinite(value) :
 				this.decimal(value);
@@ -106,21 +104,22 @@
 						this.set(value);
 						return this;
 					case 'string' :
+						var stripped, parts;
 						switch(true){
 							case (namedColors.hasOwnProperty(value)) :
 								value = namedColors[value];
-								var stripped = value.replace(leadHex, '');
+								stripped = value.replace(leadHex, '');
 								this.decimal(parseInt(stripped, 16));
 								return this;
 							case isHex.test(value) :
-								var stripped = value.replace(leadHex, '');
-								if(stripped.length == 3) {
+								stripped = value.replace(leadHex, '');
+								if(stripped.length == 3)
 									stripped = stripped.replace(hexBit, '$1$1');
-								};
+
 								this.decimal(parseInt(stripped, 16));
 								return this;
 							case isRGB.test(value) :
-								var parts = value.match(matchRGB);
+								parts = value.match(matchRGB);
 								this.red(p2v(parts[1]));
 								this.green(p2v(parts[2]));
 								this.blue(p2v(parts[3]));
@@ -128,17 +127,17 @@
 								this.output = (isPercent.test(parts[1]) ? 2 : 1) + (parts[5] ? 2 : 0);
 								return this;
 							case isHSL.test(value) :
-								var parts = value.match(matchHSL);
+								parts = value.match(matchHSL);
 								this.hue(parseInt(parts[1]));
 								this.saturation(parseInt(parts[2]));
 								this.lightness(parseInt(parts[3]));
 								this.alpha(parseFloat(parts[5]) || 1);
 								this.output = parts[5] ? 6: 5;
 								return this;
-						};
-				};
+						}
+				}
 
-		};
+		}
 		return this;
 	};
 
@@ -156,23 +155,21 @@
 		if(arguments.length == 1){
 			if(typeof key == 'object'){
 				for(var p in key){
-					if(typeof this[p] == 'function'){
+					if(key.hasOwnProperty(p) && typeof this[p] == 'function')
 						this[p](key[p]);
-					};
-				};
+				}
 			} else if(isFinite(key)){
 				this.decimal(key);
 			}
 		} else if(typeof this[key] == 'function'){
 			this[key](value);
-		};
+		}
 		return this;
 	};
 
 	Color.prototype.interpolate = function(destination, factor){
-		if(!(destination instanceof Color)){
+		if(!(destination instanceof Color))
 			destination = new Color(destination);
-		};
 		this._red = absround( +(this._red) + (destination._red - this._red) * factor );
 		this._green = absround( +(this._green) + (destination._green - this._green) * factor );
 		this._blue = absround( +(this._blue) + (destination._blue - this._blue) * factor );
@@ -199,7 +196,7 @@
 			this._lightness = absround(l * 100);
 			this._brightness = absround(v * 100);
 			return;
-		};
+		}
 
 		var d = max - min;
 		var s = d / ( ( l <= 0.5) ? (max + min) : (2 - max - min) );
@@ -240,22 +237,34 @@
 		var t = v * (1 - (1 - f) * s);
 		switch(i % 6){
 			case 0 :
-				r = v, g = t, b = p;
+				r = v;
+				g = t;
+				b = p;
 				break;
 			case 1 :
-				r = q, g = v, b = p;
+				r = q;
+				g = v;
+				b = p;
 				break;
 			case 2 :
-				r = p, g = v, b = t;
+				r = p;
+				g = v;
+				b = t;
 				break;
 			case 3 :
-				r = p, g = q, b = v;
+				r = p;
+				g = q;
+				b = v;
 				break;
 			case 4 :
-				r = t, g = p, b = v
+				r = t;
+				g = p;
+				b = v;
 				break;
 			case 5 :
-				r = v, g = p, b = q;
+				r = v;
+				g = p;
+				b = q;
 				break;
 		}
 		this._red = absround(r * 255);
@@ -360,11 +369,11 @@
 					this[prop] = value;
 					if(event){
 						this.broadcast(event);
-					};
-				};
+					}
+				}
 				this.broadcast(Event.UPDATED);
-			};
-		};
+			}
+		}
 		return this[prop];
 	};
 
@@ -415,9 +424,9 @@
 			x : this._hex,
 			d : this._decimal
 		};
-		for(var token in tokens){
-			string = string.split('%' + token + '%').join(tokens[token]);
-		};
+		for(var token in tokens)
+			if(tokens.hasOwnProperty(token))
+				string = string.split('%' + token + '%').join(tokens[token]);
 		return string;
 	};
 
@@ -450,7 +459,7 @@
 				return this.getHSLA();
 			case 7 :
 				return this._decimal;
-		};
+		}
 		return this.getHex();
 	};
 
@@ -460,23 +469,22 @@
 	};
 
 	Color.prototype.subscribe = function(type, callback){
-		if(!this._isSubscribed(type)) {
+		if(!this._isSubscribed(type))
 			this._listeners[type] = [];
-		};
+
 		this._listeners[type].push(callback);
 	};
 
 	Color.prototype.unsubscribe = function(type, callback){
-		if(!this._isSubscribed(type)) {
+		if(!this._isSubscribed(type))
 			return;
-		};
 		var stack = this._listeners[type];
 		for(var i = 0, l = stack.length; i < l; i++){
 			if(stack[i] === callback){
 				stack.splice(i, 1);
 				return this.unsubscribe(type, callback);
-			};
-		};
+			}
+		}
 	};
 
 	Color.prototype.broadcast = function(type, params){
@@ -491,9 +499,8 @@
 	};
 
 	Color.prototype.tween = function(duration, color){
-		if(!(color instanceof Color)){
+		if(!(color instanceof Color))
 			color = new Color(color);
-		};
 		var start = +(new Date());
 		var ref = this;
 		this.broadcast('tweenStart');
@@ -505,7 +512,7 @@
 			if(delta == 1){
 				clearInterval(interval);
 				ref.broadcast('tweenComplete');
-			};
+			}
 		}, 20);
 		return interval;
 	};

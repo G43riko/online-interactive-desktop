@@ -165,10 +165,17 @@ class MenuManager{
 	};
 
 	disabled(menu, button, value){
-		if(isDefined(this._subMenus[menu]))
-			each(this._subMenus[menu]._items, function(e, i, arr){
+		if(this._key == menu)
+			each(this._items, function(e, i, arr){
 				if(e.key === button)
 					arr[i].disabled = value;
+			});
+		else if(isDefined(this._subMenus[menu]))
+			each(this._subMenus[menu]._items, function(e, i, arr){
+				if(e.key === button){
+					arr[i].disabled = value;
+					console.log("našlo sa a nastavuje sa na ", value);
+				}
 			});
 	}
 
@@ -216,6 +223,12 @@ class MenuManager{
 			case "loadLocalHTML":
 				Content.setContentHTML();
 				break;
+			case "undo":
+				Paints.undo();
+				break;
+			case "redo":
+				Paints.redo();
+				break;
 			case "saveImg":
 				//saveCanvasAsFile();
 				showSavingOptions();
@@ -239,7 +252,7 @@ class MenuManager{
 				Paints.setImage(val.value);
 				break;
 			case "defaultWidth":
-				Creator.lineWidth = val.value;
+				Creator.setOpt(ATTRIBUTE_LINE_WIDTH, val.value);
 				this._parent._redraw();
 				break;
 			case "join":
@@ -396,6 +409,12 @@ class MenuManager{
 				break;
 			case "content":
 				fillText("CONT", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "undo":
+				fillText("UNDO", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "redo":
+				fillText("REDO", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "watch":
 				fillText("WATCH", x + (width >> 1), y + (height >> 1), height / 6, strokeColor, 0, FONT_ALIGN_CENTER, this._context);

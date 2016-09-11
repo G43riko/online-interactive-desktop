@@ -275,7 +275,7 @@ class Entity{
 			case OBJECT_TABLE :
 				return new Table();
 			case OBJECT_TEXT :
-				return new Text("");
+				return new TextField("");
 			case OBJECT_POLYGON :
 				return new Polygon([0,0,0]);
 			case OBJECT_LINE :

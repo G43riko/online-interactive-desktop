@@ -4,6 +4,7 @@ module.exports.startShare = function (id, socket, data){
 	connections[id] = {
 		owner: socket,
 		id: id,
+		startTime: Date.now(),
 		resolution: data["res"],
 		password: data["pass"],
 		limit: data["limit"],
@@ -18,7 +19,11 @@ module.exports.startShare = function (id, socket, data){
 			objects: data["share"]["objects"]
 		}
 	};
-}
+};
+
+module.exports.callLogInit = function(func){
+	func(connections);
+};
 
 module.exports.getShareOptions = function(id){
 	var connection = connections[id];
@@ -31,7 +36,7 @@ module.exports.getShareOptions = function(id){
 			objects : connection["share"]["objects"]
 		}
 	}
-}
+};
 
 module.exports.startWatch = function (id, socket, data){
 	connections[id].watchers[socket.id] = {
@@ -40,7 +45,7 @@ module.exports.startWatch = function (id, socket, data){
 		socket: socket,
 		connected: true
 	};
-}
+};
 
 module.exports.disconnect = function(socket, isWatcher, isSharer){
 	for(var i in connections){
@@ -67,24 +72,24 @@ module.exports.disconnect = function(socket, isWatcher, isSharer){
 			}
 		}
 	}
-}
+};
 
 module.exports.existChat = function(chatId){
 	return typeof connections[chatId] === "object";
-}
+};
 
 module.exports.checkPassword = function(chatId, password){
 	return password == connections[chatId].password;
-}
+};
 
 module.exports.getOwner = function(chatId){
 	return connections[chatId].owner;
-}
+};
 
 module.exports.getWatcher = function(chatId, socket){
 	return connections[chatId].watchers[socket.id || socket];
-}
+};
 
 module.exports.getWatchers = function(chatId){
 	return connections[chatId].watchers;
-}
+};

@@ -68,11 +68,13 @@ class PaintManager{
 	 */
 	breakLine(activeLayerName = Layers.activeLayerName){
 		this._paintHistory.push(activeLayerName);
+		this._undoHistory = [];
 
 		Scene.getLayer(activeLayerName).paint.breakLine();
 
 		Events.paintBreakLine(activeLayerName);
 
+		this._setButtons();
 	}
 
 	/**
@@ -123,11 +125,14 @@ class PaintManager{
 		if(this._paintHistory.length === 0)
 			return false;
 		var layer = this._paintHistory.pop();
+
 		Scene.getLayer(layer).paint.undo();
 		this._undoHistory.push(layer);
 
 		Events.paintUndo(layer);
-		
+		console.log(this._paintHistory.length, this._undoHistory.length);
+		this._setButtons();
+		draw();
 	}
 
 	redo(){
@@ -139,6 +144,13 @@ class PaintManager{
 		this._paintHistory.push(layer);
 
 		Events.paintRedo(layer);
+		this._setButtons();
+		draw();
+	}
+
+	_setButtons(){
+		Menu.disabled("mainMenu", "undo", this._paintHistory.length === 0);
+		Menu.disabled("mainMenu", "redo", this._undoHistory.length === 0);
 	}
 
 	//GETTERS

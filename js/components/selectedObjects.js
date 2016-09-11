@@ -1,11 +1,35 @@
 class ObjectsManager{
 	constructor(){
+		this._movedObject = false;
 		this._objects = [];
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 	size(){
 		return this._objects.length;
 	};
+
+	get movedObject(){
+		return this._movedObject;
+	}
+
+	set movedObject(val){
+		this._movedObject = val;
+	}
+
+	onMouseMove(pos, movX, movY){
+		selectedObjects.forEach(e => Movement.move(e, movX, movY));
+
+		//ak objekt s ktorým sa hýbe nieje označený(už sa sním pohlo) tak sa sním tiež pohne
+		if(!this._movedObject.selected)
+			Movement.move(this._movedObject, movX, movY);
+
+		//ak sú nejaké objekty označené tak sa aktualizuje prehlad posledného označeného ináč iba hýbaného
+		if(selectedObjects.size())
+			updateSelectedObjectView(selectedObjects.getLast());
+		else if(this._movedObject)
+			updateSelectedObjectView(this._movedObject);
+	}
+
 	add(o){
 		if((isDefined(o.locked) && o.locked) || !o)
 			return;

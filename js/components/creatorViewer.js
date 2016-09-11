@@ -163,7 +163,7 @@ class CreatorViewer extends Entity{
 		}
 	}
 
-	clickIn(x, y){
+	clickIn(x, y){//TODO skúsiť prerobiť do čitatelnejšej formy
 		if(y < this.position.y || x < this.position.x || x > this.position.x + this.size.x)
 			return false;
 		var counter =  this.position.x + MENU_OFFSET,

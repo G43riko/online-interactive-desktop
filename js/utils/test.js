@@ -1,6 +1,6 @@
 class Test{
 	static allTests(){
-		var T = new Test();
+		//var T = new Test();
 		//T.testInput();
 	}
 

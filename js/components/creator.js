@@ -24,6 +24,11 @@ class objectCreator{
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
+	onMouseMove(pos, movX, movY){
+		updateSelectedObjectView(this._object);
+		this._object.updateCreatingPosition(pos);
+	}
+
 	set visibleView(val){this._visibleView = val;}
 	/**
 	 * Nastaví view pre creator
@@ -214,5 +219,5 @@ class objectCreator{
 	get borderWidth(){return this._borderWidth;}
 
 	set object(val){this._object = val;}
-	set operation(val){this._operation = val; this._view.changeOperation()}
+	set operation(val){this._operation = val; this._view.changeOperation();}
 }

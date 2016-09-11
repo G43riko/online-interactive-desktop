@@ -1,19 +1,40 @@
-function drawGrid(width = 0.1, dist = 50){
-	var i = 0;
-	context.beginPath();
-	context.lineWidth = width;
-	context.strokeStyle = "black";
-	while((i += dist) < canvas.width){
-		context.moveTo(i,0);
-		context.lineTo(i,canvas.height);
+function drawGrid(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD, c = GRID_COLOR){
+	var pointsNormal = [],
+		pointsBold = [],
+		boldCounter = 0,
+		i;
+
+	//vertikálne čiary
+	for(i=0 ; i<canvas.width ; i+=dist){
+		if(boldCounter++ % nthBold)
+			pointsNormal.push([i, 0, i, canvas.height]);
+		else
+			pointsBold.push([i, 0, i, canvas.height]);
 	}
-	i = 0;
-	while((i += dist) < canvas.height){
-		context.moveTo(0, i);
-		context.lineTo(canvas.width, i);
+
+	//horizontálne čiaty
+	for(i=0 ; i<canvas.height ; i+=dist){
+		if(boldCounter++ % nthBold)
+			pointsNormal.push([0, i, canvas.width, i]);
+		else
+			pointsBold.push([0, i, canvas.width, i]);
 	}
-	context.stroke();
+
+	//vykreslenie normálnych čiar
+	doLine({
+		points: pointsNormal,
+		borderWidth: width,
+		borderColor: c
+	});
+
+	//vykreslenie tučných čiar
+	doLine({
+		points: pointsBold,
+		borderWidth: width * 3,
+		borderColor: c
+	});
 }
+	
 
 function doPolygon(obj){
 	if(isUndefined(obj.points))
@@ -205,7 +226,6 @@ function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COL
 		ctx.textBaseline = FONT_VALIGN_MIDDLE;
 		ctx.fillText(text, x, y);
 	}
-
 }
 
 /*

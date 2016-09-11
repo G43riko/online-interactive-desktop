@@ -24,6 +24,14 @@
 			"visible" : true,
 			"disabled" : true
 		},
+		"undo": {
+			"visible" : true,
+			"disabled" : true
+		},
+		"redo" : {
+			"visible" : true,
+			"disabled" : true
+		},
 		"ctrl": {
 			"visible" : true,
 			"disabled" : true

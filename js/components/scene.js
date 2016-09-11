@@ -59,7 +59,7 @@ class SceneManager{
 	};
 
 	getTaskObject(data){
-		var findAssignment = false;
+		//var findAssignment = false;
 
 		data["error"] = data["error"] === "" ? data["error"] : "";
 		data["results"] = isEmptyObject(data["results"]) ? data["results"] : {};
@@ -83,7 +83,7 @@ class SceneManager{
 		});
 
 		//TODO treba nejako posielať zadanie
-		findAssignment = true;
+		//findAssignment = true;
 
 		//preloopuje vrstvy
 			//preskočí neviditelne

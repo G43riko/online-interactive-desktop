@@ -9,9 +9,10 @@
 		}
 		table {
 			border-collapse: collapse;
+			margin-top: 8px;
 		}
 
-		#anonymTable{
+		#anonymTable, #sharingTable{
 			width: 100%;
 		}
 
@@ -47,7 +48,61 @@
 		</table>
 	</div>
 
+	<div style="overflow-x:auto;">
+		<table id="sharingTable">
+		</table>
+	</div>
+
+	
+
 	<script type="text/javascript">	
+		var sharing = [
+			{
+				key: "startAt",
+				label: "Začiatok zdielania",
+				visible: true
+			},
+			{
+				key: "time",
+				label: "Dĺžka zdielania",
+				visible: true
+			},
+			{
+				key: "actualWatchers",
+				label: "Počet watcherov",
+				visible: true
+			},
+			{
+				key: "connectedWatchers",
+				label: "Pripojených watcherov",
+				visible: true
+			},
+			{
+				key: "disconnecsWatchers",
+				label: "Odpojených watcherov",
+				visible: true
+			},
+			{
+				key: "sharerRes",
+				label: "Rozlíšenie sharera",
+				visible: true
+			},
+			{
+				key: "title",
+				label: "Názov",
+				visible: true
+			},
+			{
+				key: "password",
+				label: "Heslo",
+				visible: true
+			},
+			{
+				key: "id",
+				label: "Id",
+				visible: true
+			}
+		];
 		var obj2 = [
 			{
 				label: "Avail. height",
@@ -129,7 +184,7 @@
 				key: "vendor",
 				visible: true
 			}
-		]
+		];
 		var obj = [
 			{
 				label: "Začatých sledovaní",
@@ -159,18 +214,18 @@
 				label: "Načítanych watchov",
 				key: "watchLoad"
 			}
-		]
+		];
 
-		var socket = io();
-		var wasInit = false;
-		var logTable = document.getElementById("logTable");
+		var socket		= io();
+		var wasInit		= false;
+		var logTable	= document.getElementById("logTable");
 
-		function setLogData(data){
+		function setLogData(data, struct){
 			var result = "<tr><th>Key</th><th>Value</th></tr>";
-			for(var i in obj)
-				if(obj.hasOwnProperty(i)){
-					result += '<tr><td>' + obj[i].label + ': </td>';
-					result += '<td id="' + obj[i].key + '">' + data[obj[i].key] + '</td></tr>';
+			for(var i in struct)
+				if(struct.hasOwnProperty(i)){
+					result += '<tr><td>' + struct[i].label + ': </td>';
+					result += '<td id="' + struct[i].key + '">' + data[struct[i].key] + '</td></tr>';
 				}
 			logTable.innerHTML = result;
 		}
@@ -183,20 +238,20 @@
 			return document.getElementById("msg_" + id);;
 		}
 
-		function setAnonymData(data){
+		function setAnonymData(data, struct){
 			var string = "<tr>";
 
-			for(var i in obj2)
-				if(obj2.hasOwnProperty(i) && obj2[i].visible)
-					string += "<th>" + obj2[i].label + "</th>";
+			for(var i in struct)
+				if(struct.hasOwnProperty(i) && struct[i].visible)
+					string += "<th>" + struct[i].label + "</th>";
 			string += "</tr>";
 
 			for(var i in data){
 				if(data.hasOwnProperty(i)){
 					string += "<tr>";
-					for(var j in obj2)
-						if(obj2.hasOwnProperty(j) && obj2[j].visible){
-							var d = data[i][obj2[j].key];
+					for(var j in struct)
+						if(struct.hasOwnProperty(j) && struct[j].visible){
+							var d = data[i][struct[j].key];
 							if(d === 0 || d === false)
 								d = "Nie";
 							else if(d === 1 || d === true)
@@ -206,21 +261,41 @@
 					string += "</tr>";
 				}
 			}
-
 			document.getElementById("anonymTable").innerHTML = string;
+		}
+
+
+		function setSharingData(data, struct){
+			var string = "<tr>";
+
+			for(var i in struct)
+				if(struct.hasOwnProperty(i) && struct[i].visible)
+					string += "<th>" + struct[i].label + "</th>";
+			string += "</tr>";
+
+			for(var i in data){
+				if(data.hasOwnProperty(i)){
+					string += "<tr>";
+					for(var j in struct)
+						if(struct.hasOwnProperty(j) && struct[j].visible){
+							string += "<td>" + data[i][struct[j].key] + "</td>";
+						}
+					string += "</tr>";
+				}
+			}
+			document.getElementById("sharingTable").innerHTML = string;
 		}
 
 		socket.on("dataRecieve", function(msg){
 			console.log(msg);
 
-
 			for(var i in msg.messages)
 				if(msg.messages.hasOwnProperty(i))
 					getOrCreate(i).innerHTML = msg.messages[i].count;
-				
 
-			setLogData(msg.logs);
-			setAnonymData(msg.anonym);
+			setLogData(msg.logs, obj);
+			setAnonymData(msg.anonym, obj2);
+			setSharingData(msg.connections, sharing);
 		})
 		socket.emit('dataReqiere', JSON.stringify({user:"user",passw: "user"}));
 	</script>
