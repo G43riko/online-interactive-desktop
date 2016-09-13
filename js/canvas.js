@@ -67,12 +67,13 @@ function doPolygon(obj){
 					else{
 						res.radius.replace("px", "");
 						l1 = l2 = 1;
+						res.radius = parseInt(res.radius);
 					}
 					res.ctx.moveTo(points[size - 1].x + v2.x * l2 * res.radius, points[size - 1].y + v2.y * l2 * res.radius);
 					res.ctx.quadraticCurveTo(e.x, e.y, e.x + v1.x * l1 * res.radius, e.y + v1.y * l1 * res.radius);
 				}
 				else{
-					v1 = points[(i + 1)%size].getClone().sub(e);
+					v1 = points[(i + 1) % size].getClone().sub(e);
 					v2 = e.getClone().sub(points[i - 1]);
 
 					l1 = v1.getLength();
@@ -113,27 +114,31 @@ function doArc(obj){
 
 
 function doRect(obj){
-	var def = _checkPosAndSize(obj, "Rect");
+	var def = _checkPosAndSize(obj, OBJECT_RECT);
 
-	if(!isUndefined(obj["radius"])){
-		if(isNumber(obj["radius"]))
-			obj["radius"] = {tl: obj["radius"], tr: obj["radius"], br: obj["radius"], bl: obj["radius"]};
+	if(isDefined(obj[ATTRIBUTE_RADIUS])){
+		if(isNumber(obj[ATTRIBUTE_RADIUS]))
+			obj[ATTRIBUTE_RADIUS] = {
+				tl: obj[ATTRIBUTE_RADIUS],
+				tr: obj[ATTRIBUTE_RADIUS],
+				br: obj[ATTRIBUTE_RADIUS],
+				bl: obj[ATTRIBUTE_RADIUS]};
 		else
-			each(def.radius, (e, i) => obj.radius[i] = obj.radius[i] || def.radius[i]);
+			each(def[ATTRIBUTE_RADIUS], (e, i) => obj[ATTRIBUTE_RADIUS][i] = obj[ATTRIBUTE_RADIUS][i] || def[ATTRIBUTE_RADIUS][i]);
 	}
 
 	var res = _remakePosAndSize(def, obj);
 
 	res.ctx.beginPath();
-	res.ctx.moveTo(res.x + res.radius.tl, res.y);
-	res.ctx.lineTo(res.x + res.width - res.radius.tr, res.y);
-	res.ctx.quadraticCurveTo(res.x + res.width, res.y, res.x + res.width, res.y + res.radius.tr);
-	res.ctx.lineTo(res.x + res.width, res.y + res.height - res.radius.br);
-	res.ctx.quadraticCurveTo(res.x + res.width, res.y + res.height, res.x + res.width - res.radius.br, res.y + res.height);
-	res.ctx.lineTo(res.x + res.radius.bl, res.y + res.height);
-	res.ctx.quadraticCurveTo(res.x, res.y + res.height, res.x, res.y + res.height - res.radius.bl);
-	res.ctx.lineTo(res.x, res.y + res.radius.tl);
-	res.ctx.quadraticCurveTo(res.x, res.y, res.x + res.radius.tl, res.y);
+	res.ctx.moveTo(res.x + res[ATTRIBUTE_RADIUS].tl, res.y);
+	res.ctx.lineTo(res.x + res.width - res[ATTRIBUTE_RADIUS].tr, res.y);
+	res.ctx.quadraticCurveTo(res.x + res.width, res.y, res.x + res.width, res.y + res[ATTRIBUTE_RADIUS].tr);
+	res.ctx.lineTo(res.x + res.width, res.y + res.height - res[ATTRIBUTE_RADIUS].br);
+	res.ctx.quadraticCurveTo(res.x + res.width, res.y + res.height, res.x + res.width - res[ATTRIBUTE_RADIUS].br, res.y + res.height);
+	res.ctx.lineTo(res.x + res[ATTRIBUTE_RADIUS].bl, res.y + res.height);
+	res.ctx.quadraticCurveTo(res.x, res.y + res.height, res.x, res.y + res.height - res[ATTRIBUTE_RADIUS].bl);
+	res.ctx.lineTo(res.x, res.y + res[ATTRIBUTE_RADIUS].tl);
+	res.ctx.quadraticCurveTo(res.x, res.y, res.x + res[ATTRIBUTE_RADIUS].tl, res.y);
 	res.ctx.closePath();
 
 	_process(res);
@@ -249,9 +254,12 @@ function resetCanvas(){
 	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function initCanvasSize(){
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+function initCanvasSize(c = canvas){
+	if(!c.width || !c.height)
+		c = canvas;
+
+	c.width = window.innerWidth;
+	c.height = window.innerHeight;
 }
 
 function setShadow(variable){

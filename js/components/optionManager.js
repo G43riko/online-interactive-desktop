@@ -9,22 +9,32 @@ class OptionsManager{
 			grid: {
 				id: "idShowGrid",
 				attr: "checked",
-				val: true
+				val: OPTION_SHOW_GRID
 			},
 			showLayersViewer: {
 				id: "idShowLayersViewer",
 				attr: "checked",
-				val: true
+				val: OPTION_SHOW_LAYERS_VIEWER
 			},
 			shadows: {
 				id: "idShadows",
 				attr: "checked",
-				val: true
+				val: OPTION_SHOW_SHADOWS
 			},
 			movingSilhouette: {
 				id: "idMovingSilhouette",
 				attr: "checked",
-				val: false
+				val: OPTION_MOVING_SILHOUETTE
+			},
+			changeCursor: {
+				id: "idChangeCursor",
+				attr: "checked",
+				val: OPTION_CHANGE_CURSOR
+			},
+			canvasBlur: {
+				id: "idCanvasBlur",
+				attr: "checked",
+				val: OPTION_CANVAS_BLUR
 			}
 		};
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
@@ -44,6 +54,8 @@ class OptionsManager{
 	get grid(){return this._options["grid"]["val"];}
 	get shadows(){return this._options["shadows"]["val"];}
 	get snapping(){return this._options["snapping"]["val"];}
+	get canvasBlur(){return this._options["canvasBlur"]["val"];}
+	get changeCursor(){return this._options["changeCursor"]["val"];}
 	get showLayersViewer(){return this._options["showLayersViewer"]["val"];}
 	get movingSilhouette(){return this._options["movingSilhouette"]["val"];}
 

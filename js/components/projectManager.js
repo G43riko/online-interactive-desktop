@@ -79,6 +79,8 @@ class ProjectManager{
             sendData(data);
     }
 
+	set autor(val){this._autor = val;};
+
 	get title(){return this._title;}
 	get autor(){return this._autor;}
 

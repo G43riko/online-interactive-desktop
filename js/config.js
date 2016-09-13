@@ -7,6 +7,7 @@
 /*R*/const ENTER_KEY	= 13;
 /*R*/const Z_KEY		= 90;
 /*R*/const Y_KEY		= 89;
+/*R*/const DELETE_KEY	= 46;
 
 const FONT_HALIGN_LEFT		= "left";
 const FONT_HALIGN_CENTER	= "center";
@@ -113,8 +114,8 @@ const MENU_RADIUS				= 10;
 const MENU_BORDER_WIDTH 		= 2;
 const MENU_FONT_COLOR 			= "#000000";
 const MENU_BORDER_COLOR 		= "#000000";
-const MENU_WIDTH 				= 50;//60
-const MENU_HEIGHT				= 50;//60
+const MENU_WIDTH 				= 60;//60
+const MENU_HEIGHT				= 60;//60
 const MENU_POSITION				= MENU_OFFSET;
 const MENU_BACKGROUND_COLOR		= "#1abc9c";
 const MENU_DISABLED_BG_COLOR	= "#abd6bb";
@@ -161,9 +162,10 @@ const KEYWORD_UNDEFINED		= "undefined";
 const KEYWORD_TRANSPARENT	= "transparent";
 /*R*/const PI2 = Math.PI * 2;
 
-const IMAGE_FORMAT_JPG	= "image/jpeg";
-const IMAGE_FORMAT_PNG	= "image/png";
-const IMAGE_FORMAT_GIF	= "image/gif";
+/*R*/const IMAGE_FORMAT_JPG	= "image/jpeg";
+/*R*/const IMAGE_FORMAT_PNG	= "image/png";
+/*R*/const IMAGE_FORMAT_GIF	= "image/gif";
+const FORMAT_FILE_XML	= "text/xml";
 
 const ATTRIBUTE_FILL_COLOR		= "fillColor";
 const ATTRIBUTE_BORDER_COLOR	= "borderColor";
@@ -183,6 +185,24 @@ const INPUT_TYPE_RADIO		= "radio";
 
 const CHECKBOX_COLOR_TRUE	= "green";
 const CHECKBOX_COLOR_FALSE	= "red";
+
+const COMPONENT_DRAW	= "1";
+const COMPONENT_SHARE	= "2";
+const COMPONENT_WATCH	= "3";
+const COMPONENT_TOOLS	= "4";
+const COMPONENT_LOAD	= "5";
+const COMPONENT_SCREEN	= "6";
+const COMPONENT_CONTENT	= "7";
+const COMPONENT_EDIT	= "8";
+const COMPONENT_SAVE	= "9";
+
+
+const LAYERS_LINE_HEIGHT	= 50;
+const LAYERS_PANEL_WIDTH	= 180;
+const LAYERS_PANEL_OFFSET	= 40;
+const LAYERS_FONT_SIZE		= 20;
+const LAYERS_CHECKBOX_SIZE	= 30;
+const LAYERS_BUTTON_SIZE	= 40;
 
 const LOGGER_MENU_CLICK			= 2600;
 const LOGGER_CREATOR_CHANGE		= 2601;
@@ -212,3 +232,14 @@ const OBJECT_RECT		= "Rect";
 const OBJECT_TABLE		= "Table";
 const OBJECT_INPUT		= "Input";
 const OBJECT_TEXT		= "Text";
+
+const CURSOR_POINTER	= "pointer";
+const CURSOR_DEFAULT	= "default";
+const CURSOR_NOT_ALLOWED	= "not-allowed";
+
+const OPTION_CHANGE_CURSOR		= true;
+const OPTION_MOVING_SILHOUETTE	= false;
+const OPTION_SHOW_SHADOWS		= true;
+const OPTION_CANVAS_BLUR		= false;
+const OPTION_SHOW_LAYERS_VIEWER	= true;
+const OPTION_SHOW_GRID			= true;

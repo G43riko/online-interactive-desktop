@@ -142,7 +142,6 @@ Movement = {
 							o.size.y += y;
 						break
 				}
-				//EventHistory.addObjectMoveAction(o, oldPos, oldSize, o.moveType);
 			}
 		}
 		else if(isDefined(o.movingPoint)){
@@ -164,6 +163,10 @@ Movement = {
 		Events.objectMove(o);
 	}
 };
+
+function setCursor(val){
+	canvas.style.cursor = val;
+}
 
 function closeDialog(){
 	//$("#modalWindow > div").each((e) => $(e).hide());

@@ -29,7 +29,7 @@ class ContextMenuManager{
 				else if(selectedObjects.movedObject.name == OBJECT_IMAGE)
 					this._addFields("changeImage");
 				else if(selectedObjects.movedObject.name == "LayerViewer"){
-					this._addFields("visible", "lockLayer", "showPaint");
+					this._addFields("visible", "lockLayer", "showPaint", "animatePaint");
 					if(!selectedObjects.movedObject.locked)
 						this._addFields("deleteLayer", "renameLayer", "clearLayer");
 				}
@@ -231,6 +231,10 @@ class ContextMenuManager{
 				break;
 			case "clearLayer":
 				this._selectedObject.clearLayer(this.position.y);
+				actContextMenu = false;
+				break;
+			case "animatePaint":
+				this._selectedObject.animateLayer(this.position.y);
 				actContextMenu = false;
 				break;
 			case "renameLayer":

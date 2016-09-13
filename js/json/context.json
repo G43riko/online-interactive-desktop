@@ -190,6 +190,10 @@
 		"label" : "Show paint",
 		"type" : "checkbox"
 	},
+	"animatePaint" : {
+		"label" : "Animate paint",
+		"type" : "text"
+	},
 	"deleteLayer" : {
 		"label" : "Delete layer",
 		"type" : "text"

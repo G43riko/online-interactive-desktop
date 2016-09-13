@@ -28,6 +28,44 @@ class MenuManager{
 	get size(){return this._size;}
 	set visible(val){this._visible = val;}
 
+	hover(x, y){
+		if(!this._visible)
+			return false;
+
+		var posY = this._position.y,
+			posX = this._position.x,
+			result = false;
+
+		if(this._visibleSubMenu)
+			result = this._subMenus[this._visibleSubMenu].hover(x, y);
+
+
+		if(!result)
+			this._items.forEach(function(e) {
+				if (!e["visible"] || result)
+					return false;
+
+				if(x > posX && x < posX + this._size.x && y > posY && y < posY + this._size.y )
+					result = e;
+
+				if(this._vertical)
+					posY += this._size.y + this._offset;
+				else
+					posX += this._size.x + this._offset;
+			}, this);
+
+		if(result){
+			if(result.disabled)
+				setCursor(CURSOR_NOT_ALLOWED);
+			else
+				setCursor(CURSOR_POINTER);
+		}
+		else
+			setCursor(CURSOR_DEFAULT);
+
+		return result !== false;
+	}
+
 	static _changeDataByComponents(data){
 		if(!Components.tools() && Components.draw()) //ak je kreslenie a nie nastroje musí sa nastaviť kreslenie
 			Creator.operation = OPERATION_DRAW_PATH;
@@ -47,6 +85,7 @@ class MenuManager{
 		return data;
 	}
 	init(data){
+		MenuManager.dataBackup = JSON.stringify(data);
 		data = MenuManager._changeDataByComponents(data);
 		var array = [],
 			counter = new GVector2f(),
@@ -172,10 +211,8 @@ class MenuManager{
 			});
 		else if(isDefined(this._subMenus[menu]))
 			each(this._subMenus[menu]._items, function(e, i, arr){
-				if(e.key === button){
+				if(e.key === button)
 					arr[i].disabled = value;
-					console.log("našlo sa a nastavuje sa na ", value);
-				}
 			});
 	}
 
@@ -225,6 +262,19 @@ class MenuManager{
 				break;
 			case "undo":
 				Paints.undo();
+				break;
+			case "copyUrl":
+				var area = document.createElement("textarea");
+				area.appendChild(document.createTextNode(Sharer.getWatcherUrl()));
+				document.body.appendChild(area);
+				area.select();
+				try{
+					document.execCommand('copy');
+					Logger.notif("Adresa zdielania bola úspečne skopírovaná do schránky");
+				}catch(e){
+					Logger.notif("Nepodarilo sa skopírovať adresu zdielania");
+				}
+				document.body.removeChild(area);
 				break;
 			case "redo":
 				Paints.redo();
@@ -418,6 +468,9 @@ class MenuManager{
 				break;
 			case "watch":
 				fillText("WATCH", x + (width >> 1), y + (height >> 1), height / 6, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "copyUrl":
+				fillText("LINK", x + (width >> 1), y + (height >> 1), height / 6, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "shareOptions":
 				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);

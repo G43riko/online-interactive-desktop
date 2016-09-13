@@ -20,6 +20,10 @@ class SceneManager{
 		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	};
 
+	onScreenResize(){
+		each(this._layers, e => e.paint.onScreenResize())
+	}
+
 	createLayer(title = DEFAULT_LAYER_TITLE, layerType = ""){
 		if(this._layers.hasOwnProperty(title))
 			Logger.error("ide sa vytvoriť vrstva ktorá už existuje: " + title);
@@ -119,11 +123,9 @@ class SceneManager{
 		draw();
 	};
 
-	get layers(){return this._layers}
-
-	get layersNumber(){
-		return this._layersCount;
-	}
+	get layers(){return this._layers;}
+	get paint(){return Layers.activeLayer.paint;}
+	get layersNumber(){return this._layersCount;}
 
 	get(layer, id){
 		return this._layers[layer].get(id);
@@ -133,9 +135,6 @@ class SceneManager{
 		each(this._layers, e => e.draw());
 	};
 
-	get paint(){
-		return Layers.activeLayer.paint;
-	};
 
 	remove(obj, layer = obj.layer, resend = true){
 		this._layers[layer].remove(obj);

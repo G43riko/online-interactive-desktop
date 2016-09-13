@@ -30,6 +30,10 @@ class ObjectsManager{
 			updateSelectedObjectView(this._movedObject);
 	}
 
+	deleteAll(){
+		each(this._objects, e => Scene.remove(e));
+	}
+
 	add(o){
 		if((isDefined(o.locked) && o.locked) || !o)
 			return;

@@ -4,15 +4,16 @@ class Paint extends Entity{
 		this._points 		= [Paint.defArray()];
 		this._count 		= 0;
 		this._canvas 		= document.createElement("canvas");
-		this._canvas.width 	= canvas.width;
-		this._canvas.height	= canvas.height;
+		this.onScreenResize();
 		this._context 		= this._canvas.getContext('2d');
 		this._action		= PAINT_ACTION_BRUSH;
 		this._editBackup	= [];
-
-
 	}
 
+	onScreenResize(){
+		this._canvas.width 	= canvas.width;
+		this._canvas.height	= canvas.height;
+	}
 	static defArray(){
 		return {
 			color: null,
@@ -102,6 +103,9 @@ class Paint extends Entity{
 	 * @param point
 	 */
 	addPoint(point){
+		if(this._points.length === 0)
+			this._points.push(Paint.defArray());
+
 		var lastArr = this._points[this._points.length - 1],
 			arr = lastArr["points"];
 
@@ -166,7 +170,9 @@ class Paint extends Entity{
 	}
 
 	breakLine(){
-		if(this._points[this._points.length - 1].points.length < 2)
+		if(this._points.length === 0)
+			this._points.push(Paint.defArray());
+		else if(this._points[this._points.length - 1].points.length < 2)
 			this._points[this._points.length - 1] = Paint.defArray();
 		else
 			this._points.push(Paint.defArray());

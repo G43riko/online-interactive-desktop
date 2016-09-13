@@ -8,10 +8,17 @@ class SharerManager{
 			breakLine: (layer) => this._paintOperation(ACTION_PAINT_BREAK_LINE, layer),
 			clean: (layer) => this._paintOperation(ACTION_PAINT_CLEAN, layer)
 		};
+		this._sender = new EventTimer(e => this._sendStack(), 1000 / 60);
+		this._buffer = [];
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
 	get isSharing(){return this._sharing;}
+
+	_sendStack(){
+		this._socket.emit("sendBuffer", this._buffer);
+		this._buffer = [];
+	}
 
 	startShare(options){
 		this._socket = io();
@@ -43,7 +50,7 @@ class SharerManager{
 			chatViewer.recieveMessage(data["text"], data["sender"]);
 		});
 
-		this._socket.emit('startShare', data);
+		this._sendMessage('startShare', data);
 
 		this._socket.on('notification', function(data){
 			Logger.notif("prijatá správa: " + data["msg"]);
@@ -62,11 +69,13 @@ class SharerManager{
 			var span = document.createElement("span");
 			span.appendChild(document.createTextNode("zdiela sa na "));
 			span.appendChild(a);
+			span.appendChild(document.createTextNode(" s ID " + data["id"]));
 
 			Logger.notif(span);
 			Menu.disabled("sharing", "watch", false);
 			Menu.disabled("sharing", "stopShare", false);
 			Menu.disabled("sharing", "shareOptions", false);
+			Menu.disabled("sharing", "copyUrl", false);
 			Menu.disabled("sharing", "startShare", true);
 			chatViewer.show();
 		});
@@ -82,7 +91,9 @@ class SharerManager{
 				},
 				target: recData.target
 			};
-			inst._socket.emit('sendAllData', data);
+
+			Logger.notif("prijatá správa: Nový watcher sa úspešne pripojil");
+			inst._sendMessage('sendAllData', data);
 		});
 	}
 
@@ -94,11 +105,11 @@ class SharerManager{
 				val: val
 			}
 		};
-		this._socket.emit('changeCreator', data);
+		this._sendMessage('changeCreator', data);
 	}
 
 	getWatcherUrl(){
-		return location.href + "watch?id=" + this._id;
+		return location.origin + "/watcher?id=" + this._id;
 	}
 
 	_paintOperation(action, arg1, arg2){
@@ -128,7 +139,7 @@ class SharerManager{
 				Logger.error("nastala chyba lebo sa chce vykonať neznáma paintAction: " + action);
 				return;
 		}
-		this._socket.emit('paintAction', data);
+		this._sendMessage('paintAction', data);
 	}
 
 	sendMessage(text, sender){
@@ -139,7 +150,7 @@ class SharerManager{
 				sender: sender
 			}
 		};
-		this._socket.emit('chatMessage', data);
+		this._sendMessage('chatMessage', data);
 	}
 
 	mouseChange(){
@@ -153,7 +164,13 @@ class SharerManager{
 				buttonDown: Input.isButtonDown(LEFT_BUTTON)
 			}
 		};
-		this._socket.emit('mouseData', data);
+
+		this._sendMessage('mouseData', data);
+	}
+	_sendMessage(title, data){
+		this._sender.callIfCan();
+		this._buffer.push([title, data]);
+		this._socket.emit(title, data);
 	}
 
 	objectChange(o, action, keys){
@@ -191,10 +208,10 @@ class SharerManager{
 				Logger.error("nastala chyba lebo sa chce vykonať neznáma akcia: " + action);
 				return;
 		}
-		this._socket.emit('action', data);
+		this._sendMessage('action', data);
 	}
 
 	write(msg){
-		this._socket.emit('broadcastMsg', {id: this._id, msg: msg});
+		this._sendMessage('broadcastMsg', {id: this._id, msg: msg});
 	}
 }

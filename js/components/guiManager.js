@@ -25,6 +25,12 @@ function showSharingOptions(){
 	$("canvas").addClass("blur");
 }
 
+function showWatcherOptions(){
+	$("#modalWindow ").find("#watchForm").show();
+	$("#modalWindow").show();
+	$("canvas").addClass("blur");
+}
+
 function showSavingOptions(){
 	document.getElementById("idImageWidth").value = canvas.width;
 	document.getElementById("idImageHeight").value = canvas.height;
@@ -80,6 +86,51 @@ function serializeSaveData(){
 	result["background"] = KEYWORD_TRANSPARENT;
 
 	processImageData(result);
+}
+
+function processWatchData(data){
+	var checkData = {
+		shareId: data["shareId"],
+		nickName: data["nickName"],
+		password: data["password"]
+	};
+	var form = document.createElement("form"),
+		createInput = (name, value) => {
+			var el = document.createElement("input");
+			el.value = value;
+			el.name = name;
+			return el;
+		};
+	data["innerWidth"] = window.innerWidth;
+	data["innerHeight"] = window.innerHeight;
+	$.post("/checkWatchData", {content: JSON.stringify(data)}, function(response){
+		if(response.result > 0){
+			location.href = "/watch?id=" + data["shareId"] + "&userId=" + response["userId"];
+			return;
+			document.body.appendChild(form);
+			form.appendChild(createInput("content", JSON.stringify(data)));
+			form.style.display = "none";
+			form.method = "POST";
+			form.action = "/watch?id=" + data["shareId"] + "&userId=" + response["userId"];
+			form.submit();
+		}
+		else
+			Alert.danger(response.msg);
+	}, "JSON");
+	return false;
+
+	/*
+	for(var i in data)
+		if(data.hasOwnProperty(i))
+			form.appendChild(createInput(i, data[i]));
+	*/
+	document.body.appendChild(form);
+	form.appendChild(createInput("content", JSON.stringify(data)));
+	form.style.display = "none";
+	form.method = "POST";
+	form.action = "/watch?id=" + data["shareId"];
+	form.submit();
+	//document.body.removeChild(form);
 }
 
 function processImageData(data){
@@ -157,4 +208,18 @@ function serializeShareData(){
 	
 	closeDialog();
 	Sharer.startShare(result);
+}
+
+function serializeWatcherData(){
+	var getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
+	var result = {};
+	result["nickName"]          = getValueIfExists(document.getElementById("idNickName"));
+	result["password"]          = getValueIfExists(document.getElementById("idSharingPassword"));
+	result["timeLine"]          = getValueIfExists(document.getElementById("idShowTimeLine"));
+	result["changeResolution"]  = getValueIfExists(document.getElementById("idChangeResolution"));
+	result["showChat"]          = getValueIfExists(document.getElementById("idShowChat"));
+	result["shareId"]           = getValueIfExists(document.getElementById("idShareId"));
+
+	processWatchData(result);
+	//Watcher = new WatcherManager(result);
 }

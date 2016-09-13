@@ -8,8 +8,7 @@ var initTime 		= window["performance"].now(),
 	actContextMenu 	= false,
 	Logger 			= new LogManager(),
 	Listeners		= new ListenersManager(),
-	timeLine		= new TimeLine(),
-	EventHistory 	= new EventSaver(),
+	//EventHistory 	= new EventSaver(),
 	Content			= new ContentManager(),
 	FPS				= 60,
 	Files			= new FileManager(),
@@ -19,20 +18,23 @@ var initTime 		= window["performance"].now(),
 	Events 			= typeof EventManager !== KEYWORD_UNDEFINED ? new EventManager() : null,
 	SelectedText	= null,
 	Options 		= new OptionsManager(),
-	drawEvent 		= new EventTimer(realDraw, 16),
+	drawEvent 		= new EventTimer(realDraw, 1000 / 60),
 	draw 			= () => drawEvent.callIfCan(),
-	components		= {
-		draw : true,
-		share : true,
-		watch : true,
-		tools : true,
-		save : true,
-		load : true,
-		screen : true,
-		content : true,
-		edit : true
-	},
-	drawMousePos, Layers, canvas, context, chatViewer;
+	components, drawMousePos, Layers, canvas, context, chatViewer, timeLine;
+
+function setUpComponents(){
+	components =  {
+		draw : window.location.hash.indexOf(COMPONENT_DRAW) >= 0 || typeof Watcher !== "undefined",
+		share : window.location.hash.indexOf(COMPONENT_SHARE) >= 0 || typeof Watcher !== "undefined",
+		watch : window.location.hash.indexOf(COMPONENT_WATCH) >= 0 || typeof Watcher !== "undefined",
+		tools : window.location.hash.indexOf(COMPONENT_TOOLS) >= 0 || typeof Watcher !== "undefined",
+		save : window.location.hash.indexOf(COMPONENT_SAVE) >= 0 || typeof Watcher !== "undefined",
+		load : window.location.hash.indexOf(COMPONENT_LOAD) >= 0 || typeof Watcher !== "undefined",
+		screen : window.location.hash.indexOf(COMPONENT_SCREEN) >= 0 || typeof Watcher !== "undefined",
+		content : window.location.hash.indexOf(COMPONENT_CONTENT) >= 0 || typeof Watcher !== "undefined",
+		edit : window.location.hash.indexOf(COMPONENT_EDIT) >= 0 || typeof Watcher !== "undefined"
+	}
+}
 
 var Components = {
 	draw	: () => isDefined(components) && isDefined(components["draw"]) && components["draw"] === true,
@@ -94,10 +96,10 @@ function ajax(url, options, dataType){
 						options["success"](JSON.parse(xhttp.responseText));
 						break;
 					case "html" :
-						options["success"](new DOMParser().parseFromString(xhttp.responseText, "text/xml"));
+						options["success"](new DOMParser().parseFromString(xhttp.responseText, FORMAT_FILE_XML));
 						break;
 					case "xml" :
-						options["success"](new DOMParser().parseFromString(xhttp.responseText, "text/xml"));
+						options["success"](new DOMParser().parseFromString(xhttp.responseText, FORMAT_FILE_XML));
 						break;
 					default :
 						options["success"](xhttp.responseText)
@@ -172,10 +174,11 @@ function init(){
 	draw();
 }
 
-$(function(){
-	/**
-	 * DOLEZITE!!!
-	 */
+var loading = function(){
+
+	/////DOLEZITE!!!
+
+	setUpComponents();
 	canvas = document.getElementById("myCanvas");
 	initCanvasSize();
 	context = canvas.getContext("2d");
@@ -192,27 +195,30 @@ $(function(){
 	Scene.createLayer();
 	Scene.createLayer("rightMenu", "gui");
 	Scene.createLayer("test2");
-	console.log("stranka sa nacítala za: ", (window["performance"].now() - initTime) + " ms");
 
 	Options.init();
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
 	Input.initListeners(canvas);
 
-	if(typeof Watcher !== KEYWORD_UNDEFINED)
-		Project._autor = "Watcher";
-
+	if(typeof Sharer !== "undefined")
 	chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
-	if(typeof Watcher !== KEYWORD_UNDEFINED)
-		chatViewer.show();
 
 	Layers = new LayersViewer();
 	Scene.addToScene(Layers, "rightMenu");
 	Creator.view = new CreatorViewer(new GVector2f(Menu.position.x + (Menu.size.x + MENU_OFFSET) * 9 - MENU_OFFSET, Menu.position.y - MENU_OFFSET));
 
+	console.log("stranka sa nacítala za: ", (window["performance"].now() - initTime) + " ms");
 	draw();
+};
+
+$(function(){
+		loading();
 });
 
 function realDraw(){
+	if(typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected)
+		return;
+
 	drawMousePos = new Date().getMilliseconds();
 	if(!isObject(context))
 		return Logger.notif("context počas kreslenia nieje definovaný");
@@ -227,6 +233,10 @@ function realDraw(){
 	if(actContextMenu)
 		actContextMenu.draw();
 	Logger.log("kreslí sa všetko", LOGGER_DRAW);
-	if(typeof timeLine !== "undefined")
+	if(typeof timeLine !== KEYWORD_UNDEFINED && timeLine)
 		timeLine.draw();
+
+	context.font = "30px Comic Sans MS";
+	context.fillStyle = "red";
+	context.fillText("draw(ms): " + (new Date().getMilliseconds() - drawMousePos), window.innerWidth - 100, 15);
 }

@@ -2,11 +2,13 @@ class WatcherManager{
 	constructor(){
 		WatcherManager._tryPasswordCounter = 0;
 		WatcherManager._maxPasswordTries = 3;
+
 		this._mouseData = {
 			posX: window.innerWidth << 1,
 			posY: window.innerHeight << 1,
 			buttonDown: false
 		};
+		this._connected = false;
 
 		this._canvas = document.getElementById("pointerCanvas");
 		var c = $(document.getElementById("myCanvas"));
@@ -16,79 +18,86 @@ class WatcherManager{
 
 
 		this._socket = io();
-		this._id = WatcherManager.processParameters();
-		var inst = this,
-			data = {
-				resolution: {
-					x: window.innerWidth,
-					y: window.innerHeight
-				},
-				id: this._id
-			};
-		this._socket.emit('startWatch', data);
-
-		this._socket.on('chatMessage',function(data){
-			chatViewer.recieveMessage(data["text"], data["sender"]);
-		});
-
-		this._socket.on('notification', function(data){
-			Logger.notif("prijatá správa: " + data["msg"]);
-			console.log(data["msg"]);
-		});
-
-		this._socket.on('auth', function(){
-			//ZOBRAZI SA HESLO AK JE ZADANE
-			var diff = WatcherManager._maxPasswordTries - WatcherManager._tryPasswordCounter;
-			if(WatcherManager._tryPasswordCounter){
-
-				var text = "Bolo zadané zlé heslo\n";
-				text += "Prajete si skusiť zadať heslo znovu?\n";
-				text += "Počet zostávajúcich pokusov: " + diff;
-				if(!diff || !confirm(text)){
-					Logger.notif("nepodarilo sa pripojiť k zdielaniu");
-					return false;
-				}
-			}
-			var pass = prompt("Prosím zadajte heslo pre zdielanie");
-			console.log("odosiela sa heslo", WatcherManager._tryPasswordCounter);
+		var data = WatcherManager.processParameters(),
+			inst = this;
 
 
-			WatcherManager._tryPasswordCounter++;
-			inst._socket.emit('completeAuth', {passwd: pass, id: inst._id});
-		});
 
-		this._socket.on('endShare', function(){
-			console.log("sharer je offline");
-		});
+		this._id = data["id"];
 
-		this._socket.on("changeCreator", function(data){
-			Creator.setOpt(data.key, data.val);
-		});
+		data["resolution"] = {
+			x: window.innerWidth,
+			y: window.innerHeight
+		};
 
-		this._socket.on("action", function(msg){
-			WatcherManager.processOperation(msg);
-		});
 
-		this._socket.on("paintAction", function(msg){
-			WatcherManager.processPaintAction(msg);
-		});
+		//this._socket.emit('startWatch', data);
+		this._socket.emit('createWatcher', {userId: data["userId"], shareId: data["id"]});
 
-		this._socket.on("mouseData", function(data){
-			inst._mouseData = data;
-			inst._context.clearRect(0, 0, inst._canvas.width, inst._canvas.height);
-			doArc({
-				x: inst._mouseData.posX - 20,
-				y: inst._mouseData.posY - 20,
-				fillColor: "rgba(255,0,0,0.1)",
-				width: 40,
-				height: 40,
-				ctx: inst._context
-			})
-		});
+		this._socket.on('chatMessage', data => isDefined(chatViewer) && chatViewer.recieveMessage(data["text"], data["sender"]));
+		this._socket.on('notification', data => Logger.notif("prijatá správa: " + data["msg"]));
+		this._socket.on('auth', (data) => inst._authProcess(data));
+		this._socket.on('endShare', () => console.log("sharer je offline"));
+		this._socket.on("changeCreator", data => Creator.setOpt(data.key, data.val));
+		this._socket.on("action", data => WatcherManager.processOperation(data));
+		this._socket.on("paintAction", data => WatcherManager.processPaintAction(data));
+		this._socket.on("mouseData", data => inst._mouseDataProcess(data));
+		this._socket.on('sendAllData', data => inst._sendAllData(data));
+		this._socket.on("processBuffer", data => inst._processBuffer(data));
 
-		this._socket.on('sendAllData', msg => WatcherManager.processContent(msg));
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
+
+	_processBuffer(data){
+		console.log(data);
+	}
+
+	_authProcess(data){
+		if(!data.needPassword){
+			this._socket.emit('completeAuth', {passwd: "", id: this._id});
+			return;
+		}
+		//ZOBRAZI SA HESLO AK JE ZADANE
+		var diff = WatcherManager._maxPasswordTries - WatcherManager._tryPasswordCounter;
+		if(WatcherManager._tryPasswordCounter){
+			var text = "Bolo zadané zlé heslo\n";
+			text += "Prajete si skusiť zadať heslo znovu?\n";
+			text += "Počet zostávajúcich pokusov: " + diff;
+			if(!diff || !confirm(text)){
+				Logger.notif("nepodarilo sa pripojiť k zdielaniu");
+				return false;
+			}
+		}
+		var pass = prompt("Prosím zadajte heslo pre zdielanie");
+		console.log("odosiela sa heslo", WatcherManager._tryPasswordCounter);
+
+
+		WatcherManager._tryPasswordCounter++;
+		this._socket.emit('completeAuth', {passwd: pass, id: this._id});
+	}
+
+	_sendAllData(data){
+		console.log("content: ", data);
+		WatcherManager.processContent(data);
+		this._connected = true;
+		Logger.notif("Všetky dáta boly úspešne načítané");
+		draw();
+	}
+
+	_mouseDataProcess(data) {
+		this._mouseData = data;
+		this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+		doArc({
+			x: this._mouseData.posX - 20,
+			y: this._mouseData.posY - 20,
+			fillColor: "rgba(255,0,0,0.1)",
+			width: 40,
+			height: 40,
+			ctx: this._context
+		})
+	}
+
+	get pointerCanvas(){return this._canvas;}
 
 	sendMessage(text, sender){
 		var data = {
@@ -102,22 +111,34 @@ class WatcherManager{
 	}
 
 	static processContent(content){
-		console.log("content: ", content);
-		var options = content.shareOptions;
+		var shareOptions = content.shareOptions;
+		var watchOptions = content.watchOptions;
 
-		if(options.share.objects)
+		if(shareOptions.share.objects)
 			Scene.fromObject(content.scene);
-		if(options.share.creator)
+		if(shareOptions.share.creator)
 			Creator.fromObject(content.creator);
-		if(options.share.paints)
+		if(shareOptions.share.paints)
 			Paints.fromObject(content.paint);
 
-		Menu.visible = options.share.menu;
-		Creator.visibleView = options.share.menu;
-		Options.setOpt("showLayersViewer", options.share.layers);
 
-		Logger.notif("Všetky dáta boly úspešne načítané");
+		if(watchOptions.show.chat){
+			chatViewer = new ChatViewer(Project.title + "'s chat", watchOptions.nickName, sendMessage);
+			chatViewer.show();
+		}
+
+		if(watchOptions.show.timeLine)
+			timeLine = new TimeLine();
+
+		Project.autor = watchOptions.nickName;
+
+
+		Menu.visible = shareOptions.share.menu;
+		Creator.visibleView = shareOptions.share.menu;
+		Options.setOpt("showLayersViewer", shareOptions.share.layers);
 	}
+
+	get connected(){return this._connected;}
 
 	static processPaintAction(data){
 		switch(data.action){
@@ -163,11 +184,14 @@ class WatcherManager{
 
 	static processParameters(){
 		var query = window.location.search.substring(1),
-			vars = query.split("&");
+			vars = query.split("&"),
+			data = {};
 
 		for (var i = 0; i < vars.length; i++)
 			if (vars[i].indexOf("id") >= 0)
-				return vars[i].split("=")[1];
-		return false;
+				data["id"] = vars[i].split("=")[1];
+			else if (vars[i].indexOf("userId") >= 0)
+				data["userId"] = vars[i].split("=")[1];
+		return data;
 	}
 }

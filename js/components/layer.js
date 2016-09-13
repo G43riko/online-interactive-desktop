@@ -31,8 +31,14 @@ class Layer{
 	cleanUp(){
 		this.forEach(e => callIfFunc(e.cleanUp));
 		this._objects = [];
+		Paints.cleanUp(this._title);
 		Logger.log("Bol vyčistený objekt " + this.constructor.name + "[" + this._title + "]", LOGGER_OBJECT_CLEANED);
 	};
+
+	rename(){
+		//TODO doplniť premenovávanie vrstiev
+	}
+
 
 	get(id){
 		return this._objects[id];

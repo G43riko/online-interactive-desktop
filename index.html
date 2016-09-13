@@ -86,27 +86,27 @@
 						<div>Čo zdielať:</div>
 						<div>
 							<div>
-								<input type="checkbox" id="idShareAll" onchange="shareALl(this)">
+								<input type="checkbox" id="idShareAll" onchange="shareALl(this)" checked>
 								<label for="idShareAll">Všetko</label>
 							</div>
 							<div>
-								<input type="checkbox" id="idShareMenu" name="shareMenu">
+								<input type="checkbox" id="idShareMenu" name="shareMenu" checked>
 								<label for="idShareMenu">Menu</label>
 							</div>
 							<div>
-								<input type="checkbox" id="idSharePaints" name="sharePaints">
+								<input type="checkbox" id="idSharePaints" name="sharePaints" checked>
 								<label for="idSharePaints">Kresby</label>
 							</div>
 							<div>
-								<input type="checkbox" id="idShareObjects" name="shareObjects">
+								<input type="checkbox" id="idShareObjects" name="shareObjects" checked>
 								<label for="idShareObjects">Objekty</label>
 							</div>
 							<div>
-								<input type="checkbox" id="idShareCreator" name="shareCreator">
+								<input type="checkbox" id="idShareCreator" name="shareCreator" checked>
 								<label for="idShareCreator">Creator</label>
 							</div>
 							<div>
-								<input type="checkbox" id="idShareLayers" name="shareLayers">
+								<input type="checkbox" id="idShareLayers" name="shareLayers" checked>
 								<label for="idShareLayers">Správcu vrstiev</label>
 							</div>
 						</div>
@@ -144,6 +144,14 @@
 					<div class="panel">
 						<label for="idMovingSilhouette">Obraziť pri pohybe iba siluetu: </label>
 						<input id="idMovingSilhouette" type="checkbox" name="movingSilhouette">
+					</div>
+					<div class="panel">
+						<label for="idCanvasBlur">Rozmazať canvas pri zobratzení modaloveho okna: </label>
+						<input id="idCanvasBlur" type="checkbox" name="canvasBlur">
+					</div>
+					<div class="panel">
+						<label for="idChangeCursor">Meniť typ kurzoru pri pohybe myši(môže znížiť výkon): </label>
+						<input id="idChangeCursor" type="checkbox" name="changeCursor">
 					</div>
 				</form>
 			</div>

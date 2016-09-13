@@ -1,4 +1,12 @@
 var connections = {};
+var tmpData = {};
+var ides = [];
+
+module.exports.getUserId = function(){
+	return Math.floor(Math.random() * 100000);
+};
+
+
 
 module.exports.startShare = function (id, socket, data){
 	connections[id] = {
@@ -21,8 +29,49 @@ module.exports.startShare = function (id, socket, data){
 	};
 };
 
+module.exports.setTmpData = function(data){
+	tmpData[data["userId"]] = data;
+	//console.log("nastavili sa tmp data: ", data);
+	return data["userId"];
+};
+
+module.exports.setUpWatcher = function(socket, userId){
+	var data = tmpData[userId];
+	connections[data["shareId"]].watchers[socket.id] = {
+		resolution: {
+			x: data["innerWidth"],
+			y: data["innerHeight"]
+		},
+		nickName: data["nickName"],
+		show: {
+			timeLine: data["timeLine"],
+			chat: data["showChat"]
+		},
+		changeResolution: data["changeResolution"],
+		valid: false,
+		socket: socket,
+		connected: true
+	};
+};
+
 module.exports.callLogInit = function(func){
 	func(connections);
+};
+
+module.exports.isSetPassword = function(id){
+	return connections[id].password !== "";
+};
+
+module.exports.isNickNameAvailable = function(id, nick){
+	return true;
+};
+
+module.exports.getWatchOptions = function(watcher){
+	return {
+		nickName: watcher["nickName"],
+		changeResolution: watcher["changeResolution"],
+		show: watcher["show"]
+	}
 };
 
 module.exports.getShareOptions = function(id){
@@ -74,7 +123,8 @@ module.exports.disconnect = function(socket, isWatcher, isSharer){
 	}
 };
 
-module.exports.existChat = function(chatId){
+
+module.exports.existShare = function(chatId){
 	return typeof connections[chatId] === "object";
 };
 

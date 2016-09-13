@@ -136,6 +136,10 @@
 			"visible" : true,
 			"disabled" : true
 		},
+		"copyUrl": {
+			"visible" : true,
+			"disabled" : true
+		},
 		"watch" : {
 			"visible" : true,
 			"disabled" : true

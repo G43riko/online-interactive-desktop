@@ -3,15 +3,19 @@ class Rect extends Entity {
 		super(OBJECT_RECT, position, size, {fillColor: fillColor});
 		this.moveType 	= -1;
 		this.minSize 	= new GVector2f(SELECTOR_SIZE);
-		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1))
+		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1));
+		//this._radius = Creator.radius;
+		//console.log("creator: " + Creator.radius);
 	}
 
-	set radius(val){
-		this._radius = parseFloat(val);
-		if(this._radius < 100)
+//	set radius(val){
+		//this._radius = parseFloat(val);
+		/*
+		if(this._radius < 1)
 			this._radius *= 100;
-		this._checkRadius();
-	}
+		*/
+//		this._checkRadius();
+//	}
 
 	updateCreatingPosition(pos){
 		this.size.x = pos.x - this.position.x;
@@ -35,16 +39,13 @@ class Rect extends Entity {
 	};
 
 	_checkRadius(){
-		if(this._radius > Math.min(this.size.x, this.size.y) >> 1)
-			this._radius = Math.min(this.size.x, this.size.y) >> 1;
+		var minRadius = Math.min(this.size.x, this.size.y) >> 1;
+		return this._radius > minRadius ? minRadius : this._radius;
 	}
 
 	draw(){
 		if (!this.visible)
 			return;
-
-		this._checkRadius();
-
 		doRect({
 			position: this.position,
 			size: this.size,
@@ -52,7 +53,7 @@ class Rect extends Entity {
 			shadow: this.moving && !this.locked,
 			borderWidth: this.borderWidth,
 			borderColor: this.borderColor,
-			radius: this._radius
+			radius: this._checkRadius()
 		});
 
 		Entity.drawConnectors(this);

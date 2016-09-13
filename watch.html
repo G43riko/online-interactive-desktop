@@ -55,8 +55,42 @@
     <body>
         <div id="modalWindow" style="display: none">
             <div id="colorPalete" style="display: none"></div>
+            <div id="shareForm" class="formContent">
+                <form>
+                    <h2>Watch options</h2>
+                    <br/>
+                    <div>
+                        <label for="idNickName">NickName: </label>
+                        <input id="idNickName" type="password" name="nickName">
+                    </div>
+
+                    <div>
+                        <label for="idSharingPassword">Heslo: </label>
+                        <input id="idSharingPassword" type="password" name="password">
+                    </div>
+
+                    <div class="panel">
+                        <label for="idShowTimeLine">Zobraziť časovú os: </label>
+                        <input id="idShowTimeLine" type="checkbox" name="timeLine">
+                    </div>
+
+                    <div class="panel">
+                        <label for="idChangeResolution">Prispôsobiť rozlíšenie: </label>
+                        <input id="idChangeResolution" type="checkbox" name="changeResolution" checked>
+                    </div>
+
+                    <div class="panel">
+                        <label for="idShowChat">ZobraziťChat: </label>
+                        <input id="idShowChat" type="checkbox" name="showChat" checked>
+                    </div>
+
+                    <div class="panel">
+                        <input type="button" value="Začať sledovanie" onclick="serializeWatcherData()">
+                    </div>
+                </form>
+            </div>
         </div>
-        <canvas class="canvas animated" id="myCanvas" >
+        <canvas class="canvas animated" id="myCanvas" tabindex="1">
             Váš prehliadač nepodporuje Canvas
         </canvas>
         <canvas class="canvas animated" id="pointerCanvas">
@@ -65,6 +99,7 @@
     </body>
 </html>
 <script>
+
     var colors = ["#191919", "#DFE2DB", "#FFF056", "#FFFFFF", "#C63D0F", "#3B3738", "#FDF3E7",
                   "#7E8F7C", "#005A31", "#A8CD1B", "#CBE32D", "#F3FAB6", "#558C89", "#74AFAD",
                   "#D9853B", "#ECECEA", "#2B2B2B", "#DE1B1B", "#F6F6F6", "#E9E581", "#7D1935",
@@ -73,6 +108,5 @@
                   "#F361C2", "#EBED5B", "#3C007B"].sort().reverse();
 
     $("#colorPalete").append(colors.map(e => '<div class="colorPatern" style="background-color:' + e + '"></div>').join(""));
-
     Watcher = new WatcherManager();
 </script>

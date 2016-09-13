@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <script src="js/lib/jquery.min.js"></script>
+        <script type="text/javascript" src="js/lib/alerts.js"></script>
+        <script type="text/javascript" src="js/components/guiManager.js"></script>
+        <title>Watch index</title>
+
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+        <meta name="apple-mobile-web-app-copable" content="yes">
+    </head>
+    <body>
+        <div id="modalWindow" style="display: none">
+            <div id="colorPalete" style="display: none"></div>
+            <div id="watchForm" class="formContent">
+                <form onsubmit="return false">
+                    <h2>Watch options</h2>
+                    <br/>
+                    <div>
+                        <label for="idShareId">Id zdielania: </label>
+                        <input id="idShareId" type="number" name="shareId">
+                    </div>
+                    <div>
+                        <label for="idNickName">NickName: </label>
+                        <input id="idNickName" type="text" name="nickName">
+                    </div>
+
+                    <div>
+                        <label for="idSharingPassword">Heslo: </label>
+                        <input id="idSharingPassword" type="password" name="password">
+                    </div>
+
+                    <div class="panel">
+                        <label for="idShowTimeLine">Zobraziť časovú os: </label>
+                        <input id="idShowTimeLine" type="checkbox" name="timeLine">
+                    </div>
+
+                    <div class="panel">
+                        <label for="idChangeResolution">Prispôsobiť rozlíšenie: </label>
+                        <input id="idChangeResolution" type="checkbox" name="changeResolution" checked>
+                    </div>
+
+                    <div class="panel">
+                        <label for="idShowChat">ZobraziťChat: </label>
+                        <input id="idShowChat" type="checkbox" name="showChat" checked>
+                    </div>
+
+                    <div class="panel">
+                        <input type="submit" value="Začať sledovanie" onclick="serializeWatcherData()">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script type="text/javascript">
+            var vars = window.location.search.substring(1).split("&");
+
+            for (var i = 0; i < vars.length; i++)
+                if (vars[i].indexOf("id") >= 0)
+                    document.getElementById("idShareId").value = vars[i].split("=")[1];
+
+            showWatcherOptions();
+        </script>
+    </body>
+</html>

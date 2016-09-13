@@ -3,13 +3,10 @@ class ListenersManager{
 		this._movedObject = null;
 	}
 	mouseDown(position, button){
-
 		if(isDefined(timeLine) && timeLine.clickIn(position.x, position.y)){
 			this._movedObject = timeLine;
 			return;
 		}
-
-
 
 		if(SelectedText){
 			var area = document.getElementById("selectedEditor");
@@ -57,7 +54,11 @@ class ListenersManager{
 			}
 		}
 		else if(ESCAPE_KEY === key)
-			closeDialog();	
+			closeDialog();
+		else if(DELETE_KEY === key){
+			selectedObjects.deleteAll();
+			draw();
+		}
 	}
 
 	mousePress(position){
@@ -164,6 +165,10 @@ class ListenersManager{
 	}
 
 	mouseMove(position, movX, movY){
+		if(Options.changeCursor){//TODO timeline, layersViewer, creator, Line & polygon, selectors, connectors
+			Menu.hover(position.x, position.y);
+		}
+
 		if(this._movedObject && isFunction(this._movedObject.onMouseMove)){
 			this._movedObject.onMouseMove(position, movX, movY);
 			draw();

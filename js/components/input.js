@@ -12,21 +12,32 @@ class InputManager{
 
 	get mousePos(){return this._mousePos;}
 
-	_initWindowListeners(){
-		window.onresize = function(){
-			initCanvasSize();
-			draw();
-		};
+	_onResize(){
+		initCanvasSize();
 
-		window.orientationchange = function(){
-			initCanvasSize();
-			draw();
-		};
+		Scene.onScreenResize();
+
+		if(isDefined(timeLine))
+			timeLine.onScreenResize();
+
+		if(isDefined(Layers))
+			Layers.onScreenResize();
+
+		draw();
+	}
+
+	_initWindowListeners(){
+		window.onresize = this._onResize;
+
+		window.orientationchange = this._onResize;
 
 		window.onbeforeunload= function(event){
 			event.returnValue = "Nazoaj chceš odísť s tejto stránky???!!!";
 		};
-
+		window.onhashchange = function(){
+			setUpComponents();
+			Menu.init(JSON.parse(MenuManager.dataBackup));
+		};
 		window.onkeydown = e => {
 			this._keyDown(e.keyCode);
 
@@ -37,7 +48,7 @@ class InputManager{
 				}
 		};
 
-		window.addEventListener('orientationchange', initCanvasSize, false)
+		//window.addEventListener('orientationchange', initCanvasSize, false)
 	}
 
 	initListeners(target){
@@ -57,19 +68,20 @@ class InputManager{
 			this._buttonDown(e);
 			Listeners.mouseDown(new GVector2f(e.offsetX, e.offsetY), e.button);
 
-			e.target.onmouseup = e => {
-				if(!this.isButtonDown(e.button))
+			e.target.onmouseup = ee => {
+				if(!this.isButtonDown(ee.button))
 					return  false;
-				this._buttonUp(e);
+				this._buttonUp(ee);
 
-				e.target.onmousemove = false;
-				e.target.onmouseup = false;
+				if(!Options.changeCursor)
+					ee.target.onmousemove = false;
+				ee.target.onmouseup = false;
 
-				Listeners.mouseUp(new GVector2f(e.offsetX, e.offsetY), e.button);
+				Listeners.mouseUp(new GVector2f(ee.offsetX, ee.offsetY), ee.button);
 			};
-			e.target.onmousemove = e => {
-				this._mouseMove(e);
-				Listeners.mouseMove(new GVector2f(e.offsetX, e.offsetY), e["movementX"], e["movementY"]);
+			e.target.onmousemove = ee => {
+				this._mouseMove(ee);
+				Listeners.mouseMove(new GVector2f(ee.offsetX, ee.offsetY), ee["movementX"], ee["movementY"]);
 			}
 		};
 
@@ -77,34 +89,40 @@ class InputManager{
 
 
 		target.addEventListener("touchstart", e => {
+			e.preventDefault();
 			this._lastTouch = getMousePos(target, e);
 			Input._buttonDown({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
 
 			Listeners.mouseDown(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
 			
-			e.target.addEventListener("touchmove", e => {
+			e.target.addEventListener("touchmove", ee => {
+				ee.preventDefault();
 				Input._mouseMove({offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
-				var mov = getMousePos(target, e);
+				var mov = getMousePos(target, ee);
 				mov.x -=  this._lastTouch.x;
 				mov.y -=  this._lastTouch.y;
-				this._lastTouch = getMousePos(target, e);
+				this._lastTouch = getMousePos(target, ee);
 				Listeners.mouseMove(new GVector2f(this._lastTouch.x, this._lastTouch.y), mov.x, mov.y);
-
+				draw();
 			}, false);
 
 
-			e.target.addEventListener("touchend", () => {
+			e.target.addEventListener("touchend", (ee) => {
+				ee.preventDefault();
 				if(!Input.isButtonDown(LEFT_BUTTON))
 					return false;
 				Input._buttonUp({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
 				Listeners.mouseUp(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
+				draw();
 			}, false);
 
-			e.target.addEventListener("touchcancel", () => {
+			e.target.addEventListener("touchcancel", (ee) => {
+				ee.preventDefault();
 				if(!Input.isButtonDown(LEFT_BUTTON))
 					return false;
 				Input._buttonUp({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
 				Listeners.mouseUp(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
+				draw();
 			}, false);
 		}, false);
 	}

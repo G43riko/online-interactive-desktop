@@ -3,8 +3,11 @@ const BUTTON_DELETE_LAYER 	= 101;
 const BUTTON_HIDE_PANEL 	= 102;
 
 class LayersViewer extends Entity{
-	constructor(){
-		super("LayerViewer", new GVector2f(1300, 100), new GVector2f(180, 500));
+	constructor(position, size){
+		size = size ||  new GVector2f(LAYERS_PANEL_WIDTH, window.innerHeight - (LAYERS_PANEL_OFFSET << 1));
+		position = position || new GVector2f(window.innerWidth - size.x - LAYERS_PANEL_OFFSET, LAYERS_PANEL_OFFSET);
+
+		super("LayerViewer", position, size);
 		Entity.changeAttr(this, {
 			fillColor: MENU_BACKGROUND_COLOR,
 			borderColor: MENU_BORDER_COLOR,
@@ -14,15 +17,15 @@ class LayersViewer extends Entity{
 		this._buttonFillColor 	= MENU_DISABLED_BG_COLOR;
 		this._activeLayerColor  = MENU_DISABLED_BG_COLOR;
 		this._minimalized		= false;
-		this._layerPanelHeight 	= 50;
-		this._fontSize 			= 20;
+		this._layerPanelHeight 	= LAYERS_LINE_HEIGHT;
+		this._fontSize 			= LAYERS_FONT_SIZE;
 		this._fontColor 		= MENU_FONT_COLOR;
-		this._checkBoxSize 		= 30;
+		this._checkBoxSize 		= LAYERS_CHECKBOX_SIZE;
 		this._checkYOffset 		= ((this._layerPanelHeight - this._checkBoxSize) >> 1);
 		this._activeLayer		= DEFAULT_LAYER_TITLE;
 		this._layers 			= {};
 		this._offset			= 1;
-		this._buttonSize 		= 40;
+		this._buttonSize 		= LAYERS_BUTTON_SIZE;
 		this._layersCount 		= 0;
 
 		each(Scene._layers, e => this.createLayer(e), this);
@@ -46,6 +49,25 @@ class LayersViewer extends Entity{
 			posX: this.position.x,
 			layer: layer
 		};
+	}
+
+	onScreenResize(){
+		/*
+		if(this._size.x > window.innerWidth)
+			this._size.x = window.innerWidth;
+		if(this._size.y > window.innerHeight)
+			this._size.y = window.innerHeight;
+		*/
+
+		if(this._position.x < 0)
+			this._position.x = 0;
+		else if(this._position.x + this._size.x > window.innerWidth)
+			this._position.x = window.innerWidth - this._size.x;
+
+		if(this._position.y < 0)
+			this._position.y = 0;
+		else if(this._position.y + this._size.y > window.innerHeight)
+			this._position.y = window.innerHeight - this._size.y;
 	}
 
 	clickIn(x, y){
@@ -131,33 +153,32 @@ class LayersViewer extends Entity{
 		return parseInt((num - this.position.y) / this._layerPanelHeight);
 	}
 
+	_doOnLayerByY(num, func){
+		var i = this._getLayerOfYPos(num);
+		each(this._layers, function(e){
+			if(e.offset === i)
+				func(e);
+		}, this);
+	}
+
+	animateLayer(num){
+		this._doOnLayerByY(num, e => e.layer.paint.animate());
+	}
+
 	clearLayer(num){
-		this._layers[this._getLayerOfYPos(num)].layer.cleanUp();
+		this._doOnLayerByY(num, e => e.layer.cleanUp());
 	}
 
 	renameLayer(num){
-		var i 		= this._getLayerOfYPos(num),
-			layer 	= this._layers[i].layer;
-		getText(layer.title, this.position.x, this.position.y + i * this._layerPanelHeight, val => layer.title = val);
+		this._doOnLayerByY(num, e => e.layer.rename());
 	}
 
 	toggleVisibilityOfPaint(num){
-		var i = this._getLayerOfYPos(num);
-
-		each(this._layers, function(e){
-			if(e.offset === i)
-				e.layer.drawPaint = !e.layer.drawPaint;
-		}, this);
+		this._doOnLayerByY(num, e => e.layer.drawPaint = !e.layer.drawPaint);
 	}
 
 	toggleVisibilityOfLayer(num){
-		var i = this._getLayerOfYPos(num);
-
-		each(this._layers, function(e){
-			if(e.offset === i)
-				e.layer.visible = !e.layer.visible;
-		}, this);
-		//this._layers[i].layer.visible = !this._layers[i].layer.visible;
+		this._doOnLayerByY(num, e => e.layer.visible = !e.layer.visible);
 	}
 
 	_drawLayer(layer){

@@ -76,7 +76,9 @@ class ChatViewer{
 	 			_check(e, f, g){
 					var h = (a, b, c, d) => (Math.max(Math.min(a - b, c - d), 0)) + "px";
 					g.style.top = h(e.clientY, f.offsetY, window.innerHeight, g.offsetHeight);
+					//g.style.top = h(e.touches ? e.touches[0].clientY : e.clientY, f.touches ? f.touches[0].pageY : f.offsetY, window.innerHeight, g.offsetHeight);
 					g.style.left = h(e.clientX, f.offsetX, window.innerWidth, g.offsetWidth);
+					//g.style.left = h(e.touches ? e.touches[0].clientX : e.clientX, f.touches ? f.touches[0].pageX : f.offsetX, window.innerWidth, g.offsetWidth);
 				}
 
 				toggleChat(){

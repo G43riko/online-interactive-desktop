@@ -37,10 +37,34 @@ app.get('/watch', function(req, res){
 	res.sendFile('/watch.html' , { root : __dirname});
 	serverLogs.increase("watchLoad");
 });
+/*
+app.post('/watch', function(req, res){
+	var body = [];
+	req.on("data", function(chunk){
+		body.push(chunk);
+	}).on('end', function() {
+		processWatchRequest(JSON.parse(decodeURIComponent(Buffer.concat(body).toString()).replace("content=", "")), res);
+	});
+});
+*/
+
+app.get('/watcher', function(req, res){
+	res.sendFile('/watchIndex.html' , { root : __dirname});
+});
 
 app.get('/overview', function(req, res){
 	res.sendFile('/overview.html' , { root : __dirname});
 });
+
+app.post('/checkWatchData', function(req, res){
+	var body = [];
+	req.on("data", function(chunk){
+		body.push(chunk);
+	}).on('end', function() {
+		checkWatchRequest(JSON.parse(decodeURIComponent(Buffer.concat(body).toString()).replace("content=", "")), res);
+	});
+});
+
 
 
 app.post("/anonymousData", function (req, res) {
@@ -88,15 +112,17 @@ app.get('/anonymousData', function(req, res){
 io.on('connection', function(socket){
 	serverLogs.increase("connected");
 	socket.on("changeCreator", changeCreator);
-	socket.on("completeAuth", completeAuth);
+	//socket.on("completeAuth", completeAuth);
 	socket.on("broadcastMsg", broadcastMsg);
+	socket.on('createWatcher', createWatcher);
 	socket.on("sendAllData", sendAllData);
 	socket.on("paintAction", paintAction);
 	socket.on('chatMessage', chatMessage);
 	socket.on("dataReqiere", dataReqiere);
 	socket.on("startShare", startShare);
-	socket.on("startWatch", startWatch);
+	//socket.on("startWatch", startWatch);
 	socket.on('disconnect', disconnect);
+	socket.on("sendBuffer", sendBuffer);
 	socket.on('mouseData', mouseData);
 	socket.on("action", action);
 	
@@ -107,7 +133,7 @@ http.listen(PORT, function(){
 	console.log('listening on *:' + PORT);
 });
 
-var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect, action, mouseData, paintAction, chatMessage, dataReqiere;
+var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect, action, mouseData, paintAction, chatMessage, dataReqiere, sendBuffer, createWatcher;
 
 /*
  * dostane správu že uživaťel chce začať zdielať obrazovku
@@ -122,38 +148,40 @@ startShare = function(data){
 };
 
 
+
 /*
  * dostane spravu že client chce začať sledovať obrazovku
  */
+/*
 startWatch = function(data){
 	serverLogs.increase("startWatch");
 	serverLogs.messageRecieve("startWatch", data);
 	console.log("client s id " + this.id + " chce sledovať plochu");
 	connection.startWatch(data["id"], this, data);
 
-	this.emit("auth", "zadaj heslo");
-	connection.getOwner(data["id"]).emit("notification", {msg: "novy watcher sa pripojil"});
+	this.emit("auth", {needPassword: connection.isSetPassword(data["id"])});
 };
-
+*/
 
 /*
  * client úspešne zadá heslo
  */
+/*
 completeAuth = function(data){
 	serverLogs.messageRecieve("completeAuth", data);
 	console.log("dokoncuje sa authentifikacia s uživatelom: " + this.id);
 
 	if(connection.checkPassword(data["id"], data["passwd"])){
-		this.emit("notification", {msg: "pripojenie bolo uspešne - zo zadanim hesla"});
 		connection.getWatcher(data["id"], this).valid = true;
 		connection.getOwner(data["id"]).emit("getAllData", {target: this.id});
+		//connection.getOwner(data["id"]).emit("notification", {msg: "novy watcher sa pripojil"});
 	}
 	else{
-		this.emit("notification", {msg: "zlé heslo"});
-		this.emit("auth", "zadaj heslo");//TODO nejaké počítadlo lebo toto nechceme stále
+		//this.emit("notification", {msg: "zlé heslo"});
+		this.emit("auth", {needPassword: connection.isSetPassword(data["id"])});//TODO nejaké počítadlo lebo toto nechceme stále
 	}
 };
-
+*/
 
 /*
  * odpoji watchera alebo sharera
@@ -180,6 +208,7 @@ broadcastMsg = function(data){
 sendAllData = function(data){
 	serverLogs.messageRecieve("sendAllData", data);
 	data.msg["shareOptions"] = connection.getShareOptions(data.id);
+	data.msg["watchOptions"] = connection.getWatchOptions(connection.getWatcher(data.id, data.target));
 	console.log("boly prijatá všetky dáta od sharera a odosielju sa uživatelovy s id " + data.target);
 	connection.getWatcher(data.id, data.target).socket.emit("sendAllData", data.msg);
 };
@@ -196,17 +225,6 @@ chatMessage = function(data){
 	writeToAllExcept(data.id, this, "chatMessage", data.msg);
 };
 
-function writeToAllExcept(id, socket, type, msg){
-	var watchers = connection.getWatchers(id);
-	for(var i in watchers)
-		if(watchers.hasOwnProperty(i) && watchers[i].socket != socket)
-			watchers[i].socket.emit(type, msg);
-
-	var owner = connection.getOwner(id);
-	if(owner != socket)
-		owner.emit(type, msg)
-}
-
 
 action = function(data){
 	serverLogs.messageRecieve("action", data);
@@ -215,7 +233,7 @@ action = function(data){
 
 mouseData = function(data){
 	serverLogs.messageRecieve("mouseData", data);
-	if(connection.existChat(data.id))
+	if(connection.existShare(data.id))
 		writeToWatchers(connection.getWatchers(data.id), "mouseData", data.msg);
 	else
 		console.log("id " + data.id + " neexistuje v zozname ideciek");
@@ -230,7 +248,73 @@ dataReqiere = function(data){
 	serverLogs.addOverviewSocket(this);
 };
 
+sendBuffer = function(data){
+	serverLogs.messageRecieve("sendBuffer", data);
+	//TODO dorobiť preposielanie bufferových dát
+	//writeToWatchers(connection.getWatchers(data.id), "processBuffer", data.msg);
+};
+
+createWatcher = function(data){
+	connection.setUpWatcher(this, data["userId"]);
+	//TODO overiť či je shareId aj userId správne
+	connection.getOwner(data["shareId"]).emit("getAllData", {target: this.id});
+	var text = "Watcher " + connection.getWatcher(data["shareId"], this).nickName + " sa pripojil";
+	connection.getOwner(data["shareId"]).emit("notification", {msg: text});
+};
+
+function checkWatchRequest(data, res){
+	try{
+		if(!connection.existShare(data["shareId"])){
+			res.send(JSON.stringify({
+				result: -1,
+				msg: "Zle id zdielania"
+			}));
+		}
+		else if(!connection.checkPassword(data["shareId"], data["password"]))
+			res.send(JSON.stringify({
+				result: -2,
+				msg: "zlé heslo"
+			}));
+		else if(!data["nickName"])
+			res.send(JSON.stringify({
+				result: -3,
+				msg: "Nickname nie je platné meno"
+			}));
+		else if(!connection.isNickNameAvailable(data["shareId"], data["nickName"]))
+			res.send(JSON.stringify({
+				result: -4,
+				msg: "Nickname je obsadený"
+			}));
+		else{
+			data["userId"] = connection.getUserId();
+			connection.setTmpData(data);
+			res.send(JSON.stringify({
+				result: 1,
+				userId: data["userId"]
+			}));
+		}
+	}
+	catch(e){
+		res.send(JSON.stringify({
+			result: 0,
+			msg: "Neznáma chyba",
+			error: e
+		}));
+	}
+}
+
 //UTILS
+
+function writeToAllExcept(id, socket, type, msg){
+	var watchers = connection.getWatchers(id);
+	for(var i in watchers)
+		if(watchers.hasOwnProperty(i) && watchers[i].socket != socket)
+			watchers[i].socket.emit(type, msg);
+
+	var owner = connection.getOwner(id);
+	if(owner != socket)
+		owner.emit(type, msg)
+}
 
 function getChatId(){
 	return Math.floor(Math.random() * MAX_CHAT_ID_VALUE);

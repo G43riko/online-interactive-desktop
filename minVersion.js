@@ -1,4 +1,3 @@
-
 class Arc extends Entity{
 	constructor(position, size, fillColor){
 		super(OBJECT_ARC, position, size, {fillColor: fillColor, minSize: new GVector2f(SELECTOR_SIZE)});
@@ -43,7 +42,8 @@ class Arc extends Entity{
 
 		Entity.drawConnectors(this);
 	};
-}class Arrow{
+}
+class Arrow{
 	static drawArrow(pFrom, pTo, parent, type = 0, angle = Math.PI / 6, length = 30){
 		if(type == 0)
 			return;
@@ -54,18 +54,18 @@ class Arc extends Entity{
 
 		var p0 = new GVector2f(pTo.x, pTo.y);
 		var p1 = new GVector2f(pTo.x - (vec.x * cos - vec.y * sin) * length,
-							   pTo.y - (vec.x * sin + vec.y * cos) * length);
+			pTo.y - (vec.x * sin + vec.y * cos) * length);
 		var p2 = new GVector2f(pTo.x - (vec.x * cos + vec.y * sin) * length,
-							   pTo.y + (vec.x * sin - vec.y * cos) * length);
+			pTo.y + (vec.x * sin - vec.y * cos) * length);
 
 		var p3 = new GVector2f(((pTo.x - ((vec.x * cos - vec.y * sin) * length << 1)) + (pTo.x - ((vec.x * cos + vec.y * sin) * length << 1))) >> 1,
-							   ((pTo.y - ((vec.x * sin + vec.y * cos) * length << 1)) + (pTo.y + ((vec.x * sin - vec.y * cos) * length << 1))) >> 1);
+			((pTo.y - ((vec.x * sin + vec.y * cos) * length << 1)) + (pTo.y + ((vec.x * sin - vec.y * cos) * length << 1))) >> 1);
 
 		switch(type){
 			case 2210:
 				doLine({
 					points: [[p1, p0],
-					    	 [p2, p0]],
+						[p2, p0]],
 					borderColor: parent.borderColor,
 					borderWidth: parent.borderWidth
 				});
@@ -112,7 +112,8 @@ class Arc extends Entity{
 				break;
 		}
 	}
-}class Class extends Table{
+}
+class Class extends Table{
 	constructor(position, size, title, attributes = {}, methods = {}, access = ACCESS_PUBLIC){
 		super(position, size, [[]]);
 		this._name = OBJECT_CLASS;
@@ -207,14 +208,15 @@ class Arc extends Entity{
 		result += $.map(this._methods, function(e){
 			var args = (Array.isArray(e.args) ? e.args.map(e => e[1] + " " + e[0]).join(", ") : ""),
 				subRes = "\n\t" + Class.toAccess(e.access) + " " + e.retType + " ";
-				subRes += e.name + "(" + args + "){\n\t\tTODO auto generated body\n\t}\n";
+			subRes += e.name + "(" + args + "){\n\t\tTODO auto generated body\n\t}\n";
 			return subRes;
 		}).join("\t");
 		result += "}";
 
 		return result;
 	}
-}class Connector{
+}
+class Connector{
 	constructor(object, data){
 		this._object = object;
 		this._data = data;
@@ -232,7 +234,8 @@ class Arc extends Entity{
 	forEachTargets(func){
 		this._targets.forEach(func);
 	}
-}class Entity{
+}
+class Entity{
 	/**
 	 * @param name
 	 * @param position
@@ -309,7 +312,7 @@ class Arc extends Entity{
 	 */
 	clickInBoundingBox(x, y, obj = this){
 		return x + SELECTOR_SIZE > obj._position.x && x - SELECTOR_SIZE < obj._position.x + obj._size.x &&
-			   y + SELECTOR_SIZE > obj._position.y && y - SELECTOR_SIZE < obj._position.y + obj._size.y;
+			y + SELECTOR_SIZE > obj._position.y && y - SELECTOR_SIZE < obj._position.y + obj._size.y;
 	};
 
 
@@ -385,7 +388,7 @@ class Arc extends Entity{
 	static changeAttr(obj, data, val){
 		if(isObject(data))
 			each(data, (e, i) => Entity.setAttr(obj, i, e));
-		else 
+		else
 			Entity.setAttr(obj, data, val);
 		return obj;
 	}
@@ -461,13 +464,13 @@ class Arc extends Entity{
 		var vec = targetPos.getClone().sub(obj.position).div(fps),
 			counter = 0,
 			int = setInterval(function(){
-			obj.position.add(vec);
-			draw();
-			if(++counter == fps){
-				clearInterval(int);
-				obj.position = targetPos;
-			}
-		}, 1000 / fps);
+				obj.position.add(vec);
+				draw();
+				if(++counter == fps){
+					clearInterval(int);
+					obj.position = targetPos;
+				}
+			}, 1000 / fps);
 	}
 
 
@@ -561,33 +564,33 @@ class Arc extends Entity{
 	 * vytvorý kópiu objektu
 	 */
 	/*
-	static getClone(obj){
-		var res = Entity.create(obj);
-			res.position.add(obj.size);
-		return res;
-		var copy = Object.create(obj.__proto__);
-		each(obj, function(e, i){
-			if(e.constructor.name == "GVector2f")
-				copy[i] = e.getClone();
-			else if(i == "data"){
-				copy[i] = [];
-				e.forEach(function(ee){
-					ee.forEach(eee => tmp.push(eee));
-					copy[i].push(tmp);
-				});
-			}
-			else if(i == "points"){
-				copy[i] = [];
-				e.forEach(ee => copy[i].push(ee.getClone().add(obj.size)));
-			}
-			else
-				copy[i] = e;
-		});
+	 static getClone(obj){
+	 var res = Entity.create(obj);
+	 res.position.add(obj.size);
+	 return res;
+	 var copy = Object.create(obj.__proto__);
+	 each(obj, function(e, i){
+	 if(e.constructor.name == "GVector2f")
+	 copy[i] = e.getClone();
+	 else if(i == "data"){
+	 copy[i] = [];
+	 e.forEach(function(ee){
+	 ee.forEach(eee => tmp.push(eee));
+	 copy[i].push(tmp);
+	 });
+	 }
+	 else if(i == "points"){
+	 copy[i] = [];
+	 e.forEach(ee => copy[i].push(ee.getClone().add(obj.size)));
+	 }
+	 else
+	 copy[i] = e;
+	 });
 
-		copy.position.add(obj.size);
-		return  clone;
-	}
-	*/
+	 copy.position.add(obj.size);
+	 return  clone;
+	 }
+	 */
 	/**
 	 * GETTERS
 	 *
@@ -623,7 +626,8 @@ class Arc extends Entity{
 	//set borderColor(val){this._borderColor = val;}
 	set selectedConnector(val){this._selectedConnector = val;}
 
-}class ImageObject extends Entity{
+}
+class ImageObject extends Entity{
 	constructor(position, size, image, data){
 		super(OBJECT_IMAGE, position, size, data);
 		this._radius = 20;
@@ -673,7 +677,8 @@ class Arc extends Entity{
 
 		drawBorder(this);
 	}
-}class Join extends Entity{
+}
+class Join extends Entity{
 	constructor(obj1, type = JOIN_LINEAR){
 		super(OBJECT_JOIN);
 		this._obj1 				= obj1;
@@ -756,7 +761,8 @@ class Arc extends Entity{
 		else
 			doLine({points: array, borderWidth: this.borderWidth, borderColor: this.borderColor});
 	};
-}class Line extends Entity{
+}
+class Line extends Entity{
 	constructor(points, width, fillColor, targetA = null, targetConnectionA = null) {
 		super(OBJECT_LINE, new GVector2f(), new GVector2f(), {fillColor: fillColor, borderWidth: width});
 		this._points 			= points;
@@ -899,7 +905,8 @@ class Arc extends Entity{
 			}
 		}
 	};
-}class Paint extends Entity{
+}
+class Paint extends Entity{
 	constructor(){
 		super(OBJECT_PAINT, new GVector2f(), new GVector2f());
 		this._points 		= [Paint.defArray()];
@@ -1080,7 +1087,8 @@ class Arc extends Entity{
 			return;
 		context.drawImage(this._canvas, 0, 0);
 	};
-}class Polygon extends Entity{
+}
+class Polygon extends Entity{
 	constructor(points, color){
 		super(OBJECT_POLYGON, new GVector2f(), new GVector2f(), {fillColor: color});
 		this.points 		= points;
@@ -1123,7 +1131,7 @@ class Arc extends Entity{
 			if(vec.dist(e) < SELECTOR_SIZE)
 				this.movingPoint = i;
 			else if(i < points.length && vec.dist((e.x + (points[(i + 1) % points.length].x) >> 1),
-													  (e.y + (points[(i + 1) % points.length].y) >> 1)) < SELECTOR_SIZE)
+					(e.y + (points[(i + 1) % points.length].y) >> 1)) < SELECTOR_SIZE)
 				this.movingPoint = parseFloat(i) + 0.5;
 		}, this);
 
@@ -1174,7 +1182,8 @@ class Arc extends Entity{
 		}
 
 	};
-}class Rect extends Entity {
+}
+class Rect extends Entity {
 	constructor(position, size, fillColor){
 		super(OBJECT_RECT, position, size, {fillColor: fillColor});
 		this.moveType 	= -1;
@@ -1474,7 +1483,8 @@ class Table extends Entity{
 
 		drawBorder(this);
 	}
-}class TextArea extends Entity{
+}
+class TextArea extends Entity{
 	constructor(text, position, size, fontColor = DEFAULT_FONT_COLOR){
 		super(OBJECT_TEXT, position, size, {fillColor: DEFAULT_BACKGROUND_COLOR, radius: DEFAULT_RADIUS});
 		this._text 		= text || "";
@@ -1515,7 +1525,7 @@ class Table extends Entity{
 			vec = new GVector2f(x, y);
 
 		var area = document.getElementById("selectedEditor");
-		
+
 		if(area){
 			document.body.removeChild(area);
 		}
@@ -1582,7 +1592,8 @@ class Table extends Entity{
 			offsetY += this._lineHeight* 1.40	;//29 * 1.41;//this._fontSize * 1.333333 *2;
 		})
 	}
-}class TextField extends Entity{
+}
+class TextField extends Entity{
 	constructor(text, position, size, fontColor = DEFAULT_FONT_COLOR){
 		super("Text", position, size, {fillColor: DEFAULT_BACKGROUND_COLOR, radius: DEFAULT_RADIUS});//TODO premenovať na input
 		this._text 		= text || "";
@@ -1637,7 +1648,7 @@ class Table extends Entity{
 		context.textBaseline = this._verticalTextAlign;
 		context.fillStyle = this._textColor;
 		context.font = this._fontSize + "pt " + DEFAULT_FONT;
-		
+
 		if(this._horizontalTextAlign == FONT_HALIGN_LEFT)
 			pos.x += this._fontOffset;
 		else if(this._horizontalTextAlign == FONT_HALIGN_CENTER)
@@ -1701,10 +1712,9 @@ class Table extends Entity{
 
 
 
-}class BrushManager{
+}
 
-
-}function pickUpColor(func, thisArg){
+function pickUpColor(func, thisArg){
 	var T;
 	if (arguments.length > 1)
 		T = thisArg;
@@ -1719,19 +1729,20 @@ class Table extends Entity{
 
 function shadeColor1(color, percent) {  // deprecated. See below.
 	var num = parseInt(color.slice(1), 16),
-		amt = Math.round(2.55 * percent), 
-		R = (num >> 16) + amt, 
+		amt = Math.round(2.55 * percent),
+		R = (num >> 16) + amt,
 		G = (num >> 8 & 0x00FF) + amt,
 		B = (num & 0x0000FF) + amt;
-	return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + 
-							  (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + 
-							  (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+	return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+		(G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+		(B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
 }
 
 function hexToRGBA(color) {
 	var num = parseInt(color.slice(1), 16);
 	return [num >> 16, num >> 8 & 0x00FF, num & 0x0000FF];
 }
+
 class ContentManager{
 	constructor(){
 		this._contentImage = null;
@@ -1765,7 +1776,8 @@ class ContentManager{
 		if(this._contentHTML !== null)
 			this._contentHTML.classList.add("hide");
 	}
-}class ContextMenuManager{
+}
+class ContextMenuManager{
 	constructor(position, titles = [], parent = false, key = "undefined"){
 		this._position 			= position;
 		this._subMenu 			= false;
@@ -1850,7 +1862,7 @@ class ContentManager{
 
 	clickInBoundingBox(x, y){
 		return x + SELECTOR_SIZE > this._position.x && x - SELECTOR_SIZE < this._position.x + this._menuWidth &&
-			   y + SELECTOR_SIZE > this._position.y && y - SELECTOR_SIZE < this._position.y + this._titles.length * CONTEXT_MENU_LINE_HEIGHT;
+			y + SELECTOR_SIZE > this._position.y && y - SELECTOR_SIZE < this._position.y + this._titles.length * CONTEXT_MENU_LINE_HEIGHT;
 	};
 
 	draw(){
@@ -1915,11 +1927,11 @@ class ContentManager{
 			else if(e["type"] == "widthValue")
 				doLine({
 					points: [pX + menuWidth - (checkSize << 2), posY + (CONTEXT_MENU_LINE_HEIGHT >> 1),
-							 pX + menuWidth - offset, posY + (CONTEXT_MENU_LINE_HEIGHT >> 1)],
+						pX + menuWidth - offset, posY + (CONTEXT_MENU_LINE_HEIGHT >> 1)],
 					borderWidth: e["name"]
 				});
 		}, this);
-	
+
 		if(this._subMenu)
 			this._subMenu.draw();
 	};
@@ -2072,7 +2084,8 @@ class ContentManager{
 		return true;
 
 	};
-}class objectCreator{
+}
+class objectCreator{
 	constructor(){
 		this._object 		= false;
 		this._fillColor 	= DEFAULT_FILL_COLOR;
@@ -2092,9 +2105,9 @@ class ContentManager{
 		this._view			= null;
 		this._visibleView	= true;
 		this._allowedItems 	= ["_fillColor", "_borderColor", "_borderWidth", "_operation", "_lineWidth", "_fontSize",
-							   "_fontColor", "_lineType", "_lineStyle", "_brushSize", "_brushType", "_brushColor",
-							   "_radius"];
-		
+			"_fontColor", "_lineType", "_lineStyle", "_brushSize", "_brushType", "_brushColor",
+			"_radius"];
+
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
@@ -2294,13 +2307,14 @@ class ContentManager{
 
 	set object(val){this._object = val;}
 	set operation(val){this._operation = val; this._view.changeOperation();}
-}class CreatorViewer extends Entity{
+}
+class CreatorViewer extends Entity{
 	constructor(position = new GVector2f(100, 100), size = new GVector2f(400, 40), data = {}){
 		super("CreatorViewer", position, size, data);
 		this._items 		= [];
 		this._canvas		= document.createElement("canvas");
 		this._context 		= this._canvas.getContext('2d');
-		
+
 		Entity.changeAttr(this,{
 			fillColor: MENU_BACKGROUND_COLOR,
 			borderColor: MENU_BORDER_COLOR,
@@ -2576,7 +2590,8 @@ class ContentManager{
 			counter += MENU_WIDTH + MENU_OFFSET;
 		}, this);
 	}
-}class EventManager{
+}
+class EventManager{
 	constructor(){
 		this._history = [];
 
@@ -2653,7 +2668,8 @@ class ContentManager{
 	loadScene(){//Scene
 
 	}
-}class FileManager{
+}
+class FileManager{
 	constructor(){
 		this._input = document.createElement("input");
 		this._input.setAttribute("type", "file");
@@ -2750,7 +2766,6 @@ function loadFile(func){
 	};
 	el.click();
 }
-
 
 function saveSceneAsFile(fileName = "scene_backup"){
 	var data = {
@@ -2966,124 +2981,126 @@ function serializeShareData(){
 	result["shareObjects"] = getValueIfExists(document.getElementById("idShareObjects"));
 	result["shareCreator"] = getValueIfExists(document.getElementById("idShareCreator"));
 	result["shareLayers"] = getValueIfExists(document.getElementById("idShareLayers"));
-	
+
 	closeDialog();
 	Sharer.startShare(result);
-}class ChatViewer{
- 				constructor(title, myName, sendMessage){
- 					this._myName		= myName;
- 					this._title 		= title;
- 					this._createHTML();
- 					this._isShifDown	= false;
- 					this._textC 		= document.getElementById("textC");
- 					this._histC 		= document.getElementById("histC");
- 					this._chatW			= document.getElementById("chatW");
- 					this._histW 		= document.getElementById("hist");
- 					this._sendMessage 	= sendMessage;
- 					this._init(document.getElementById("headC"));
- 					this.hide();
- 				}
+}
+class ChatViewer{
+	constructor(title, myName, sendMessage){
+		this._myName		= myName;
+		this._title 		= title;
+		this._createHTML();
+		this._isShifDown	= false;
+		this._textC 		= document.getElementById("textC");
+		this._histC 		= document.getElementById("histC");
+		this._chatW			= document.getElementById("chatW");
+		this._histW 		= document.getElementById("hist");
+		this._sendMessage 	= sendMessage;
+		this._init(document.getElementById("headC"));
+		this.hide();
+	}
 
- 				_createHTML(){
- 					var result = '<div id="chatW"><div id="headC"><span id="chatTitle">';
- 					result += this._title + '</span><div class="headerButton" id="hideChat">×</div>';
- 					result += '<div class="headerButton" id="toggleChat">-</div>';
- 					result += '<div class="headerButton" id="clearChat">C</div></div>';
- 					result += '<div id="histC"><div id="hist"></div></div>';
- 					result += '<div id="textC" contenteditable="true"></div></div>';
+	_createHTML(){
+		var result = '<div id="chatW"><div id="headC"><span id="chatTitle">';
+		result += this._title + '</span><div class="headerButton" id="hideChat">×</div>';
+		result += '<div class="headerButton" id="toggleChat">-</div>';
+		result += '<div class="headerButton" id="clearChat">C</div></div>';
+		result += '<div id="histC"><div id="hist"></div></div>';
+		result += '<div id="textC" contenteditable="true"></div></div>';
 
- 					var el = document.createElement("div");
- 					el.innerHTML = result;
- 					document.body.appendChild(el.firstChild);
- 					//document.body.innerHTML += result;
- 				}
+		var el = document.createElement("div");
+		el.innerHTML = result;
+		document.body.appendChild(el.firstChild);
+		//document.body.innerHTML += result;
+	}
 
- 				hide(){
- 					this._chatW.style.display = "none";
- 				}
+	hide(){
+		this._chatW.style.display = "none";
+	}
 
- 				show(){
- 					this._chatW.style.display = "block";
- 				}
+	show(){
+		this._chatW.style.display = "block";
+	}
 
- 				_init(headC){
- 					document.getElementById("chatTitle").innerHTML = this._title;
- 					document.getElementById("toggleChat").onclick = () => this.toggleChat();
- 					document.getElementById("clearChat").onclick = () => this._histW.innerHTML = "";
- 					document.getElementById("hideChat").onclick = () => this.hide();
- 					headC.onmousedown = ee => {
-						if(ee.target != headC)
-							return false;
-						var backup = window.onmousemove;
-						window.onmousemove = e => this._check(e, ee, this._chatW);
-						window.onmouseup = e => window.onmousemove = backup;
-					};
+	_init(headC){
+		document.getElementById("chatTitle").innerHTML = this._title;
+		document.getElementById("toggleChat").onclick = () => this.toggleChat();
+		document.getElementById("clearChat").onclick = () => this._histW.innerHTML = "";
+		document.getElementById("hideChat").onclick = () => this.hide();
+		headC.onmousedown = ee => {
+			if(ee.target != headC)
+				return false;
+			var backup = window.onmousemove;
+			window.onmousemove = e => this._check(e, ee, this._chatW);
+			window.onmouseup = e => window.onmousemove = backup;
+		};
 
-		 			this._textC.onkeydown = e => {
-		 				if(e.keyCode === SHIFT_KEY)
-							this._isShifDown = true;
+		this._textC.onkeydown = e => {
+			if(e.keyCode === SHIFT_KEY)
+				this._isShifDown = true;
 
-						e.target.onkeyup = e => {
-			 				if(e.keyCode === SHIFT_KEY)
-			 					this._isShifDown = false;
-			 				this._updateData();
-			 			};
+			e.target.onkeyup = e => {
+				if(e.keyCode === SHIFT_KEY)
+					this._isShifDown = false;
+				this._updateData();
+			};
 
-		 				if(e.keyCode == ENTER_KEY && !this._isShifDown){
-		 					this._prepareMessage();	
-		 					return false;
-		 				}
-		 			};
- 				}
+			if(e.keyCode == ENTER_KEY && !this._isShifDown){
+				this._prepareMessage();
+				return false;
+			}
+		};
+	}
 
- 				_updateData(size = true, offset = true){
-	 				if(size)
-	 					this._histC.style.height = (this._chatW.offsetHeight - this._textC.offsetHeight - 30) + "px";
+	_updateData(size = true, offset = true){
+		if(size)
+			this._histC.style.height = (this._chatW.offsetHeight - this._textC.offsetHeight - 30) + "px";
 
-	 				if(offset)
-						this._histC.scrollTop = this._histC.scrollHeight - this._histC.clientHeight;
-	 			}
+		if(offset)
+			this._histC.scrollTop = this._histC.scrollHeight - this._histC.clientHeight;
+	}
 
-	 			_check(e, f, g){
-					var h = (a, b, c, d) => (Math.max(Math.min(a - b, c - d), 0)) + "px";
-					g.style.top = h(e.clientY, f.offsetY, window.innerHeight, g.offsetHeight);
-					g.style.left = h(e.clientX, f.offsetX, window.innerWidth, g.offsetWidth);
-				}
+	_check(e, f, g){
+		var h = (a, b, c, d) => (Math.max(Math.min(a - b, c - d), 0)) + "px";
+		g.style.top = h(e.clientY, f.offsetY, window.innerHeight, g.offsetHeight);
+		g.style.left = h(e.clientX, f.offsetX, window.innerWidth, g.offsetWidth);
+	}
 
-				toggleChat(){
-					var toggle = (height, display) =>{
-							this._chatW.style.height  = height + "px";
-							this._histC.style.display = display;
-							this._textC.style.display = display;
-					};
-					this._chatW.style.height == "28px" ? toggle(404, "block") : toggle(28, "none");
-				}
+	toggleChat(){
+		var toggle = (height, display) =>{
+			this._chatW.style.height  = height + "px";
+			this._histC.style.display = display;
+			this._textC.style.display = display;
+		};
+		this._chatW.style.height == "28px" ? toggle(404, "block") : toggle(28, "none");
+	}
 
-				recieveMessage(msg, sender){
-	 				var string;
-	 				if(this._myName != sender){
-	 					string = '<div class="messageC">';
-	 					string += '<div class ="senderName">' + getFormattedDate() + ' - ';
-	 					string += sender + ':</div>';
-	 				}
-	 				else{
-	 					string = '<div class="messageC myMessage">';
-	 				}
-	 				
-	 				string += '<div class="messageText">' + msg + '</div></div>';
+	recieveMessage(msg, sender){
+		var string;
+		if(this._myName != sender){
+			string = '<div class="messageC">';
+			string += '<div class ="senderName">' + getFormattedDate() + ' - ';
+			string += sender + ':</div>';
+		}
+		else{
+			string = '<div class="messageC myMessage">';
+		}
 
-	 				this._histW.innerHTML += string;
+		string += '<div class="messageText">' + msg + '</div></div>';
 
-	 				this._updateData(false);
-	 			}
+		this._histW.innerHTML += string;
 
-	 			_prepareMessage(){
-	 				var context = this._textC.innerHTML;
-	 				this._sendMessage(context);
+		this._updateData(false);
+	}
 
-	 				this._textC.innerHTML = "";
-	 			}
- 			}class InputManager{
+	_prepareMessage(){
+		var context = this._textC.innerHTML;
+		this._sendMessage(context);
+
+		this._textC.innerHTML = "";
+	}
+}
+class InputManager{
 	constructor(){
 		this._keys = [];
 		this._timer = false;
@@ -3166,7 +3183,7 @@ function serializeShareData(){
 			Input._buttonDown({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
 
 			Listeners.mouseDown(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
-			
+
 			e.target.addEventListener("touchmove", e => {
 				Input._mouseMove({offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
 				var mov = getMousePos(target, e);
@@ -3249,7 +3266,7 @@ function serializeShareData(){
 	_buttonDown(val){
 		this._buttons[val.button] = true;
 		if(val.button == LEFT_BUTTON && isSharing())
-				Sharer.mouseChange();
+			Sharer.mouseChange();
 
 		var t = this;
 		if (this._timer)
@@ -3405,7 +3422,7 @@ class LayersViewer extends Entity{
 				}
 			}
 		}
-		else 
+		else
 			each(this._layers, function(e){
 				if(e.offset === i)
 					this._activeLayer = e.layer.title;
@@ -3498,7 +3515,7 @@ class LayersViewer extends Entity{
 
 	_drawLayer(layer){
 		var checkColor 	= layer.layer._visible ? CHECKBOX_COLOR_TRUE : CHECKBOX_COLOR_FALSE,
-			//posY 		= this.position.y + order * this._layerPanelHeight;
+		//posY 		= this.position.y + order * this._layerPanelHeight;
 			posY 		= this.position.y + layer.posY;
 		doRect({
 			position: [this.position.x, posY],
@@ -3584,7 +3601,8 @@ class LayersViewer extends Entity{
 	get activeLayer(){
 		return Scene.getLayer(this.activeLayerName);
 	}
-}class MenuManager{
+}
+class MenuManager{
 	constructor(position = new GVector2f(), size = new GVector2f(MENU_WIDTH, MENU_HEIGHT), key = "mainMenu", parent = null){
 		if(parent != null)
 			this._items = parent._allItems[key];
@@ -3963,9 +3981,9 @@ class LayersViewer extends Entity{
 			case "line":
 				doLine({
 					points: [new GVector2f(x + offset, y + offset),
-							 new GVector2f(x + width - (offset << 1), y + (height >> 1)),
-							 new GVector2f(x + offset, y +  height - (offset << 1)),
-							 new GVector2f(x + width - (offset << 1), y + offset)],
+						new GVector2f(x + width - (offset << 1), y + (height >> 1)),
+						new GVector2f(x + offset, y +  height - (offset << 1)),
+						new GVector2f(x + width - (offset << 1), y + offset)],
 					borderWidth: strokeWidth,
 					borderColor: strokeColor,
 					ctx: this._context
@@ -4039,7 +4057,7 @@ class LayersViewer extends Entity{
 					borderColor: strokeColor,
 					ctx: this._context
 				});
-				
+
 				doLine({
 					points: points,
 					borderWidth: strokeWidth,
@@ -4104,7 +4122,8 @@ class LayersViewer extends Entity{
 				break;
 		}
 	}
-}class OptionsManager{
+}
+class OptionsManager{
 	constructor(){
 		this._options = {
 			snapping: {
@@ -4164,12 +4183,13 @@ class LayersViewer extends Entity{
 
 		if(key === "showLayersViewer")
 			Entity.setAttr(Layers, "visible", val);
-		
+
 		Logger.log("nastavila sa možnosť " + key + " na hodnotu " + val, LOGGER_CHANGE_OPTION);
 		obj["val"] = val;
 		draw();
 	}
-}class PaintManager{
+}
+class PaintManager{
 	constructor(){
 		this._brushes			= [];
 		this._selectedImage		= null;
@@ -4298,7 +4318,7 @@ class LayersViewer extends Entity{
 		this._undoHistory.push(layer);
 
 		Events.paintUndo(layer);
-		
+
 	}
 
 	redo(){
@@ -4334,7 +4354,8 @@ class LayersViewer extends Entity{
 		this._selectedImageName = title;
 		Menu._redraw();
 	}
-}class ProjectManager{
+}
+class ProjectManager{
 	constructor(author, title = "OIP Project"){
 		this._createdAt = Date.now();
 		this._title = title;
@@ -4342,15 +4363,15 @@ class LayersViewer extends Entity{
 		ProjectManager.url = "http://192.168.0.123:3000/anonymousData";
 		//PAINT_MANAGER
 		//CREATOR
-		//TYPE 
+		//TYPE
 		//ALLOWED_COMPONENTS
-		
+
 		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 
 		if(getCookie("send_data") === ""){
-	        this._sendAnonymousData(this._analyzeBrowser());
-	        setCookie("send_data", 1);
-	    }
+			this._sendAnonymousData(this._analyzeBrowser());
+			setCookie("send_data", 1);
+		}
 	}
 
 	_analyzeBrowser(){
@@ -4374,7 +4395,7 @@ class LayersViewer extends Entity{
 		 *		s = Undetected mobile device running Safari
 		 *		1 = Undetected mobile device
 		 */
-	    var e = navigator.userAgent;
+		var e = navigator.userAgent;
 		return {
 			browser: /Edge\/\d+/.test(e) ? 'ed' : /MSIE 9/.test(e) ? 'ie9' : /MSIE 10/.test(e) ? 'ie10' : /MSIE 11/.test(e) ? 'ie11' : /MSIE\s\d/.test(e) ? 'ie?' : /rv\:11/.test(e) ? 'ie11' : /Firefox\W\d/.test(e) ? 'ff' : /Chrom(e|ium)\W\d|CriOS\W\d/.test(e) ? 'gc' : /\bSafari\W\d/.test(e) ? 'sa' : /\bOpera\W\d/.test(e) ? 'op' : /\bOPR\W\d/i.test(e) ? 'op' : typeof MSPointerEvent !== 'undefined' ? 'ie?' : '',
 			os: /Windows NT 10/.test(e) ? "win10" : /Windows NT 6\.0/.test(e) ? "winvista" : /Windows NT 6\.1/.test(e) ? "win7" : /Windows NT 6\.\d/.test(e) ? "win8" : /Windows NT 5\.1/.test(e) ? "winxp" : /Windows NT [1-5]\./.test(e) ? "winnt" : /Mac/.test(e) ? "mac" : /Linux/.test(e) ? "linux" : /X11/.test(e) ? "nix" : "",
@@ -4396,30 +4417,31 @@ class LayersViewer extends Entity{
 		data["availWidth"] = screen.availWidth;
 		data["connectedAt"] = getFormattedDate();
 
-        if (navigator.geolocation)
-            navigator.geolocation.watchPosition(position => {
-            	navigator.geolocation.getCurrentPosition(a => {
-					data["accuracy"] = a.coords && a.coords.accuracy  || "unknown";
-					data["position"]   = {
-						lat : a.coords.latitude,
-						lon : a.coords.longitude
-					};
-					sendData(data);
+		if (navigator.geolocation)
+			navigator.geolocation.watchPosition(position => {
+					navigator.geolocation.getCurrentPosition(a => {
+						data["accuracy"] = a.coords && a.coords.accuracy  || "unknown";
+						data["position"]   = {
+							lat : a.coords.latitude,
+							lon : a.coords.longitude
+						};
+						sendData(data);
+					});
+				},
+				function (error) {
+					if (error.code == error.PERMISSION_DENIED)
+						sendData(data);
 				});
-			},
-			function (error) {
-				if (error.code == error.PERMISSION_DENIED)
-					sendData(data);
-			});
-        else
-            sendData(data);
-    }
+		else
+			sendData(data);
+	}
 
 	get title(){return this._title;}
 	get autor(){return this._autor;}
 
 	get time(){return Date.now() - this._createdAt; }
-}class SceneManager{
+}
+class SceneManager{
 	constructor(){
 		this._layers = {};
 		this._layersCount = 0;
@@ -4507,17 +4529,17 @@ class LayersViewer extends Entity{
 		//findAssignment = true;
 
 		//preloopuje vrstvy
-			//preskočí neviditelne
-			//preloopuje objekty
-				//preskočí neviditelne
+		//preskočí neviditelne
+		//preloopuje objekty
+		//preskočí neviditelne
 
-				//ak je textInput
-					//ak je prazdny tak vymaže
+		//ak je textInput
+		//ak je prazdny tak vymaže
 
-					//ak nie tak podla do resultov pridá podla idečtka texfieldu spravny vysledok
-					//vymaže obsah
-				
-				//pridá to scene
+		//ak nie tak podla do resultov pridá podla idečtka texfieldu spravny vysledok
+		//vymaže obsah
+
+		//pridá to scene
 		if(isEmptyObject(data["results"])){
 			data["error"] += "nieje zadaný žiadny text pre výsledok"
 		}
@@ -4577,7 +4599,8 @@ class LayersViewer extends Entity{
 		this.forEach(e => e.name == "LayerViewer" || result.push(e));
 		return result;
 	}
-}class ObjectsManager{
+}
+class ObjectsManager{
 	constructor(){
 		this._movedObject = false;
 		this._objects = [];
@@ -4642,7 +4665,8 @@ class LayersViewer extends Entity{
 	forEach(e){
 		this._objects.forEach(e);
 	};
-}class SharerManager{
+}
+class SharerManager{
 	constructor(){
 		this._id = false;
 		this._socket = false;
@@ -4841,7 +4865,8 @@ class LayersViewer extends Entity{
 	write(msg){
 		this._socket.emit('broadcastMsg', {id: this._id, msg: msg});
 	}
-}class Slider{
+}
+class Slider{
 	constructor(position, size, value, onMove){
 		this._position = position;
 		this._size = size;
@@ -4868,7 +4893,7 @@ class LayersViewer extends Entity{
 
 	clickIn(x, y){
 		if(x < this._position.x || x > this._position.x + this._size.x ||
-		   y < this._position.y || y > this._position.y + this._size.y)
+			y < this._position.y || y > this._position.y + this._size.y)
 			return false
 
 
@@ -4884,14 +4909,16 @@ class LayersViewer extends Entity{
 		fillArc(sliderPos.x - (this._buttonSize >> 1), sliderPos.y - (this._buttonSize >> 1), this._buttonSize, this._buttonSize, this._buttonColor);
 	};
 
-}class TaskManager{
+}
+class TaskManager{
 	constructor(results, title, layer){
 		this._title = title;
 		this._results = results;
 		this._layer = layer;
 		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
-}class TimeLine{
+}
+class TimeLine{
 	constructor(val = 75, maxVal = 100, minVal = 0){
 		this._position 			= new GVector2f();
 		this._size 				= new GVector2f(window.innerWidth, 60);
@@ -4987,16 +5014,16 @@ class EventSaver{
 	}
 
 	addObjectMoveAction(object, oldPos, oldSize, moveType, arg){
-			this._actions[window.performance.now() - this._initTime] ={
-				event: ACTION_OBJECT_MOVE,
-				objectId: object.id,
-				objectLayerName: object.layer,
-				oldPos: oldPos,
-				oldSize: oldSize,
-				newPos: object.position,
-				moveType: moveType,
-				arg: isUndefined(arg) ? false : true
-			};
+		this._actions[window.performance.now() - this._initTime] ={
+			event: ACTION_OBJECT_MOVE,
+			objectId: object.id,
+			objectLayerName: object.layer,
+			oldPos: oldPos,
+			oldSize: oldSize,
+			newPos: object.position,
+			moveType: moveType,
+			arg: isUndefined(arg) ? false : true
+		};
 	}
 
 	objectDeleteAction(object){
@@ -5016,7 +5043,8 @@ class EventSaver{
 
 	toString(){
 	}
-}class WatcherManager{
+}
+class WatcherManager{
 	constructor(){
 		WatcherManager._tryPasswordCounter = 0;
 		WatcherManager._maxPasswordTries = 3;
@@ -5282,7 +5310,8 @@ module.exports.getWatcher = function(chatId, socket){
 
 module.exports.getWatchers = function(chatId){
 	return connections[chatId].watchers;
-};var GVector2fCounter = 0;
+};
+var GVector2fCounter = 0;
 var GVector2fCounterClone = 0;
 
 class GVector2f{
@@ -5366,7 +5395,8 @@ class GVector2f{
 			return Math.sqrt(Math.pow(this._x - arguments[0], 2) + Math.pow(this._y - arguments[1], 2));
 	}
 
-}class LogManager {
+}
+class LogManager {
 	constructor(){
 		LogManager.LOGS = "logs";
 		LogManager.WARNS = "warns";
@@ -5420,7 +5450,8 @@ class GVector2f{
 	get data(){
 		return this_data;
 	}
-}var messages	= {},
+}
+var messages	= {},
 	startTime   = Date.now(),
 	connections = null,
 	logs		= {
@@ -5444,9 +5475,9 @@ processConnData = function(data){
 			sharerRes: share.resolution.x + "x" + share.resolution.y,
 			id: share.id,
 			connectedWatchers: 0,
-			disconnecsWatchers: 0,	
+			disconnecsWatchers: 0,
 			password: share.password || "None",
-			title: share.title || "Unknown",		
+			title: share.title || "Unknown",
 			//limit
 			//realTime
 			actualWatchers: share.watchers.length,
@@ -5510,51 +5541,8 @@ module.exports.messageRecieve = function (type, msg){
 module.exports.increase = function(title){
 	logs[title]++;
 	updateOverviews();
-};class Test{
-	static allTests(){
-		//var T = new Test();
-		//T.testInput();
-	}
-
-	testContextMenu(){
-
-	}
-
-	testInput(){
-		var input = new InputManager();
-
-		if(input.isButtonDown(0) || input.isButtonDown("gabo") || input.isButtonDown(false) || input.isButtonDown(0))
-			Logger.error("button je dole aj ked by tam nemal byť");
-
-		if(input.isKeyDown(0) || input.isKeyDown("gabo") || input.isKeyDown(false) || input.isKeyDown(0))
-			Logger.error("key je dole aj ked by tam nemal byť");
-
-
-		input.keyDown(0);
-
-		if(!input.isKeyDown(0))
-			Logger.error("key nieje dole ked by mal byť dole");
-
-		input.keyUp(0);
-
-		if(input.isKeyDown(0))
-			Logger.error("key je dole aj ked by tam už nemal byť");
-
-		input.buttonDown({button: 0});
-
-		if(!input.isButtonDown(0))
-			Logger.error("button nieje dole ked by mal byť dole");
-
-		input.buttonUp({button: 0});
-
-		if(input.isButtonDown(0))
-			Logger.error("button je dole aj ked by tam už nemal byť");
-	}
-
-	testTable(){
-
-	}
-}function isIn(obj, data){
+};
+function isIn(obj, data){
 	//return arguments.some((e, i) => i && e === obj);
 	var i;
 	if(isArray(data)){
@@ -5655,7 +5643,7 @@ Movement = {
 		}
 		else if(isDefined(o.moveType)){
 			if(Creator.operation == OPERATION_DRAW_LINE && Menu.isToolActive()){
-				
+
 			}
 			else{
 				var oldPos = o.position.getClone();
@@ -5879,7 +5867,8 @@ class EventTimer{
 		var diff = window["performance"].now() - this._lastTime;
 		diff > this._time ? this._callEvent() : this._setTimeOut(diff);
 	}
-}function drawGrid(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD, c = GRID_COLOR){
+}
+function drawGrid(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD, c = GRID_COLOR){
 	var pointsNormal = [],
 		pointsBold = [],
 		boldCounter = 0,
@@ -5915,7 +5904,7 @@ class EventTimer{
 		borderColor: c
 	});
 }
-	
+
 
 function doPolygon(obj){
 	if(isUndefined(obj.points))
@@ -5974,7 +5963,7 @@ function doPolygon(obj){
 			});
 		res.ctx.closePath();
 	};
-	
+
 	if(isArray(res.points[0]))
 		res.points.forEach(a => drawLines(a));
 	else
@@ -6266,11 +6255,11 @@ function _process(res){
 		else
 			res.ctx.drawImage(res.bgImage.img, res.bgImage.x, res.bgImage.y, res.bgImage.w, res.bgImage.h, res.x, res.y, res.width, res.height);
 		/*
-		if(isObject(res.bgImage))
-			res.ctx.drawImage(res.bgImage.img, res.bgImage.x, res.bgImage.y, res.bgImage.w, res.bgImage.h, res.x, res.y, res.width, res.height);
-		else
-			res.ctx.drawImage(res.bgImage, res.x, res.y, res.width, res.height);
-		*/
+		 if(isObject(res.bgImage))
+		 res.ctx.drawImage(res.bgImage.img, res.bgImage.x, res.bgImage.y, res.bgImage.w, res.bgImage.h, res.x, res.y, res.width, res.height);
+		 else
+		 res.ctx.drawImage(res.bgImage, res.x, res.y, res.width, res.height);
+		 */
 		res.ctx.restore();
 	}
 	else if (res.fill){
@@ -6482,7 +6471,7 @@ const LOGGER_PAINT_ACTION		= 2608;
 const LOGGER_OBJECT_CLEANED		= 2609;
 const LOGGER_MOUSE_EVENT		= 2610;
 const LOGGER_KEY_EVENT			= 2611;
-const LOGGER_DRAW				= 2612;		
+const LOGGER_DRAW				= 2612;
 const LOGGER_CHANGE_OPTION		= 2613;
 
 const OBJECT_ARC		= "Arc";
@@ -6498,6 +6487,7 @@ const OBJECT_RECT		= "Rect";
 const OBJECT_TABLE		= "Table";
 const OBJECT_INPUT		= "Input";
 const OBJECT_TEXT		= "Text";
+
 class ListenersManager{
 	constructor(){
 		this._movedObject = null;
@@ -6549,7 +6539,7 @@ class ListenersManager{
 			}
 		}
 		else if(ESCAPE_KEY === key)
-			closeDialog();	
+			closeDialog();
 	}
 
 	mousePress(position){
@@ -6668,46 +6658,47 @@ class ListenersManager{
 
 		return false;
 		/*
-		/////OBJEKTY PRI POHYBE
+		 /////OBJEKTY PRI POHYBE
 
-		//ak sa hýbe nejakým objektom
-		if(selectedObjects.movedObject && Creator.operation != OPERATION_DRAW_PATH){
-			//prejdu sa všetky označené objekty a pohne sa nimi
-			selectedObjects.forEach(e => Movement.move(e, movX, movY));
+		 //ak sa hýbe nejakým objektom
+		 if(selectedObjects.movedObject && Creator.operation != OPERATION_DRAW_PATH){
+		 //prejdu sa všetky označené objekty a pohne sa nimi
+		 selectedObjects.forEach(e => Movement.move(e, movX, movY));
 
-			//ak objekt s ktorým sa hýbe nieje označený(už sa sním pohlo) tak sa sním tiež pohne
-			if(!selectedObjects.movedObject.selected)
-				Movement.move(selectedObjects.movedObject, movX, movY);
+		 //ak objekt s ktorým sa hýbe nieje označený(už sa sním pohlo) tak sa sním tiež pohne
+		 if(!selectedObjects.movedObject.selected)
+		 Movement.move(selectedObjects.movedObject, movX, movY);
 
-			//ak sú nejaké objekty označené tak sa aktualizuje prehlad posledného označeného ináč iba hýbaného
-			if(selectedObjects.size())
-				updateSelectedObjectView(selectedObjects.getLast());
-			else if(selectedObjects.movedObject)
-				updateSelectedObjectView(selectedObjects.movedObject);
-		}
+		 //ak sú nejaké objekty označené tak sa aktualizuje prehlad posledného označeného ináč iba hýbaného
+		 if(selectedObjects.size())
+		 updateSelectedObjectView(selectedObjects.getLast());
+		 else if(selectedObjects.movedObject)
+		 updateSelectedObjectView(selectedObjects.movedObject);
+		 }
 
 
-		/////ČIARA
+		 /////ČIARA
 
-		//ak sa kreslí čiara tak sa nakreslí nové posunutie
-		if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
-			Paints.addPoint(position);
-			draw();
-		}
+		 //ak sa kreslí čiara tak sa nakreslí nové posunutie
+		 if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
+		 Paints.addPoint(position);
+		 draw();
+		 }
 
-		/////CREATOR
+		 /////CREATOR
 
-		//ak sa vytvára objekt tak sa nakreslí nové posunutie
-		if(Creator.object){
-			updateSelectedObjectView(Creator.object);
-			Creator.object.updateCreatingPosition(position);
-		}
+		 //ak sa vytvára objekt tak sa nakreslí nové posunutie
+		 if(Creator.object){
+		 updateSelectedObjectView(Creator.object);
+		 Creator.object.updateCreatingPosition(position);
+		 }
 
-		if(selectedObjects.movedObject || Input.isKeyDown(SHIFT_KEY) || Creator.object)
-			draw();
-		*/
+		 if(selectedObjects.movedObject || Input.isKeyDown(SHIFT_KEY) || Creator.object)
+		 draw();
+		 */
 	}
-}var initTime 		= window["performance"].now(),
+}
+var initTime 		= window["performance"].now(),
 	movedObject 	= false,
 	Scene 			= new SceneManager(),
 	Creator 		= new objectCreator(),

@@ -105,3 +105,4 @@ class TimeLine{
 			borderColor: this._buttonBorderColor
 		})
 	}
+}
