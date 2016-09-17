@@ -796,8 +796,7 @@ G.prototype.class = function(name){//TODO prerobiť - nemôže vracať this ak m
 				classes.remove(name.substring(1));
 				break;
 			case "/":
-				name = name.substring(1);
-				this.attr("class").indexOf(name) > -1 ? classes.remove(name) : classes.add(name);
+				classes.toggle(name.substring(1));
 				break;
 			default:
 				return this.attr("class").indexOf(name) > -1;

@@ -5,6 +5,7 @@
 		<title>Document</title>
 		<link rel="stylesheet" type="text/css" href="css/styles.css">
 		<script src="js/lib/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 		<script src="/socket.io/socket.io.js"></script>
 		<script type="text/javascript" src="js/utils/logger.js"></script>
@@ -12,6 +13,7 @@
 		<script type="text/javascript" src="js/config.js"></script>
 		<script type="text/javascript" src="js/components/creator.js"></script>
 		<script type="text/javascript" src="js/components/guiManager.js"></script>
+		<script type="text/javascript" src="js/components/panelManager.js"></script>
 		<script type="text/javascript" src="js/components/colorManager.js"></script>
 		<script type="text/javascript" src="js/utils/GVector2f.js"></script>
 		<script type="text/javascript" src="js/utils/utils.js"></script>
@@ -63,6 +65,10 @@
 					<h2>Sharing options</h2>
 					<br/>
 					<div>
+						<label for="idShareTitle">Názov zdielania: </label>
+						<input id="idShareTitle" type="text" name="shareTitle">
+					</div>
+					<div>
 						<label for="idMaxWatchers">Maximálny počet watcherov: </label>
 						<input id="idMaxWatchers" type="number" value="20" name="maxWatchers">
 					</div>
@@ -75,6 +81,11 @@
 					<div class="panel">
 						<label for="idRealtimeSharing">Realtime zdielatie: </label>
 						<input id="idRealtimeSharing" type="checkbox" checked name="realtimeSharing">
+					</div>
+
+					<div class="panel">
+						<label for="idPublicShare">Verejné zdielanie: </label>
+						<input id="idPublicShare" type="checkbox" name="publicShare">
 					</div>
 
 					<div class="panel">
@@ -115,6 +126,45 @@
 						<input type="button" value="Začať zdielanie" onclick="serializeShareData()">
 					</div>
 				</form>
+			</div>
+			<div id="saveXmlForm" class="hide formContent">
+				<h2>Save XML form</h2>
+					<div class="panel">
+						<label for="idProjectTitle">Názov: </label>
+						<input id="idProjectTitle" type="text" name="projectTitle">
+					</div>
+					<div class="panel">
+						<label for="idSaveCreator">Uložiť creator: </label>
+						<input id="idSaveCreator" type="checkbox" name="saveCreator">
+					</div>
+					<div class="panel">
+						<label for="idSavePaint">Uložiť malbu: </label>
+						<input id="idSavePaint" type="checkbox" name="savePaint">
+					</div>
+					<div class="panel">
+						<label for="idSaveTask">Uložiť ako úlohu: </label>
+						<input id="idSaveTask" type="checkbox" name="saveTask" onchange="document.getElementById('saveTaskOptions').style.display= this.checked ? 'block' : 'none'">
+					</div>
+					<div id="saveTaskOptions" style="display: none;">
+						<div class="panel">
+							<label for="idTaskHint">Zadanie úlohy: </label>
+							<input id="idTaskHint" type="text" name="taskHint">
+						</div>
+						<div class="panel">
+							<label for="idTaskTimeLimit">Časový limit(min): </label>
+							<input id="idTaskTimeLimit" type="number" name="taskTimeLimit">
+						</div>
+						<div class="panel">
+							<label for="idSaveHistory">Ukladať históriu: </label>
+							<input id="idSaveHistory" type="checkbox" name="saveHistory">
+						</div>
+						<div class="panel">
+							<label for="idStoreStatistics">zobraziť štatistiky online: </label>
+							<input id="idStoreStatistics" type="checkbox" name="storeStatistics">
+						</div>
+					</div>
+					<input type="button" value="Uložiť obrázok" onclick="serializeSaveXmlData()">
+				<br/>
 			</div>
 			<div id="optionsForm" class="hide formContent">
 				<form>

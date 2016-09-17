@@ -1,3 +1,7 @@
+/*
+	compatible:	forEach 14.9.2016
+*/
+
 class SharerManager{
 	constructor(){
 		this._id = false;
@@ -16,6 +20,8 @@ class SharerManager{
 	get isSharing(){return this._sharing;}
 
 	_sendStack(){
+		if(!this._socket || this._socket.disconnected)
+			return;
 		this._socket.emit("sendBuffer", this._buffer);
 		this._buffer = [];
 	}
@@ -23,11 +29,12 @@ class SharerManager{
 	startShare(options){
 		this._socket = io();
 		this._sharing = true;
-
+		this._startTime = Date.now();
 		this._sharePaints = options.sharePaints;
 		this._shareCreator = options.shareCreator;
 		this._shareObjects = options.shareObjects;
-
+		this._maximalWatchers = options.maxWatchers;
+		this._actualWatchers = [];
 		var inst = this,
 			data = {
 				res: {
@@ -49,6 +56,7 @@ class SharerManager{
 		this._socket.on('chatMessage',function(data){
 			chatViewer.recieveMessage(data["text"], data["sender"]);
 		});
+
 
 		this._sendMessage('startShare', data);
 
@@ -72,12 +80,13 @@ class SharerManager{
 			span.appendChild(document.createTextNode(" s ID " + data["id"]));
 
 			Logger.notif(span);
-			Menu.disabled("sharing", "watch", false);
-			Menu.disabled("sharing", "stopShare", false);
-			Menu.disabled("sharing", "shareOptions", false);
-			Menu.disabled("sharing", "copyUrl", false);
-			Menu.disabled("sharing", "startShare", true);
-			chatViewer.show();
+			Menu.disabled("sharing", "watch");
+			Menu.disabled("sharing", "stopShare");
+			Menu.disabled("sharing", "shareOptions");
+			Menu.disabled("sharing", "copyUrl");
+			Menu.disabled("sharing", "startShare");
+			//chatViewer.show();
+			Panel.startShare();
 		});
 
 		this._socket.on('getAllData', function(recData){
@@ -91,10 +100,42 @@ class SharerManager{
 				},
 				target: recData.target
 			};
-
-			Logger.notif("prijatá správa: Nový watcher sa úspešne pripojil");
+			console.log("recData.nickName: " + recData.nickName);
+			Panel.addWatcher(recData.nickName);
+			inst._actualWatchers.push(recData.nickName);
+			Logger.notif("prijatá správa: Nový watcher " + recData.nickName + " sa úspešne pripojil");
 			inst._sendMessage('sendAllData', data);
 		});
+	}
+
+	get maxWatchers(){return this._maximalWatchers;}
+	get duration(){return (Date.now() - this._startTime);}
+
+	stopShare(){
+		Menu.disabled("sharing", "watch");
+		Menu.disabled("sharing", "stopShare");
+		Menu.disabled("sharing", "shareOptions");
+		Menu.disabled("sharing", "copyUrl");
+		Menu.disabled("sharing", "startShare");
+
+		this._id = false;
+		this._socket.disconnect();
+		this._socket = false;
+		this._sharing = false;
+	}
+
+	copyUrl(){
+		var area = document.createElement("textarea");
+		area.appendChild(document.createTextNode(this.getWatcherUrl()));
+		document.body.appendChild(area);
+		area.select();
+		try{
+			document.execCommand('copy');
+			Logger.notif("Adresa zdielania bola úspečne skopírovaná do schránky");
+		}catch(e){
+			Logger.notif("Nepodarilo sa skopírovať adresu zdielania");
+		}
+		document.body.removeChild(area);
 	}
 
 	changeCreator(key, val){
@@ -195,7 +236,8 @@ class SharerManager{
 				data["msg"]["oId"] = o.id;
 				data["msg"]["oL"] = o.layer;
 				data["msg"]["keys"] = {};
-				keys.forEach((e, i) => data.msg.keys["i"] = o[i]);
+				//keys.forEach((e, i) => data.msg.keys["i"] = o[i]);
+				each(keys, (e, i) => data.msg.keys["i"] = o[i]);
 				break;
 			case ACTION_OBJECT_DELETE:
 				data["msg"]["oId"] = o.id;

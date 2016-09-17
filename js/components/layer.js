@@ -1,3 +1,7 @@
+/*
+	compatible: 14.9.2016
+*/
+
 class Layer{
 	constructor(title, layerType = ""){
 		this._objects 	= {};

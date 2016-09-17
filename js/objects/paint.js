@@ -19,6 +19,7 @@ class Paint extends Entity{
 			color: null,
 			action: null,
 			size: null,
+			type: null,
 			points: []
 		}
 	}
@@ -35,7 +36,12 @@ class Paint extends Entity{
 				clearInterval(interval);
 				return;
 			}
-			inst.addPoint(points[i]["points"][ii], points[i]["color"]);
+			//inst.addPoint(points[i]["points"][ii], points[i]["color"]);
+			Creator.setOpt(ATTRIBUTE_BRUSH_COLOR, points[i]["color"]);
+			Creator.setOpt(ATTRIBUTE_BRUSH_SIZE, points[i]["size"]);
+			Creator.setOpt(ATTRIBUTE_BRUSH_TYPE, points[i]["type"]);
+			inst.addPoint(points[i]["points"][ii]);
+
 			if(ii++ == points[i]["points"].length - 1){
 				inst.breakLine();
 				i++;

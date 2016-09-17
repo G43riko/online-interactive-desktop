@@ -1,3 +1,6 @@
+/*
+	compatible:	forEach, getComputedStyle, JSON parsing 14.9.2016
+*/
 class ListenersManager{
 	constructor(){
 		this._movedObject = null;
@@ -20,8 +23,10 @@ class ListenersManager{
 		if($(canvas).hasClass("blur"))
 			return false;
 
+		/*
 		if(actContextMenu && actContextMenu.clickIn(position.x, position.y))
 			return;
+		*/
 
 		if(button == LEFT_BUTTON)
 			Scene.forEach((o) => {
@@ -42,6 +47,19 @@ class ListenersManager{
 		draw();
 	}
 
+	hashChange(){
+		setUpComponents();
+
+		if(MenuManager.dataBackup)
+			Menu.init(JSON.parse(MenuManager.dataBackup));
+
+		if(Layers)
+			Entity.setAttr(Layers, "visible", Components.layers());
+
+		Gui.showOptionsByComponents();
+		draw();
+	}
+
 	keyUp(key, isCtrlDown){
 		if(isCtrlDown){
 			switch(key){
@@ -50,6 +68,10 @@ class ListenersManager{
 					break;
 				case Y_KEY:
 					Paints.redo();
+					break;
+				case A_KEY:
+					selectedObjects.selectAll();
+					draw();
 					break;
 			}
 		}
@@ -167,6 +189,10 @@ class ListenersManager{
 	mouseMove(position, movX, movY){
 		if(Options.changeCursor){//TODO timeline, layersViewer, creator, Line & polygon, selectors, connectors
 			Menu.hover(position.x, position.y);
+			/*
+			if(actContextMenu)
+				actContextMenu.hover(position.x, position.y);
+			*/
 		}
 
 		if(this._movedObject && isFunction(this._movedObject.onMouseMove)){

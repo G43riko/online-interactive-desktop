@@ -79,7 +79,6 @@ class Polygon extends Entity{
 			borderWidth: this.borderWidth,
 			radius: this.radius
 		});
-		console.log("radius: " + this.radius);
 		if(this.selected){
 			drawBorder(this, {});
 			for(var i=0 ; i<this.points.length ; i++){

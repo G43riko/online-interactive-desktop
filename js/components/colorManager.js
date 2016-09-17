@@ -1,3 +1,6 @@
+/*
+	compatible: 14.9.2016
+*/
 function pickUpColor(func, thisArg){
 	var T;
 	if (arguments.length > 1)

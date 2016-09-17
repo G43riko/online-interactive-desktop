@@ -1,3 +1,7 @@
+/*
+	compatible:	14.9.2016
+*/
+
 var GVector2fCounter = 0;
 var GVector2fCounterClone = 0;
 

@@ -1,3 +1,6 @@
+/*
+	compatible: blob constructing, File API, FileReader API, JSON parsing 14.9.2016
+*/
 class FileManager{
 	constructor(){
 		this._input = document.createElement("input");
@@ -97,7 +100,7 @@ function loadFile(func){
 }
 
 
-function saveSceneAsFile(fileName = "scene_backup"){
+function saveSceneAsFile(data = {projectTitle: "scene_backup"}){
 	var data = {
 		scene: Scene.toObject(),
 		creator: Creator.toObject(),
@@ -105,7 +108,7 @@ function saveSceneAsFile(fileName = "scene_backup"){
 		type: 2500
 	};
 
-	saveFile(fileName, JSON.stringify(data));
+	saveFile(data.projectTitle, JSON.stringify(data));
 }
 
 function saveSceneAsTask(fileName = "default_task"){

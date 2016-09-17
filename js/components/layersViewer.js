@@ -1,3 +1,7 @@
+/*
+	compatible: 14.9.2016
+*/
+
 const BUTTON_NEW_LAYER 		= 100;
 const BUTTON_DELETE_LAYER 	= 101;
 const BUTTON_HIDE_PANEL 	= 102;
@@ -11,7 +15,8 @@ class LayersViewer extends Entity{
 		Entity.changeAttr(this, {
 			fillColor: MENU_BACKGROUND_COLOR,
 			borderColor: MENU_BORDER_COLOR,
-			borderWidth: 2
+			borderWidth: 2,
+			visible: Components.layers()
 		});
 
 		this._buttonFillColor 	= MENU_DISABLED_BG_COLOR;

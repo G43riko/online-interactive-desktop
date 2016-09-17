@@ -1,3 +1,6 @@
+/*
+	compatible:	canvas 14.9.2016
+*/
 class PaintManager{
 	constructor(){
 		this._brushes			= [];
@@ -99,6 +102,7 @@ class PaintManager{
 	 * @param col - farba štetca
 	 */
 	rePaintImage(size, col){
+		console.log("prekresluje");
 		var c = document.createElement('canvas'),
 			ctx, imgData, data, color, i;
 		c.width = size;

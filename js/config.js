@@ -8,6 +8,7 @@
 /*R*/const Z_KEY		= 90;
 /*R*/const Y_KEY		= 89;
 /*R*/const DELETE_KEY	= 46;
+/*R*/const A_KEY		= 65;
 
 const FONT_HALIGN_LEFT		= "left";
 const FONT_HALIGN_CENTER	= "center";
@@ -96,10 +97,13 @@ const DEFAULT_BRUSH_TYPE		= "brush1.png";
 const DEFAULT_BRUSH_COLOR		= "#000000";
 const DEFAULT_LAYER_TITLE		= "default";
 
-const CONTEXT_MENU_LINE_HEIGHT	= 40;
-const CONTEXT_MENU_FONT_COLOR	= DEFAULT_FONT_COLOR;
-const CONTEXT_MENU_OFFSET 		= 10;
-const CONTEXT_MENU_WIDTH 		= 240;
+const CONTEXT_MENU_LINE_HEIGHT		= 40;
+const CONTEXT_MENU_FONT_COLOR		= DEFAULT_FONT_COLOR;
+const CONTEXT_MENU_OFFSET 			= 10;
+const CONTEXT_MENU_WIDTH 			= 240;
+const CONTEXT_FILL_COLOR			= "#1abc9c";
+const CONTEXT_DISABLED_FILL_COLOR	= "#abd6bb";
+const CONTEXT_SELECTED_FILL_COLOR	= "red";
 
 const GRID_COLOR	= "Black";
 const GRID_WIDTH	= 0.1;
@@ -114,8 +118,8 @@ const MENU_RADIUS				= 10;
 const MENU_BORDER_WIDTH 		= 2;
 const MENU_FONT_COLOR 			= "#000000";
 const MENU_BORDER_COLOR 		= "#000000";
-const MENU_WIDTH 				= 60;//60
-const MENU_HEIGHT				= 60;//60
+const MENU_WIDTH 				= 50;//60
+const MENU_HEIGHT				= 50;//60
 const MENU_POSITION				= MENU_OFFSET;
 const MENU_BACKGROUND_COLOR		= "#1abc9c";
 const MENU_DISABLED_BG_COLOR	= "#abd6bb";
@@ -152,7 +156,9 @@ const ACTION_PAINT_CHANGE_BRUSH	= 2317;
 
 const PAINT_ACTION_BRUSH	= 2400;
 const PAINT_ACTION_LINE		= 2401;
-
+/*
+	compatible: 14.9.2016
+*/
 const KEYWORD_OBJECT		= "object";
 const KEYWORD_STRING		= "string";
 const KEYWORD_NUMBER		= "number";
@@ -186,15 +192,17 @@ const INPUT_TYPE_RADIO		= "radio";
 const CHECKBOX_COLOR_TRUE	= "green";
 const CHECKBOX_COLOR_FALSE	= "red";
 
-const COMPONENT_DRAW	= "1";
-const COMPONENT_SHARE	= "2";
-const COMPONENT_WATCH	= "3";
-const COMPONENT_TOOLS	= "4";
-const COMPONENT_LOAD	= "5";
-const COMPONENT_SCREEN	= "6";
-const COMPONENT_CONTENT	= "7";
-const COMPONENT_EDIT	= "8";
-const COMPONENT_SAVE	= "9";
+const COMPONENT_DRAW	= "a";
+const COMPONENT_SHARE	= "b";
+/*D*/const COMPONENT_WATCH	= "c";
+const COMPONENT_TOOLS	= "d";
+const COMPONENT_LOAD	= "e";
+const COMPONENT_SCREEN	= "f";
+const COMPONENT_CONTENT	= "g";
+const COMPONENT_EDIT	= "h";
+const COMPONENT_SAVE	= "i";
+const COMPONENT_LAYERS	= "j";
+const COMPONENT_TASK	= "k";
 
 
 const LAYERS_LINE_HEIGHT	= 50;
@@ -218,6 +226,9 @@ const LOGGER_MOUSE_EVENT		= 2610;
 const LOGGER_KEY_EVENT			= 2611;
 const LOGGER_DRAW				= 2612;		
 const LOGGER_CHANGE_OPTION		= 2613;
+
+const HIGHTLIGHT_CORRECT	= 2700;
+const HIGHTLIGHT_WRONG		= 2701;
 
 const OBJECT_ARC		= "Arc";
 const OBJECT_ARROW		= "Arrow";

@@ -1,3 +1,6 @@
+/*
+	compatible: 14.9.2016
+*/
 class TimeLine{
 	constructor(val = 75, maxVal = 100, minVal = 0){
 		this.onScreenResize();

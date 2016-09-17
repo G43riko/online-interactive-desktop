@@ -1,3 +1,6 @@
+/*
+	compatible:	forEach 14.9.2016
+*/
 class ObjectsManager{
 	constructor(){
 		this._movedObject = false;
@@ -34,6 +37,10 @@ class ObjectsManager{
 		each(this._objects, e => Scene.remove(e));
 	}
 
+	selectAll(){
+		Scene.forEach(e => this.add(e));
+	}
+
 	add(o){
 		if((isDefined(o.locked) && o.locked) || !o)
 			return;
@@ -52,7 +59,8 @@ class ObjectsManager{
 		return this._objects[this.size() - 1];
 	};
 	clear(){
-		this._objects.forEach(function(e){
+		//this._objects.forEach(function(e){
+		each(this._objects, e => {
 			if(isDefined(e.moveType))
 				e.moveType = -1;
 			e.selected = false;
@@ -65,6 +73,6 @@ class ObjectsManager{
 	};
 
 	forEach(e){
-		this._objects.forEach(e);
+		each(this._objects, e);
 	};
 }

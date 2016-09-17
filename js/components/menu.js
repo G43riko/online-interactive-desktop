@@ -1,3 +1,6 @@
+/*
+	compatible: forEach, canvas, JSON parsing 14.9.2016
+*/
 class MenuManager{
 	constructor(position = new GVector2f(), size = new GVector2f(MENU_WIDTH, MENU_HEIGHT), key = "mainMenu", parent = null){
 		if(parent != null)
@@ -41,7 +44,8 @@ class MenuManager{
 
 
 		if(!result)
-			this._items.forEach(function(e) {
+			//this._items.forEach(function(e) {
+			each(this._items, function(e) {
 				if (!e["visible"] || result)
 					return false;
 
@@ -69,16 +73,24 @@ class MenuManager{
 	static _changeDataByComponents(data){
 		if(!Components.tools() && Components.draw()) //ak je kreslenie a nie nastroje musí sa nastaviť kreslenie
 			Creator.operation = OPERATION_DRAW_PATH;
+		
+		data["tools"]["draw"]["visible"] = Components.draw();
+		//TODO undo a redo zmeniť lebo ho bude treba aj pri tool componente
+		data["mainMenu"]["undo"]["visible"] = Components.draw();
+		data["mainMenu"]["redo"]["visible"] = Components.draw();
 
 		data["mainMenu"]["tools"]["visible"] = Components.tools();
 		data["mainMenu"]["content"]["visible"] = Components.content();
 		data["mainMenu"]["sharing"]["visible"] = Components.share();
-		if(!Components.load() && !Components.save() && !Components.screen())
+		data["tools"]["image"]["visible"] = Components.load();
+
+		if(!Components.load() && !Components.save() && !Components.screen() && !Components.task())
 			data["mainMenu"]["file"]["visible"] = false;
 		else{
 			data["file"]["loadXML"]["visible"] = Components.load();
 			data["file"]["saveXML"]["visible"] = Components.save();
 			data["file"]["saveImg"]["visible"] = Components.screen();
+			data["file"]["saveTask"]["visible"] = Components.task();
 		}
 
 
@@ -98,7 +110,8 @@ class MenuManager{
 			array[ii] = [];
 			each(data[ii], function(e, i){
 				if(isDefined(e["values"])){
-					e.values.forEach(function(ee){
+					//e.values.forEach(function(ee){
+					each(e.values, function(ee){
 						tmp = {};
 						tmp["visible"] = e["visible"];
 						tmp["disabled"] = e["disabled"];
@@ -184,7 +197,8 @@ class MenuManager{
 		if(result)
 			return result;
 
-		this._items.forEach(function(e) {
+		//this._items.forEach(function(e) {
+		each(this._items, function(e) {
 			if (!e["visible"] || result)
 				return false;
 
@@ -204,16 +218,14 @@ class MenuManager{
 	};
 
 	disabled(menu, button, value){
+		var check = (e, i, arr) => {
+			if(e.key === button)
+					arr[i].disabled = typeof value === KEYWORD_UNDEFINED ? !e.disabled : value;
+		}
 		if(this._key == menu)
-			each(this._items, function(e, i, arr){
-				if(e.key === button)
-					arr[i].disabled = value;
-			});
+			each(this._items, check);
 		else if(isDefined(this._subMenus[menu]))
-			each(this._subMenus[menu]._items, function(e, i, arr){
-				if(e.key === button)
-					arr[i].disabled = value;
-			});
+			each(this._subMenus[menu]._items, check);
 	}
 
 	_doClickAct(val){
@@ -264,17 +276,7 @@ class MenuManager{
 				Paints.undo();
 				break;
 			case "copyUrl":
-				var area = document.createElement("textarea");
-				area.appendChild(document.createTextNode(Sharer.getWatcherUrl()));
-				document.body.appendChild(area);
-				area.select();
-				try{
-					document.execCommand('copy');
-					Logger.notif("Adresa zdielania bola úspečne skopírovaná do schránky");
-				}catch(e){
-					Logger.notif("Nepodarilo sa skopírovať adresu zdielania");
-				}
-				document.body.removeChild(area);
+				Sharer.copyUrl();
 				break;
 			case "redo":
 				Paints.redo();
@@ -289,8 +291,12 @@ class MenuManager{
 			case "saveTask":
 				saveSceneAsTask();
 				break;
+			case "stopShare":
+				Sharer.stopShare();
+				break;
 			case "saveXML":
-				saveSceneAsFile();
+				//saveSceneAsFile();
+				showXmlSavingOptions();
 				break;
 			case "loadXML":
 				loadSceneFromFile();
@@ -345,7 +351,8 @@ class MenuManager{
 		if(result)
 			return result;
 
-		this._items.forEach(function(e) {
+		//this._items.forEach(function(e) {
+		each(this._items, function(e) {
 			if (!e["visible"] || result)
 				return false;
 
@@ -379,7 +386,8 @@ class MenuManager{
 		context.strokeStyle = MENU_BORDER_COLOR;
 		context.fillStyle = this._backgroundColor;
 
-		this._items.forEach(function(e){
+		//this._items.forEach(function(e){
+		each(this._items, function(e){
 			if(!e["visible"])
 				return;
 			var bgColor = e["disabled"] ? this._disabledBackgroundColor : this._backgroundColor;
@@ -409,7 +417,8 @@ class MenuManager{
 
 	_redraw(){
 		this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
-		this._tmpDrawArray.forEach(function(e){
+		//this._tmpDrawArray.forEach(function(e){
+		each(this._tmpDrawArray, function(e){			
 			this._drawIcon(e, e.x * this._size.x, e.y * this._size.y, 5, this._size.x, this._size.y, this._fontColor);
 		}, this);
 

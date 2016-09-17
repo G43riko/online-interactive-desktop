@@ -1,3 +1,7 @@
+/*
+	compatible: bind, eventTarget, hashChange, touchEvents 14.9.2016
+*/
+
 class InputManager{
 	constructor(){
 		this._keys = [];
@@ -34,10 +38,8 @@ class InputManager{
 		window.onbeforeunload= function(event){
 			event.returnValue = "Nazoaj chceš odísť s tejto stránky???!!!";
 		};
-		window.onhashchange = function(){
-			setUpComponents();
-			Menu.init(JSON.parse(MenuManager.dataBackup));
-		};
+		window.onhashchange = Listeners.hashChange;
+		
 		window.onkeydown = e => {
 			this._keyDown(e.keyCode);
 
@@ -69,6 +71,7 @@ class InputManager{
 			Listeners.mouseDown(new GVector2f(e.offsetX, e.offsetY), e.button);
 
 			e.target.onmouseup = ee => {
+
 				if(!this.isButtonDown(ee.button))
 					return  false;
 				this._buttonUp(ee);
@@ -129,7 +132,6 @@ class InputManager{
 
 	_keyDown(val){
 		this._keys[val] = true;
-
 		Logger.log("stlačené klavesa " + val, LOGGER_KEY_EVENT);
 	};
 
@@ -143,6 +145,7 @@ class InputManager{
 		this._hist[val]++;
 
 		Logger.log("pustená klavesa " + val, LOGGER_KEY_EVENT);
+
 	};
 
 	isKeyDown(val){

@@ -1,3 +1,6 @@
+/*
+	compatible:	Date.now, geolocation, JSON parsing 14.9.2016
+*/
 class ProjectManager{
 	constructor(author, title = "OIP Project"){
 		this._createdAt = Date.now();
@@ -10,12 +13,14 @@ class ProjectManager{
 		//ALLOWED_COMPONENTS
 		
 		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
-
+		this._browserData = this._analyzeBrowser();
 		if(getCookie("send_data") === ""){
-	        this._sendAnonymousData(this._analyzeBrowser());
+	        this._sendAnonymousData(this._browserData);
 	        setCookie("send_data", 1);
 	    }
 	}
+
+	get isMobile(){return this._browserData["mobile"] !== 0;}
 
 	_analyzeBrowser(){
 		/*

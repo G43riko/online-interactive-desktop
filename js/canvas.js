@@ -1,3 +1,6 @@
+/*
+	compatible:	forEach, canvas, canvasText 14.9.2016
+*/
 function drawGrid(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD, c = GRID_COLOR){
 	var pointsNormal = [],
 		pointsBold = [],
@@ -49,9 +52,11 @@ function doPolygon(obj){
 		var size = points.length;
 
 		if(res.radius == 0 || isNaN(res.radius))
-			points.forEach((e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
+			each(points, (e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
+			//points.forEach((e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
 		else
-			points.forEach(function(e, i){
+			//points.forEach(function(e, i){
+			each(points, (e, i) => {
 				var v1, v2, l1, l2;
 				if (i == 0) {
 					v1 = points[i + 1].getClone().sub(e);
@@ -96,7 +101,8 @@ function doPolygon(obj){
 	};
 	
 	if(isArray(res.points[0]))
-		res.points.forEach(a => drawLines(a));
+		each(res.points, drawLines);
+		//res.points.forEach(a => drawLines(a));
 	else
 		drawLines(res.points);
 
@@ -159,9 +165,11 @@ function doLine(obj){
 	var drawLines = function(points){
 		if(isNaN(points[0])){
 			if(res.radius == 0 || isNaN(res.radius))
-				points.forEach((e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
+				//points.forEach((e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
+				each(points, (e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y))
 			else
-				points.forEach(function(e, i){
+				//points.forEach(function(e, i){
+				each(points, (e, i) => {
 					if(i == 0)
 						res.ctx.moveTo(e.x, e.y);
 					else if(i + 1 < points.length){
@@ -194,7 +202,8 @@ function doLine(obj){
 	};
 
 	if(isArray(res.points[0]))
-		res.points.forEach(a => drawLines(a));
+		//res.points.forEach(a => drawLines(a));
+		each(res.points, drawLines);
 	else
 		drawLines(res.points);
 
@@ -210,7 +219,8 @@ function drawQuadraticCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderCo
 	ctx.lineWidth = borderWidth;
 	ctx.strokeStyle = borderColor;
 	ctx.beginPath();
-	points.forEach((e, i) => i == 0 ? ctx.moveTo(e.x, e.y) : ctx.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y));
+	//points.forEach((e, i) => i == 0 ? ctx.moveTo(e.x, e.y) : ctx.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y));
+	each(points, (e, i) => i == 0 ? ctx.moveTo(e.x, e.y) : ctx.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y));
 	ctx.stroke();
 }
 
@@ -239,9 +249,11 @@ function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COL
 
 function getMaxWidth(val, max = 0){
 	if(isArray(val))
-		val.forEach(function(e){
+		//val.forEach(function(e){
+		each(val, e => {
 			if(isArray(e))
-				e.forEach(a => max = Math.max(calcTextWidth(a), max));
+				//e.forEach(a => max = Math.max(calcTextWidth(a), max));
+				each(e, a => max = Math.max(calcTextWidth(a), max));
 			else
 				max = Math.max(calcTextWidth(e), max);
 		});

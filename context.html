@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding:0;
+		}
+		#context{
+			position: fixed;
+			overflow: none;
+    		
+		}
+		#context li a{
+			position: relative;
+			font-size: 20px;
+			line-height: 30px;
+			text-decoration: none;
+			color: black;
+			padding-left: 5px;
+			width: 100%;
+			display: block;
+			box-sizing: border-box;
+			
+		}
+		#context li{
+			position:relative;
+			background-color: #1abc9c;
+			list-style: none;
+			height: 30px;
+			box-sizing: border-box;
+			border-left: 2px solid black;
+			border-right: 2px solid black;
+		}
+		#context li:hover{
+			background-color: #2accac;
+		}
+
+		#context li.disabled{
+			background-color: #abd6bb;
+			cursor: not-allowed;
+		}
+
+		#context li.disabled a{
+			pointer-events: none;
+			cursor: not-allowed;
+		}
+
+		#context li:not(:first-child){
+			border-top: 2px solid black;
+
+		}
+
+		#context li:first-child{
+			border-top-left-radius: 10px;
+			border-top-right-radius: 10px;
+			border-top: 2px solid black;
+
+		}
+
+		#context li:last-child{
+			border-bottom-left-radius: 10px;
+			border-bottom-right-radius: 10px;
+			border-bottom: 2px solid black;
+		}
+
+		#context ul ul{
+			position:absolute;
+			left:0%;
+			top:0;
+			width:100%;
+			display:none;
+		}
+		#context li:hover > ul{
+			top:-2px;
+			left:100%;
+			display:block;
+			transform: translateX(0px);
+		}
+	</style>
+
+</head>
+<body>
+	<!--
+	<div id="context">
+		<ul>
+			<li><a href="">Otvoriť</a></li>
+			<li class="disabled"><a href="">Nová super špecialna možnosť</a></li>
+			<li><a href="">niečo</a>
+				<ul>
+					<li><a href="">a</a></li>
+					<li><a href="">b</a></li>
+					<li><a href="">c</a></li>
+				</ul>
+			</li>
+			<li><a href="">zatvoriť</a></li>
+			<li><a href="">zmazať</a></li>
+		</ul>
+	</div>
+	-->
+
+	<script type="text/javascript">
+		var object = [
+			{
+				onClick :"alert('koncis')",
+				label : "Otvorit",
+				visible: true
+			},{
+				label : "Nová super špecialna možnosť",
+				visible: true,
+				disabled: true
+			},{
+				label : "niečo",
+				subMenu : [
+					{
+						label: "a",
+						onClick: "alert('cawko')",
+						href: "google.com",
+						visible: true
+					},{
+						label: "b",
+						visible: false
+					},{
+						label: "c",
+						visible: true,
+						disabled: true
+					},{
+						label: "a",
+						onClick: "alert('cawko')",
+						href: "google.com",
+						visible: true
+					},{
+						label: "b",
+						visible: false
+					},{
+						label: "c",
+						visible: true,
+						disabled: true
+					},{
+						label: "a",
+						onClick: "alert('cawko')",
+						href: "google.com",
+						visible: true
+					},{
+						label: "b",
+						visible: false
+					},{
+						label: "c",
+						visible: true,
+						disabled: true
+					}
+				]
+			},{
+				label : "Zatvoriť",
+				visible: true
+			},{
+				label : "zmazať",
+				visible: true
+			}
+		]
+		function createContext(posX, posY, data){
+			var wrapper = document.getElementById("context");
+
+			wrapper && document.body.removeChild(wrapper);
+
+			wrapper = document.createElement("div");
+			var createMenu = function(items){
+				var rootUl = document.createElement("ul");
+				for(var i in items)
+					if(items.hasOwnProperty(i) && items[i]["visible"] !== false)
+						rootUl.appendChild(proccessItem(items[i]));
+
+				return rootUl;
+			}
+			var proccessItem = function(item){
+				var li = document.createElement("li");
+				var a = document.createElement("a");
+
+				a.setAttribute("href", item["href"] || "");
+				a.appendChild(document.createTextNode(item["label"]))
+
+				li.appendChild(a);
+
+				item["onClick"] && li.setAttribute("onclick", item["onClick"]);
+				item["disabled"] && li.setAttribute("class", "disabled");
+				item["subMenu"] && li.appendChild(createMenu(item["subMenu"]))
+
+				return li;
+			}
+
+			wrapper.setAttribute("id", "context");
+			wrapper.appendChild(createMenu(data));
+
+			document.body.appendChild(wrapper);
+
+			if(posY + wrapper.offsetHeight > window.innerHeight)
+				posY = window.innerHeight - wrapper.offsetHeight;
+			if(posX + wrapper.offsetWidth > window.innerWidth)
+				posX = window.innerWidth - wrapper.offsetWidth;
+
+			wrapper.style.top = posY + "px";
+			wrapper.style.left = posX + "px";
+
+
+			console.log(posY, posX);
+		}
+
+		document.onclick = e => createContext(e.offsetX, e.offsetY, object);
+	</script>
+</body>
+</html>

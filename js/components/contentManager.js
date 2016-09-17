@@ -1,3 +1,6 @@
+/*
+	compatible: classList 14.9.2016
+*/
 class ContentManager{
 	constructor(){
 		this._contentImage = null;

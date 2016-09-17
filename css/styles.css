@@ -1,6 +1,13 @@
 @import "alerts.css";
 @import "form.css";
 @import "chat.css";
+@import "panel.css";
+
+@media print {
+    html, body {
+       display: none;  /* hide whole page */
+    }
+}
 
 *{
 	margin: 0;
@@ -73,12 +80,19 @@ body{
 	height: calc(100% - 2px);
 }
 
+.canvas.offset{
+	top: 30px;
+	height: calc(100% - 30px);	
+}
+
+/*
 .animated{
 	-webkit-transition: all 0.5s ease;
 	-ms-transition: all 0.5s ease; 
 	-o-transition: all 0.5s ease; 
 	transition: all 0.5s ease;
 }
+*/
 
 .blur{
 	/*

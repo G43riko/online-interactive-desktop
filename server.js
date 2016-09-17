@@ -189,7 +189,10 @@ completeAuth = function(data){
 disconnect = function(){
 	serverLogs.increase("disconnect");
 	serverLogs.messageRecieve("disconnect", "");
-	connection.disconnect(this, () => serverLogs.increase("disconnectWatcher"), () => serverLogs.increase("disconnectSharer"));
+	connection.disconnect(this, () => serverLogs.increase("disconnectWatcher"), (socket, conn) => {
+		serverLogs.increase("disconnectSharer");
+		writeToWatchers(conn.id, socket, "endShare", "nieco");
+	});
 };
 
 
@@ -257,9 +260,8 @@ sendBuffer = function(data){
 createWatcher = function(data){
 	connection.setUpWatcher(this, data["userId"]);
 	//TODO overiť či je shareId aj userId správne
-	connection.getOwner(data["shareId"]).emit("getAllData", {target: this.id});
-	var text = "Watcher " + connection.getWatcher(data["shareId"], this).nickName + " sa pripojil";
-	connection.getOwner(data["shareId"]).emit("notification", {msg: text});
+	var nickName = connection.getWatcher(data["shareId"], this).nickName;
+	connection.getOwner(data["shareId"]).emit("getAllData", {target: this.id, nickName: nickName});
 };
 
 function checkWatchRequest(data, res){

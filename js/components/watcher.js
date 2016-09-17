@@ -1,3 +1,6 @@
+/*
+	compatible:	forEach, canvas 14.9.2016
+*/
 class WatcherManager{
 	constructor(){
 		WatcherManager._tryPasswordCounter = 0;
@@ -44,12 +47,16 @@ class WatcherManager{
 		this._socket.on("mouseData", data => inst._mouseDataProcess(data));
 		this._socket.on('sendAllData', data => inst._sendAllData(data));
 		this._socket.on("processBuffer", data => inst._processBuffer(data));
+		this._socket.on("endShare", data => inst._endShare(data));
 
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
 	_processBuffer(data){
 		console.log(data);
+	}
+	_endShare(data){
+		Alert.danger("Zdielanie bolo ukončené");
 	}
 
 	_authProcess(data){

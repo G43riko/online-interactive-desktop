@@ -1,3 +1,6 @@
+/*
+	compatible:	forEach, JSON parsing 14.9.2016
+*/
 class SceneManager{
 	constructor(){
 		this._layers = {};
@@ -78,7 +81,12 @@ class SceneManager{
 						if(e.name === OBJECT_TEXT){
 							if(e.text === "")
 								return;
-							data["results"][e.id] = e.text;
+							if(e.taskResult){
+								data["results"][e.id] = e.text;
+								e.text = "";
+								for(var i in data["results"][e.id])
+									e.text += " ";
+							}
 						}
 						data["content"].push(e);
 					}
@@ -87,7 +95,7 @@ class SceneManager{
 		});
 
 		//TODO treba nejako posielať zadanie
-		//findAssignment = true;
+		var findAssignment = true;
 
 		//preloopuje vrstvy
 			//preskočí neviditelne

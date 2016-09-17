@@ -1,3 +1,6 @@
+/*
+	compatible:  14.9.2016
+*/
 class objectCreator{
 	constructor(){
 		this._object 		= false;
@@ -159,12 +162,20 @@ class objectCreator{
 	 * @param val
 	 */
 	setOpt(key, val){
+		
+		if(isObject(key)){
+			each(key, (e, i) => this.setOpt(i, e))
+			return;
+		}
+
 		if(key[0] != "_")
 			key = "_" + key;
 
+		//console.log("key: ", key, " vaĺ: ", val, "normal: ", this[key]);
+
+		var redrawPaint = isIn(key, "_brushColor", "_brushSize", "_brushType") && this[key] != val;
+
 		this[key] = val;
-
-
 
 
 		if(key === "_brushType"){
@@ -177,9 +188,7 @@ class objectCreator{
 		/*
 		 * Ak sa zmení vlastnosť štetca musí prekresliť štetec aby sa mohlo rovno malovať
 		 */
-		if(isIn(key, "_brushColor", "_brushSize", "_brushType")){
-			Paints.rePaintImage(this.brushSize, this.brushColor);
-		}
+		redrawPaint && Paints.rePaintImage(this.brushSize, this.brushColor);
 
 		/*
 		 * Ak s zmení nejaká farba musí sa prekresliť aj view zobtrazujúci aktuálnu farbu

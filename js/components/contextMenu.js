@@ -1,3 +1,6 @@
+/*
+	compatible: forEach, Object.keys 14.9.2016
+*/
 class ContextMenuManager{
 	constructor(position, titles = [], parent = false, key = "undefined"){
 		this._position 			= position;
@@ -5,6 +8,7 @@ class ContextMenuManager{
 		this._parent 			= parent;
 		this._key 				= key;
 		this._textColor 		= CONTEXT_MENU_FONT_COLOR;
+		this._fillColor			= CONTEXT_FILL_COLOR;
 		this._selectedObject 	= parent ? parent._selectedObject : selectedObjects.movedObject;
 		this._titles 			= titles;
 
@@ -25,7 +29,7 @@ class ContextMenuManager{
 				else if(selectedObjects.movedObject.name == OBJECT_TABLE)
 					this._addFields("editTable");
 				else if(selectedObjects.movedObject.name == OBJECT_TEXT)
-					this._addFields("verticalTextAlign", "horizontalTextAlign");
+					this._addFields("verticalTextAlign", "horizontalTextAlign", "taskResult");
 				else if(selectedObjects.movedObject.name == OBJECT_IMAGE)
 					this._addFields("changeImage");
 				else if(selectedObjects.movedObject.name == "LayerViewer"){
@@ -42,7 +46,8 @@ class ContextMenuManager{
 		var hasExtension = false;
 
 		if(titles.length)
-			titles.forEach(function(e, i, arr){
+			//titles.forEach(function(e, i, arr){
+			each(titles, function(e, i ,arr){
 				if(e["type"] == INPUT_TYPE_RADIO){
 					hasExtension = true;
 					arr[i]["value"] = this._selectedObject["_" + this._key] == e["name"];
@@ -56,6 +61,8 @@ class ContextMenuManager{
 						arr[i]["value"] = selectedObjects.movedObject.visible;
 					else if(e["key"] == "showPaint")
 						arr[i]["value"] = selectedObjects.movedObject.showPaint;
+					else if(e["key"] == "taskResult")
+						arr[i]["value"] = selectedObjects.movedObject.taskResult;
 				}
 			}, this);
 
@@ -72,12 +79,34 @@ class ContextMenuManager{
 		return this._position;
 	};
 
+	static disabled(val, ... args){
+		var res = ContextMenuManager.items[args[0]];
+
+		if(args[1])
+			res["fields"][args[1]].disabled = val;
+		else
+			res.disabled = val;
+	}
+
+	static visibility(val, ... args){
+		var res = ContextMenuManager.items[args[0]];
+
+		if(args[1])
+			res["fields"][args[1]].visible = val;
+		else
+			res.visible = val;
+	}
+
 	_addFields(){
 		var res;
-		objectToArray(arguments).forEach(function(e){
+
+		//objectToArray(arguments).forEach(function(e){
+		each(objectToArray(arguments), e => {
 			res = ContextMenuManager.items[e];
-			res["key"] = e;
-			this._titles.push(res);
+			if(res && res["visible"]){
+				res["key"] = e;
+				this._titles.push(res);
+			}
 		}, this);
 	};
 
@@ -106,9 +135,9 @@ class ContextMenuManager{
 			width: this._menuWidth,
 			height: Object.keys(this._titles).length * CONTEXT_MENU_LINE_HEIGHT,
 			radius: MENU_RADIUS,
-			borderColor: this.borderColor,
-			borderWidth: this.borderWidth,
-			fillColor: "rgb(153, 217, 234)",
+			borderColor: this._borderColor,
+			borderWidth: this._borderWidth,
+			fillColor: this._fillColor,
 			shadow: true,
 			draw: true
 		});
@@ -118,11 +147,25 @@ class ContextMenuManager{
 			if(count++)
 				doLine({points: [pX, posY, pX + menuWidth, posY], draw: true});
 
+			//STARA SA O ROZBALANE ALEBO DISABLOVANE POZADIE
+			if(e["disabled"] || this._subMenu && e["key"] == this._subMenu._key){
+				var firstRadius = this._titles[0] === e ? MENU_RADIUS : 0;
+				var lastRadius = getLastElement(this._titles) === e ? MENU_RADIUS : 0;
 
-			if(this._subMenu && e["key"] == this._subMenu._key)
-				fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor);
-			else
-				fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor, [CONTEXT_MENU_OFFSET, 0]);
+				doRect({
+					position:[pX, posY],
+					width: this._menuWidth,
+					height: CONTEXT_MENU_LINE_HEIGHT,
+					radius: {tr: firstRadius, tl: firstRadius, br: lastRadius, bl: lastRadius},
+					borderColor: this.borderColor,
+					borderWidth: this.borderWidth,
+					fillColor: e["disabled"] ? CONTEXT_DISABLED_FILL_COLOR : CONTEXT_SELECTED_FILL_COLOR,
+					draw: true
+				});
+			}
+
+			fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor, [CONTEXT_MENU_OFFSET, 0]);
+
 
 			if(e["type"] == INPUT_TYPE_CHECKBOX)
 				doRect({
@@ -159,7 +202,8 @@ class ContextMenuManager{
 
 	_doClickAct(opt) {
 		var act = opt.key;
-
+		if(opt.disabled)
+			return false;
 
 		Logger.log("Klikol v contextMenu na položku " + act, LOGGER_CONTEXT_CLICK);
 		switch (act) {
@@ -183,6 +227,10 @@ class ContextMenuManager{
 				break;
 			case "clearWorkspace":
 				Scene.cleanUp();
+				actContextMenu = false;
+				break;
+			case "taskResult":
+				this._selectedObject.taskResult = !this._selectedObject.taskResult;
 				actContextMenu = false;
 				break;
 			case "removeRow":
@@ -307,6 +355,6 @@ class ContextMenuManager{
 		this._doClickAct(this._titles[i]);
 
 		return true;
-
 	};
+
 }

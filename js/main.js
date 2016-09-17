@@ -1,3 +1,6 @@
+/*
+	compatible:	indexOf, canvas, canvasText, JSON parsing 14.9.2016
+*/
 var initTime 		= window["performance"].now(),
 	movedObject 	= false,
 	Scene 			= new SceneManager(),
@@ -17,8 +20,10 @@ var initTime 		= window["performance"].now(),
 	Task 			= null,
 	Events 			= typeof EventManager !== KEYWORD_UNDEFINED ? new EventManager() : null,
 	SelectedText	= null,
+	Gui 			= new GuiManager(),
 	Options 		= new OptionsManager(),
 	drawEvent 		= new EventTimer(realDraw, 1000 / 60),
+	Panel			= null,
 	draw 			= () => drawEvent.callIfCan(),
 	components, drawMousePos, Layers, canvas, context, chatViewer, timeLine;
 
@@ -32,7 +37,9 @@ function setUpComponents(){
 		load : window.location.hash.indexOf(COMPONENT_LOAD) >= 0 || typeof Watcher !== "undefined",
 		screen : window.location.hash.indexOf(COMPONENT_SCREEN) >= 0 || typeof Watcher !== "undefined",
 		content : window.location.hash.indexOf(COMPONENT_CONTENT) >= 0 || typeof Watcher !== "undefined",
-		edit : window.location.hash.indexOf(COMPONENT_EDIT) >= 0 || typeof Watcher !== "undefined"
+		edit : window.location.hash.indexOf(COMPONENT_EDIT) >= 0 || typeof Watcher !== "undefined",
+		layers : window.location.hash.indexOf(COMPONENT_LAYERS) >= 0 || typeof Watcher !== "undefined",
+		task : window.location.hash.indexOf(COMPONENT_TASK) >= 0 || typeof Watcher !== "undefined"
 	}
 }
 
@@ -45,6 +52,8 @@ var Components = {
 	load	: () => isDefined(components) && isDefined(components["load"]) && components["load"] === true,
 	screen	: () => isDefined(components) && isDefined(components["screen"]) && components["screen"] === true,
 	content	: () => isDefined(components) && isDefined(components["content"]) && components["content"] === true,
+	layers	: () => isDefined(components) && isDefined(components["layers"]) && components["layers"] === true,
+	task	: () => isDefined(components) && isDefined(components["task"]) && components["task"] === true,
 	edit	: () => isDefined(components) && isDefined(components["edit"]) && components["edit"] === true
 };
 
@@ -177,8 +186,8 @@ function init(){
 var loading = function(){
 
 	/////DOLEZITE!!!
+	Listeners.hashChange();
 
-	setUpComponents();
 	canvas = document.getElementById("myCanvas");
 	initCanvasSize();
 	context = canvas.getContext("2d");
@@ -191,6 +200,7 @@ var loading = function(){
 			draw();
 		});
 	});
+	Panel = new PanelManager();
 
 	Scene.createLayer();
 	Scene.createLayer("rightMenu", "gui");
@@ -201,7 +211,7 @@ var loading = function(){
 	Input.initListeners(canvas);
 
 	if(typeof Sharer !== "undefined")
-	chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
+		chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
 
 	Layers = new LayersViewer();
 	Scene.addToScene(Layers, "rightMenu");

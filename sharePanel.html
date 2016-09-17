@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test</title>
+	<style type="text/css">
+		.noselect {
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none;   /* Chrome/Safari/Opera */
+			-moz-user-select: none;      /* Firefox */
+			-ms-user-select: none;       /* Internet Explorer/Edge */
+			user-select: none;           /* Non-prefixed version, currently*/
+		}
+		.panel{
+			position: absolute;
+			/*top: 50px;
+			left: 100px;
+			*/
+			top: 0;
+			right: 0;
+			width: 300px;
+			background-color: white;
+			border-radius: 5px;
+			transition: all 0.2s ease;
+		}
+
+		.panel > .panelBody{
+			overflow: hidden;
+			position: relative;
+			top:-1px;
+			height: 300px;
+			transition: all 0.2s ease;
+			border-color: #1abc9c;
+			border-style: solid;
+			border-width: 2px 2px 2px 2px;
+			border-radius: 0 0 5px 5px;
+			z-index: 20;
+			box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .20);
+		}
+
+		.panel.minimalized > .panelBody{
+			height: 0;
+			padding: 0;
+			top:-2px;
+			border-width: 0 2px 0 2px;
+		}
+
+
+		.panel.minified > .panelBody{
+			border-radius: 5px 0 5px 5px;
+		}
+
+
+		.panel > .panelHeader{
+			height: 30px;
+			padding:3px;
+			box-sizing: border-box;
+			background-color: white;
+			box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .20);
+			border: 2px solid #1abc9c;
+			border-radius: 5px 5px 0 0;
+			transition: all 0.2s ease;
+			z-index: 30;
+		}
+
+		.panel.minimalized> .panelHeader{
+			border-radius: 5px 5px 5px 5px;
+		}
+
+		.panel .headerButton{
+			display: inline;
+			float:right;
+			background-color: #ABD6BB;
+			border: 1px solid #1abc9c;
+			border-radius: 5px;
+			position: relative;
+			min-width:20px;
+			text-align: center;
+			margin-left: 5px;
+			cursor: pointer;
+		}
+
+		.panel .headerButton:hover{
+			background-color: #1abc9c;
+			border: 1px solid #ABD6BB;
+		}
+
+		.panel .headerButton:active{
+			background-color: red;
+			border: 1px solid blue;
+		}
+
+		.panel .panelLine{
+			box-sizing: border-box;
+			height: 30px;
+			line-height: 20px;
+			padding: 5px;
+		}
+
+		.panel .panelLine:not(:last-child) {
+			border-bottom: 2px solid #ABD6BB;
+
+		}
+
+		.panel.minified .panelHeader{
+			width: 50px;
+			position: relative;
+			left: calc(100% - 50px);
+		}
+
+		#chatHeader{
+			display: inline;
+		}
+
+		#title{
+			font-weight: bold;
+		}	
+
+		.panel:not(.showWatchers) #panelWatchers, .panel:not(.showChat) #panelChat{
+			display: none;
+		}
+
+		.hidden{
+			display: none;
+		}
+
+		#chatInput{
+			position:absolute;
+			min-height: 20px;
+			max-height: 80px;
+			width: 100%;
+			bottom: 0;
+			overflow-y: auto;
+			overflow-x: hidden;
+			border-top: 2px solid #1abc9c;
+			background-color: white;
+		}
+
+		#chatHistoryWrapper{
+			position:relative;
+			width: 100%;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+
+		#chatHistoryWrapper .messageC{
+			width: calc(100% - 40px);
+			margin: 5px;
+			background-color: #1abc9c;
+			border-radius: 10px;
+		}
+		#chatHistoryWrapper #headC{
+			height: 30px;
+			padding:5px;
+			box-sizing: border-box;
+			border-bottom: 2px solid #1abc9c;
+			cursor: pointer;
+			box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .20);
+		}
+
+		#chatHistoryWrapper .myMessage{
+			position: relative;
+			left: 30px;
+			background-color: #ABD6BB;
+		}
+
+		#chatHistoryWrapper .messageC div{
+			padding: 5px;
+		}
+
+		#chatHistoryWrapper .messageText{
+			border-top: 1px solid white;
+			word-wrap: break-word;
+		}
+	</style>
+</head>
+<body>
+	<script type="text/javascript">
+		var setAttr = (el, key, val) => {
+			if(typeof key === "string")
+				el.setAttribute(key, val);
+			else if(typeof key === "object")
+				for(var i in key)
+					if(key.hasOwnProperty(i))
+						el.setAttribute(i, key[i]);
+			
+			return el;
+		}
+		var createText = title => document.createTextNode(title);
+
+		var append = function(element, content){
+			if(typeof content === "object")
+				element.appendChild(content);
+			return element
+		};
+		var createEl = (type, attr, cont) => append(setAttr(document.createElement(type), attr), cont);
+		class PanelManager{
+			constructor(){
+				this._running = false;
+				this._watchers = [
+					{name: "jano"},
+					{name: "fero"},
+					{name: "maros"}
+				];
+				this._sharer = {
+					title: "nazov 1",
+					maxWatchers: 20,
+					duration: 10000
+				};
+				this._task = {
+					title: "nazov 2",
+					resultCount: 4,
+					resultCorrect: 3,
+					timeLeft: 150000
+				};
+				//this._panel = document.getElementsByClassName("panel")[0];
+				this._panel = createEl("div", {class: "panel minimalized showChat"});
+
+				this._bodyPanel =createEl("div", {class: "panelBody"});
+
+				append(this._panel, this._initPanelHead());
+				append(this._panel, this._bodyPanel);
+
+				append(document.body, this._panel);
+
+			}
+
+			_startRun(){
+				this._running = true;
+				this._interval = setInterval(() => this._update(), 1000);
+			}
+			startTask(){
+				this._type = "Task";
+				this._startRun();
+			}
+
+			startShare(){
+				append(this._headerPanel, this._initTitle())
+				this._initChatPanel();
+				this._initWatcherPanel();
+				this._type = "Share";
+				this._startRun();
+			}
+
+			_update(){
+				
+			}
+
+			_initChatPanel(){
+				//HEADER
+				var chatButton = createEl("div", {class: "headerButton minimalize", id: "toggleChat"}, createText("Chat"));
+				chatButton.onclick = e => {
+					if(this._panel.classList.contains("showChat"))
+						this._panel.classList.toggle("minimalized");
+					
+					else
+						this._panel.classList.add("showChat");
+					
+
+					if(this._panel.classList.contains("showWatchers")){
+						this._panel.classList.remove("showWatchers");
+						this._panel.classList.remove("minimalized");
+					}
+				}
+				append(this._headerPanel, chatButton);
+
+				//BODY
+
+				var panelLine, watcherProfil;
+				var watchersWrapper = createEl("div", {class: "panelContent", id: "panelWatchers"});
+				for(var i in this._watchers)
+					if(this._watchers.hasOwnProperty(i)){
+						watcherProfil = createEl("div", {class: "watcherProfil"}, createText(this._watchers[i].name));
+						panelLine = createEl("div", {class: "panelLine"}, watcherProfil);
+						append(watchersWrapper, panelLine);
+					}
+
+				append(this._bodyPanel, watchersWrapper);
+			}
+
+			_initWatcherPanel(){
+				//HEADER
+				var watcherButton = createEl("div", {class: "headerButton minimalize", id: "toggleWrappers"});
+				append(watcherButton, createText("\xa0"));
+				append(watcherButton, createEl("span", {id: "connected"}, createText(this._watchers.length)));
+				append(watcherButton, createText("/"));
+				append(watcherButton, createEl("span", {id: "maxConnected"}, createText(this._sharer.maxWatchers)));
+				append(watcherButton, createText("\xa0"));
+				watcherButton.onclick = e => {
+					if(this._panel.classList.contains("showWatchers"))
+						this._panel.classList.toggle("minimalized");
+					
+					else
+						this._panel.classList.add("showWatchers");
+					
+					if(this._panel.classList.contains("showChat")){
+						this._panel.classList.remove("showChat");
+						this._panel.classList.remove("minimalized");
+					}
+				}
+				append(this._headerPanel, watcherButton);
+				//BODY
+
+				var chatHistory = createEl("div", {id: "chatHistory"});
+				var chatWrapper = createEl("div", {id: "chatHistoryWrapper"}, chatHistory);
+				var input = createEl("div", {id: "chatInput", contenteditable: true});
+				var chatPanel = createEl("div", {class: "panelContent", id: "panelChat"}, chatWrapper);
+				append(chatPanel, input);
+				append(this._bodyPanel, chatPanel);
+			}
+
+			_initTitle(){
+				this._headerTitle = createEl("div", {id: "chatHeader"});
+
+				var title = this._sharer ? this._sharer.title : this._task.title;
+				var time = this._sharer ? this._sharer.duration : this._task.timeLeft;
+
+				append(this._headerTitle, createEl("span", {id: "title"}, createText(title)));
+					append(this._headerTitle, createText(" čas: "));
+					append(this._headerTitle, createEl("span", {id: "duration"}, createText(time)));
+				return this._headerTitle;
+			}
+
+			_initPanelHead(Project){
+				
+
+
+				//PANEL
+				this._headerPanel = createEl("div", {class: "panelHeader noselect"});
+				append(this._headerPanel, createEl("div", {class: "headerButton minimalize"}, createText("Stop")));
+				return this._headerPanel;
+
+			}
+		}
+	new PanelManager();
+	</script>
+</body>
+</html>

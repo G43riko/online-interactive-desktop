@@ -105,7 +105,7 @@ module.exports.disconnect = function(socket, isWatcher, isSharer){
 					if(connections[i].watchers.hasOwnProperty(j))
 						connections[i].watchers[j].socket.emit("endShare", "endShare");
 				if(typeof isSharer === "function")
-					isSharer(socket);
+					isSharer(socket, connections[i]);
 				console.log("SHARER s id " + socket.id + " sa odpojil");
 				break;
 			}

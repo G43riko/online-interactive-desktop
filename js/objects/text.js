@@ -1,38 +1,31 @@
 class TextField extends Entity{
 	constructor(text, position, size, fontColor = DEFAULT_FONT_COLOR){
 		super("Text", position, size, {fillColor: DEFAULT_BACKGROUND_COLOR, radius: DEFAULT_RADIUS});//TODO premenovať na input
-		this._text 		= text || "";
-		this._textColor = fontColor;
-		this._fontSize 	= DEFAULT_FONT_SIZE;
-		this._moveType 	= -1;
-		this.size.x 	= calcTextWidth(text, this._fontSize + "pt " + DEFAULT_FONT) + (DEFAULT_TEXT_OFFSET << 1);
-		this.minSize 	= this.size.getClone();
+		this._text 			= text || "";
+		this._textColor 	= fontColor;
+		this._fontSize 		= DEFAULT_FONT_SIZE;
+		this._moveType 		= -1;
+		this._taskResult	= false;
+		this._hightlight	= false
+		this.size.x 		= calcTextWidth(text, this._fontSize + "pt " + DEFAULT_FONT) + (DEFAULT_TEXT_OFFSET << 1);
+		this.minSize 		= this.size.getClone();
 		this._verticalTextAlign = FONT_VALIGN_TOP;
 		this._horizontalTextAlign = FONT_HALIGN_LEFT;
-		this._fontOffset = DEFAULT_TEXT_OFFSET;
+		this._fontOffset 	= DEFAULT_TEXT_OFFSET;
 
 		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1))
 	};
 
-	get moveType(){
-		return this._moveType;
-	}
+	get moveType(){return this._moveType;}
+	get text(){return this._text;}
+	get taskResult(){return this._taskResult;}
 
-	set moveType(val){
-		this._moveType = val;
-	}
+	set taskResult(val){this._taskResult = val;}
+	set moveType(val){this._moveType = val;}
+	set verticalTextAlign(val){this._verticalTextAlign = val;}
+	set horizontalTextAlign(val){this._horizontalTextAlign = val;}
 
-	set verticalTextAlign(val){
-		this._verticalTextAlign = val;
-	}
-
-	set horizontalTextAlign(val){
-		this._horizontalTextAlign = val;
-	}
-
-	get text(){
-		return this._text;
-	}
+	
 
 	draw(){
 		var pos = this.position.getClone();
@@ -44,6 +37,7 @@ class TextField extends Entity{
 			radius: this.radius,
 			fillColor: this.fillColor,
 			borderWidth: this._borderWidth,
+			borderColor: !this._hightlight ? DEFAUL_STROKE_COLOR : this._hightlight == HIGHTLIGHT_CORRECT ? "green" : "red",
 			draw: true,
 			fill: true
 		});
@@ -108,12 +102,18 @@ class TextField extends Entity{
 				Scene.remove(this);
 			this._text = val;
 			this._size.x = calcTextWidth(val) + (DEFAULT_TEXT_OFFSET << 1);
+
+			if(Task && this.taskResult)
+				this._hightlight = Task.checkResult(this) ? HIGHTLIGHT_CORRECT : HIGHTLIGHT_WRONG;
 		}, this);
 
 		return true;
 	};
 
-
+	set text(val){
+		this._text = val;
+		this._size.x = calcTextWidth(val) + (DEFAULT_TEXT_OFFSET << 1);
+	}
 
 
 

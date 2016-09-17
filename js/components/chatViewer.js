@@ -1,3 +1,6 @@
+/*
+	compatible: 14.9.2016
+*/
 class ChatViewer{
  				constructor(title, myName, sendMessage){
  					this._myName		= myName;
@@ -11,6 +14,7 @@ class ChatViewer{
  					this._sendMessage 	= sendMessage;
  					this._init(document.getElementById("headC"));
  					this.hide();
+ 					this.toggleChat();
  				}
 
  				_createHTML(){
@@ -29,10 +33,22 @@ class ChatViewer{
 
  				hide(){
  					this._chatW.style.display = "none";
+
+ 					if(typeof Project !== "undefined" && Project.isMobile){
+	 					var canvases = document.getElementsByClassName("canvas");
+	 					for(var i in canvases)
+	 						canvas.classList.remove("offset");
+ 					}
  				}
 
  				show(){
  					this._chatW.style.display = "block";
+
+ 					if(typeof Project !== "undefined" && Project.isMobile){
+	 					var canvases = document.getElementsByClassName("canvas");
+	 					for(var i in canvases)
+	 						canvas.classList.add("offset");
+ 					}
  				}
 
  				_init(headC){

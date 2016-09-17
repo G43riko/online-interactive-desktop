@@ -1,3 +1,6 @@
+/*
+	compatible:	 14.9.2016
+*/
 class Slider{
 	constructor(position, size, value, onMove){
 		this._position = position;

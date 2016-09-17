@@ -1,34 +1,100 @@
+/*
+	compatible: canvas, getElementByClassName, JSON parsing 14.9.2016
+*/
+
+//GLIB
+var setAttr = (el, key, val) => {
+	if(typeof key === "string")
+		el.setAttribute(key, val);
+	else if(typeof key === "object")
+		for(var i in key)
+			if(key.hasOwnProperty(i))
+				el.setAttribute(i, key[i]);
+	
+	return el;
+}
+var createText = title => document.createTextNode(title);
+
+var append = function(element, content){
+	if(typeof content === "object")
+		element.appendChild(content);
+	return element
+};
+var createEl = (type, attr, cont) => append(setAttr(document.createElement(type), attr), cont);
+
+
+class G{
+    constructor(el){
+    	if(typeof el === "string")
+    		this._e = document.querySelectorAll(el);
+    	else
+        	this._e = [el];
+    }
+    attr(key, val){
+    	if(this._e)
+    		for(var i in this._e)
+    			if(this._e.hasOwnProperty(i) && this._e[i].style)
+    				this._e[i].setAttribute(key, val);
+        return this;
+    }
+    show(){
+    	if(this._e)
+    		for(var i in this._e)
+    			if(this._e.hasOwnProperty(i) && this._e[i].style)
+    				this._e[i].style.display = "block";
+        return this;
+    }
+    hide(){
+    	if(this._e)
+    		for(var i in this._e)
+    			if(this._e.hasOwnProperty(i) && this._e[i].style)
+    				this._e[i].style.display = "none";
+        return this;
+    }
+    addClass(t){
+    	if(this._e)
+    		for(var i in this._e)
+    			if(this._e.hasOwnProperty(i) && this._e[i].style)
+    				this._e[i].classList ? this._e[i].classList.add(t) : this._e[i].className += ' ' + t;
+        return this;
+    }
+
+}
+G.byId = val => new G(document.getElementById(val));
+G.byTag = val => new G(val);
+G.byClass = val => new G("." + val);
+
+//SHOWERS
+
 function showOptions(){
-	$("#modalWindow ").find("#optionsForm").show();
-	$("#modalWindow").show();
-	$("canvas").addClass("blur");
+	G.byId("optionsForm").show();
+    G.byId("modalWindow").show();
+    G.byTag("canvas").addClass("blur");
+}
+
+function showXmlSavingOptions(){
+	G.byId("idProjectTitle").attr("value", Project.title);
+	G.byId("saveXmlForm").show();
+    G.byId("modalWindow").show();
+    G.byTag("canvas").addClass("blur");
 }
 
 function showColors(){
-	$("#modalWindow ").find("#colorPalete").show();
-	$("#modalWindow").show();
-	$("canvas").addClass("blur");
-}
-
-function shareALl(el){
-	Options.setOpt("grid", el.checked);
-	document.getElementById("idShareMenu").checked = el.checked;
-	document.getElementById("idSharePaints").checked = el.checked;
-	document.getElementById("idShareObjects").checked = el.checked;
-	document.getElementById("idShareCreator").checked = el.checked;
-	document.getElementById("idShareLayers").checked = el.checked;
+	G.byId("colorPalete").show();
+    G.byId("modalWindow").show();
+    G.byTag("canvas").addClass("blur");
 }
 
 function showSharingOptions(){
-	$("#modalWindow ").find("#shareForm").show();
-	$("#modalWindow").show();
-	$("canvas").addClass("blur");
+    G.byId("shareForm").show();
+    G.byId("modalWindow").show();
+    G.byTag("canvas").addClass("blur");
 }
 
 function showWatcherOptions(){
-	$("#modalWindow ").find("#watchForm").show();
-	$("#modalWindow").show();
-	$("canvas").addClass("blur");
+    G.byId("watchForm").show();
+    G.byId("modalWindow").show();
+    G.byTag("canvas").addClass("blur");
 }
 
 function showSavingOptions(){
@@ -55,10 +121,17 @@ function showSavingOptions(){
 		parent.appendChild(div);
 	});
 
+    G.byId("saveForm").show();
+    G.byId("modalWindow").show();
+    G.byTag("canvas").addClass("blur");
+    /*
 	$("#modalWindow ").find("#saveForm").show();
 	$("#modalWindow").show();
 	$("canvas").addClass("blur");
+	*/
 }
+
+//SERIALIZATORS
 
 function serializeSaveData(){
 	var getValueIfExist = (e, val = false) => e ? (e.type == "checkbox" ? e.checked : e.value) : val;
@@ -87,6 +160,54 @@ function serializeSaveData(){
 
 	processImageData(result);
 }
+
+function serializeShareData(){
+	var getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
+	var result = {};
+	result["realTime"] = getValueIfExists(document.getElementById("idRealtimeSharing"));
+	result["maxWatchers"] = getValueIfExists(document.getElementById("idMaxWatchers"));
+	result["password"] = getValueIfExists(document.getElementById("idSharingPassword"));
+	result["detailMovement"] = getValueIfExists(document.getElementById("idDetailMovement"));
+
+	result["shareMenu"] = getValueIfExists(document.getElementById("idShareMenu"));
+	result["sharePaints"] = getValueIfExists(document.getElementById("idSharePaints"));
+	result["shareObjects"] = getValueIfExists(document.getElementById("idShareObjects"));
+	result["shareCreator"] = getValueIfExists(document.getElementById("idShareCreator"));
+	result["shareLayers"] = getValueIfExists(document.getElementById("idShareLayers"));
+	result["shareTitle"] = getValueIfExists(document.getElementById("idShareTitle"));
+	result["publicShare"] = getValueIfExists(document.getElementById("idPublicShare"));
+	
+	
+	closeDialog();
+	Sharer.startShare(result);
+}
+
+function serializeWatcherData(){
+	var getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
+	var result = {};
+	result["nickName"]          = getValueIfExists(document.getElementById("idNickName"));
+	result["password"]          = getValueIfExists(document.getElementById("idSharingPassword"));
+	result["timeLine"]          = getValueIfExists(document.getElementById("idShowTimeLine"));
+	result["changeResolution"]  = getValueIfExists(document.getElementById("idChangeResolution"));
+	result["showChat"]          = getValueIfExists(document.getElementById("idShowChat"));
+	result["shareId"]           = getValueIfExists(document.getElementById("idShareId"));
+
+	//result = processValues({}, "idNickName", "idSharingPassword", "idShowTimeLine", "idChangeResolution", "idShowChat", "idShareId")
+	processWatchData(result);
+	//Watcher = new WatcherManager(result);
+}
+
+function serializeSaveXmlData(){
+	var processValues = (result, el, ...args) => {
+		var process = item => {if(item) result[item.name] = item.type == "checkbox" ? item.checked : item.value};
+		process(document.getElementById(el));
+		each(args, e => process(document.getElementById(e)));
+		return result;
+	}
+	saveSceneAsFile(processValues({}, "idProjectTitle", "idSaveCreator", "idSavePaint", "idSaveTask", "idTaskHint", "idTaskTimeLimit", "idSaveHistory", "idStoreStatistics"));
+}
+
+//PROCESSORS
 
 function processWatchData(data){
 	var checkData = {
@@ -192,34 +313,40 @@ function processImageData(data){
 	closeDialog();
 }
 
-function serializeShareData(){
-	var getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
-	var result = {};
-	result["realTime"] = getValueIfExists(document.getElementById("idRealtimeSharing"));
-	result["maxWatchers"] = getValueIfExists(document.getElementById("idMaxWatchers"));
-	result["password"] = getValueIfExists(document.getElementById("idSharingPassword"));
-	result["detailMovement"] = getValueIfExists(document.getElementById("idDetailMovement"));
+//UTILS
 
-	result["shareMenu"] = getValueIfExists(document.getElementById("idShareMenu"));
-	result["sharePaints"] = getValueIfExists(document.getElementById("idSharePaints"));
-	result["shareObjects"] = getValueIfExists(document.getElementById("idShareObjects"));
-	result["shareCreator"] = getValueIfExists(document.getElementById("idShareCreator"));
-	result["shareLayers"] = getValueIfExists(document.getElementById("idShareLayers"));
-	
-	closeDialog();
-	Sharer.startShare(result);
+var processValues = (result, el, ...args) => {
+	var process = item => {if(item) result[item.name] = item.type == "checkbox" ? item.checked : item.value};
+	process(document.getElementById(el));
+	each(args, e => process(document.getElementById(e)));
+	return result;
 }
 
-function serializeWatcherData(){
-	var getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
-	var result = {};
-	result["nickName"]          = getValueIfExists(document.getElementById("idNickName"));
-	result["password"]          = getValueIfExists(document.getElementById("idSharingPassword"));
-	result["timeLine"]          = getValueIfExists(document.getElementById("idShowTimeLine"));
-	result["changeResolution"]  = getValueIfExists(document.getElementById("idChangeResolution"));
-	result["showChat"]          = getValueIfExists(document.getElementById("idShowChat"));
-	result["shareId"]           = getValueIfExists(document.getElementById("idShareId"));
+function shareALl(el){
+	Options.setOpt("grid", el.checked);
+	document.getElementById("idShareMenu").checked = el.checked;
+	document.getElementById("idSharePaints").checked = el.checked;
+	document.getElementById("idShareObjects").checked = el.checked;
+	document.getElementById("idShareCreator").checked = el.checked;
+	document.getElementById("idShareLayers").checked = el.checked;
+}
 
-	processWatchData(result);
-	//Watcher = new WatcherManager(result);
+class GuiManager{
+	constructor(){
+
+	}
+
+	showOptionsByComponents(){
+		var setDisabledIfExist = (id, value) =>{
+			var el = document.getElementById(id);
+			if(el)
+				el.parentElement.style.display = value ? "block" : "none";
+		}
+
+		setDisabledIfExist("idAllowedSnapping", Components.edit());
+		setDisabledIfExist("idShadows", Components.edit());
+		setDisabledIfExist("idShowLayersViewer", Components.layers());
+		setDisabledIfExist("idMovingSilhouette", Components.edit());
+
+	}
 }

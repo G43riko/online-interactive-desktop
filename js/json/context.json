@@ -2,411 +2,571 @@
 	"lineType" : {
 		"label" : "Line type",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" :  {
 			"linear" : {
 				"label" : "Linear",
 				"type" : "radio",
 				"group" : "lineTypeValue",
-				"name" : 2000
+				"name" : 2000,
+				"visible" : true,
+				"disabled" : false
 			},
 			"sequencal" : {
 				"label" : "Sequencal",
 				"type" : "radio",
 				"group" : "lineTypeValue",
-				"name" : 2002
+				"name" : 2002,
+				"visible" : true,
+				"disabled" : false
 			},
 			"bezier" : {
 				"label" : "Bezier",
 				"type" : "radio",
 				"group" : "lineTypeValue",
-				"name" : 2001
+				"name" : 2001,
+				"visible" : true,
+				"disabled" : false
 			}
 		}
 	},
 	"file" : {
 		"label" : "File options",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" : {
 			"normalLine" : {
 				"label" : "Normal line",
 				"type" : "radio",
 				"group" : "lineStyleValue",
-				"name" : 2100
+				"name" : 2100,
+				"visible" : true,
+				"disabled" : false
 			}
 		}
 	},
 	"lineStyle" : {
 		"label" : "Line style",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" : {
 			"normalLine" : {
 				"label" : "Normal line",
 				"type" : "radio",
 				"group" : "lineStyleValue",
-				"name" : 2100
+				"name" : 2100,
+				"visible" : true,
+				"disabled" : false
 			},
 			"strippedLine" : {
 				"label" : "Stripped line",
 				"type" : "radio",
 				"group" : "lineStyleValue",
-				"name" : 2101
+				"name" : 2101,
+				"visible" : true,
+				"disabled" : false
 			},
 			"fillLine" : {
 				"label" : "Filled line",
 				"type" : "radio",
 				"group" : "lineStyleValue",
-				"name" : 2102
+				"name" : 2102,
+				"visible" : true,
+				"disabled" : false
 			}
 		}
 	},
 	"lineCap" : {
 		"label" : "Cap type",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" : {
 			"buttCap" : {
 				"label" : "Butt cap",
 				"type" : "radio",
 				"group" : "lineCapValue",
-				"name" : "butt"
+				"name" : "butt",
+				"visible" : true,
+				"disabled" : false
 			},
 			"roundCap" : {
 				"label" : "Round cap",
 				"type" : "radio",
 				"group" : "lineCapValue",
-				"name" : "round"
+				"name" : "round",
+				"visible" : true,
+				"disabled" : false
 			},
 			"squareCap" : {
 				"label" : "Square cap",
 				"type" : "radio",
 				"group" : "lineCapValue",
-				"name" : "square"
+				"name" : "square",
+				"visible" : true,
+				"disabled" : false
 			}
 		}
 	},
 	"joinType" : {
 		"label" : "Join type",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" : {
 			"miterJoin" : {
 				"label" : "Miter join",
 				"type" : "radio",
 				"group" : "joinTypeValue",
-				"name" : "miter"
+				"name" : "miter",
+				"visible" : true,
+				"disabled" : false
 			},
 			"roundJoin" : {
 				"label" : "Round join",
 				"type" : "radio",
 				"group" : "joinTypeValue",
-				"name" : "round"
+				"name" : "round",
+				"visible" : true,
+				"disabled" : false
 			},
 			"bevelJoin" : {
 				"label" : "Bevel join",
 				"type" : "radio",
 				"group" : "joinTypeValue",
-				"name" : "bevel"
+				"name" : "bevel",
+				"visible" : true,
+				"disabled" : false
 			}
 		}
 	},
 	"changeLayer" : {
 		"label" : "Change layer",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
 	},
 	"changeOpacity" : {
 		"label" : "Change opacity",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
+	},
+	"taskResult" : {
+		"label" : "Task result",
+		"type" : "checkbox",
+		"visible" : true,
+		"disabled" : false
 	},
 	"changeImage" : {
 		"label" : "Change Image",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
 	},
 	"delete" : {
 		"label" : "Delete",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
 	},
 	"changeFillColor" : {
 		"label" : "Change fill color",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
 	},
 	"changeBorderColor" : {
 		"label" : "Change border color",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
 	},
 	"clearWorkspace" : {
 		"label" : "Clear workspace",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
 	},
 	"locked" : {
 		"label" : "Locked",
-		"type" : "checkbox"
+		"type" : "checkbox",
+		"visible" : true,
+		"disabled" : false
 	},
 	"editTable" : {
 		"label" : "Edit table",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" : {
 			"removeRow" : {
 				"label" : "Remove row",
-				"type" : "text"
+				"type" : "text",
+				"visible" : true,
+				"disabled" : false
 			},
 			"removeColumn" : {
 				"label" : "Remove column",
-				"type" : "text"
+				"type" : "text",
+				"visible" : true,
+				"disabled" : false
 			},
 			"clearColumn" : {
 				"label" : "Clear column",
-				"type" : "text"
+				"type" : "text",
+				"visible" : true,
+				"disabled" : false
 			},
 			"clearRow" : {
 				"label" : "Clear row",
-				"type" : "text"
+				"type" : "text",
+				"visible" : true,
+				"disabled" : false
 			},
 			"clearTable" : {
 				"label" : "Clear table",
-				"type" : "text"
+				"type" : "text",
+				"visible" : true,
+				"disabled" : false
 			},
 			"addRowBelow" : {
 				"label" : "Add row below",
-				"type" : "text"
+				"type" : "text",
+				"visible" : true,
+				"disabled" : false
 			},
 			"addRowAbove" : {
 				"label" : "Add row above",
-				"type" : "text"
+				"type" : "text",
+				"visible" : true,
+				"disabled" : false
 			},
 			"addColumnToRight" : {
 				"label" : "Add column right",
-				"type" : "text"
+				"type" : "text",
+				"visible" : true,
+				"disabled" : false
 			},
 			"addColumnToLeft" : {
 				"label" : "Add column left",
-				"type" : "text"
+				"type" : "text",
+				"visible" : true,
+				"disabled" : false
 			}
 
 		}
 	},
 	"visible" : {
 		"label" : "Visible",
-		"type" : "checkbox"
+		"type" : "checkbox",
+		"visible" : true,
+		"disabled" : false
 	},
 	"showPaint" : {
 		"label" : "Show paint",
-		"type" : "checkbox"
+		"type" : "checkbox",
+		"visible" : true,
+		"disabled" : false
 	},
 	"animatePaint" : {
 		"label" : "Animate paint",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
 	},
 	"deleteLayer" : {
 		"label" : "Delete layer",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
 	},
 	"renameLayer" : {
 		"label" : "Rename layer",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
 	},
 	"lockLayer" : {
 		"label" : "Lock layer",
-		"type" : "checkbox"
+		"type" : "checkbox",
+		"visible" : true,
+		"disabled" : false
 	},
 	"clearLayer" : {
 		"label" : "Clear layer",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
 	},
 	"verticalTextAlign" : {
 		"label" : "Vert. align",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" : {
 			"topVAlign" : {
 				"label" : "Top",
 				"type" : "radio",
 				"group" : "valignValue",
-				"name" : "top"
+				"name" : "top",
+				"visible" : true,
+				"disabled" : false
 			},
 			"middleVAlign" : {
 				"label" : "Middle",
 				"type" : "radio",
 				"group" : "valignValue",
-				"name" : "middle"
+				"name" : "middle",
+				"visible" : true,
+				"disabled" : false
 			},
 			"bottomVAlign" : {
 				"label" : "Bottom",
 				"type" : "radio",
 				"group" : "valignValue",
-				"name" : "bottom"
+				"name" : "bottom",
+				"visible" : true,
+				"disabled" : false
 			}
 		}
 	},
 	"horizontalTextAlign" : {
 		"label" : "Hor. align",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" : {
 			"leftHAlign" : {
 				"label" : "Left",
 				"type" : "radio",
 				"group" : "halignValue",
-				"name" : "left"
+				"name" : "left",
+				"visible" : true,
+				"disabled" : false
 			},
 			"centerHAlign" : {
 				"label" : "Center",
 				"type" : "radio",
 				"group" : "halignValue",
-				"name" : "center"
+				"name" : "center",
+				"visible" : true,
+				"disabled" : false
 			},
 			"rightHAlign" : {
 				"label" : "Right",
 				"type" : "radio",
 				"group" : "halignValue",
-				"name" : "right"
+				"name" : "right",
+				"visible" : true,
+				"disabled" : false
 			}
 		}
 	},
 	"makeCopy" : {
 		"label" : "Make copy",
-		"type" : "text"
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
 	},
 	"radius" : {
 		"label" : "Radius",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" : {
 			"0Radius" : {
 				"label" : "none",
 				"group" : "roundRadius",
 				"type" : "radio",
-				"name" : 0
+				"name" : 0,
+				"visible" : true,
+				"disabled" : false
 			},
 			"10%Radius" : {
 				"label" : "10%",
 				"group" : "roundRadius",
 				"type" : "radio",
-				"name" : 0.1
+				"name" : 0.1,
+				"visible" : true,
+				"disabled" : false
 			},
 			"20%Radius" : {
 				"label" : "20%",
 				"group" : "roundRadius",
 				"type" : "radio",
-				"name" : 0.2
+				"name" : 0.2,
+				"visible" : true,
+				"disabled" : false
 			},
 			"50%Radius" : {
 				"label" : "50%",
 				"group" : "roundRadius",
 				"type" : "radio",
-				"name" : 0.5
+				"name" : 0.5,
+				"visible" : true,
+				"disabled" : false
 			},
 			"75%Radius" : {
 				"label" : "75%",
 				"group" : "roundRadius",
 				"type" : "radio",
-				"name" : 0.75
+				"name" : 0.75,
+				"visible" : true,
+				"disabled" : false
 			},
 			"100%Radius" : {
 				"label" : "100%",
 				"group" : "roundRadius",
 				"type" : "radio",
-				"name" : 1
+				"name" : 1,
+				"visible" : true,
+				"disabled" : false
 			},
 			"10pxRadius" : {
 				"label" : "10px",
 				"group" : "roundRadius",
 				"type" : "radio",
-				"name" : "10"
+				"name" : "10",
+				"visible" : true,
+				"disabled" : false
 			},
 			"20pxRadius" : {
 				"label" : "20px",
 				"group" : "roundRadius",
 				"type" : "radio",
-				"name" : "20"
+				"name" : "20",
+				"visible" : true,
+				"disabled" : false
 			},
 			"40pxRadius" : {
 				"label" : "40px",
 				"group" : "roundRadius",
 				"type" : "radio",
-				"name" : "40"
+				"name" : "40",
+				"visible" : true,
+				"disabled" : false
 			},
 			"80pxRadius" : {
 				"label" : "80px",
 				"group" : "roundRadius",
 				"type" : "radio",
-				"name" : "80"
+				"name" : "80",
+				"visible" : true,
+				"disabled" : false
 			}
 		}
 	},
 	"lineWidth" : {
 		"label" : "Line width",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" : {
 			"1pxWidth" : {
 				"label" : "1 px",
 				"group" : "widthValue",
 				"type" : "widthValue",
-				"name" : 1
+				"name" : 1,
+				"visible" : true,
+				"disabled" : false
 			},
 			"2pxWidth" : {
 				"label" : "2 px",
 				"group" : "widthValue",
 				"type" : "widthValue",
-				"name" : 2
+				"name" : 2,
+				"visible" : true,
+				"disabled" : false
 			},
 			"5pxWidth" : {
 				"label" : "5 px",
 				"group" : "widthValue",
 				"type" : "widthValue",
-				"name" : 5
+				"name" : 5,
+				"visible" : true,
+				"disabled" : false
 			},
 			"10pxWidth" : {
 				"label" : "10 px",
 				"group" : "widthValue",
 				"type" : "widthValue",
-				"name" : 10
+				"name" : 10,
+				"visible" : true,
+				"disabled" : false
 			},
 			"20pxWidth" : {
 				"label" : "20 px",
 				"group" : "widthValue",
 				"type" : "widthValue",
-				"name" : 20
+				"name" : 20,
+				"visible" : true,
+				"disabled" : false
 			},
 			"otherWidth" : {
 				"label" : "custom width",
-				"type" : "text"
+				"type" : "text",
+				"visible" : true,
+				"disabled" : false
 			}
 		}
 	},
 	"arrowEndType": {
 		"label" : "Arrow end type",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" : {
 			"arrowEndNone": {
 				"label": "none",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 0
+				"name": 0,
+				"visible" : true,
+				"disabled" : false
 			},
 			"arrowEnd0": {
 				"label": "classic",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 2210
+				"name": 2210,
+				"visible" : true,
+				"disabled" : false
 			},
 			"arrowEnd1": {
 				"label": "closed",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 2211
+				"name": 2211,
+				"visible" : true,
+				"disabled" : false
 			},
 			"arrowEnd2": {
 				"label": "filled",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 2212
+				"name": 2212,
+				"visible" : true,
+				"disabled" : false
 			},
 			"arrowEnd3": {
 				"label": "diamond",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 2213
+				"name": 2213,
+				"visible" : true,
+				"disabled" : false
 			},
 			"arrowEnd4": {
 				"label": "diamond filled",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 2214
+				"name": 2214,
+				"visible" : true,
+				"disabled" : false
 			}
 
 
@@ -415,42 +575,56 @@
 	"arrowStartType": {
 		"label" : "Arrow start type",
 		"type" : "text",
+		"visible" : true,
+		"disabled" : false,
 		"fields" : {
 			"arrowStartNone": {
 				"label": "none",
 				"group": "arrowStartType",
 				"type" : "radio",
-				"name": 0
+				"name": 0,
+				"visible" : true,
+				"disabled" : false
 			},
 			"arrowStart0": {
 				"label": "classic",
 				"group": "arrowStartType",
 				"type" : "radio",
-				"name": 2210
+				"name": 2210,
+				"visible" : true,
+				"disabled" : false
 			},
 			"arrowStart1": {
 				"label": "closed",
 				"group": "arrowStartType",
 				"type" : "radio",
-				"name": 2211
+				"name": 2211,
+				"visible" : true,
+				"disabled" : false
 			},
 			"arrowStart2": {
 				"label": "filled",
 				"group": "arrowStartType",
 				"type" : "radio",
-				"name": 2212
+				"name": 2212,
+				"visible" : true,
+				"disabled" : false
 			},
 			"arrowStart3": {
 				"label": "diamond",
 				"group": "arrowStartType",
 				"type" : "radio",
-				"name": 2213
+				"name": 2213,
+				"visible" : true,
+				"disabled" : false
 			},
 			"arrowStart4": {
 				"label": "diamond filled",
 				"group": "arrowStartType",
 				"type" : "radio",
-				"name": 2214
+				"name": 2214,
+				"visible" : true,
+				"disabled" : false
 			}
 		}
 	}

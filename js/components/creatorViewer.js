@@ -1,3 +1,6 @@
+/*
+	compatible: forEach, canvas 14.9.2016
+*/
 class CreatorViewer extends Entity{
 	constructor(position = new GVector2f(100, 100), size = new GVector2f(400, 40), data = {}){
 		super("CreatorViewer", position, size, data);
@@ -41,7 +44,8 @@ class CreatorViewer extends Entity{
 			});
 
 			if(isDefined(e["values"]))
-				e["values"].forEach(function(ee, ii){
+				//e["values"].forEach(function(ee, ii){
+				each(e["values"], function(ee, ii){
 					if(posY > 0)
 						doRect({
 							//bgColor: e.image,
@@ -169,7 +173,8 @@ class CreatorViewer extends Entity{
 		var counter =  this.position.x + MENU_OFFSET,
 			click 	= false,
 			num;
-		this._items.forEach(function(e, i, arr){
+		//this._items.forEach(function(e, i, arr){
+		each(this._items, function(e, i, arr){
 			if(!click && x > counter && x < counter + MENU_WIDTH){
 				if(y < this.position.y + MENU_OFFSET + MENU_HEIGHT){
 					if(e["item"]["type"] == "color")
@@ -181,7 +186,8 @@ class CreatorViewer extends Entity{
 				else if(e["itemsSelected"]){
 					num = this.position.y + MENU_OFFSET;
 					if(isDefined(e["item"]["values"]))
-						e["item"]["values"].forEach(function(ee, ii){
+						//e["item"]["values"].forEach(function(ee, ii){
+						each(e["item"]["values"], function(ee, ii){
 							num += MENU_HEIGHT + MENU_OFFSET;
 							if(!click && y > num && y < num + MENU_HEIGHT){
 								Creator.setOpt(e["key"], ee);
@@ -233,7 +239,8 @@ class CreatorViewer extends Entity{
 
 	draw(){
 		var counter = MENU_OFFSET;
-		this._items.forEach(function(e){
+		//this._items.forEach(function(e){
+		each(this._items, function(e){
 			doRect({
 				bgImage: {
 					x: e["item"]["offset"],
@@ -255,7 +262,8 @@ class CreatorViewer extends Entity{
 
 			if(e["itemsSelected"] && isDefined(e["item"]["values"])){
 				var num = this.position.y + MENU_OFFSET;
-				e["item"]["values"].forEach(function(ee, ii){
+				//e["item"]["values"].forEach(function(ee, ii){
+				each(e["item"]["values"], function(ee, ii){
 					num += MENU_OFFSET + MENU_WIDTH;
 					doRect({
 						bgImage: {
