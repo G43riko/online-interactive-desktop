@@ -20,7 +20,7 @@ app.use("/css", express.static(__dirname + '/css'));
 app.use("/img", express.static(__dirname + '/img'));
 app.use("/js", express.static(__dirname + '/js'));
 
-app.get('/', function(req, res) {
+app.get('/app', function(req, res) {
 	serverLogs.increase("pageLoad");
 	var cookies = parseCookies(req);
 
@@ -47,6 +47,9 @@ app.post('/watch', function(req, res){
 	});
 });
 */
+app.get('/', function(req, res){
+	res.sendFile('/welcomeBootstrap.html' , { root : __dirname});
+});
 
 app.get('/watcher', function(req, res){
 	res.sendFile('/watchIndex.html' , { root : __dirname});

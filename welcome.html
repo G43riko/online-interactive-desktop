@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Online Interaktívna plocha</title>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+
+		.wrapper{
+			padding-top: 1px;
+			position: relative;
+		}
+
+		.wrapper h2{
+			margin-left: 30px; 
+		}
+		#headerWrapper{
+			padding-top: 1px; 
+			background-color: green;
+			height: 200px;
+		}
+		#windowsWrapper{
+			/*width: 800px;*/
+			background-color: red;
+		}
+		.windowFrame{
+			padding: 40px;
+			width: 25%;
+			height: 250px;
+			display: inline-block;
+			margin: 0 0 -4px -3px;
+		}
+		.windowContent{
+			position: relative;
+			background-color: blue;
+			height: 100%;
+			width: 100%;
+			box-shadow: 5px 5px 20px black;
+		}
+		#componentWrapper{
+			background-color: pink;
+		}
+		.component{
+			position: relative;
+			display: inline-block;
+			padding: 10px;
+			width: 33%;
+			margin: 0 0 -4px -3px;
+			line-height: 40px;
+			height: 60px;
+			box-sizing: border-box;
+		}
+		.componentTitle{
+			position: relative;
+			background-color: orange;
+			cursor: pointer;
+			/*padding: 0 30px 0 30px;*/
+		}
+
+		.componentTitle input, .componentTitle .componentName{
+			margin-left: 20px !important;
+		}
+
+		.componentTitle input{
+			width: 20px;
+			height: 20px;
+			vertical-align:middle; 
+			position:relative;
+			margin-top: -4px;
+		}
+
+		.componentTitle .componentName{
+			font-size: 18px;
+		}
+
+		#footerWrapper{
+			background-color: grey;
+		}
+	</style>
+</head>
+<body>
+	<div id=containter>
+		<div class="wrapper" id="headerWrapper">
+			<h2>Hlavička</h2>
+		</div>
+		<div class="wrapper" id="windowsWrapper">
+			<h2>Výber balíčkov</h2>
+			<div class="windowFrame">
+				<div class="windowContent">
+					<div>header</div>
+					<div>description</div>
+					<div>components</div>
+				</div>
+			</div>
+			<div class="windowFrame"><div class="windowContent"></div></div>
+			<div class="windowFrame"><div class="windowContent"></div></div>
+			<div class="windowFrame"><div class="windowContent"></div></div>
+			<div class="windowFrame"><div class="windowContent"></div></div>
+			<div class="windowFrame"><div class="windowContent"></div></div>
+			<div class="windowFrame"><div class="windowContent"></div></div>
+		</div>
+		<div class="wrapper" id="componentWrapper">
+			<h2>Components</h2>
+			<!--
+			<div class="component">
+				<div class="componentTitle" onclick="this.firstElementChild.checked = !this.firstElementChild.checked">
+					<input type="checkbox" name="share">
+					<span class="componentName">Share</span> -
+					<span class="componentDesc">Umožnuje zdielať obrazovku</span>
+				</div>
+			</div>
+			-->
+		</div>
+
+		<div class="wrapper" id="footerWrapper">
+			<h2>Footer</h2>
+			podakovanie a informácie
+		</div>
+	</div>
+	<script type="text/javascript">
+		var components = [
+			{
+				title: "Zdielanie",
+				key: "Share",
+				description: "Umožnuje zdielať obrazovku",
+				checked: false
+			},{
+				title: "Upravovanie",
+				key: "Edit",
+				description: "Umožnuje upravovať objekt",
+				checked: false
+			},{
+				title: "Kreslenie",
+				key: "Draw",
+				description: "Umožnuje kreslenie",
+				checked: false
+			}
+		];
+
+		var packages = [
+
+		];
+
+		var createComponent = function(item){
+			var input = document.createElement("input");
+			input.setAttribute("type", "checkbox");
+			input.setAttribute("name", item.key);
+
+			var name = document.createElement("span");
+			name.setAttribute("class", "componentName");
+			name.appendChild(document.createTextNode(item.title));
+
+			var description = document.createElement("span");
+			description.setAttribute("class", "componentDesc");
+			description.appendChild(document.createTextNode(item.description));
+
+			var containter = document.createElement("div");
+			containter.setAttribute("class", "componentTitle");
+			containter.onclick = function(){input.checked = !input.checked};
+			containter.appendChild(input);
+			containter.appendChild(name);
+			containter.appendChild(document.createTextNode(" - "));
+			containter.appendChild(description);
+
+			var component = document.createElement("div");
+			component.setAttribute("class", "component");
+			component.appendChild(containter);
+			return component
+		}
+
+		var wrapper = document.getElementById("componentWrapper");
+		for(var i in components)
+			if(components.hasOwnProperty(i))
+				wrapper.appendChild(createComponent(components[i]));
+
+	</script>
+</body>
+</html>

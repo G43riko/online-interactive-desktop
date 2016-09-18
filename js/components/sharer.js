@@ -86,7 +86,7 @@ class SharerManager{
 			Menu.disabled("sharing", "copyUrl");
 			Menu.disabled("sharing", "startShare");
 			//chatViewer.show();
-			Panel.startShare();
+			Panel.startShare(sendMessage);
 		});
 
 		this._socket.on('getAllData', function(recData){

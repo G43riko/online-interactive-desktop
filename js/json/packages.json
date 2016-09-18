@@ -1,0 +1,63 @@
+[{
+		"title" : "Všetko",
+		"components" : [
+			"a",
+			"bb",
+			"ccc"
+		],
+		"descriptions" : [
+			"kreslenie",
+			"zmenu štetca(farba, velkosť, typ)"
+		],
+		"link" : "/app#abcdefghijk"
+	},{
+		"title" : "Kreslenie",
+		"components" : [
+			"a",
+			"bb",
+			"ccc"
+		],
+		"descriptions" : [
+			"kreslenie",
+			"zmenu štetca(farba, velkosť, typ)"
+		],
+		"link" : "/app#"
+	},{
+		"title" : "Test",
+		"components" : [
+
+		],
+		"descriptions" : [
+			"riešenie ulohy",
+			"nastavanie podla ulohy"
+		]
+	},{
+		"title" : "Zdielanie",
+		"components" : [
+
+		],
+		"descriptions" : [
+			"zdielanie obrazovky",
+			"kreslenie",
+			"upravu sceny"
+		]
+	},{
+		"title" : "Sledovanie",
+		"components" : [
+			
+		],
+		"descriptions" : [
+			"sledovanie obrazovky",
+			"uloženie scnény"
+		],
+		"link" : "/watcher"
+	},{
+		"title" : "Zadanie",
+		"components" : [
+			
+		],
+		"descriptions" : [
+			"Tvorba nového zadania"
+		]
+	}
+]

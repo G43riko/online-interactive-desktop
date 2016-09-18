@@ -62,7 +62,7 @@
 }
 
 .guiPanel .headerButton{
-	display: inline;
+	display: inline-flex;
 	float:right;
 	background-color: #ABD6BB;
 	border: 1px solid #1abc9c;
@@ -72,6 +72,10 @@
 	text-align: center;
 	margin-left: 5px;
 	cursor: pointer;
+}
+
+.guiPanel .headerButton i{
+	font-size: 19px;
 }
 
 .guiPanel .headerButton:hover{
@@ -165,4 +169,17 @@
 #chatHistoryWrapper .messageText{
 	border-top: 1px solid white;
 	word-wrap: break-word;
+}
+
+.blinking{
+    animation-duration: 2s;	
+    animation-name: blink;
+    animation-iteration-count: infinite;
+}
+
+@keyframes blink {
+	49%  {background-color: white;}
+    50%  {background-color: blue;}
+    99%  {background-color: blue;}
+    100%  {background-color: white;}
 }

@@ -13,7 +13,6 @@ var setAttr = (el, key, val) => {
 	
 	return el;
 }
-var createText = title => document.createTextNode(title);
 
 var append = function(element, content){
 	if(typeof content === "object")
@@ -21,7 +20,8 @@ var append = function(element, content){
 	return element
 };
 var createEl = (type, attr, cont) => append(setAttr(document.createElement(type), attr), cont);
-
+var createText = title => document.createTextNode(title);
+var createIcon = text => createEl("i", {class: "material-icons"}, createText(text));
 
 class G{
     constructor(el){

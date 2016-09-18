@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Online Interaktívna plocha</title>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<style type="text/css">
+		.navbar{
+			z-index: 1000;
+			margin-bottom: 0;
+		}
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-inverse"></nav>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Online Interaktívna Plocha</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">Domov</a></li>
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#">Balíky<span class="caret"></span></a>
+					<ul class="dropdown-menu" id="packagesMenu"></ul>
+				</li>
+				<li><a href="/doc">Dokumentácia</a></li>
+				<li><a href="/about">Info</a></li>
+			</ul>
+		</div>
+	</nav>
+	<div class="jumbotron text-center">
+		<h1>Online interaktívna plocha</h1>
+		<p>Aplikácia s ktorou je celý život jednoduchší!</p> 
+	</div>
+
+
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2>Balíčky</h2>
+			</div>
+			<div class="panel-body">
+				<div class="row" id="packageWrapper"></div>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2>Komponenty</h2>
+			</div>
+			<div class="panel-body">
+				<div class="row" id="componentWrapper">
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var createComponentPanel = function(item){
+			var listGroupItem = document.createElement("a");
+			listGroupItem.setAttribute("class", "list-group-item" + (item.checked ? " active" : ""));
+			listGroupItem.setAttribute("href", "#");
+			listGroupItem.onclick = function(e){
+				listGroupItem.classList.toggle("active")
+				listGroupItem.getElementsByClassName("glyphicon")[0].classList.toggle("glyphicon-check");
+				listGroupItem.getElementsByClassName("glyphicon")[0].classList.toggle("glyphicon-unchecked");
+				return false;
+			}
+
+			var row = document.createElement("div");
+			row.setAttribute("class", "row");
+
+			var panel;
+
+			//ICON
+			var span = document.createElement("span");
+			span.setAttribute("class", "glyphicon glyphicon-" + (item.checked ? "check" : "unchecked"));
+
+			panel = document.createElement("div");
+			panel.setAttribute("class", "col-sm-1");
+			panel.appendChild(span);
+			row.appendChild(panel);
+
+			//TITLE
+			var title = document.createElement("h4");
+			title.setAttribute("class", "list-group-item-heading");
+			title.appendChild(document.createTextNode(item.title))
+
+			panel = document.createElement("div");
+			panel.setAttribute("class", "col-sm-4 ");
+			panel.appendChild(title);
+			row.appendChild(panel);
+
+			//DESC
+			var description = document.createElement("p");
+			description.setAttribute("class", "list-group-item-text");
+			description.appendChild(document.createTextNode(item.description));
+
+			panel = document.createElement("div");
+			panel.setAttribute("class", "col-sm-6");
+			panel.appendChild(description);
+			row.appendChild(panel);
+
+			listGroupItem.appendChild(row);
+			return listGroupItem;
+		}
+
+		var createCompponents = function(componentWrapper, components, columns = 2){
+			var i, containter, listGroup;
+			var divideNum = Math.ceil(components.length / columns);
+
+			for(i = 0; i < components.length ; i++){
+				if(i % divideNum === 0){
+					containter = document.createElement("div");
+					containter.setAttribute("class", "col-sm-" + (12 / columns));
+					listGroup = document.createElement("div");
+					listGroup.setAttribute("class", "list-group");
+					componentWrapper.appendChild(containter);
+					containter.appendChild(listGroup);
+				}
+				if(components.hasOwnProperty(i))
+					listGroup.appendChild(createComponentPanel(components[i]));
+			}
+
+			var button = document.createElement("button");
+			button.appendChild(document.createTextNode("Spustiť aplikáciu s vlastnými komponentami"));
+			button.setAttribute("type", "button");
+			button.setAttribute("class", "btn btn-primary btn-lg btn-block");
+
+			componentWrapper.appendChild(button);
+		}
+
+		var createPackagePanel = function(item){
+			var panel = document.createElement("div");
+			panel.setAttribute("class", "panel panel-info");
+
+			//PANEL HEADER
+			var header = document.createElement("div");
+			header.setAttribute("class", "panel-heading text-center");
+			header.setAttribute("style", "cursor: pointer;");
+			
+			panel.appendChild(header);
+
+			var title = document.createElement("h2");
+			title.appendChild(document.createTextNode(item.title));
+			header.appendChild(title);
+
+			//PANEL BODY
+
+			var body = document.createElement("div");
+			body.setAttribute("class", "panel-body");
+			body.setAttribute("style", "min-height: 150px;");
+			panel.appendChild(body);
+
+			var row = document.createElement("div");
+			row.setAttribute("class", "row");
+			body.appendChild(row);
+
+			var description = document.createElement("div");
+			description.setAttribute("class", "col-sm-6 text-center");
+			row.appendChild(description);
+
+			var dlDesc = document.createElement("dl");
+			//dlDesc.setAttribute("class", "well");
+			description.appendChild(dlDesc);
+
+			var dt = document.createElement("dt");
+			dt.appendChild(document.createTextNode("Vhodné pre:"));
+			dlDesc.appendChild(dt);
+			var dd;
+			for(var i in item.descriptions)
+				if(item.descriptions.hasOwnProperty(i)){
+					dd = document.createElement("dd");
+					dd.appendChild(document.createTextNode("- " + item.descriptions[i]));
+					dlDesc.appendChild(dd);
+				}
+
+
+			var component = document.createElement("div");
+			component.setAttribute("class", "col-sm-6 text-center");
+			row.appendChild(component);
+
+			var dlComp = document.createElement("dl");
+			component.appendChild(dlComp);
+
+			var dt = document.createElement("dt");
+			dt.appendChild(document.createTextNode("Komponenty:"));
+			dlComp.appendChild(dt);
+			var dd;
+			for(var i in item.components)
+				if(item.components.hasOwnProperty(i)){
+					dd = document.createElement("dd");
+					dd.appendChild(document.createTextNode("- " + item.components[i]));
+					dlComp.appendChild(dd);
+				}
+
+			var button = document.createElement("button");
+			button.setAttribute("type", "button");
+			button.setAttribute("class", "btn btn-primary btn-lg btn-block");
+			button.style.display = "none";
+			button.appendChild(document.createTextNode("Začať"));
+			body.appendChild(button);
+
+			header.onclick = function(e){
+				var element = document.getElementsByClassName("panel-primary")[0];
+				if(element && element !== panel){
+					element.classList.toggle("panel-info");
+					element.classList.toggle("panel-primary");
+					element.getElementsByClassName("btn btn-primary btn-lg btn-block")[0].style.display = "none";
+				}
+				if(item.link)
+					button.style.display = button.style.display==="block" ? "none" : "block";
+				button.onclick = function(){
+					location.href = item.link;
+				}
+				panel.classList.toggle("panel-info");
+				panel.classList.toggle("panel-primary");
+			}
+
+
+			return panel;
+		}
+
+		var createPackageMenu = function(item, panel){
+			if(!item.link)
+				return false;
+			var li = document.createElement("li");
+			var a = document.createElement("a");
+			a.setAttribute("href", item.link);
+			a.appendChild(document.createTextNode(item.title));
+
+			li.appendChild(a);
+			panel.appendChild(li);
+		}
+
+		var createPackages = function(packageWrapper, packages, columns = 3){
+			var i, containter, panel;
+			var divideNum = Math.ceil(packages.length / columns);
+			for(i = 0; i < packages.length ; i++){
+				if(i % divideNum === 0){
+					containter = document.createElement("div");
+					containter.setAttribute("class", "col-sm-" + (12 / columns));
+					packageWrapper.appendChild(containter);
+				}
+				if(packages.hasOwnProperty(i)){
+					createPackageMenu(packages[i], document.getElementById("packagesMenu"));
+					containter.appendChild(createPackagePanel(packages[i]));
+				}
+			}
+		}
+
+		try{
+			$.getJSON("js/json/packages.json", function(data){
+				try{
+					createPackages(document.getElementById("packageWrapper"), data);
+				}catch(ee){
+					alert("chybaa");
+				}
+			});
+			$.getJSON("js/json/components.json", function(data){
+				try{
+					createCompponents(document.getElementById("componentWrapper"), data);
+				}catch(ee){
+					alert("chybab");
+				}
+			});
+		}catch(e){
+			alert("chyba");
+		}
+	</script>
+</body>
+</html>

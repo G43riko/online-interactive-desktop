@@ -64,7 +64,8 @@ function sendMessage(message){
 	if(typeof Sharer !== "undefined" && Sharer.isSharing)
 		Sharer.sendMessage(message, Project.autor);
 
-	chatViewer.recieveMessage(message, Project.autor);
+	//chatViewer.recieveMessage(message, Project.autor);
+	Panel.recieveMessage(message, Project.autor);
 }
 
 function ajax(url, options, dataType){

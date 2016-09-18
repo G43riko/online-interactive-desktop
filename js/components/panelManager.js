@@ -1,44 +1,57 @@
 class PanelManager{
 	constructor(){
 		this._running = false;
-		this._watchers = [];
 		//this._panel = document.getElementsByClassName("panel")[0];
 		this._panel = createEl("div", {class: "guiPanel minimalized showChat", style: "display: none;"});
 
 		this._bodyPanel =createEl("div", {class: "panelBody"});
 
-		append(this._panel, this._initPanelHead());
+		this._headerPanel = createEl("div", {class: "panelHeader noselect"});
+		append(this._panel, this._headerPanel);
 		append(this._panel, this._bodyPanel);
 
 		append(document.body, this._panel);
+	}
 
+	//MAIN
+
+
+	_update(){
+		this._durationSpan.innerText = toHHMMSS(Sharer.duration);
 	}
 
 	_startRun(){
 		this._running = true;
 		this._interval = setInterval(() => this._update(), 1000);
 	}
+
+	//TASK
+
 	startTask(){
 		this._type = "Task";
 		this._startRun();
 	}
 
-	startShare(){
+	startShare(sendMessage){
+		this._type = "Share";
 		append(this._headerPanel, this._initTitle());
+		append(this._headerPanel, createEl("div", {class: "headerButton minimalize"}, createIcon("stop")));
 		this._initChatPanel();
 		this._initWatcherPanel();
-		this._type = "Share";
 		this._panel.style.display = "block";
 		this._startRun();
+		this._sendMessage = sendMessage;
 	}
 
-	_update(){
-		this._durationSpan.innerText = toHHMMSS(Sharer.duration);
-	}
-
+	//CHAT
 	_initChatPanel(){
+		//DATA
+		this._isShifDown	= false;
+
+
 		//HEADER
-		var chatButton = createEl("div", {class: "headerButton minimalize", id: "toggleChat"}, createText("Chat"));
+
+		var chatButton = createEl("div", {class: "headerButton minimalize", id: "toggleChat"}, createIcon("message"));
 		chatButton.onclick = e => {
 			if(this._panel.classList.contains("showChat"))
 				this._panel.classList.toggle("minimalized");
@@ -52,17 +65,68 @@ class PanelManager{
 				this._panel.classList.remove("minimalized");
 			}
 		}
+
 		append(this._headerPanel, chatButton);
 
 		//BODY
 
-		var chatHistory = createEl("div", {id: "chatHistory"});
-		var chatWrapper = createEl("div", {id: "chatHistoryWrapper"}, chatHistory);
-		var input = createEl("div", {id: "chatInput", contenteditable: true});
-		var chatPanel = createEl("div", {class: "panelContent", id: "panelChat"}, chatWrapper);
-		append(chatPanel, input);
-		append(this._bodyPanel, chatPanel);	
+		this._chatHistory = createEl("div", {id: "chatHistory"});
+		this._chatWrapper = createEl("div", {id: "chatHistoryWrapper"}, this._chatHistory);
+		this._msgInput = createEl("div", {id: "chatInput", contenteditable: true});
+		this._chatPanel = createEl("div", {class: "panelContent", id: "panelChat"}, this._chatWrapper);
+		append(this._chatPanel, this._msgInput);
+		append(this._bodyPanel, this._chatPanel);	
+
+		this._msgInput.onkeydown = e => {
+			if(e.keyCode === SHIFT_KEY)
+				this._isShifDown = true;
+
+			e.target.onkeyup = e => {
+ 				if(e.keyCode === SHIFT_KEY)
+ 					this._isShifDown = false;
+ 				this._updateData();
+ 			};
+
+			if(e.keyCode == ENTER_KEY && !this._isShifDown){
+				this._prepareMessage();	
+				return false;
+			}
+	 	};
 	}
+
+	recieveMessage(msg, sender){
+		var string;
+		if(Project.autor != sender){
+			string = '<div class="messageC">';
+			string += '<div class ="senderName">' + getFormattedDate() + ' - ';
+			string += sender + ':</div>';
+		}
+		else
+			string = '<div class="messageC myMessage">';
+		
+		string += '<div class="messageText">' + msg + '</div></div>';
+
+		this._chatHistory.innerHTML += string;
+
+		this._updateData(false);
+	}
+
+	_updateData(size = true, offset = true){
+		if(size)
+			this._chatWrapper.style.height = (this._bodyPanel.offsetHeight - this._msgInput.offsetHeight) + "px";
+
+		if(offset)
+			this._chatWrapper.scrollTop = this._chatWrapper.scrollHeight - this._chatWrapper.clientHeight;
+	}
+
+	_prepareMessage(){
+		if(this._msgInput.innerHTML)
+			this._sendMessage(this._msgInput.innerHTML);
+
+		this._msgInput.innerHTML = "";
+	}
+
+	//WATCHERS
 
 	addWatcher(name){
 		this._watchers.push({name})
@@ -72,6 +136,10 @@ class PanelManager{
 	}
 
 	_initWatcherPanel(){
+		//DATA
+
+		this._watchers = [];
+
 		//HEADER
 		var watcherButton = createEl("div", {class: "headerButton minimalize", id: "toggleWrappers"});
 		append(watcherButton, createText("\xa0"));
@@ -111,20 +179,10 @@ class PanelManager{
 		//var time = this._sharer ? this._sharer.duration : this._task.timeLeft;
 
 		append(this._headerTitle, createEl("span", {id: "title"}, createText(Project.title)));
-		append(this._headerTitle, createText(" čas: "));
+		//append(this._headerTitle, createText(" čas: "));
+		append(this._headerTitle, createText("\xa0 \xa0"));
 		this._durationSpan = createEl("span", {id: "duration"}, createText(toHHMMSS(Sharer.duration)));
 		append(this._headerTitle, this._durationSpan);
 		return this._headerTitle;
-	}
-
-	_initPanelHead(Project){
-		
-
-
-		//PANEL
-		this._headerPanel = createEl("div", {class: "panelHeader noselect"});
-		append(this._headerPanel, createEl("div", {class: "headerButton minimalize"}, createText("Stop")));
-		return this._headerPanel;
-
 	}
 }
