@@ -30,36 +30,58 @@ class G{
     	else
         	this._e = [el];
     }
+
     attr(key, val){
-    	if(this._e)
-    		for(var i in this._e)
-    			if(this._e.hasOwnProperty(i) && this._e[i].style)
-    				this._e[i].setAttribute(key, val);
-        return this;
-    }
-    show(){
-    	if(this._e)
-    		for(var i in this._e)
-    			if(this._e.hasOwnProperty(i) && this._e[i].style)
-    				this._e[i].style.display = "block";
-        return this;
-    }
-    hide(){
-    	if(this._e)
-    		for(var i in this._e)
-    			if(this._e.hasOwnProperty(i) && this._e[i].style)
-    				this._e[i].style.display = "none";
-        return this;
-    }
-    addClass(t){
-    	if(this._e)
-    		for(var i in this._e)
-    			if(this._e.hasOwnProperty(i) && this._e[i].style)
-    				this._e[i].classList ? this._e[i].classList.add(t) : this._e[i].className += ' ' + t;
+		for(var i in this._e)
+			if(this._e.hasOwnProperty(i))
+				G.setAttr(this._e[i], key, val);
         return this;
     }
 
+    show(){
+		for(var i in this._e)
+			if(this._e.hasOwnProperty(i))
+				this._e[i].style.display = "block";
+        return this;
+    }
+
+    hide(){
+		for(var i in this._e)
+			if(this._e.hasOwnProperty(i))
+				this._e[i].style.display = "none";
+        return this;
+    }
+
+    append(el){
+		for(var i in this._e)
+			if(this._e.hasOwnProperty(i))
+				this._e[i].appendChild(el);
+        return this;
+    }
+    
+    addClass(t){
+		for(var i in this._e)
+			if(this._e.hasOwnProperty(i) && this._e[i].style)
+				this._e[i].classList ? this._e[i].classList.add(t) : this._e[i].className += ' ' + t;
+        return this;
+    }
+
+    //STATIC
+
+    static setAttr(el, key, val){
+		if(typeof key === "string")
+			el.setAttribute(key, val);
+		else if(typeof key === "object")
+			for(var i in key)
+				if(key.hasOwnProperty(i))
+					el.setAttribute(i, key[i]);
+		
+		return el;
+	}
 }
+
+
+G.create = val => new G(document.createElement(val));
 G.byId = val => new G(document.getElementById(val));
 G.byTag = val => new G(val);
 G.byClass = val => new G("." + val);
@@ -139,6 +161,7 @@ function serializeSaveData(){
 	result["width"] = getValueIfExist(document.getElementById("idImageWidth"), canvas.width);
 	result["height"] = getValueIfExist(document.getElementById("idImageHeight"), canvas.height);
 	result["name"] = getValueIfExist(document.getElementById("idImageName"));
+	result["background"] = getValueIfExist(document.getElementById("idBackground"), KEYWORD_TRANSPARENT);
 
 	result["format"] = document.getElementById("idImageFormat");
 	result["format"] = result["format"].options &&
@@ -148,15 +171,14 @@ function serializeSaveData(){
 
 	var layerCheckboxes = document.getElementsByClassName("layerVisibility");
 	result["selectedLayers"] = [];
-	each(layerCheckboxes, e => e.checked && result["selectedLayers"].push(e.name));
+	//musí byť tento for ináč to dá viackrát to isté
+	for(var i=0 ; i < layerCheckboxes.length ; i++)
+		layerCheckboxes[i].checked && result["selectedLayers"].push(layerCheckboxes[i].name);
 	/*
 	 for(var i=0 ; i<layerCheckboxes.length ; i++)
 	 if(layerCheckboxes[i].checked)
 	 result["selectedLayers"].push(layerCheckboxes[i].name);
 	 */
-
-	//TODO načítať farbu pozadia
-	result["background"] = KEYWORD_TRANSPARENT;
 
 	processImageData(result);
 }
@@ -283,18 +305,14 @@ function processImageData(data){
 			ctx: resContext
 		});
 	}
-
 	/*
 	 * Vykreslí vrstvy určené na vykresleni
 	 */
 	for(var i in data["selectedLayers"]){
-		if(data["selectedLayers"].hasOwnProperty(i)){
-			//TODO vykreslenie jednotlivých vrstiev
-		}
+		if(data["selectedLayers"].hasOwnProperty(i))
+			Scene.getLayer(data["selectedLayers"][i]).draw(resContext);
 	}
 
-	//TODO toto zakomentovať lebo to prekresluje všetko
-	resContext.drawImage(canvas, 0, 0);
 
 	/*
 	 * malý canvas kde sa prekreslí velký canvas

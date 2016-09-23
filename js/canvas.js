@@ -1,6 +1,91 @@
 /*
 	compatible:	forEach, canvas, canvasText 14.9.2016
 */
+
+
+class CanvasManager{
+	constructor(arg1, arg2){
+		if(arg1 instanceof HTMLImageElement){//ARGUMENT JE OBRAZOK
+			this._canvas = CanvasManager.imageToCanvas(arg1);
+		}
+		else{
+			this._canvas = document.createElement("canvas");
+
+			if(arg1 && arg2){//ARGUMENTY SU VELKOST
+				this.setCanvasSize(arg1, arg2);
+			}
+		}
+		this._context = this._canvas.getContext("2d");
+	}
+
+	
+	get canvas(){return this._canvas;}
+	get context(){return this._context;}
+
+	setShadow(x, y, color, blur){
+		CanvasManager.setShadow(this._context, x, y, color, blur);
+	}
+
+	show(format = "image/png"){
+		window.open(this._canvas.toDataURL(format), '_blank');
+	}
+
+	clearCanvas(){
+		CanvasManager.clearCanvas(this._context);
+	}
+
+	setCanvasSize(width = window.innerWidth, height = window.innerHeight){
+		CanvasManager.setCanvasSize(this._canvas, width, height);
+	}
+
+	appendTo(element){
+		element.appendChild(this._canvas);
+	}
+
+	static clearCanvas(ctx){
+		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	}
+
+	static setCanvasSize(c, width = window.innerWidth, height = window.innerHeight){
+		c.width = width;
+		c.height = height;
+	}
+
+	static setShadow(ctx, x, y, color, blur){
+      ctx.shadowColor = color;
+      ctx.shadowBlur = blur;
+      ctx.shadowOffsetX = x;
+      ctx.shadowOffsetY = y;
+	}
+
+	static imageToCanvas(image){
+		var canvas = document.createElement("canvas");
+		canvas.width = image.width;
+		canvas.height = image.height;
+		canvas.getContext("2d").drawImage(image, 0, 0);
+		return canvas;
+	}
+
+	static setLineDash(ctx, ...args){
+		//TODO otestovať;
+		ctx.setLineDash(args);
+	}
+
+	static calcTextWidth(ctx, value, font = false){
+		if(font)
+			ctx.font = font;
+		return ctx.measureText(value).width;
+	}
+
+	static canvasToImage(canvas, format = "image/png"){
+		var image = new Image();
+		image.src = canvas.toDataURL(format);
+		image.width = canvas.width;
+		image.height = canvas.height;
+		return image;
+	}
+}
+
 function drawGrid(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD, c = GRID_COLOR){
 	var pointsNormal = [],
 		pointsBold = [],
@@ -262,51 +347,54 @@ function getMaxWidth(val, max = 0){
 	return max;
 }
 
-function resetCanvas(){
-	context.clearRect(0, 0, canvas.width, canvas.height);
+function resetCanvas(ctx = context){
+	CanvasManager.clearCanvas(ctx);
 }
 
 function initCanvasSize(c = canvas){
-	if(!c.width || !c.height)
-		c = canvas;
-
-	c.width = window.innerWidth;
-	c.height = window.innerHeight;
+	CanvasManager.setCanvasSize(c);
 }
 
 function setShadow(variable){
-	context.shadowBlur = variable ? DEFAULT_SHADOW_BLUR : 0;
-	context.shadowOffsetX = variable ? DEFAULT_SHADOW_OFFSET : 0;
-	context.shadowOffsetY = variable ? DEFAULT_SHADOW_OFFSET : 0;
+	if(variable)
+		CanvasManager.setShadow(context, DEFAULT_SHADOW_OFFSET, DEFAULT_SHADOW_OFFSET, "black", DEFAULT_SHADOW_BLUR);
+	else
+		CanvasManager.setShadow(context, 0, 0, "black", 0);
 }
 
 
 function setLineDash(variable){
 	if(variable)
-		context.setLineDash([15, 5]);
+		CanvasManager.setLineDash(context, 15, 5);
+	else
+		CanvasManager.setLineDash(context, 1);
 }
 
 
 function canvasToImage(canvas) {
+	return CanvasManager.canvasToImage(canvas);
+	/*
 	var image = new Image();
 	image.src = canvas.toDataURL("image/png");
 	image.width = canvas.width;
 	image.height = canvas.height;
 	return image;
+	*/
 }
 
 function imageToCanvas(image) {
+	return CanvasManager.imageToCanvas(image)
+	/*
 	var canvas = document.createElement("canvas");
 	canvas.width = image.width;
 	canvas.height = image.height;
 	canvas.getContext("2d").drawImage(image, 0, 0);
 	return canvas;
+	*/
 }
 
 function calcTextWidth(value, font = false){
-	if(font)
-		context.font = font;
-	return context.measureText(value).width;
+	return CanvasManager.calcTextWidth(context, value, font);
 }
 
 /*

@@ -1,5 +1,5 @@
 class Arrow{
-	static drawArrow(pFrom, pTo, parent, type = 0, angle = Math.PI / 6, length = 30){
+	static drawArrow(ctx, pFrom, pTo, parent, type = 0, angle = Math.PI / 6, length = 30){
 		if(type == 0)
 			return;
 
@@ -22,7 +22,8 @@ class Arrow{
 					points: [[p1, p0],
 					    	 [p2, p0]],
 					borderColor: parent.borderColor,
-					borderWidth: parent.borderWidth
+					borderWidth: parent.borderWidth,
+					ctx: ctx
 				});
 				break;
 			case 2211:
@@ -32,7 +33,8 @@ class Arrow{
 					draw: true,
 					borderColor: parent.borderColor,
 					fillColor: parent.fillColor,
-					borderWidth: parent.borderWidth
+					borderWidth: parent.borderWidth,
+					ctx: ctx
 				});
 				break;
 			case 2212:
@@ -42,7 +44,8 @@ class Arrow{
 					draw: true,
 					borderColor: parent.borderColor,
 					fillColor: parent.borderColor,
-					borderWidth: parent.borderWidth
+					borderWidth: parent.borderWidth,
+					ctx: ctx
 				});
 				break;
 			case 2213:
@@ -52,7 +55,8 @@ class Arrow{
 					draw: true,
 					borderColor: parent.borderColor,
 					fillColor: parent.fillColor,
-					borderWidth: parent.borderWidth
+					borderWidth: parent.borderWidth,
+					ctx: ctx
 				});
 				break;
 			case 2214:
@@ -62,7 +66,8 @@ class Arrow{
 					draw: true,
 					borderColor: parent.borderColor,
 					fillColor: parent.borderColor,
-					borderWidth: parent.borderWidth
+					borderWidth: parent.borderWidth,
+					ctx: ctx
 				});
 				break;
 		}

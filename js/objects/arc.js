@@ -25,7 +25,7 @@ class Arc extends Entity{
 		return this.moveType >= 0;
 	};
 
-	draw(){
+	draw(ctx = context){
 		if (!this.visible)
 			return;
 
@@ -35,11 +35,12 @@ class Arc extends Entity{
 			fillColor: this.fillColor,
 			borderColor: this.borderColor,
 			borderWidth: this.borderWidth,
-			shadow: this.moving && !this.locked
+			shadow: this.moving && !this.locked,
+			ctx: ctx
 		});
+		
+		drawBorder(ctx, this);
 
-		drawBorder(this);
-
-		Entity.drawConnectors(this);
+		Entity.drawConnectors(this, ctx);
 	};
 }

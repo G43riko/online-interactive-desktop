@@ -17,15 +17,23 @@ class PanelManager{
 
 
 	_update(){
-		this._durationSpan.innerText = toHHMMSS(Sharer.duration);
+		this._durationSpan.innerText = toHHMMSS(Date.now() - this._startTime);
 	}
 
 	_startRun(){
+		this._startTime = Date.now();
 		this._running = true;
 		this._interval = setInterval(() => this._update(), 1000);
 	}
 
-	//TASK
+	_stopRun(){
+		clearInterval(this._interval)
+		this._running = false;
+	}
+
+	stopShare(){
+		this._stopRun();
+	}
 
 	startTask(){
 		this._type = "Task";
@@ -39,8 +47,17 @@ class PanelManager{
 		this._initChatPanel();
 		this._initWatcherPanel();
 		this._panel.style.display = "block";
-		this._startRun();
 		this._sendMessage = sendMessage;
+		this._startRun();
+	}
+
+	startWatch(sendMessage){
+		this._type = "Watch";
+		append(this._headerPanel, this._initTitle());
+		this._initChatPanel();
+		this._panel.style.display = "block";
+		this._sendMessage = sendMessage;
+		this._startRun();
 	}
 
 	//CHAT
@@ -176,12 +193,11 @@ class PanelManager{
 	_initTitle(){
 		this._headerTitle = createEl("div", {id: "chatHeader"});
 
-		//var time = this._sharer ? this._sharer.duration : this._task.timeLeft;
 
 		append(this._headerTitle, createEl("span", {id: "title"}, createText(Project.title)));
-		//append(this._headerTitle, createText(" čas: "));
 		append(this._headerTitle, createText("\xa0 \xa0"));
-		this._durationSpan = createEl("span", {id: "duration"}, createText(toHHMMSS(Sharer.duration)));
+		if(isIn(this._type, "Share", "Task"));
+		this._durationSpan = createEl("span", {id: "duration"}, createText("00:00:00"));
 		append(this._headerTitle, this._durationSpan);
 		return this._headerTitle;
 	}

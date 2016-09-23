@@ -128,8 +128,6 @@ io.on('connection', function(socket){
 	socket.on("sendBuffer", sendBuffer);
 	socket.on('mouseData', mouseData);
 	socket.on("action", action);
-	
-
 });
 
 http.listen(PORT, function(){

@@ -1,6 +1,35 @@
 /*
 	compatible:	strictMode, Array.isArray 14.9.2016
 */
+
+class Animation{
+	static init(loop){
+		Animation._running = false;
+		Animation._loop = loop;
+		Animation._counter = 0;
+	}
+
+	static _mainLoop(timestamp){
+		Animation._loop(timestamp);
+		
+		if(Animation._running)
+			requestAnimationFrame(Animation._mainLoop);
+	}
+
+	static stop(){
+		Animation._running = false;
+	
+	}
+	static start(){
+		Animation._running = true;
+
+		var test = (time) => {
+			Animation._mainLoop(time)
+		}
+		requestAnimationFrame(test);
+	}
+}
+
 function isIn(obj, data){
 	//return arguments.some((e, i) => i && e === obj);
 	var i;
@@ -242,28 +271,28 @@ function getCookie(cname) {
 	return "";
 }
 
-function drawBorder(o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
+function drawBorder(ctx, o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 	if(!o.selected && o.name != "Paint")
 		return;
-
 	doRect({
 		position: o.position,
 		size: o.size,
 		borderWidth: DEFAULT_STROKE_WIDTH << 1,
-		lineDash:  [15, 5]
+		lineDash:  [15, 5],
+		ctx: ctx
 	});
 
 	if(selectors.hasOwnProperty("tc"))
-		drawSelectArc(o.position.x + (o.size.x >> 1), o.position.y);
+		drawSelectArc(ctx, o.position.x + (o.size.x >> 1), o.position.y);
 	if(selectors.hasOwnProperty("cl"))
-		drawSelectArc(o.position.x, o.position.y + (o.size.y >> 1));
+		drawSelectArc(ctx, o.position.x, o.position.y + (o.size.y >> 1));
 	if(selectors.hasOwnProperty("bc"))
-		drawSelectArc(o.position.x + (o.size.x >> 1), o.position.y + o.size.y);
+		drawSelectArc(ctx, o.position.x + (o.size.x >> 1), o.position.y + o.size.y);
 	if(selectors.hasOwnProperty("cr"))
-		drawSelectArc(o.position.x + o.size.x, o.position.y + (o.size.y >> 1));
+		drawSelectArc(ctx, o.position.x + o.size.x, o.position.y + (o.size.y >> 1));
 
 	if(selectors.hasOwnProperty("br"))
-		drawSelectArc(o.position.x + o.size.x, o.position.y + o.size.y);
+		drawSelectArc(ctx, o.position.x + o.size.x, o.position.y + o.size.y);
 }
 
 function objectToArray(obj){
@@ -283,7 +312,7 @@ function updateSelectedObjectView(object){
 	 */
 }
 
-function drawConnector(vec, obj){
+function drawConnector(vec, obj, ctx){
 	vec = vec.getClone().mul(obj.size);
 	doArc({
 		x: obj.position.x + vec.x,
@@ -291,11 +320,12 @@ function drawConnector(vec, obj){
 		fillColor: "brown",
 		center: true,
 		width: 10,
-		height: 10
+		height: 10,
+		ctx: ctx
 	});
 }
 
-function drawSelectArc(x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE << 1 	, dots = true){
+function drawSelectArc(ctx, x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE << 1 	, dots = true){
 	doArc({
 		x: x,
 		y: y,
@@ -305,8 +335,8 @@ function drawSelectArc(x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE << 1 	
 		fillColor: color,
 		borderWidth: DEFAULT_STROKE_WIDTH << 1,
 		lineDash:  dots ? [15, 5] : [],
-		borderColor: SELECTOR_BORDER_COLOR
-
+		borderColor: SELECTOR_BORDER_COLOR,
+		ctx: ctx
 	});
 }
 

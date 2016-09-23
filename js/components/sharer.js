@@ -54,7 +54,7 @@ class SharerManager{
 			};
 
 		this._socket.on('chatMessage',function(data){
-			chatViewer.recieveMessage(data["text"], data["sender"]);
+			Panel.recieveMessage(data["text"], data["sender"]);
 		});
 
 
@@ -122,6 +122,7 @@ class SharerManager{
 		this._socket.disconnect();
 		this._socket = false;
 		this._sharing = false;
+		Panel.stopShare();
 	}
 
 	copyUrl(){

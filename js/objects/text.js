@@ -12,7 +12,7 @@ class TextField extends Entity{
 		this._verticalTextAlign = FONT_VALIGN_TOP;
 		this._horizontalTextAlign = FONT_HALIGN_LEFT;
 		this._fontOffset 	= DEFAULT_TEXT_OFFSET;
-
+		this._link			= false;
 		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1))
 	};
 
@@ -27,7 +27,7 @@ class TextField extends Entity{
 
 	
 
-	draw(){
+	draw(ctx = context){
 		var pos = this.position.getClone();
 
 		doRect({
@@ -39,14 +39,15 @@ class TextField extends Entity{
 			borderWidth: this._borderWidth,
 			borderColor: !this._hightlight ? DEFAUL_STROKE_COLOR : this._hightlight == HIGHTLIGHT_CORRECT ? "green" : "red",
 			draw: true,
-			fill: true
+			fill: true,
+			ctx: ctx
 		});
 
 
-		context.textAlign = this._horizontalTextAlign;
-		context.textBaseline = this._verticalTextAlign;
-		context.fillStyle = this._textColor;
-		context.font = this._fontSize + "pt " + DEFAULT_FONT;
+		ctx.textAlign = this._horizontalTextAlign;
+		ctx.textBaseline = this._verticalTextAlign;
+		ctx.fillStyle = this._textColor;
+		ctx.font = this._fontSize + "pt " + DEFAULT_FONT;
 		
 		if(this._horizontalTextAlign == FONT_HALIGN_LEFT)
 			pos.x += this._fontOffset;
@@ -60,10 +61,10 @@ class TextField extends Entity{
 		else if(this._verticalTextAlign == FONT_VALIGN_BOTT)
 			pos.y += this.size.y - this._fontOffset;
 
-		context.fillText(this._text, pos.x, pos.y);
+		ctx.fillText(this._text, pos.x, pos.y);
 
-		drawBorder(this);
-		Entity.drawConnectors(this);
+		drawBorder(ctx, this);
+		Entity.drawConnectors(this, ctx);
 	};
 
 	clickIn(x, y){

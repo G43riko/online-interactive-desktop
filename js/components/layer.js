@@ -10,6 +10,7 @@ class Layer{
 		this._paint 	= null;
 		this._locked 	= false;
 		this._drawPaint	= true;
+		this._opacity	= 1;
 		this._layerType = layerType;
 	};
 
@@ -48,14 +49,14 @@ class Layer{
 		return this._objects[id];
 	}
 
-	draw(){
+	draw(ctx = context){
 		if(!this.visible)
 			return;
 
-		this.forEach(e => e.visible && e.draw());
+		this.forEach(e => e.visible && e.draw(ctx));
 
 		if(this._drawPaint)
-			this.paint.draw();
+			this.paint.draw(ctx);
 	};
 
 	add(element){

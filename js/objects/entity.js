@@ -208,11 +208,11 @@ class Entity{
 	 *
 	 * @param obj
 	 */
-	static drawConnectors(obj){
+	static drawConnectors(obj, ctx){
 		if(Creator.operation != OPERATION_DRAW_JOIN && (Creator.operation != OPERATION_DRAW_LINE || !Menu.isToolActive()))
 			return;
 
-		obj._connectors.forEach(e => drawConnector(e, obj));
+		obj._connectors.forEach(e => drawConnector(e, obj, ctx));
 	};
 
 

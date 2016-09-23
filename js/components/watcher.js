@@ -37,7 +37,7 @@ class WatcherManager{
 		//this._socket.emit('startWatch', data);
 		this._socket.emit('createWatcher', {userId: data["userId"], shareId: data["id"]});
 
-		this._socket.on('chatMessage', data => isDefined(chatViewer) && chatViewer.recieveMessage(data["text"], data["sender"]));
+		this._socket.on('chatMessage', data => Panel.recieveMessage(data["text"], data["sender"]));
 		this._socket.on('notification', data => Logger.notif("prijatá správa: " + data["msg"]));
 		this._socket.on('auth', (data) => inst._authProcess(data));
 		this._socket.on('endShare', () => console.log("sharer je offline"));
@@ -130,8 +130,11 @@ class WatcherManager{
 
 
 		if(watchOptions.show.chat){
+			/*
 			chatViewer = new ChatViewer(Project.title + "'s chat", watchOptions.nickName, sendMessage);
 			chatViewer.show();
+			*/
+			Panel.startWatch(sendMessage);
 		}
 
 		if(watchOptions.show.timeLine)

@@ -43,7 +43,7 @@ class Rect extends Entity {
 		return this._radius > minRadius ? minRadius : this._radius;
 	}
 
-	draw(){
+	draw(ctx = context){
 		if (!this.visible)
 			return;
 		doRect({
@@ -53,11 +53,12 @@ class Rect extends Entity {
 			shadow: this.moving && !this.locked,
 			borderWidth: this.borderWidth,
 			borderColor: this.borderColor,
-			radius: this._checkRadius()
+			radius: this._checkRadius(),
+			ctx: ctx
 		});
 
-		Entity.drawConnectors(this);
+		Entity.drawConnectors(this, ctx);
 
-		drawBorder(this);
+		drawBorder(ctx, this);
 	}
 }

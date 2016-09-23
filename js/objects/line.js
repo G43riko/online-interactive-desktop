@@ -113,7 +113,7 @@ class Line extends Entity{
 		Entity.findMinAndMax(this._points, this.position, this.size);
 	};
 
-	draw(){
+	draw(ctx = context){
 		var size = this._points.length;
 
 		if(isNumber(this._radius) && this._radius > 1)
@@ -128,19 +128,20 @@ class Line extends Entity{
 			borderWidth: this.borderWidth,
 			borderColor: this.fillColor,
 			radius: this.radius,
-			lineDash: this._lineStyle == LINE_STYLE_STRIPPED ? [15, 5] : []
+			lineDash: this._lineStyle == LINE_STYLE_STRIPPED ? [15, 5] : [],
+			ctx: ctx
 		});
 
-		Arrow.drawArrow(this._points[1], this._points[0], this, this._arrowEndType);
-		Arrow.drawArrow(this._points[size - 2], this._points[size - 1], this, this._arrowStartType);
+		Arrow.drawArrow(ctx, this._points[1], this._points[0], this, this._arrowEndType);
+		Arrow.drawArrow(ctx, this._points[size - 2], this._points[size - 1], this, this._arrowStartType);
 
 		context.lineWidth = DEFAULT_STROKE_WIDTH << 1;
 		if(this.selected){
-			drawBorder(this, {});
-			drawSelectArc(this._points[0].x, this._points[0].y);
+			drawBorder(ctx, this, {});
+			drawSelectArc(ctx, this._points[0].x, this._points[0].y);
 			for(var i=1 ; i<size ; i++){
-				drawSelectArc(this._points[i].x, this._points[i].y);
-				drawSelectArc((this._points[i].x + this._points[i - 1].x) >> 1, (this._points[i].y + this._points[i - 1].y) >> 1);
+				drawSelectArc(ctx, this._points[i].x, this._points[i].y);
+				drawSelectArc(ctx, (this._points[i].x + this._points[i - 1].x) >> 1, (this._points[i].y + this._points[i - 1].y) >> 1);
 			}
 		}
 	};

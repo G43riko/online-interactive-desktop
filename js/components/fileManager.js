@@ -101,6 +101,7 @@ function loadFile(func){
 
 
 function saveSceneAsFile(data = {projectTitle: "scene_backup"}){
+	console.log(data);
 	var data = {
 		scene: Scene.toObject(),
 		creator: Creator.toObject(),
@@ -151,6 +152,7 @@ function loadSceneFromFile(){
 			Creator.fromObject(data.creator);
 			Paints.fromObject(data.paints);
 		}
+		draw();
 		/*
 		 }
 		 catch(err){

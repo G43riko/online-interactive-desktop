@@ -70,23 +70,24 @@ class Polygon extends Entity{
 		return true;
 	}
 
-	draw(){
+	draw(ctx = context){
 		doPolygon({
 			shadow: this.moving && !this.locked,
 			points: this.points,
 			fillColor: this.fillColor,
 			borderColor: this.borderColor,
 			borderWidth: this.borderWidth,
-			radius: this.radius
+			radius: this.radius,
+			ctx: ctx
 		});
 		if(this.selected){
-			drawBorder(this, {});
+			drawBorder(ctx, this, {});
 			for(var i=0 ; i<this.points.length ; i++){
 				var min = i - 1;
 				if(i == 0)
 					min = this.points.length - 1;
-				drawSelectArc(this.points[i].x, this.points[i].y);
-				drawSelectArc((this.points[i].x + this.points[min].x) >> 1, (this.points[i].y + this.points[min].y) >> 1);
+				drawSelectArc(ctx, this.points[i].x, this.points[i].y);
+				drawSelectArc(ctx, (this.points[i].x + this.points[min].x) >> 1, (this.points[i].y + this.points[min].y) >> 1);
 			}
 		}
 

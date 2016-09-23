@@ -3,16 +3,15 @@ class Paint extends Entity{
 		super(OBJECT_PAINT, new GVector2f(), new GVector2f());
 		this._points 		= [Paint.defArray()];
 		this._count 		= 0;
-		this._canvas 		= document.createElement("canvas");
+
+		this._canvas		= new CanvasManager();
 		this.onScreenResize();
-		this._context 		= this._canvas.getContext('2d');
 		this._action		= PAINT_ACTION_BRUSH;
 		this._editBackup	= [];
 	}
 
 	onScreenResize(){
-		this._canvas.width 	= canvas.width;
-		this._canvas.height	= canvas.height;
+		this._canvas.setCanvasSize(canvas.width, canvas.height);
 	}
 	static defArray(){
 		return {
@@ -147,19 +146,19 @@ class Paint extends Entity{
 
 	_drawLine(pointA, pointB){
 		if(this._action == PAINT_ACTION_LINE){
-			this._context.lineCap 		= LINE_CAP_ROUND;
-			this._context.lineWidth 	= this.borderWidth;
-			this._context.strokeStyle	= Creator.brushColor;
-			this._context.beginPath();
-			this._context.moveTo(pointA.x, pointA.y);
-			this._context.lineTo(pointB.x, pointB.y);
-			this._context.stroke();
+			this._canvas.context.lineCap 		= LINE_CAP_ROUND;
+			this._canvas.context.lineWidth 		= this.borderWidth;
+			this._canvas.context.strokeStyle	= Creator.brushColor;
+			this._canvas.context.beginPath();
+			this._canvas.context.moveTo(pointA.x, pointA.y);
+			this._canvas.context.lineTo(pointB.x, pointB.y);
+			this._canvas.context.stroke();
 		}
 		else if(this._action == PAINT_ACTION_BRUSH){
 			var dist 	= pointA.dist(pointB),
 				angle 	= Math.atan2(pointA.x - pointB.x, pointA.y - pointB.y);
 			for (var i = 0; i < dist; i++)
-				this._context.drawImage(Paints.selectedBrush,
+				this._canvas.context.drawImage(Paints.selectedBrush,
 					pointB.x + (Math.sin(angle) * i) - (Creator.brushSize >> 1),
 					pointB.y + (Math.cos(angle) * i) - (Creator.brushSize >> 1),
 					Creator.brushSize,
@@ -171,7 +170,7 @@ class Paint extends Entity{
 		this._points = [Paint.defArray()];
 		this._points[this._actColor] = [[]];
 		this._count = 0;
-		this._context.clearRect(0, 0, canvas.width, canvas.height);
+		this._canvas.context.clearRect(0, 0, canvas.width, canvas.height);
 		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	}
 
@@ -184,9 +183,9 @@ class Paint extends Entity{
 			this._points.push(Paint.defArray());
 	}
 
-	draw() {
+	draw(ctx = context) {
 		if (!this.visible)
 			return;
-		context.drawImage(this._canvas, 0, 0);
+		ctx.drawImage(this._canvas.canvas, 0, 0);
 	};
 }

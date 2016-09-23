@@ -260,7 +260,7 @@ G.isNum = obj => !G.isArray(obj) && (obj - parseFloat(obj) + 1) >= 0;
 G.isBool = val => typeof val === "boolean";
 G.isG = val => val.__proto__ === G.prototype;
 G.isUndefined = val => !G.isDefined(val);
-G.isArray = val => Array.isArray(val);
+G.isArray = val => Object.prototype.toString.call(val) === '[object Array]';
 G.isToStringable = val => G.isNumber(val) || G.isString(val) || G.isBool(val);
 G.isGElement = val => val["isGElement"] === true;
 G.isElement = obj => {

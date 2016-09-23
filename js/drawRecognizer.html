@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script type="text/javascript" src="config.js"></script>
+	<script type="text/javascript" src="utils/utils.js"></script>
+	<script type="text/javascript" src="canvas.js"></script>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		canvas{
+			border:1px solid black;
+		}
+	</style>
+	<title>Document</title>
+</head>
+<body>
+	<script type="text/javascript">
+		Array.prototype.sum = function(){return this.reduce((a, b) => a + b)}
+		Array.prototype.avg = function(){return this.reduce((a, b) => a + b) / this.length}
+
+		Math.radians = function(degrees) {
+		  return degrees * Math.PI / 180;
+		};
+		 
+		// Converts from radians to degrees.
+		Math.degrees = function(radians) {
+		  return radians * 180 / Math.PI;
+		};
+
+		var paintCanvas = new CanvasManager(window.innerWidth / 2 - 10, window.innerWidth / 4);
+		var statistics = new CanvasManager(window.innerWidth / 2 - 10, window.innerWidth / 4);
+		paintCanvas.appendTo(document.body);
+		statistics.appendTo(document.body);
+
+		paintCanvas.canvas.onmousedown = function(e){
+			var points = [{x: e.offsetX, y: e.offsetY}];
+			var angles = [];
+
+            paintCanvas.clearCanvas();
+			paintCanvas.canvas.onmousemove = function(e){
+				drawLine({x: e.offsetX, y: e.offsetY}, points);
+				calcShape({x: e.offsetX, y: e.offsetY}, points, angles);
+				points.push({x: e.offsetX, y: e.offsetY});
+			}
+
+			paintCanvas.canvas.onmouseup = function(e){
+				calcShape({x: e.offsetX, y: e.offsetY}, points, angles);
+				drawLine({x: e.offsetX, y: e.offsetY}, points);
+				paintCanvas.canvas.onmousemove = null;
+				paintCanvas.canvas.onmouseup = null;
+
+				console.log("avgAngle: ", angles.avg());
+				console.log("sumAngle: ", angles.sum());
+				if(Math.abs(angles.avg()) < 5){
+            		paintCanvas.clearCanvas();
+            		drawPoint({x: e.offsetX, y: e.offsetY}, points[0]);
+				}
+				drawData(angles);
+			}
+		}
+
+		function dist(v1, v2){
+			var dx = v1.x - v2.x;
+			var dy = v1.y - v2.y;
+		return Math.sqrt(dx * dx + dy * dy);
+		}
+
+		function calcShape(lastPoint, points, angles){
+			if(points.length > 1){
+
+				var v1x = points[points.length - 2].x - points[points.length - 1].x
+				var v1y = points[points.length - 2].y - points[points.length - 1].y
+				var v2x = points[points.length - 1].x - lastPoint.x;
+				var v2y = points[points.length - 1].y - lastPoint.y;
+
+
+				var dx = v1x - v2x;
+				var dy = v1y - v2y;
+				if(Math.sqrt(dx * dx + dy * dy) < 5)
+					return;
+				angles.push(Math.degrees(Math.atan2(v1y, v1x) - Math.atan2(v2y, v2x)));
+			}
+		}
+
+		function drawData(angles){
+			var size = statistics.canvas.width / (angles.length - 1);
+			var min = angles[0];
+			var max = angles[0];
+			for(var i=1 ; i<angles.length ; i++){
+				if(angles.hasOwnProperty(i)){
+					max = Math.max(max, angles[i]);
+					min = Math.min(min, angles[i]);
+				}
+			}
+
+			var size = max - min;
+
+			statistics.context.beginPath();
+			statistics.context.lineTo(0, angles[0]/ 8 + Math.abs(min));
+            for(var i=1 ; i < angles.length ; i++){
+            	if(angles.hasOwnProperty(i)){
+	            	console.log(i + ": " + angles[i] + " == " + (angles[i]/ 8 + Math.abs(min)));
+	            	statistics.context.lineTo(i * size, angles[i]/ 8 + Math.abs(min));
+            	}
+            }
+            statistics.context.lineWidth = 5;
+
+			statistics.context.strokeStyle = "green";
+            statistics.context.stroke();
+		}
+
+		function drawPoint(p1, p2){
+			paintCanvas.context.beginPath();
+            paintCanvas.context.moveTo(p1.x, p1.y);
+            paintCanvas.context.lineTo(p2.x, p2.y);
+            paintCanvas.context.lineWidth = 5;
+
+			paintCanvas.context.strokeStyle = "red";
+            paintCanvas.context.stroke();
+		}
+		function drawLine(lastPoint, points){
+			drawPoint(lastPoint, points[points.length - 1]);
+		}
+	</script>
+</body>
+</html>

@@ -32,7 +32,7 @@ class ImageObject extends Entity{
 		return this.moveType >= 0;
 	};
 
-	draw(){
+	draw(ctx = context){
 		//context.drawImage(this._image, this.position.x, this.position.y, this.size.x, this.size.y);
 		doRect({
 			bgImage: this._image || false,
@@ -43,9 +43,10 @@ class ImageObject extends Entity{
 			draw: true,
 			shadow: this.moving && !this.locked,
 			borderWidth: this.borderWidth,
-			borderColor: this.borderColor
+			borderColor: this.borderColor,
+			ctx: ctx
 		});
 
-		drawBorder(this);
+		drawBorder(ctx, this);
 	}
 }

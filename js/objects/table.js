@@ -165,7 +165,7 @@ class Table extends Entity{
 		return true;
 	}
 
-	draw(){
+	draw(ctx = context){
 		var i,
 			j,
 			posX = this._position.x,
@@ -177,14 +177,15 @@ class Table extends Entity{
 			this._checkSize();
 
 		//FILL HEADER
-
+		//TODO pre fillText doplniť context do ktorého sa má kresliť
 		doRect({
 			position: this._position,
 			width: this._size.x,
 			height: this._lineHeight,
 			radius: {tr: this.radius, tl: this.radius},
 			fillColor: this._headerColor,
-			shadow: this.moving && !this.locked
+			shadow: this.moving && !this.locked,
+			ctx: ctx
 		});
 
 		//FILL BODY
@@ -195,7 +196,8 @@ class Table extends Entity{
 			height: this._lineHeight * (this.data.length - 1),
 			radius: {br: this.radius, bl: this.radius},
 			fillColor: this._bodyColor,
-			shadow: this.moving && !this.locked
+			shadow: this.moving && !this.locked,
+			ctx: ctx
 		});
 
 		//DRAW BORDER
@@ -204,7 +206,8 @@ class Table extends Entity{
 			size: this._size,
 			radius: this.radius,
 			borderColor: this.borderColor,
-			borderWidth: this.borderWidth
+			borderWidth: this.borderWidth,
+			ctx: ctx
 		});
 
 		///DRAW HEADER TEXT
@@ -231,9 +234,10 @@ class Table extends Entity{
 		doLine({
 			points: points,
 			borderWidth: this.borderWidth,
-			borderColor: this.borderColor
+			borderColor: this.borderColor,
+			ctx: ctx
 		});
 
-		drawBorder(this);
+		drawBorder(ctx, this);
 	}
 }

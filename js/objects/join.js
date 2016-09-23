@@ -27,7 +27,7 @@ class Join extends Entity{
 		this._tmpPos.set(pos);
 	}
 
-	draw(){
+	draw(ctx = context){
 		if(this._obj1.position == null){
 			Logger.warn("ide sa kresliť join ktorý nemá potrebné udaje");
 			Scene.remove(this);
@@ -79,6 +79,6 @@ class Join extends Entity{
 		if(this._lineType == JOIN_BAZIER)
 			drawBazierCurve(array, this.borderWidth, this.borderColor);
 		else
-			doLine({points: array, borderWidth: this.borderWidth, borderColor: this.borderColor});
+			doLine({points: array, borderWidth: this.borderWidth, borderColor: this.borderColor, ctx: ctx});
 	};
 }
