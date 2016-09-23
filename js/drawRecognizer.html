@@ -2,9 +2,6 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<script type="text/javascript" src="config.js"></script>
-	<script type="text/javascript" src="utils/utils.js"></script>
-	<script type="text/javascript" src="canvas.js"></script>
 	<style type="text/css">
 		*{
 			margin: 0;
@@ -18,9 +15,107 @@
 </head>
 <body>
 	<script type="text/javascript">
+		class CanvasManager{
+			constructor(arg1, arg2){
+				if(arg1 instanceof HTMLImageElement){//ARGUMENT JE OBRAZOK
+					this._canvas = CanvasManager.imageToCanvas(arg1);
+				}
+				else{
+					this._canvas = document.createElement("canvas");
+
+					if(arg1 && arg2){//ARGUMENTY SU VELKOST
+						this.setCanvasSize(arg1, arg2);
+					}
+				}
+				this._context = this._canvas.getContext("2d");
+			}
+
+			
+			get canvas(){return this._canvas;}
+			get context(){return this._context;}
+
+			setShadow(x, y, color, blur){
+				CanvasManager.setShadow(this._context, x, y, color, blur);
+			}
+
+			show(format = "image/png"){
+				window.open(this._canvas.toDataURL(format), '_blank');
+			}
+
+			clearCanvas(){
+				CanvasManager.clearCanvas(this._context);
+			}
+
+			setCanvasSize(width = window.innerWidth, height = window.innerHeight){
+				CanvasManager.setCanvasSize(this._canvas, width, height);
+			}
+
+			appendTo(element){
+				element.appendChild(this._canvas);
+			}
+
+			static clearCanvas(ctx){
+				ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			}
+
+			static setCanvasSize(c, width = window.innerWidth, height = window.innerHeight){
+				c.width = width;
+				c.height = height;
+			}
+
+			static setShadow(ctx, x, y, color, blur){
+		      ctx.shadowColor = color;
+		      ctx.shadowBlur = blur;
+		      ctx.shadowOffsetX = x;
+		      ctx.shadowOffsetY = y;
+			}
+
+			static imageToCanvas(image){
+				var canvas = document.createElement("canvas");
+				canvas.width = image.width;
+				canvas.height = image.height;
+				canvas.getContext("2d").drawImage(image, 0, 0);
+				return canvas;
+			}
+
+			static setLineDash(ctx, ...args){
+				//TODO otestovať;
+				ctx.setLineDash(args);
+			}
+
+			static calcTextWidth(ctx, value, font = false){
+				if(font)
+					ctx.font = font;
+				return ctx.measureText(value).width;
+			}
+
+			static canvasToImage(canvas, format = "image/png"){
+				var image = new Image();
+				image.src = canvas.toDataURL(format);
+				image.width = canvas.width;
+				image.height = canvas.height;
+				return image;
+			}
+		}
+		function caclAverageData(data){
+			var result = [], sum = 0;
+			each(data, function(e, i){
+				sum += e;
+				result[i] = i != 0 ? sum / i : sum;
+			})
+			return result;
+		}
+
+		function each(el, funct){
+			for(var i in el)
+				if(el.hasOwnProperty(i))
+					funct(el[i], i, el);
+		}
+
+		const LINE_ANGLE_LIMIT = 10;
+		const POINT_DIST_LIMIT = 1;
 		Array.prototype.sum = function(){return this.reduce((a, b) => a + b)}
 		Array.prototype.avg = function(){return this.reduce((a, b) => a + b) / this.length}
-
 		Math.radians = function(degrees) {
 		  return degrees * Math.PI / 180;
 		};
@@ -29,100 +124,107 @@
 		Math.degrees = function(radians) {
 		  return radians * 180 / Math.PI;
 		};
-
-		var paintCanvas = new CanvasManager(window.innerWidth / 2 - 10, window.innerWidth / 4);
-		var statistics = new CanvasManager(window.innerWidth / 2 - 10, window.innerWidth / 4);
+		var paintCanvas = new CanvasManager(window.innerWidth / 2 - 30, window.innerWidth / 4);
+		var statistics = new CanvasManager(window.innerWidth / 2 - 30, window.innerWidth / 4);
 		paintCanvas.appendTo(document.body);
 		statistics.appendTo(document.body);
-
 		paintCanvas.canvas.onmousedown = function(e){
 			var points = [{x: e.offsetX, y: e.offsetY}];
 			var angles = [];
-
+			var distances = []
             paintCanvas.clearCanvas();
 			paintCanvas.canvas.onmousemove = function(e){
-				drawLine({x: e.offsetX, y: e.offsetY}, points);
-				calcShape({x: e.offsetX, y: e.offsetY}, points, angles);
+				drawPoint({x: e.offsetX, y: e.offsetY}, points[points.length - 1], "red");
+				calcShape({x: e.offsetX, y: e.offsetY}, points, angles, distances);
 				points.push({x: e.offsetX, y: e.offsetY});
 			}
-
 			paintCanvas.canvas.onmouseup = function(e){
-				calcShape({x: e.offsetX, y: e.offsetY}, points, angles);
-				drawLine({x: e.offsetX, y: e.offsetY}, points);
+				calcShape({x: e.offsetX, y: e.offsetY}, points, angles, distances);
+				drawPoint({x: e.offsetX, y: e.offsetY}, points[points.length - 1], "red");
 				paintCanvas.canvas.onmousemove = null;
 				paintCanvas.canvas.onmouseup = null;
-
-				console.log("avgAngle: ", angles.avg());
-				console.log("sumAngle: ", angles.sum());
-				if(Math.abs(angles.avg()) < 5){
+				if(Math.abs(angles.avg()) < LINE_ANGLE_LIMIT){
             		paintCanvas.clearCanvas();
-            		drawPoint({x: e.offsetX, y: e.offsetY}, points[0]);
+            		drawPoint({x: e.offsetX, y: e.offsetY}, points[0], "red");
 				}
-				drawData(angles);
+				statistics.clearCanvas();
+				var h = statistics.canvas.height >> 1;
+				var w = statistics.canvas.width >> 1;
+				alert("angles: " + angles.length + "\ndists: " + distances.length);
+				drawData("angle", angles, 0, 0, w, h, "blue");
+				drawData("dist", distances, w, 0, w, h, "green");
+				drawData("avgAngle", caclAverageData(angles), 0, h, w, h, "blue");
+				drawData("avgDist", caclAverageData(distances), w, h, w, h, "green");
+				divideScreen();
 			}
 		}
-
 		function dist(v1, v2){
 			var dx = v1.x - v2.x;
 			var dy = v1.y - v2.y;
 		return Math.sqrt(dx * dx + dy * dy);
 		}
+		function divideScreen(){
+			statistics.context.beginPath();
+			statistics.context.moveTo(0, statistics.canvas.height / 2);
+	        statistics.context.lineTo(statistics.canvas.width, statistics.canvas.height / 2);
 
-		function calcShape(lastPoint, points, angles){
+
+			statistics.context.moveTo(statistics.canvas.width / 2, 0);
+	       	statistics.context.lineTo(statistics.canvas.width / 2, statistics.canvas.height);
+            statistics.context.lineWidth = 4;
+			statistics.context.strokeStyle = "black";
+            statistics.context.stroke();
+		}
+
+		function calcShape(lastPoint, points, angles, distances){
 			if(points.length > 1){
-
 				var v1x = points[points.length - 2].x - points[points.length - 1].x
 				var v1y = points[points.length - 2].y - points[points.length - 1].y
 				var v2x = points[points.length - 1].x - lastPoint.x;
 				var v2y = points[points.length - 1].y - lastPoint.y;
-
-
 				var dx = v1x - v2x;
 				var dy = v1y - v2y;
-				if(Math.sqrt(dx * dx + dy * dy) < 5)
+				var dist = Math.sqrt(dx * dx + dy * dy);
+				if(dist < POINT_DIST_LIMIT)
 					return;
+				distances.push(dist);
 				angles.push(Math.degrees(Math.atan2(v1y, v1x) - Math.atan2(v2y, v2x)));
 			}
 		}
+		function drawData(text, data, x, y, w, h, color){
+			var min, max;
+			var width = w / (data.length - 1);
 
-		function drawData(angles){
-			var size = statistics.canvas.width / (angles.length - 1);
-			var min = angles[0];
-			var max = angles[0];
-			for(var i=1 ; i<angles.length ; i++){
-				if(angles.hasOwnProperty(i)){
-					max = Math.max(max, angles[i]);
-					min = Math.min(min, angles[i]);
-				}
-			}
+			each(data, function(e){
+				max = typeof max !== "undefined" ? Math.max(max, e) : e;
+				min = typeof min !== "undefined" ? Math.min(min, e) : e;
+			});
 
-			var size = max - min;
+			var range = max - min;
+			var ration = range / h
+			var offset = -min;
 
 			statistics.context.beginPath();
-			statistics.context.lineTo(0, angles[0]/ 8 + Math.abs(min));
-            for(var i=1 ; i < angles.length ; i++){
-            	if(angles.hasOwnProperty(i)){
-	            	console.log(i + ": " + angles[i] + " == " + (angles[i]/ 8 + Math.abs(min)));
-	            	statistics.context.lineTo(i * size, angles[i]/ 8 + Math.abs(min));
-            	}
-            }
-            statistics.context.lineWidth = 5;
 
-			statistics.context.strokeStyle = "green";
+			each(data, function(e, i){
+				if(i === 0)
+					statistics.context.lineTo(x, y + h - (e + offset) / ration);
+				else
+					statistics.context.lineTo(x + i * width, y + h - (e + offset) / ration);
+			})
+            statistics.context.font = "20px Arial";
+            statistics.context.fillText(text, x, y + 20);
+            statistics.context.lineWidth = 5;
+			statistics.context.strokeStyle = color;
             statistics.context.stroke();
 		}
-
-		function drawPoint(p1, p2){
+		function drawPoint(p1, p2, color){
 			paintCanvas.context.beginPath();
             paintCanvas.context.moveTo(p1.x, p1.y);
             paintCanvas.context.lineTo(p2.x, p2.y);
             paintCanvas.context.lineWidth = 5;
-
-			paintCanvas.context.strokeStyle = "red";
+			paintCanvas.context.strokeStyle = color;
             paintCanvas.context.stroke();
-		}
-		function drawLine(lastPoint, points){
-			drawPoint(lastPoint, points[points.length - 1]);
 		}
 	</script>
 </body>
