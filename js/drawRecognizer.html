@@ -34,10 +34,6 @@
 			get canvas(){return this._canvas;}
 			get context(){return this._context;}
 
-			setShadow(x, y, color, blur){
-				CanvasManager.setShadow(this._context, x, y, color, blur);
-			}
-
 			show(format = "image/png"){
 				window.open(this._canvas.toDataURL(format), '_blank');
 			}
@@ -63,13 +59,6 @@
 				c.height = height;
 			}
 
-			static setShadow(ctx, x, y, color, blur){
-		      ctx.shadowColor = color;
-		      ctx.shadowBlur = blur;
-		      ctx.shadowOffsetX = x;
-		      ctx.shadowOffsetY = y;
-			}
-
 			static imageToCanvas(image){
 				var canvas = document.createElement("canvas");
 				canvas.width = image.width;
@@ -77,31 +66,22 @@
 				canvas.getContext("2d").drawImage(image, 0, 0);
 				return canvas;
 			}
-
-			static setLineDash(ctx, ...args){
-				//TODO otestovať;
-				ctx.setLineDash(args);
-			}
-
-			static calcTextWidth(ctx, value, font = false){
-				if(font)
-					ctx.font = font;
-				return ctx.measureText(value).width;
-			}
-
-			static canvasToImage(canvas, format = "image/png"){
-				var image = new Image();
-				image.src = canvas.toDataURL(format);
-				image.width = canvas.width;
-				image.height = canvas.height;
-				return image;
-			}
 		}
-		function caclAverageData(data){
+
+		function calcAverageData(data){
 			var result = [], sum = 0;
 			each(data, function(e, i){
 				sum += e;
 				result[i] = i != 0 ? sum / i : sum;
+			});
+			return result;
+		}
+
+		function calcAverageDiffData(data){
+			var avg = calcAverageData(data);
+			var result = [];
+			each(data, function(e, i){
+				result.push(Math.abs(e - avg[i]));
 			})
 			return result;
 		}
@@ -112,96 +92,130 @@
 					funct(el[i], i, el);
 		}
 
+		function dist(v1, v2){
+			var dx = v1.x - v2.x;
+			var dy = v1.y - v2.y;
+			return Math.sqrt(dx * dx + dy * dy);
+		}
+
+		function divideScreen(canvas, dividers, subDividers, color = "black"){
+			var divineNTimes = function(times, width){
+				var w = canvas.canvas.width / times;
+				var h = canvas.canvas.height / times;
+				var hCounter = 0;
+				var wCounter = 0;
+				canvas.context.beginPath();
+				for(var i=0 ; i<=times ; i++){
+					canvas.context.moveTo(0, hCounter);
+					canvas.context.lineTo(canvas.canvas.width, hCounter);
+
+					canvas.context.moveTo(wCounter, 0);
+				   	canvas.context.lineTo(wCounter, canvas.canvas.height);
+				   	wCounter += w;
+				   	hCounter += h;
+				}
+
+				canvas.context.lineWidth = width;
+				canvas.context.strokeStyle = color;
+				canvas.context.stroke();
+			}
+			divineNTimes(dividers, 4);
+			divineNTimes(dividers * subDividers, 0.5);
+		}
+
 		const LINE_ANGLE_LIMIT = 10;
 		const POINT_DIST_LIMIT = 1;
-		Array.prototype.sum = function(){return this.reduce((a, b) => a + b)}
-		Array.prototype.avg = function(){return this.reduce((a, b) => a + b) / this.length}
-		Math.radians = function(degrees) {
-		  return degrees * Math.PI / 180;
-		};
-		 
-		// Converts from radians to degrees.
-		Math.degrees = function(radians) {
-		  return radians * 180 / Math.PI;
-		};
+		Array.prototype.sum = function(){return this.reduce(function(a, b){return a + b})};
+		Array.prototype.avg = function(){return this.reduce(function(a, b){return a + b}) / this.length};
+		Math.radians = function(degrees){return degrees * Math.PI / 180;};
+		Math.degrees = function(radians){return radians * 180 / Math.PI;};
+
 		var paintCanvas = new CanvasManager(window.innerWidth / 2 - 30, window.innerWidth / 4);
 		var statistics = new CanvasManager(window.innerWidth / 2 - 30, window.innerWidth / 4);
 		paintCanvas.appendTo(document.body);
 		statistics.appendTo(document.body);
+
 		paintCanvas.canvas.onmousedown = function(e){
-			var points = [{x: e.offsetX, y: e.offsetY}];
-			var angles = [];
-			var distances = []
-            paintCanvas.clearCanvas();
-			paintCanvas.canvas.onmousemove = function(e){
-				drawPoint({x: e.offsetX, y: e.offsetY}, points[points.length - 1], "red");
-				calcShape({x: e.offsetX, y: e.offsetY}, points, angles, distances);
-				points.push({x: e.offsetX, y: e.offsetY});
+			var points = [{x: e.offsetX, y: e.offsetY, t:window["performance"].now()}];
+			var datas = {
+				angles: [],
+				distances: [],
+				times: []
 			}
+			var angles = [];
+			var distances = [];
+			var times = [];
+
+			paintCanvas.clearCanvas();
+			statistics.clearCanvas();
+
+			paintCanvas.canvas.onmousemove = function(e){
+				drawLine({x: e.offsetX, y: e.offsetY, t:window["performance"].now()}, points[points.length - 1], "red");
+				calcShape({x: e.offsetX, y: e.offsetY, t:window["performance"].now()}, points, datas);
+				points.push({x: e.offsetX, y: e.offsetY, t:window["performance"].now()});
+			};
 			paintCanvas.canvas.onmouseup = function(e){
-				calcShape({x: e.offsetX, y: e.offsetY}, points, angles, distances);
-				drawPoint({x: e.offsetX, y: e.offsetY}, points[points.length - 1], "red");
+				calcShape({x: e.offsetX, y: e.offsetY, t:window["performance"].now()}, points, datas);
+				drawLine({x: e.offsetX, y: e.offsetY, t:window["performance"].now()}, points[points.length - 1], "red");
 				paintCanvas.canvas.onmousemove = null;
 				paintCanvas.canvas.onmouseup = null;
-				if(Math.abs(angles.avg()) < LINE_ANGLE_LIMIT){
-            		paintCanvas.clearCanvas();
-            		drawPoint({x: e.offsetX, y: e.offsetY}, points[0], "red");
+				if(Math.abs(datas.angles.avg()) < LINE_ANGLE_LIMIT){
+					//paintCanvas.clearCanvas();
+					//drawLine({x: e.offsetX, y: e.offsetY}, points[0], "red");
 				}
-				statistics.clearCanvas();
-				var h = statistics.canvas.height >> 1;
-				var w = statistics.canvas.width >> 1;
-				alert("angles: " + angles.length + "\ndists: " + distances.length);
-				drawData("angle", angles, 0, 0, w, h, "blue");
-				drawData("dist", distances, w, 0, w, h, "green");
-				drawData("avgAngle", caclAverageData(angles), 0, h, w, h, "blue");
-				drawData("avgDist", caclAverageData(distances), w, h, w, h, "green");
-				divideScreen();
+				var h = statistics.canvas.height / 3;
+				var w = statistics.canvas.width / 3;
+
+				drawData("angle", datas.angles, 0, 0, w, h, "blue");
+				drawData("avgAngle", calcAverageData(datas.angles), 0, h, w, h, "blue");
+				drawData("avgDiffAngle", calcAverageDiffData(datas.angles), 0, h * 2, w, h, "blue");
+				drawData("dist", datas.distances, w, 0, w, h, "green");
+				drawData("avgDist", calcAverageData(datas.distances), w, h, w, h, "green");
+				drawData("avgDiffDist", calcAverageDiffData(datas.distances), w, h * 2, w, h, "green");
+				drawData("time", datas.times, w * 2, 0, w, h, "aqua");
+				drawData("avgTime", calcAverageData(datas.times), w * 2, h, w, h, "aqua");
+				drawData("avgDiffTime", calcAverageDiffData(datas.times), w * 2, h * 2, w, h, "aqua");
+				divideScreen(statistics, 3, 9);
 			}
-		}
-		function dist(v1, v2){
-			var dx = v1.x - v2.x;
-			var dy = v1.y - v2.y;
-		return Math.sqrt(dx * dx + dy * dy);
-		}
-		function divideScreen(){
-			statistics.context.beginPath();
-			statistics.context.moveTo(0, statistics.canvas.height / 2);
-	        statistics.context.lineTo(statistics.canvas.width, statistics.canvas.height / 2);
+		};
 
-
-			statistics.context.moveTo(statistics.canvas.width / 2, 0);
-	       	statistics.context.lineTo(statistics.canvas.width / 2, statistics.canvas.height);
-            statistics.context.lineWidth = 4;
-			statistics.context.strokeStyle = "black";
-            statistics.context.stroke();
-		}
-
-		function calcShape(lastPoint, points, angles, distances){
+		function calcShape(lastPoint, points, datas){
 			if(points.length > 1){
-				var v1x = points[points.length - 2].x - points[points.length - 1].x
-				var v1y = points[points.length - 2].y - points[points.length - 1].y
+				var v1x = points[points.length - 2].x - points[points.length - 1].x;
+				var v1y = points[points.length - 2].y - points[points.length - 1].y;
 				var v2x = points[points.length - 1].x - lastPoint.x;
 				var v2y = points[points.length - 1].y - lastPoint.y;
 				var dx = v1x - v2x;
 				var dy = v1y - v2y;
 				var dist = Math.sqrt(dx * dx + dy * dy);
-				if(dist < POINT_DIST_LIMIT)
-					return;
-				distances.push(dist);
-				angles.push(Math.degrees(Math.atan2(v1y, v1x) - Math.atan2(v2y, v2x)));
+				//if(dist < POINT_DIST_LIMIT)
+				//	return;
+				datas.times.push(window["performance"].now() - points[points.length - 1].t)
+				datas.distances.push(dist);
+				datas.angles.push(Math.degrees(Math.atan2(v1y, v1x) - Math.atan2(v2y, v2x)));
 			}
 		}
+
+		function calcAngleBetweenPoint(p1, p2, p3){
+			var v1x = p3.x - p2.x;
+			var v1y = p3.y - p2.y;
+			var v2x = p2.x - p1.x;
+			var v2y = p2.y - p1.y;
+			return Math.degrees(Math.atan2(v1y, v1x) - Math.atan2(v2y, v2x));
+		}
 		function drawData(text, data, x, y, w, h, color){
-			var min, max;
+			var min = data[0], max = data[0];
 			var width = w / (data.length - 1);
 
-			each(data, function(e){
-				max = typeof max !== "undefined" ? Math.max(max, e) : e;
-				min = typeof min !== "undefined" ? Math.min(min, e) : e;
+			each(data, function(e, i){
+				if(i > 0){
+					max = Math.max(max, e);
+					min = Math.min(min, e);
+				}
 			});
 
 			var range = max - min;
-			var ration = range / h
+			var ration = range / h;
 			var offset = -min;
 
 			statistics.context.beginPath();
@@ -211,20 +225,21 @@
 					statistics.context.lineTo(x, y + h - (e + offset) / ration);
 				else
 					statistics.context.lineTo(x + i * width, y + h - (e + offset) / ration);
-			})
-            statistics.context.font = "20px Arial";
-            statistics.context.fillText(text, x, y + 20);
-            statistics.context.lineWidth = 5;
+			});
+			statistics.context.font = "20px Arial";
+			statistics.context.fillText(text, x, y + 20);
+			statistics.context.lineWidth = 5;
 			statistics.context.strokeStyle = color;
-            statistics.context.stroke();
+			statistics.context.stroke();
 		}
-		function drawPoint(p1, p2, color){
+
+		function drawLine(p1, p2, color){
 			paintCanvas.context.beginPath();
-            paintCanvas.context.moveTo(p1.x, p1.y);
-            paintCanvas.context.lineTo(p2.x, p2.y);
-            paintCanvas.context.lineWidth = 5;
+			paintCanvas.context.moveTo(p1.x, p1.y);
+			paintCanvas.context.lineTo(p2.x, p2.y);
+			paintCanvas.context.lineWidth = 5;
 			paintCanvas.context.strokeStyle = color;
-            paintCanvas.context.stroke();
+			paintCanvas.context.stroke();
 		}
 	</script>
 </body>
