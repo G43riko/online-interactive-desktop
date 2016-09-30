@@ -1,0 +1,18 @@
+{
+	"Project" :{
+		"Name" : 
+	},
+	"Redis" : {
+		"Port" : 6379,
+		"Host" : "127.0.0.1"
+	},
+	"RequestTimeOut" : 3000,
+	"MaximumUsers" : 100,
+	"MaximumChats" : 10,
+	"Options" : {
+
+	},
+	"Customize" : {
+
+	}
+}

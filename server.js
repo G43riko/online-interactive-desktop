@@ -1,20 +1,22 @@
+const MAX_CHAT_ID_VALUE = 10;
+const MAX_USER_ID_VALUE = 1000000;
+const PORT 				= 3000;
+const REDIS_PORT		= 6379;
+const REDIS_HOST		= "127.0.0.1";
+const REQUEST_TIMEOUT	= 3000;
+const ELASTIC_HOST		= 'localhost:9200';
+
 var express 		= require('express'),
 	app 			= express(),
 	http 			= require('http').Server(app),
 	io 				= require('socket.io')(http),
-	//url 			= require('url'),
 	elasticsearch	= require('elasticsearch'),
+	redis 			= require('redis'),
+	client 			= redis.createClient(REDIS_PORT, REDIS_HOST);
 	serverLogs		= require('./js/utils/serverLogs'),
 	connection 		= require('./js/utils/connectionManager');
 
-const MAX_CHAT_ID_VALUE = 10;
-const MAX_USER_ID_VALUE = 1000000;
-const PORT 				= 3000;
-const REQUEST_TIMEOUT	= 3000;
-const ELASTIC_HOST_URL	= 'localhost:9200';
-
 connection.callLogInit(serverLogs.init);
-
 
 app.use("/css", express.static(__dirname + '/css'));
 app.use("/img", express.static(__dirname + '/img'));
@@ -97,7 +99,7 @@ app.post("/anonymousData", function (req, res) {
 app.get('/anonymousData', function(req, res){
 	var client = new elasticsearch.Client({
 		//log: 'trace',
-		host: ELASTIC_HOST_URL
+		host: ELASTIC_HOST
 	});
 
 	client.ping({
