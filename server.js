@@ -192,7 +192,9 @@ completeAuth = function(data){
 disconnect = function(){
 	serverLogs.increase("disconnect");
 	serverLogs.messageRecieve("disconnect", "");
-	connection.disconnect(this, () => serverLogs.increase("disconnectWatcher"), (socket, conn) => {
+	connection.disconnect(this, function(){
+			serverLogs.increase("disconnectWatcher")
+	}, function(socket, conn){
 		serverLogs.increase("disconnectSharer");
 		writeToWatchers(conn.id, socket, "endShare", "nieco");
 	});
