@@ -25,7 +25,9 @@ class SharerManager{
 		this._socket.emit("sendBuffer", this._buffer);
 		this._buffer = [];
 	}
-
+	startConnection(){
+		
+	}
 	startShare(options){
 		this._socket = io();
 		this._sharing = true;

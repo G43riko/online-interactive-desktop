@@ -16,6 +16,9 @@ class Line extends Entity{
 		this._targetB			= null;
 		this._targetConnectionB	= null;
 
+		this._text_A = "začiatok 10%";
+		this._text_B = "koniec 90%";
+
 		if(points.length < 2){
 			Logger.warn("vytvoril sa line ktory mal menej ako 2 body a tak sa maže");
 			Scene.remove(this);
@@ -132,6 +135,22 @@ class Line extends Entity{
 			ctx: ctx
 		});
 
+		var last = this._points[this._points.length - 1].getClone();
+		var subLast = this._points[this._points.length - 2].getClone();
+		var offset = CanvasManager.calcTextWidth(ctx, this._text_A, "10pt Comic Sans MS");
+		var point = last.add(subLast.sub(last).normalize().mul((offset >> 1) + 10));
+		doRect({
+			position: point,
+			fillColor: "white",
+			width: offset,
+			height: 10,
+			center: true,
+			ctx: ctx
+		})
+		ctx.fillStyle = "black";
+		ctx.textAlign = FONT_HALIGN_CENTER;
+		ctx.textBaseline = FONT_VALIGN_MIDDLE;
+		ctx.fillText(this._text_A, point.x, point.y);
 		Arrow.drawArrow(ctx, this._points[1], this._points[0], this, this._arrowEndType);
 		Arrow.drawArrow(ctx, this._points[size - 2], this._points[size - 1], this, this._arrowStartType);
 

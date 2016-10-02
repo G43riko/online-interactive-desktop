@@ -1,9 +1,9 @@
-const MAX_CHAT_ID_VALUE = 10;
-const MAX_USER_ID_VALUE = 1000000;
-const PORT 				= 3000;
-const REDIS_PORT		= 6379;
-const REDIS_HOST		= "127.0.0.1";
-const REQUEST_TIMEOUT	= 3000;
+//const MAX_CHAT_ID_VALUE = 10;
+//const MAX_USER_ID_VALUE = 1000000;
+//const PORT 				= 3000;
+//const REDIS_PORT		= 6379;
+//const REDIS_HOST		= "127.0.0.1";
+//const REQUEST_TIMEOUT	= 3000;
 const ELASTIC_HOST		= 'localhost:9200';
 
 var express 		= require('express'),
@@ -12,12 +12,12 @@ var express 		= require('express'),
 	io 				= require('socket.io')(http),
 	elasticsearch	= require('elasticsearch'),
 	redis 			= require('redis'),
-	client 			= redis.createClient(REDIS_PORT, REDIS_HOST);
+	config 			= require('./js/json/config.json'),
+	client 			= redis.createClient(config.server.redis.port, config.server.redis.host);
 	serverLogs		= require('./js/utils/serverLogs'),
 	connection 		= require('./js/utils/connectionManager');
 
 connection.callLogInit(serverLogs.init);
-
 app.use("/css", express.static(__dirname + '/css'));
 app.use("/img", express.static(__dirname + '/img'));
 app.use("/js", express.static(__dirname + '/js'));
@@ -39,16 +39,6 @@ app.get('/watch', function(req, res){
 	res.sendFile('/watch.html' , { root : __dirname});
 	serverLogs.increase("watchLoad");
 });
-/*
-app.post('/watch', function(req, res){
-	var body = [];
-	req.on("data", function(chunk){
-		body.push(chunk);
-	}).on('end', function() {
-		processWatchRequest(JSON.parse(decodeURIComponent(Buffer.concat(body).toString()).replace("content=", "")), res);
-	});
-});
-*/
 app.get('/', function(req, res){
 	res.sendFile('/welcomeBootstrap.html' , { root : __dirname});
 });
@@ -56,43 +46,25 @@ app.get('/', function(req, res){
 app.get('/watcher', function(req, res){
 	res.sendFile('/watchIndex.html' , { root : __dirname});
 });
-
+app.get('/frame', function(req, res){
+	res.sendFile('/iframe.html' , { root : __dirname});
+});
 app.get('/overview', function(req, res){
 	res.sendFile('/overview.html' , { root : __dirname});
 });
 
 app.post('/checkWatchData', function(req, res){
-	var body = [];
-	req.on("data", function(chunk){
-		body.push(chunk);
-	}).on('end', function() {
-		checkWatchRequest(JSON.parse(decodeURIComponent(Buffer.concat(body).toString()).replace("content=", "")), res);
-	});
+	processPostData(req, function(data){
+		checkWatchRequest(JSON.parse(data.replace("content=", "")), res);
+	})
 });
 
-
-
-app.post("/anonymousData", function (req, res) {
-	var body = [];
-	req.on("data", function(chunk){
-		body.push(chunk);
-	}).on('end', function() {
-		var data = JSON.parse(decodeURIComponent(Buffer.concat(body).toString()).replace("content=", ""));
+app.post("/anonymousData", function (request, res) {
+	processPostData(request, function(data, req){
+		var data = JSON.parse(data.replace("content=", ""));
 		data["ipAddress"] = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 		data["connectedAt"] = data["connectedAt"].replace("+", " ");
 		serverLogs.addAnonymData(data);
-		/*
-		new elasticsearch.Client({
-			host: 'localhost:9200'
-		}).create({
-			index: 'plocha_analytics',
-			type: 'anonymous',
-			body: data
-		}, function (error, response) {
-			if(typeof error !== "undefined")
-				console.log("chyba pri vkladani do ES: ", error);
-		});
-		*/
 	});
 });
 
@@ -103,7 +75,7 @@ app.get('/anonymousData', function(req, res){
 	});
 
 	client.ping({
-		requestTimeout: REQUEST_TIMEOUT,
+		requestTimeout: confir.server.requestTimeOut,
 		hello: "elasticsearch"
 	}, function (error) {
 		if (error)
@@ -132,8 +104,8 @@ io.on('connection', function(socket){
 	socket.on("action", action);
 });
 
-http.listen(PORT, function(){
-	console.log('listening on *:' + PORT);
+http.listen(config.server.port, function(){
+	console.log('listening on *:' + config.server.port);
 });
 
 var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect, action, mouseData, paintAction, chatMessage, dataReqiere, sendBuffer, createWatcher;
@@ -150,41 +122,6 @@ startShare = function(data){
 	this.emit("confirmShare", {id: id});
 };
 
-
-
-/*
- * dostane spravu že client chce začať sledovať obrazovku
- */
-/*
-startWatch = function(data){
-	serverLogs.increase("startWatch");
-	serverLogs.messageRecieve("startWatch", data);
-	console.log("client s id " + this.id + " chce sledovať plochu");
-	connection.startWatch(data["id"], this, data);
-
-	this.emit("auth", {needPassword: connection.isSetPassword(data["id"])});
-};
-*/
-
-/*
- * client úspešne zadá heslo
- */
-/*
-completeAuth = function(data){
-	serverLogs.messageRecieve("completeAuth", data);
-	console.log("dokoncuje sa authentifikacia s uživatelom: " + this.id);
-
-	if(connection.checkPassword(data["id"], data["passwd"])){
-		connection.getWatcher(data["id"], this).valid = true;
-		connection.getOwner(data["id"]).emit("getAllData", {target: this.id});
-		//connection.getOwner(data["id"]).emit("notification", {msg: "novy watcher sa pripojil"});
-	}
-	else{
-		//this.emit("notification", {msg: "zlé heslo"});
-		this.emit("auth", {needPassword: connection.isSetPassword(data["id"])});//TODO nejaké počítadlo lebo toto nechceme stále
-	}
-};
-*/
 
 /*
  * odpoji watchera alebo sharera
@@ -324,11 +261,20 @@ function writeToAllExcept(id, socket, type, msg){
 }
 
 function getChatId(){
-	return Math.floor(Math.random() * MAX_CHAT_ID_VALUE);
+	return Math.floor(Math.random() * config.server.maximumChats);
 }
 
 function getUserId(){
-	return Math.floor(Math.random() * MAX_USER_ID_VALUE);
+	return Math.floor(Math.random() * config.server.maximumUsers);
+}
+
+function processPostData(req, func){
+	var body = [];
+	req.on("data", function(chunk){
+		body.push(chunk);
+	}).on('end', function() {
+		func(decodeURIComponent(Buffer.concat(body).toString()), req);
+	});
 }
 
 function parseCookies (request) {

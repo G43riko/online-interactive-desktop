@@ -17,7 +17,7 @@ class MenuManager{
 		this._offset 					= MENU_OFFSET;
 		this._size 						= size;
 		this._vertical 					= parent != null;
-
+		this._visibleElements			= 0;
 		this._canvas 					= parent == null ? document.createElement("canvas") : parent._canvas;
 		this._context					= null;
 		this._tmpDrawArray				= [];
@@ -97,7 +97,9 @@ class MenuManager{
 		return data;
 	}
 	init(data){
-		MenuManager.dataBackup = JSON.stringify(data);
+		if(!MenuManager.dataBackup)
+			MenuManager.dataBackup = JSON.stringify(data);
+
 		data = MenuManager._changeDataByComponents(data);
 		var array = [],
 			counter = new GVector2f(),
@@ -106,6 +108,8 @@ class MenuManager{
 			num = 0,
 			store = {},
 			tmp;
+
+		this._visibleElements = 0;
 		each(data, function(eee, ii){
 			array[ii] = [];
 			each(data[ii], function(e, i){
@@ -136,7 +140,9 @@ class MenuManager{
 				e["key"] = i;
 
 				counter.x > counter.y && counter.y++ || counter.x++;
-
+				if(ii === "mainMenu" && e.visible)
+					this._visibleElements++;
+				
 				e["posX"] = counter.x;
 				e["posY"] = counter.y;
 				this._tmpDrawArray.push({
@@ -153,8 +159,6 @@ class MenuManager{
 			if(ii !== "mainMenu" && data["mainMenu"][ii]["visible"])
 				num++;
 		}, this);
-
-
 		this._canvas.width 	= this._tmpDrawArray[this._tmpDrawArray.length - 1].x * this._size.x + this._size.x;
 		this._canvas.height	= this._tmpDrawArray[this._tmpDrawArray.length - 1].y * this._size.y + this._size.y;
 		this._context 		= this._canvas.getContext('2d');
@@ -168,7 +172,14 @@ class MenuManager{
 		each(store, (e, i) => {
 			this._subMenus[i] = new MenuManager(new GVector2f(e * w, h), new GVector2f(this._size.x, this._size.y), i, this);
 		}, this);
+
+		if(Creator.view)
+			Creator.view.position.x = this.position.x + (this.size.x + MENU_OFFSET) * this.visibleElements - MENU_OFFSET
 		draw();
+	}
+
+	get visibleElements(){
+		return this._visibleElements;
 	}
 
 	isToolActive(){

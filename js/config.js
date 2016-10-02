@@ -243,6 +243,7 @@ const OBJECT_RECT		= "Rect";
 const OBJECT_TABLE		= "Table";
 const OBJECT_INPUT		= "Input";
 const OBJECT_TEXT		= "Text";
+const OBJECT_GRAPH		= "Graph";
 
 const CURSOR_POINTER	= "pointer";
 const CURSOR_DEFAULT	= "default";
@@ -254,3 +255,10 @@ const OPTION_SHOW_SHADOWS		= true;
 const OPTION_CANVAS_BLUR		= false;
 const OPTION_SHOW_LAYERS_VIEWER	= true;
 const OPTION_SHOW_GRID			= true;
+
+const LINE_NONE				= 2210;
+const LINE_ARROW_CLASSIC	= 2211;
+const LINE_ARROW_CLOSED		= 2212;
+const LINE_ARROW_FILLED		= 2213;
+const LINE_DIAMOND_CLASSIC	= 2214;
+const LINE_DIAMOND_FILLED	= 2215;

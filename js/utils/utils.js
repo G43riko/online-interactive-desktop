@@ -130,6 +130,10 @@ function each(obj, func, thisArg = false){
 	}
 }
 
+function eachFiltered(obj, func1, func2, thisArg = false){
+	each(obj, (e, i, arr) => func1(e, i, arr) && func2(e, i, arr), thisArg);
+}
+
 function extendObject(){
 	for(var i=1; i<arguments.length; i++)
 		for(var key in arguments[i])

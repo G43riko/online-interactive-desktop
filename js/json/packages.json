@@ -21,7 +21,7 @@
 			"kreslenie",
 			"zmenu štetca(farba, velkosť, typ)"
 		],
-		"link" : "/app#"
+		"link" : "/app#a"
 	},{
 		"title" : "Test",
 		"components" : [

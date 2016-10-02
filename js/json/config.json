@@ -1,18 +1,23 @@
 {
-	"Project" :{
-		"Name" : 
+	"project" :{
+		"author" : "DefaultUserName"
 	},
-	"Redis" : {
-		"Port" : 6379,
-		"Host" : "127.0.0.1"
+	"server" : {
+		"port" : 3000,
+		"redis" : {
+			"port" : 6379,
+			"host" : "127.0.0.1"
+		},
+		"requestTimeOut" : 3000,
+		"maximumUsers" : 100,
+		"maximumChats" : 10
 	},
-	"RequestTimeOut" : 3000,
-	"MaximumUsers" : 100,
-	"MaximumChats" : 10,
-	"Options" : {
-
-	},
-	"Customize" : {
-
+	"options" : {
+		"TopMenu" : {
+			"show" :true,
+			"showOptions" : true,
+			"showCtrl" : true
+		},
+		"showLayersViewer" : true
 	}
 }

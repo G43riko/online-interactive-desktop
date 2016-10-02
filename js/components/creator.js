@@ -32,6 +32,10 @@ class objectCreator{
 		this._object.updateCreatingPosition(pos);
 	}
 
+	get view(){
+		return this._view;
+	}
+
 	set visibleView(val){this._visibleView = val;}
 	/**
 	 * Nastaví view pre creator

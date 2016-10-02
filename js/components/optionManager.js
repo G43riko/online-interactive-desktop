@@ -42,16 +42,16 @@ class OptionsManager{
 		};
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
-	_processAndSetValueIfExistById(id, val, attr){
+	_processAndSetValueIfExistById(id, val, attr, value){
 		var e = document.getElementById(id);
 		if(e){
-			e.value = this[val];
-			e.onchange = e => this.setOpt(val, e.target[attr], false);
+			e[attr] = value;
+			e.onchange = ee => this.setOpt(val, ee.target[attr], false);
 		}
 	}
 
 	init(){
-		each(this._options, (e, i) => this._processAndSetValueIfExistById(e["id"], i, e["attr"]));
+		each(this._options, (e, i) => this._processAndSetValueIfExistById(e["id"], i, e["attr"], e["val"]));
 	}
 
 	get grid(){return this._options["grid"]["val"];}

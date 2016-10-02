@@ -33,7 +33,7 @@
 			"disabled" : true
 		},
 		"ctrl": {
-			"visible" : true,
+			"visible" : false,
 			"disabled" : true
 		},
 		"lineWidth" : {

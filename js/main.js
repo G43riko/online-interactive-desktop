@@ -43,6 +43,59 @@ function setUpComponents(){
 	}
 }
 
+var config = {
+	"key" : {
+		"a" : 65,
+		"delete" : 46,
+		"enter" : 13,
+		"escape" : 27,
+		"l_alt"   : 18,
+		"l_ctrl"     : 17,
+		"shift" : 16,
+		"y" : 89,
+		"z" : 90
+	},
+	"font" : {
+		"halign" : {
+			"left" : "left",
+			"center" : "center",
+			"right" : "right"
+		},
+		"valign" : {
+			"middle" : "middle",
+			"top" : "top",
+			"alpha" : "aplhabetic",
+			"hang" : "hanging",
+			"ideo" : "ideographics", 
+			"bott" : "bottom"
+		}
+	},
+	"line" : {
+		"cap" : {
+			"butt" : "butt",
+			"round" : "round",
+			"square" : "square"
+		},
+		"join" : {
+			"mitter" : "mitter",
+			"round" : "round",
+			"bevel" : "bevel"
+		},
+		"type" : {
+			"linear" : 2000,
+			"bazier" : 2001,
+			"sequencal" : 2002
+		},
+		"style" : {
+			"normal" : 2100,
+			"stripped" : 2101,
+			"filled" : 2102
+		}
+	}
+}
+
+
+
 var Components = {
 	draw	: () => isDefined(components) && isDefined(components["draw"]) && components["draw"] === true,
 	share	: () => isDefined(components) && isDefined(components["share"]) && components["share"] === true,
@@ -185,7 +238,28 @@ function init(){
 }
 
 var loading = function(){
-
+	var constants = {};
+	var setConstant = (key, val) => {
+		key = key.toUpperCase();
+		constants[key] = val;
+		Object.defineProperty (window, key, { value : val, writable: false });
+	}
+	each(config, (e, i) => {
+		if(typeof e === "object"){
+			each(e, (ee, ii) => {
+				if(typeof ee === "object"){
+					each(ee, (eee, iii) => {
+						setConstant(i + "_" + ii + "_" + iii, eee);
+					})
+				}
+				else
+					setConstant(i + "_" + ii, ee);
+			})
+		}
+		else
+			setConstant(i, e);
+	})
+	console.log("constants: ", constants);
 	/////DOLEZITE!!!
 	Listeners.hashChange();
 
@@ -207,7 +281,6 @@ var loading = function(){
 	Scene.createLayer("rightMenu", "gui");
 	Scene.createLayer("test2");
 
-	Options.init();
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
 	Input.initListeners(canvas);
 
@@ -216,14 +289,16 @@ var loading = function(){
 
 	Layers = new LayersViewer();
 	Scene.addToScene(Layers, "rightMenu");
-	Creator.view = new CreatorViewer(new GVector2f(Menu.position.x + (Menu.size.x + MENU_OFFSET) * 9 - MENU_OFFSET, Menu.position.y - MENU_OFFSET));
+	Creator.view = new CreatorViewer(new GVector2f(Menu.position.x + (Menu.size.x + MENU_OFFSET) * Menu.visibleElements - MENU_OFFSET, Menu.position.y - MENU_OFFSET));
 
+	Options.init();
 	console.log("stranka sa nacítala za: ", (window["performance"].now() - initTime) + " ms");
+	
 	draw();
 };
 
 $(function(){
-		loading();
+	loading();
 });
 
 function realDraw(){

@@ -19,9 +19,7 @@ class ProjectManager{
 	        setCookie("send_data", 1);
 	    }
 	}
-
-	get isMobile(){return this._browserData["mobile"] !== 0;}
-
+	
 	_analyzeBrowser(){
 		/*
 		 *	browser:
@@ -85,6 +83,8 @@ class ProjectManager{
     }
 
 	set autor(val){this._autor = val;};
+
+	get isMobile(){return this._browserData["mobile"] !== 0;}
 
 	get title(){return this._title;}
 	get autor(){return this._autor;}
