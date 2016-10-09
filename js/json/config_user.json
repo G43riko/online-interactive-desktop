@@ -1,0 +1,134 @@
+{
+	"project" :{
+		"author" : "DefaultUserName",
+		"layer_title" : "default"
+	},
+	"fps" : 60,
+	"limits" : {
+		"maximum" : {
+			"objects" : 100,
+			"paths" : 200,
+			"layers" : 10
+		}
+	},
+	"visibilityOptions" : {
+		"showTopMenu" : true,
+		"showLayersViewer" : true,
+		"showTimeLine" : true
+	},
+	"environmentOptions" : {
+		"default" : {
+			"fill_color" : "#ffffff",
+			"font" : {
+				"color" : "#000000",
+				"size" : 22,
+				"offset" : 5,
+				"halight" : "left",
+				"valign" : "top"
+			},
+			"shadow" : {
+				"color" : "#000000",
+				"blur" : 20,
+				"offset" : 5
+			},
+			"border" : {
+				"color" : "#000000",
+				"width" : 2
+			},
+			"line" : {
+				"type" : 2000,
+				"style" : 2100
+			},
+			"brush" : {
+				"size" : 20,
+				"type" : "line",
+				"color" : "#000000"
+			},
+			"fill_color" :  "#000000",
+			"radius" : 5
+		},
+		"layers" : {
+			"border" : {
+				"color": "#000000",
+				"width": 2
+			},
+			"panel" : {
+				"width" : 180,
+				"offset" : 40
+			},
+			"line_height" : 50,
+			"font" : {
+				"size" : 20
+			},
+			"checkbox_size" : 30,
+			"button_size" : 40
+		},
+		"menu" : {
+			"border" : {
+				"color": "#000000",
+				"width": 2
+			},
+			"offset" : 20,
+			"radius" : 10,
+			"font" : {
+				"color" : "#000000"
+			},
+			"width" : 50,
+			"height" : 50,
+			"position" : 20,
+			"fill_color" : "#1abc9c",
+			"disabled_fill_color" : "#abd6bb"
+		},
+		"context_menu" : {
+			"border" : {
+				"color": "#000000",
+				"width": 2
+			},
+			"line_height" : 40,
+			"font" : {
+				"color" : "#000000"
+			},
+			"offset" : 10,
+			"width" : 240,
+			"fill_color" : "#1abc9c",
+			"disabled_fill_color" : "#abd6bb",
+			"selected_fill_color" : "#ff0000"
+		},
+		"table" : {
+			"border" : {
+				"color": "#000000",
+				"width": 2
+			},
+			"header_fill_color" : "#53cfff",
+			"body_fill_color" : "#5bf2ff",
+			"line_height" : 40,
+			"width" : 300,
+			"radius" : 10,
+			"font" : {
+				"offset" : 5
+			}
+		},
+		"timeLine" : {
+			"fill_color" : "<timeLine>	</timeLine>avender",
+			"height" : 60,
+			"slider" : {
+				"height" : 5,
+				"fill_color" : "purple",
+				"offset" : 30
+			},
+			"button" : {
+				"size" : 20,
+				"color" : "HotPink",
+				"border" : {
+					"color" : "IndianRed"
+				}
+			}
+		},
+		"grid" : {
+			"color" : "black",
+			"width" : 0.1,
+			"dist" : 10,
+			"nth_bold" : 5
+		}
+	}
+}

@@ -113,7 +113,7 @@ class CreatorViewer extends Entity{
 					doArc({
 						position: [posX + (offset << 1), posY + (offset << 1)],
 						size: [width - (offset << 2), height - (offset << 2)],
-						fillColor: MENU_BACKGROUND_COLOR,
+						fillColor: MENU_BORDER_COLOR,
 						ctx: this._context
 					});
 				else
@@ -218,6 +218,8 @@ class CreatorViewer extends Entity{
 				return isIn(OBJECT_LINE, allowed);
 			case 1004:
 				return isIn(OBJECT_JOIN, allowed);
+			case 1006:
+				return isIn(OBJECT_RUBBER, allowed);
 		}
 		return false;
 	}

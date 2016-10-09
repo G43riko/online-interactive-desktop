@@ -29,7 +29,17 @@ class MenuManager{
 
 	get position(){return this._position;}
 	get size(){return this._size;}
-	set visible(val){this._visible = val;}
+	get visible(){return this._visible;}
+	set visible(val){
+		this._visible = val;
+		if(Creator.view){
+			if(this._visible)
+				Creator.view.position.x = this.position.x + (this.size.x + MENU_OFFSET) * this.visibleElements - MENU_OFFSET;
+			else
+				Creator.view.position.x = MENU_OFFSET;
+			draw();
+		}
+	}
 
 	hover(x, y){
 		if(!this._visible)
@@ -74,28 +84,33 @@ class MenuManager{
 		if(!Components.tools() && Components.draw()) //ak je kreslenie a nie nastroje musí sa nastaviť kreslenie
 			Creator.operation = OPERATION_DRAW_PATH;
 		
-		data["tools"]["draw"]["visible"] = Components.draw();
+		data["tools"]["draw"]["visible"] = data["tools"]["draw"]["visible"] && Components.draw();
 		//TODO undo a redo zmeniť lebo ho bude treba aj pri tool componente
-		data["mainMenu"]["undo"]["visible"] = Components.draw();
-		data["mainMenu"]["redo"]["visible"] = Components.draw();
+		data["mainMenu"]["undo"]["visible"] = data["mainMenu"]["undo"]["visible"] && Components.draw();
+		data["mainMenu"]["redo"]["visible"] = data["mainMenu"]["redo"]["visible"] && Components.draw();
 
-		data["mainMenu"]["tools"]["visible"] = Components.tools();
-		data["mainMenu"]["content"]["visible"] = Components.content();
-		data["mainMenu"]["sharing"]["visible"] = Components.share();
-		data["tools"]["image"]["visible"] = Components.load();
+		data["mainMenu"]["tools"]["visible"] = data["mainMenu"]["tools"]["visible"] && Components.tools();
+		data["mainMenu"]["content"]["visible"] = data["mainMenu"]["content"]["visible"] && Components.content();
+		data["mainMenu"]["sharing"]["visible"] = data["mainMenu"]["sharing"]["visible"] && Components.share();
+		data["tools"]["image"]["visible"] = data["tools"]["image"]["visible"] && Components.load();
 
 		if(!Components.load() && !Components.save() && !Components.screen() && !Components.task())
-			data["mainMenu"]["file"]["visible"] = false;
+			data["mainMenu"]["file"]["visible"] = data["mainMenu"]["file"]["visible"] && false;
 		else{
-			data["file"]["loadXML"]["visible"] = Components.load();
-			data["file"]["saveXML"]["visible"] = Components.save();
-			data["file"]["saveImg"]["visible"] = Components.screen();
-			data["file"]["saveTask"]["visible"] = Components.task();
+			data["file"]["loadXML"]["visible"] = data["file"]["loadXML"]["visible"] && Components.load();
+			data["file"]["saveXML"]["visible"] = data["file"]["saveXML"]["visible"] && Components.save();
+			data["file"]["saveImg"]["visible"] = data["file"]["saveImg"]["visible"] && Components.screen();
+			data["file"]["saveTask"]["visible"] = data["file"]["saveTask"]["visible"] && Components.task();
 		}
 
 
 		return data;
 	}
+	/*
+	setVisibility(menu, subMenu, value){
+		data[menu][subMenu]["visible"] = value;
+	}
+	*/
 	init(data){
 		if(!MenuManager.dataBackup)
 			MenuManager.dataBackup = JSON.stringify(data);
@@ -173,8 +188,12 @@ class MenuManager{
 			this._subMenus[i] = new MenuManager(new GVector2f(e * w, h), new GVector2f(this._size.x, this._size.y), i, this);
 		}, this);
 
-		if(Creator.view)
-			Creator.view.position.x = this.position.x + (this.size.x + MENU_OFFSET) * this.visibleElements - MENU_OFFSET
+		if(Creator.view){
+			if(this._visible)
+				Creator.view.position.x = this.position.x + (this.size.x + MENU_OFFSET) * this.visibleElements - MENU_OFFSET;
+			else
+				Creator.view.position.x = MENU_OFFSET;
+		}
 		draw();
 	}
 
@@ -232,7 +251,7 @@ class MenuManager{
 		var check = (e, i, arr) => {
 			if(e.key === button)
 					arr[i].disabled = typeof value === KEYWORD_UNDEFINED ? !e.disabled : value;
-		}
+		};
 		if(this._key == menu)
 			each(this._items, check);
 		else if(isDefined(this._subMenus[menu]))
@@ -264,6 +283,9 @@ class MenuManager{
 				break;
 			case "draw":
 				Creator.operation = OPERATION_DRAW_PATH;
+				break;
+			case "area":
+				Creator.toggleArea();
 				break;
 			case "rect":
 				Creator.operation = OPERATION_DRAW_RECT;
@@ -311,6 +333,9 @@ class MenuManager{
 				break;
 			case "loadXML":
 				loadSceneFromFile();
+				break;
+			case "rubber":
+				Creator.toggleRubber();
 				break;
 			case "arc":
 				Creator.operation = OPERATION_DRAW_ARC;
@@ -404,13 +429,18 @@ class MenuManager{
 			var bgColor = e["disabled"] ? this._disabledBackgroundColor : this._backgroundColor;
 			if(e["key"] == "color" )
 				bgColor = Creator.color;
+
+			var shadow = e["key"] === "rubber" && Creator.operation === OPERATION_RUBBER || 
+						 e["key"] === "area" && Creator.operation === OPERATION_AREA || 
+						 e["key"] === this._visibleSubMenu;
 			doRect({
 				position: [posX, posY],
 				size: this._size,
 				radius: MENU_RADIUS,
 				fillColor: bgColor,
 				borderWidth: MENU_BORDER_WIDTH,
-				borderColor: MENU_BORDER_COLOR
+				borderColor: MENU_BORDER_COLOR,
+				shadow: shadow
 			});
 
 			context.drawImage(this._canvas, e["posX"] * this._size.x, e["posY"] * this._size.y, this._size.x, this._size.y, posX, posY, this._size.x, this._size.y);
@@ -494,6 +524,12 @@ class MenuManager{
 				break;
 			case "shareOptions":
 				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "rubber":
+				fillText("RUBB", x + (width >> 1), y + (height >> 1), height / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
+				break;
+			case "area":
+				fillText("AREA", x + (width >> 1), y + (height >> 1), height / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "stopShare":
 				fillText("STOP", x + (width >> 1), y + (height >> 1), height  / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);

@@ -10,6 +10,8 @@
 /*R*/const DELETE_KEY	= 46;
 /*R*/const A_KEY		= 65;
 
+const FPS = 60;
+
 const FONT_HALIGN_LEFT		= "left";
 const FONT_HALIGN_CENTER	= "center";
 const FONT_HALIGN_RIGHT		= "right";
@@ -46,6 +48,8 @@ const OPERATION_DRAW_PATH	= 1002;
 const OPERATION_DRAW_LINE	= 1003;
 const OPERATION_DRAW_JOIN	= 1004;
 const OPERATION_DRAW_IMAGE	= 1005;
+const OPERATION_RUBBER		= 1006;
+const OPERATION_AREA		= 1007;
 
 const JOIN_LINEAR		= 2000;
 const JOIN_BAZIER		= 2001;
@@ -93,7 +97,7 @@ const DEFAULT_BORDER_WIDTH		= 2;
 const DEFAULT_LINE_TYPE			= JOIN_LINEAR;
 const DEFAULT_LINE_STYLE		= LINE_STYLE_NORMAL;
 const DEFAULT_BRUSH_SIZE		= 20;
-const DEFAULT_BRUSH_TYPE		= "brush1.png";
+const DEFAULT_BRUSH_TYPE		= "line";
 const DEFAULT_BRUSH_COLOR		= "#000000";
 const DEFAULT_LAYER_TITLE		= "default";
 
@@ -244,6 +248,8 @@ const OBJECT_TABLE		= "Table";
 const OBJECT_INPUT		= "Input";
 const OBJECT_TEXT		= "Text";
 const OBJECT_GRAPH		= "Graph";
+const OBJECT_RUBBER		= "Rubber";
+const OBJECT_AREA		= "Area";
 
 const CURSOR_POINTER	= "pointer";
 const CURSOR_DEFAULT	= "default";

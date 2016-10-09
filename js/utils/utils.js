@@ -381,6 +381,38 @@ class EventTimer{
 	}
 }
 
+
+function setConstants(data){
+	var constants = {};
+	var setConstant = (key, val) => {
+		key = key.toUpperCase();
+		constants[key] = val;
+		Object.defineProperty (window, key, { value : val, writable: false });
+	};
+	each(data, (e, i) => {
+		if(typeof e === "object"){
+			each(e, (ee, ii) => {
+				if(typeof ee === "object"){
+					each(ee, (eee, iii) => {
+						if(typeof eee === "object"){
+							each(eee, (eeee, iiii) => {
+								setConstant(i + "_" + ii + "_" + iii + "_" + iiii, eeee);
+							})
+						}
+						else
+							setConstant(i + "_" + ii + "_" + iii, eee);
+					})
+				}
+				else
+					setConstant(i + "_" + ii, ee);
+			})
+		}
+		else
+			setConstant(i, e);
+	});
+	return constants;
+}
+
 /**************************************************************************************
 POLYFILLS
 **************************************************************************************/

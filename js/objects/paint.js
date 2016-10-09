@@ -3,15 +3,14 @@ class Paint extends Entity{
 		super(OBJECT_PAINT, new GVector2f(), new GVector2f());
 		this._points 		= [Paint.defArray()];
 		this._count 		= 0;
-
 		this._canvas		= new CanvasManager();
 		this.onScreenResize();
-		this._action		= PAINT_ACTION_BRUSH;
 		this._editBackup	= [];
 	}
 
 	onScreenResize(){
 		this._canvas.setCanvasSize(canvas.width, canvas.height);
+		this.redraw(this._points);
 	}
 	static defArray(){
 		return {
@@ -19,7 +18,10 @@ class Paint extends Entity{
 			action: null,
 			size: null,
 			type: null,
-			points: []
+			points: [],
+			min: null,
+			max: null,
+			forRemove: false
 		}
 	}
 
@@ -58,17 +60,9 @@ class Paint extends Entity{
 				return;
 			res.push(e);
 
-
-			if(Creator.brushColor !== e["color"])
-				Creator.setOpt("brushColor", e["color"]);
-			if(Creator.brushSize !== e["size"])
-				Creator.setOpt("brushSize", e["size"]);
-			if(Creator.brushType !== e["type"])
-				Creator.setOpt("brushType", e["type"]);
-
 			e["points"].forEach(function(ee, ii, arr){
 				if(ii)
-					this._drawLine(ee, arr[ii - 1], this._actColor)
+					Paints.drawLine(this._canvas.context, ee, arr[ii - 1], e["size"], e["color"], e["action"], e["type"]);
 			}, this);
 		}, this);
 		this._points = res;
@@ -122,10 +116,16 @@ class Paint extends Entity{
 			lastArr["action"] = Paints.action;
 			lastArr["type"] = Creator.brushType;
 			lastArr["size"] = Creator.brushSize;
+			lastArr["min"] = point.getClone();
+			lastArr["max"] = point.getClone();
 		}
 
 		if(arr.length)
-			this._drawLine(arr[arr.length - 1], point);
+			Paints.drawLine(this._canvas.context, arr[arr.length - 1], point, Creator.brushSize, Creator.brushColor, Paints.action, Creator.brushType);
+		lastArr["min"].x = Math.min(lastArr["min"].x, point.x);
+		lastArr["min"].y = Math.min(lastArr["min"].y, point.y);
+		lastArr["max"].x = Math.max(lastArr["max"].x, point.x);
+		lastArr["max"].y = Math.max(lastArr["max"].y, point.y);
 		arr.push(point);
 	}
 
@@ -142,28 +142,6 @@ class Paint extends Entity{
 
 	toObject(){
 		return this._points;
-	}
-
-	_drawLine(pointA, pointB){
-		if(this._action == PAINT_ACTION_LINE){
-			this._canvas.context.lineCap 		= LINE_CAP_ROUND;
-			this._canvas.context.lineWidth 		= this.borderWidth;
-			this._canvas.context.strokeStyle	= Creator.brushColor;
-			this._canvas.context.beginPath();
-			this._canvas.context.moveTo(pointA.x, pointA.y);
-			this._canvas.context.lineTo(pointB.x, pointB.y);
-			this._canvas.context.stroke();
-		}
-		else if(this._action == PAINT_ACTION_BRUSH){
-			var dist 	= pointA.dist(pointB),
-				angle 	= Math.atan2(pointA.x - pointB.x, pointA.y - pointB.y);
-			for (var i = 0; i < dist; i++)
-				this._canvas.context.drawImage(Paints.selectedBrush,
-					pointB.x + (Math.sin(angle) * i) - (Creator.brushSize >> 1),
-					pointB.y + (Math.cos(angle) * i) - (Creator.brushSize >> 1),
-					Creator.brushSize,
-					Creator.brushSize);
-		}
 	}
 
 	cleanUp(){
@@ -183,9 +161,95 @@ class Paint extends Entity{
 			this._points.push(Paint.defArray());
 	}
 
+	findPathsForRemove(pos){
+		//TODO dorobiť na porovnávanie čiarok pretože toto porovnáva len body a pri rýchlich pohyboch to nemusí trafiť
+		var pointsToRemove = [];
+		each(this._points, (e, i) => {
+			if(!e["forRemove"] && e["min"] && e["max"]){
+				var offset = (Creator.brushSize >> 1) + (e["size"] >> 1);
+				if(pos.x + offset > e["min"].x - e["size"] && pos.y + offset > e["min"].y &&
+				   pos.x - offset < e["max"].x + e["size"] && pos.y - offset < e["max"].y ){
+					each(e["points"], ee => {
+						if(!e["forRemove"] && ee.dist(pos) < Creator.brushSize){//TODO tu má byť asi offset
+							e["forRemove"] = true;
+							pointsToRemove.push({
+								line: e, 
+								points: [],
+								lineIndex: i
+							});
+						}
+					});
+				}
+			}
+		});
+		return false;
+		if(pointsToRemove.length){//ak existuje čiara ktorá sa má vymazať
+			console.log(pointsToRemove);
+			each(pointsToRemove, (e) => {
+				var line1Points = [];
+				var line2Points = [];
+				each(e.line.points, (ee) => {
+					if(ee.dist(pos) < Creator.brushSize)
+						e.points.push(ee);
+					else{
+						if(e.points) // druha čast
+							line1Points.push(ee);
+						else // prvá časť
+							line2Points.push(ee);
+					}
+				})
+				//vymaže povodnu čiaru
+				console.log(e.line.points, e.points, line1Points, line2Points)
+				this._points.splice(e.lineIndex, 1);
+				//vytvorí prvú čast
+				var line1 = {};
+				line1["action"] = e.line["action"];
+				line1["color"] = e.line["color"];
+				line1["forRemove"] = false;
+				//line1["max"]; //TODO dopočítať
+				//line1["min"]; //TODO dopočítať
+				line1["points"] = line1Points;
+				line1["size"] = e.line["size"];
+				line1["type"] = e.line["type"];
+				this._points.push(line1);
+				console.log(line1, this._points);
+				this.redraw(this._points);
+			})
+		}
+		
+	}
+
+	removeSelectedPaths(){
+		var i = this._points.length;
+		while (i--)
+			if(this._points[i]["forRemove"])
+				this._points.splice(i, 1);
+		/*
+		each(this._points, (e, i, arr) => {
+			if(e["forRemove"]){
+				arr.splice(i, 1);
+			}
+		});
+		*/
+		this.redraw(this._points);
+	}
+
 	draw(ctx = context) {
 		if (!this.visible)
 			return;
 		ctx.drawImage(this._canvas.canvas, 0, 0);
+		/*
+		each(this._points, e => {
+			if(!isNull(e["min"]) && e["points"].length > 4)
+				doRect({
+					x: e["min"].x,
+					y: e["min"].y,
+					width: e["max"].x - e["min"].x,
+					height: e["max"].y - e["min"].y,
+					borderColor: "black",
+					ctx: ctx
+				})
+		})
+		*/
 	};
 }

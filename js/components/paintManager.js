@@ -7,7 +7,7 @@ class PaintManager{
 		this._selectedImage		= null;
 		this._selectedImageName	= null;
 		this._selectedBrush		= null;
-		this._action			= PAINT_ACTION_BRUSH;
+		this._action			= PAINT_ACTION_LINE;
 		this._paintHistory		= [];
 		this._undoHistory		= [];
 
@@ -29,6 +29,13 @@ class PaintManager{
 		Scene.getLayer(activeLayerName).paint.addPoint(position);
 	}
 
+	findPathsForRemove(position, activeLayerName = Layers.activeLayerName){
+		Scene.getLayer(activeLayerName).paint.findPathsForRemove(position);
+	}
+
+	removeSelectedPaths(activeLayerName = Layers.activeLayerName){
+		Scene.getLayer(activeLayerName).paint.removeSelectedPaths();
+	}
 
 	/**
 	 * Vyčistí vrstvu danú ako parameter alebo vyčistí aktualnu vrstvu
@@ -92,6 +99,7 @@ class PaintManager{
 
 		if(isNull(this._selectedImage))
 			this.selectedImage = title;
+
 		Logger.log("pridal sa nový štetec: " + title, LOGGER_PAINT_ACTION);
 	}
 
@@ -102,7 +110,6 @@ class PaintManager{
 	 * @param col - farba štetca
 	 */
 	rePaintImage(size, col){
-		console.log("prekresluje");
 		var c = document.createElement('canvas'),
 			ctx, imgData, data, color, i;
 		c.width = size;
@@ -123,6 +130,33 @@ class PaintManager{
 		this._selectedBrush = c;
 
 		Events.paintBrushChange(size, col, this._selectedImageName);
+	}
+
+	drawLine(ctx, pointA, pointB, brushSize, brushColor, action, brushType){
+		if(action == PAINT_ACTION_LINE){
+			ctx.lineCap 		= LINE_CAP_ROUND;
+			ctx.lineWidth 		= brushSize;
+			ctx.strokeStyle	= brushColor;
+			ctx.beginPath();
+			ctx.moveTo(pointA.x, pointA.y);
+			ctx.lineTo(pointB.x, pointB.y);
+			ctx.stroke();
+		}
+		else if(action == PAINT_ACTION_BRUSH){
+			var dist 	= pointA.dist(pointB),
+				angle 	= Math.atan2(pointA.x - pointB.x, pointA.y - pointB.y);
+
+			Creator.setOpt("brushColor", brushColor);
+			Creator.setOpt("brushSize", brushSize);
+			Creator.setOpt("brushType", brushType);
+
+			for (var i = 0; i < dist; i++)
+				ctx.drawImage(Paints.selectedBrush,
+					pointB.x + (Math.sin(angle) * i) - (brushSize >> 1),
+					pointB.y + (Math.cos(angle) * i) - (brushSize >> 1),
+					brushSize,
+					brushSize);
+		}
 	}
 
 	undo(){
@@ -164,6 +198,7 @@ class PaintManager{
 
 	get action(){return this._action;}
 
+
 	getBrush(title){
 		return this._brushes[title];
 	}
@@ -179,4 +214,6 @@ class PaintManager{
 		this._selectedImageName = title;
 		Menu._redraw();
 	}
+
+	set action(val){this._action = val;}
 }

@@ -12,8 +12,8 @@ var express 		= require('express'),
 	io 				= require('socket.io')(http),
 	elasticsearch	= require('elasticsearch'),
 	redis 			= require('redis'),
-	config 			= require('./js/json/config.json'),
-	client 			= redis.createClient(config.server.redis.port, config.server.redis.host);
+	config 			= require('./js/json/config_server.json'),
+	client 			= redis.createClient(config.redis.port, config.redis.host),
 	serverLogs		= require('./js/utils/serverLogs'),
 	connection 		= require('./js/utils/connectionManager');
 
@@ -59,21 +59,23 @@ app.post('/checkWatchData', function(req, res){
 	})
 });
 
-app.post("/anonymousData", function (request, res) {
+app.post("/anonymousData", function (request) {
 	processPostData(request, function(data, req){
-		var data = JSON.parse(data.replace("content=", ""));
+		data = JSON.parse(data.replace("content=", ""));
 		data["ipAddress"] = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 		data["connectedAt"] = data["connectedAt"].replace("+", " ");
+		client.sadd(["connections", JSON.stringify(data)]);
 		serverLogs.addAnonymData(data);
 	});
 });
 
 app.get('/anonymousData', function(req, res){
+
+	/*
 	var client = new elasticsearch.Client({
 		//log: 'trace',
 		host: ELASTIC_HOST
 	});
-
 	client.ping({
 		requestTimeout: confir.server.requestTimeOut,
 		hello: "elasticsearch"
@@ -83,6 +85,7 @@ app.get('/anonymousData', function(req, res){
 		else
 			console.log('All is well');
 	});
+	*/
 	res.send('<h1>Táto stranka slúži len ako príjemca dát</h1>');
 });
 
@@ -104,8 +107,8 @@ io.on('connection', function(socket){
 	socket.on("action", action);
 });
 
-http.listen(config.server.port, function(){
-	console.log('listening on *:' + config.server.port);
+http.listen(config.port, function(){
+	console.log('listening on *:' + config.port);
 });
 
 var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect, action, mouseData, paintAction, chatMessage, dataReqiere, sendBuffer, createWatcher;
@@ -261,11 +264,11 @@ function writeToAllExcept(id, socket, type, msg){
 }
 
 function getChatId(){
-	return Math.floor(Math.random() * config.server.maximumChats);
+	return Math.floor(Math.random() * config.maximumChats);
 }
 
 function getUserId(){
-	return Math.floor(Math.random() * config.server.maximumUsers);
+	return Math.floor(Math.random() * config.maximumUsers);
 }
 
 function processPostData(req, func){

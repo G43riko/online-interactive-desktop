@@ -21,7 +21,7 @@
 		"type" : "number"
 	},
 	"brushSize" : {
-		"allowedFor" : ["Paint"],
+		"allowedFor" : ["Paint", "Rubber"],
 		"label" : "Brush size",
 		"action" : "selectNumber" ,
 		"values": [10, 20, 30, 40, 50, 58],

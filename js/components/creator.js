@@ -19,6 +19,7 @@ class objectCreator{
 		this._radius		= DEFAULT_RADIUS;
 		this._items 		= null;
 		this._view			= null;
+		this._lastOperation = this._operation;
 		this._visibleView	= true;
 		this._allowedItems 	= ["_fillColor", "_borderColor", "_borderWidth", "_operation", "_lineWidth", "_fontSize",
 							   "_fontColor", "_lineType", "_lineStyle", "_brushSize", "_brushType", "_brushColor",
@@ -107,6 +108,29 @@ class objectCreator{
 		}
 	}
 
+	toggleArea(){
+		if(this._operation !== OPERATION_AREA){
+			if(this._operation !== OPERATION_RUBBER)
+				this._lastOperation = this._operation;
+			this.operation = OPERATION_AREA;
+		}
+		else
+			this.operation = this._lastOperation;
+	}
+
+	/**
+	 * Prepne medzy vymazávaním a pôvodným nástrojom
+	 */
+	toggleRubber(){
+		if(this._operation !== OPERATION_RUBBER){
+			if(this._operation !== OPERATION_AREA)
+				this._lastOperation = this._operation;
+			this.operation = OPERATION_RUBBER;
+		}
+		else
+			this.operation = this._lastOperation;
+	};
+
 
 	/**
 	 * Načíta všetky dáta potrebné pre creator s jedného objektu
@@ -140,8 +164,23 @@ class objectCreator{
 
 		if(this._view !== null && this._items !== null && this._visibleView)
 			this._view.draw();
-	}
 
+	}
+	drawRubber(pointA, pointB){
+		if(this._operation === OPERATION_RUBBER && Input.isButtonDown(LEFT_BUTTON)) {
+			Paints.drawLine(context, pointA, pointB, this._brushSize, "grey", PAINT_ACTION_LINE);
+			Paints.findPathsForRemove(pointA);
+		}
+			/*
+			doArc({
+				position:Input.mousePos,
+				center: true,
+				width: 20,
+				height: 20,
+				fillColor: "grey"
+			});
+			*/
+	}
 
 	/**
 	 * Vytvorý objekt bud s objektu alebo s JSON stringu a vloží ho do scény
@@ -166,16 +205,17 @@ class objectCreator{
 	 * @param val
 	 */
 	setOpt(key, val){
-		
 		if(isObject(key)){
-			each(key, (e, i) => this.setOpt(i, e))
+			each(key, (e, i) => this.setOpt(i, e));
 			return;
 		}
-
 		if(key[0] != "_")
 			key = "_" + key;
 
 		//console.log("key: ", key, " vaĺ: ", val, "normal: ", this[key]);
+
+		if(this[key] == val)
+			return false;
 
 		var redrawPaint = isIn(key, "_brushColor", "_brushSize", "_brushType") && this[key] != val;
 
@@ -183,8 +223,12 @@ class objectCreator{
 
 
 		if(key === "_brushType"){
-			if(val !== "line")
+			if(val !== "line"){
 				Paints.selectedImage = val;
+				Paints.action = PAINT_ACTION_BRUSH;
+			}
+			else
+				Paints.action = PAINT_ACTION_LINE;
 		}
 
 		Events.creatorChange(key, val);

@@ -170,6 +170,10 @@ class LayersViewer extends Entity{
 		this._doOnLayerByY(num, e => e.layer.paint.animate());
 	}
 
+	clearPaint(num){
+		this._doOnLayerByY(num, e => e.layer.paint.cleanUp());
+	}
+
 	clearLayer(num){
 		this._doOnLayerByY(num, e => e.layer.cleanUp());
 	}

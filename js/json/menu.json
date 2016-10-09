@@ -25,12 +25,20 @@
 			"disabled" : true
 		},
 		"undo": {
-			"visible" : true,
+			"visible" : false,
 			"disabled" : true
 		},
 		"redo" : {
-			"visible" : true,
+			"visible" : false,
 			"disabled" : true
+		},
+		"rubber" : {
+			"visible" : true,
+			"disabled" : false
+		},
+		"area" : {
+			"visible" : true,
+			"disabled" : false
 		},
 		"ctrl": {
 			"visible" : false,

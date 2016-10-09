@@ -284,6 +284,12 @@
 		"visible" : true,
 		"disabled" : false
 	},
+	"clearPaint" : {
+		"label" : "Clear paint",
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
+	},
 	"renameLayer" : {
 		"label" : "Rename layer",
 		"type" : "text",

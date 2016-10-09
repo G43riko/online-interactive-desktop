@@ -13,11 +13,24 @@ class ProjectManager{
 		//ALLOWED_COMPONENTS
 		
 		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
-		this._browserData = this._analyzeBrowser();
+		this._browserData = this._analyzeWindow(this._analyzeBrowser());
+		this._sendAnonymousData(this._browserData);
 		if(getCookie("send_data") === ""){
-	        this._sendAnonymousData(this._browserData);
 	        setCookie("send_data", 1);
 	    }
+	}
+
+	_analyzeWindow(data){
+		data["userAgent"] = navigator.userAgent;
+		data["language"] = navigator.language;
+		data["platform"] = navigator.platform;
+		data["vendor"] = navigator.vendor;
+		data["innerHeight"] = window.innerHeight;
+		data["innerWidth"] = window.innerWidth;
+		data["availHeight"] = screen.availHeight;
+		data["availWidth"] = screen.availWidth;
+		data["connectedAt"] = getFormattedDate();
+		return data;
 	}
 	
 	_analyzeBrowser(){
@@ -53,15 +66,6 @@ class ProjectManager{
 
 	_sendAnonymousData(data = {}){
 		var sendData = c =>	$.post(ProjectManager.url, {content: JSON.stringify(c)});
-		data["userAgent"] = navigator.userAgent;
-		data["language"] = navigator.language;
-		data["platform"] = navigator.platform;
-		data["vendor"] = navigator.vendor;
-		data["innerHeight"] = window.innerHeight;
-		data["innerWidth"] = window.innerWidth;
-		data["availHeight"] = screen.availHeight;
-		data["availWidth"] = screen.availWidth;
-		data["connectedAt"] = getFormattedDate();
 
         if (navigator.geolocation)
             navigator.geolocation.watchPosition(position => {

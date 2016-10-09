@@ -70,7 +70,7 @@ class TimeLine{
 		if(pos.x < this._position.x + this._sliderOffset)
 			pos.x = this._position.x + this._sliderOffset;
 		if(pos.x > this._position.x + this._size.x - this._sliderOffset)
-			pos.x = this._position.x + this._size.x - this._sliderOffset
+			pos.x = this._position.x + this._size.x - this._sliderOffset;
 
 		this._sliderPosition = pos.x - this._sliderOffset;
 		this._val = ((this._sliderPosition - this._position.x) / (this._size.x - (this._sliderOffset << 1))) * this._maxVal;

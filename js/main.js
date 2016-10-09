@@ -13,7 +13,6 @@ var initTime 		= window["performance"].now(),
 	Listeners		= new ListenersManager(),
 	//EventHistory 	= new EventSaver(),
 	Content			= new ContentManager(),
-	FPS				= 60,
 	Files			= new FileManager(),
 	Project			= new ProjectManager("Gabriel Csollei"),
 	Paints			= new PaintManager(),
@@ -22,7 +21,8 @@ var initTime 		= window["performance"].now(),
 	SelectedText	= null,
 	Gui 			= new GuiManager(),
 	Options 		= new OptionsManager(),
-	drawEvent 		= new EventTimer(realDraw, 1000 / 60),
+	drawEvent 		= new EventTimer(realDraw, 1000 / FPS),
+	area 			= null,
 	Panel			= null,
 	draw 			= () => drawEvent.callIfCan(),
 	components, drawMousePos, Layers, canvas, context, chatViewer, timeLine;
@@ -42,59 +42,6 @@ function setUpComponents(){
 		task : window.location.hash.indexOf(COMPONENT_TASK) >= 0 || typeof Watcher !== "undefined"
 	}
 }
-
-var config = {
-	"key" : {
-		"a" : 65,
-		"delete" : 46,
-		"enter" : 13,
-		"escape" : 27,
-		"l_alt"   : 18,
-		"l_ctrl"     : 17,
-		"shift" : 16,
-		"y" : 89,
-		"z" : 90
-	},
-	"font" : {
-		"halign" : {
-			"left" : "left",
-			"center" : "center",
-			"right" : "right"
-		},
-		"valign" : {
-			"middle" : "middle",
-			"top" : "top",
-			"alpha" : "aplhabetic",
-			"hang" : "hanging",
-			"ideo" : "ideographics", 
-			"bott" : "bottom"
-		}
-	},
-	"line" : {
-		"cap" : {
-			"butt" : "butt",
-			"round" : "round",
-			"square" : "square"
-		},
-		"join" : {
-			"mitter" : "mitter",
-			"round" : "round",
-			"bevel" : "bevel"
-		},
-		"type" : {
-			"linear" : 2000,
-			"bazier" : 2001,
-			"sequencal" : 2002
-		},
-		"style" : {
-			"normal" : 2100,
-			"stripped" : 2101,
-			"filled" : 2102
-		}
-	}
-}
-
-
 
 var Components = {
 	draw	: () => isDefined(components) && isDefined(components["draw"]) && components["draw"] === true,
@@ -237,40 +184,33 @@ function init(){
 	draw();
 }
 
-var loading = function(){
-	var constants = {};
-	var setConstant = (key, val) => {
-		key = key.toUpperCase();
-		constants[key] = val;
-		Object.defineProperty (window, key, { value : val, writable: false });
+function setVisibilityData(data){
+	Menu.visible = data.showTopMenu;
+}
+
+
+$.ajax({
+	dataType: "json",
+	url: "/js/json/config_user.json",
+	//async: false,
+	success : function(data){
+		console.log("constants: ", setConstants(data.environmentOptions));
+		setVisibilityData(data.visibilityOptions);
 	}
-	each(config, (e, i) => {
-		if(typeof e === "object"){
-			each(e, (ee, ii) => {
-				if(typeof ee === "object"){
-					each(ee, (eee, iii) => {
-						setConstant(i + "_" + ii + "_" + iii, eee);
-					})
-				}
-				else
-					setConstant(i + "_" + ii, ee);
-			})
-		}
-		else
-			setConstant(i, e);
-	})
-	console.log("constants: ", constants);
+});
+
+var loading = function(){
 	/////DOLEZITE!!!
 	Listeners.hashChange();
-
+	area = new Area();
 	canvas = document.getElementById("myCanvas");
 	initCanvasSize();
 	context = canvas.getContext("2d");
 
 	$.getJSON(FOLDER_JSON + "/menu.json",function(data){
 		Menu.init(data);
-		$.getJSON(FOLDER_JSON + "/creator.json", data => {
-			Creator.init(data);
+		$.getJSON(FOLDER_JSON + "/creator.json", data2 => {
+			Creator.init(data2);
 			Paints.rePaintImage(Creator.brushSize, Creator.brushColor);
 			draw();
 		});
@@ -289,7 +229,8 @@ var loading = function(){
 
 	Layers = new LayersViewer();
 	Scene.addToScene(Layers, "rightMenu");
-	Creator.view = new CreatorViewer(new GVector2f(Menu.position.x + (Menu.size.x + MENU_OFFSET) * Menu.visibleElements - MENU_OFFSET, Menu.position.y - MENU_OFFSET));
+	var xOffset = Menu.position.x + (Menu.size.x + MENU_OFFSET) * Menu.visibleElements - MENU_OFFSET;
+	Creator.view = new CreatorViewer(new GVector2f(Menu.visible ? xOffset : MENU_OFFSET, Menu.position.y - MENU_OFFSET));
 
 	Options.init();
 	console.log("stranka sa nacítala za: ", (window["performance"].now() - initTime) + " ms");
@@ -312,6 +253,9 @@ function realDraw(){
 
 	if(Options.grid)
 		drawGrid();
+
+	if(Creator.operation == OPERATION_AREA && area)
+		area.draw();
 
 	Scene.draw();
 	Creator.draw();

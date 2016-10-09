@@ -231,7 +231,7 @@ class Entity{
 			draw();
 			if(++counter == fps){
 				clearInterval(int);
-				obj.position = targetPos;
+				obj.position.set(targetPos);
 			}
 		}, 1000 / fps);
 	}
@@ -388,5 +388,14 @@ class Entity{
 	//set borderWidth(val){this._borderWidth = val;}
 	//set borderColor(val){this._borderColor = val;}
 	set selectedConnector(val){this._selectedConnector = val;}
+}
+
+function testAnimation(){
+	var obj = [];
+	for(var i=0 ; i<100 ; i++){
+		obj.push(new Rect(new GVector2f(Math.random() * canvas.width, Math.random() * canvas.height), new GVector2f(50, 50) , "blue"));
+		Scene.addToScene(obj[obj.length - 1]);
+		Entity.animateMove(obj[obj.length - 1], new GVector2f(300, 300));
+	}
 
 }

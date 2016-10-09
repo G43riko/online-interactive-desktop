@@ -11,12 +11,15 @@ class ListenersManager{
 			return;
 		}
 
+		if(!actContextMenu && Creator.operation == OPERATION_AREA && area)
+			area.startCreate(position);
+
 		if(SelectedText){
-			var area = document.getElementById("selectedEditor");
-			if(area){
-				console.log("res: " + parseInt(window.getComputedStyle(area).fontSize, 10));
-				SelectedText.text = area.innerText;
-				document.body.removeChild(area);
+			var textArea = document.getElementById("selectedEditor");
+			if(textArea){
+				console.log("res: " + parseInt(window.getComputedStyle(textArea).fontSize, 10));
+				SelectedText.text = textArea.innerText;
+				document.body.removeChild(textArea);
 			}
 		}
 
@@ -28,7 +31,8 @@ class ListenersManager{
 			return;
 		*/
 
-		if(button == LEFT_BUTTON)
+
+		if(button == LEFT_BUTTON && !actContextMenu)
 			Scene.forEach((o) => {
 				if(o.visible && o.clickIn(position.x, position.y, button)){
 					o.moving = true;
@@ -123,6 +127,13 @@ class ListenersManager{
 
 		var result = false;
 
+		if(Creator.operation === OPERATION_RUBBER)
+			Paints.removeSelectedPaths();
+
+		if(Creator.operation == OPERATION_AREA && area && area.isCreating){
+			area.endCreate(position);
+		}
+
 		/*
 		 * SKONTROLUJE KONTEXTOVE MENU A AK SA KLILKLO NA NEHO TAK HO VYPNE A SKONCI
 		 */
@@ -193,7 +204,16 @@ class ListenersManager{
 			if(actContextMenu)
 				actContextMenu.hover(position.x, position.y);
 			*/
+			if(area)
+				area.hover(position.x, position.y);
 		}
+
+		if(Creator.operation == OPERATION_AREA && area && area.isCreating){
+			area.addPoint(position);
+		}
+
+
+		Creator.drawRubber(position, {x: position.x - movX, y: position.y - movY});
 
 		if(this._movedObject && isFunction(this._movedObject.onMouseMove)){
 			this._movedObject.onMouseMove(position, movX, movY);
