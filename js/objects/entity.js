@@ -24,10 +24,10 @@ class Entity{
 			this._connectors 	= [new GVector2f(0.5, 0), new GVector2f(0.5, 1), new GVector2f(0, 0.5), new GVector2f(1, 0.5)];
 
 		if(isUndefined(this._id))	//presunute pod priradenie atributov lebo chcem priradiť ID iba ak nieje ešte
-			this._id			= Entity.getId();
+			this._id			= Project.generateId();//Entity.getId();
 
 		if(isUndefined(this._borderWidth))
-			this._borderWidth 	= Creator.borderWidth;
+			this._borderWidth	= Creator.borderWidth;
 
 		if(isUndefined(this._radius))
 			this._radius 		= Creator.radius;
@@ -39,21 +39,15 @@ class Entity{
 			this._borderColor 	= Creator.borderColor;
 	}
 
-
 	/**
 	 * Vygeneruje jedinečný identifikátor
 	 *
 	 * @returns {Number}
 	 */
 	static getId(){
-		if(isUndefined(Entity._ides))
-			Entity._ides = [];
-
-		var id = parseInt(Math.random() * 1000000);
-		while(isDefined(Entity._ides[id]))
-			id = parseInt(Math.random() * 1000000);
-		Entity._ides[id] = 1;
-		return id;
+		if(isUndefined(Entity._actId))
+			Entity._actId = 0;
+		return Entity._actId++;
 	}
 
 
@@ -313,7 +307,7 @@ class Entity{
 				else if(i == "points")
 					result[i] = e.map(ee => new GVector2f(ee._x, ee._y));
 				else if(i == "_id" && generateId)
-					result[i] = Entity.getId();
+					result[i] = Project.generateId();//Entity.getId();
 				else
 					result[i] = e;
 			});

@@ -7,5 +7,6 @@
 	},
 	"requestTimeOut" : 3000,
 	"maximumUsers" : 100,
-	"maximumChats" : 10
+	"maximumChats" : 10,
+	"defaultUserName" : "none"
 }

@@ -95,11 +95,12 @@ class WatcherManager{
 		this._mouseData = data;
 		this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
 		doArc({
-			x: this._mouseData.posX - 20,
-			y: this._mouseData.posY - 20,
+			x: this._mouseData.posX,
+			y: this._mouseData.posY,
 			fillColor: "rgba(255,0,0,0.1)",
 			width: 40,
 			height: 40,
+			center: true,
 			ctx: this._context
 		})
 	}

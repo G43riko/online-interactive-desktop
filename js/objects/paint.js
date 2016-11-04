@@ -96,6 +96,26 @@ class Paint extends Entity{
 	}
 
 
+	animateLine(line, time = 0){
+		if(time === 0){
+			//console.log("pred: ", this._points);
+			//console.log("last: ", last);
+			if(this._points[this._points.length - 1]["points"].length > 0){
+				this._points.push(line);
+
+				//console.log("a");
+			}
+			else{
+				this._points[this._points.length - 1] = line;
+				this._points.push(Paint.defArray());
+				//console.log("b");
+			}
+			//console.log("po: ", this._points);
+			this.redraw(this._points);
+		}
+		draw();
+	}
+
 	/**
 	 * Pridá nový pod do malby podla aktualne nakresleneho štetca
 	 *
@@ -157,8 +177,11 @@ class Paint extends Entity{
 			this._points.push(Paint.defArray());
 		else if(this._points[this._points.length - 1].points.length < 2)
 			this._points[this._points.length - 1] = Paint.defArray();
-		else
+		else{
 			this._points.push(Paint.defArray());
+			return this._points[this._points.length - 2];
+		}
+		return false;
 	}
 
 	findPathsForRemove(pos){

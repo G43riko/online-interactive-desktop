@@ -56,194 +56,19 @@
 		<script type="text/javascript" src="js/utils/test.js"></script>
 		<script type="text/javascript" src="js/components/sharer.js"></script>
 		<script type="text/javascript" src="js/components/taskManager.js"></script>
+        <script type="text/javascript" src="js/components/ConnectionManager.js"></script>
+        <script type="text/javascript" src="js/components/formManager.js"></script>
 
-		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
 		<meta name="apple-mobile-web-app-copable" content="yes">
 	</head>
 	<body>
 		<div id="modalWindow" class="hide">
 			<div id="colorPalete" class="hide"></div>
-			<div id="shareForm" class="hide formContent">
-				<form>
-					<h2>Sharing options</h2>
-					<br/>
-					<div>
-						<label for="idShareTitle">Názov zdielania: </label>
-						<input id="idShareTitle" type="text" name="shareTitle">
-					</div>
-					<div>
-						<label for="idMaxWatchers">Maximálny počet watcherov: </label>
-						<input id="idMaxWatchers" type="number" value="20" name="maxWatchers">
-					</div>
-
-					<div>
-						<label for="idSharingPassword">Heslo: </label>
-						<input id="idSharingPassword" type="password" name="sharingPassword">
-					</div>
-
-					<div class="panel">
-						<label for="idRealtimeSharing">Realtime zdielatie: </label>
-						<input id="idRealtimeSharing" type="checkbox" checked name="realtimeSharing">
-					</div>
-
-					<div class="panel">
-						<label for="idPublicShare">Verejné zdielanie: </label>
-						<input id="idPublicShare" type="checkbox" name="publicShare">
-					</div>
-
-					<div class="panel">
-						<label for="idDetailMovement">Odosielať podrobný pohyb: </label>
-						<input id="idDetailMovement" type="checkbox" checked name="detailMovement">
-					</div>
-
-					<div class="panel">
-						<div>Čo zdielať:</div>
-						<div>
-							<div>
-								<input type="checkbox" id="idShareAll" onchange="shareALl(this)" checked>
-								<label for="idShareAll">Všetko</label>
-							</div>
-							<div>
-								<input type="checkbox" id="idShareMenu" name="shareMenu" checked>
-								<label for="idShareMenu">Menu</label>
-							</div>
-							<div>
-								<input type="checkbox" id="idSharePaints" name="sharePaints" checked>
-								<label for="idSharePaints">Kresby</label>
-							</div>
-							<div>
-								<input type="checkbox" id="idShareObjects" name="shareObjects" checked>
-								<label for="idShareObjects">Objekty</label>
-							</div>
-							<div>
-								<input type="checkbox" id="idShareCreator" name="shareCreator" checked>
-								<label for="idShareCreator">Creator</label>
-							</div>
-							<div>
-								<input type="checkbox" id="idShareLayers" name="shareLayers" checked>
-								<label for="idShareLayers">Správcu vrstiev</label>
-							</div>
-						</div>
-					</div>
-					<div class="panel">
-						<input type="button" value="Začať zdielanie" onclick="serializeShareData()">
-					</div>
-				</form>
-			</div>
-			<div id="saveXmlForm" class="hide formContent">
-				<h2>Save XML form</h2>
-					<div class="panel">
-						<label for="idProjectTitle">Názov: </label>
-						<input id="idProjectTitle" type="text" name="projectTitle">
-					</div>
-					<div class="panel">
-						<label for="idSaveCreator">Uložiť creator: </label>
-						<input id="idSaveCreator" type="checkbox" name="saveCreator">
-					</div>
-					<div class="panel">
-						<label for="idSavePaint">Uložiť malbu: </label>
-						<input id="idSavePaint" type="checkbox" name="savePaint">
-					</div>
-					<div class="panel">
-						<label for="idSaveTask">Uložiť ako úlohu: </label>
-						<input id="idSaveTask" type="checkbox" name="saveTask" onchange="document.getElementById('saveTaskOptions').style.display= this.checked ? 'block' : 'none'">
-					</div>
-					<div id="saveTaskOptions" style="display: none;">
-						<div class="panel">
-							<label for="idTaskHint">Zadanie úlohy: </label>
-							<input id="idTaskHint" type="text" name="taskHint">
-						</div>
-						<div class="panel">
-							<label for="idTaskTimeLimit">Časový limit(min): </label>
-							<input id="idTaskTimeLimit" type="number" name="taskTimeLimit">
-						</div>
-						<div class="panel">
-							<label for="idSaveHistory">Ukladať históriu: </label>
-							<input id="idSaveHistory" type="checkbox" name="saveHistory">
-						</div>
-						<div class="panel">
-							<label for="idStoreStatistics">zobraziť štatistiky online: </label>
-							<input id="idStoreStatistics" type="checkbox" name="storeStatistics">
-						</div>
-					</div>
-					<input type="button" value="Uložiť súbor" onclick="serializeSaveXmlData()">
-				<br/>
-			</div>
-			<div id="optionsForm" class="hide formContent">
-				<form>
-					<h2>Options</h2>
-					<br/>
-					<div>
-						<label for="idAllowedSnapping">Prichytávanie: </label>
-						<select name="allowedSnapping" id="idAllowedSnapping">
-							<option value="0" >Žiadne</option>
-							<option value="90">90 stupnov</option>
-							<option value="45">45 stupnov</option>
-							<option value="30">30 stupnov</option>
-						</select>
-					</div>
-					<div class="panel">
-						<label for="idShowGrid">Zobraziť mriežku: </label>
-						<input id="idShowGrid" type="checkbox" name="showGrid">
-					</div>
-					<div class="panel">
-						<label for="idShowLayersViewer">Zobraziť správcu vrstiev: </label>
-						<input id="idShowLayersViewer" type="checkbox" name="showLayersViewer">
-					</div>
-					<div class="panel">
-						<label for="idShadows">Zobraziť tiene: </label>
-						<input id="idShadows" type="checkbox" name="shadows">
-					</div>
-					<div class="panel">
-						<label for="idMovingSilhouette">Obraziť pri pohybe iba siluetu: </label>
-						<input id="idMovingSilhouette" type="checkbox" name="movingSilhouette">
-					</div>
-					<div class="panel">
-						<label for="idCanvasBlur">Rozmazať canvas pri zobratzení modaloveho okna: </label>
-						<input id="idCanvasBlur" type="checkbox" name="canvasBlur">
-					</div>
-					<div class="panel">
-						<label for="idChangeCursor">Meniť typ kurzoru pri pohybe myši(môže znížiť výkon): </label>
-						<input id="idChangeCursor" type="checkbox" name="changeCursor">
-					</div>
-				</form>
-			</div>
-			<div id="saveForm" class="hide formContent">
-				<form>
-					<h2>Saving options</h2>
-					<br/>
-					<div>
-						<label for="idImageName">Názov súboru: </label>
-						<input id="idImageName" type="text" placeholder="desktopScreen" name="imageName">
-					</div>
-					<div>
-						<label for="idImageFormat">Formát: </label>
-						<select name="imageFormat" id="idImageFormat">
-							<option value="" disabled selected>Vyber</option>
-							<option value="image/jpeg">JPG</option>
-							<option value="image/png">PNG</option>
-							<option value="image/gif">GIF</option>
-						</select>
-					</div>
-					<div>
-						<label for="idBackground">Pozadie: </label>
-						<input id="idBackground" type="text" value="transparent" name="background">
-					</div>
-					<div>
-						<label for="idImageWidth">Width:</label>
-						<input type="number" id="idImageWidth" value="800">
-						<label for="idImageHeight">Height:</label>
-						<input type="number" id="idImageHeight" value="600">
-					</div>
-					<div class="panel">
-						<div>Vrstvy:</div>
-						<div id="layersSavionOptions">
-
-						</div>
-					</div>
-					<input type="button" value="Uložiť obrázok" onclick="serializeSaveData()">
-				</form>
-			</div>
+			<div id="shareForm" class="hide formContent"></div>
+			<div id="saveXmlForm" class="hide formContent"></div>
+			<div id="optionsForm" class="hide formContent"></div>
+			<div id="saveForm" class="hide formContent"></div>
 		</div>
 		<div id="content">
 			<img id="contentImage" src="#" class="hide">
@@ -258,6 +83,16 @@
 	</body>
 </html>
 <script language="javascript" type="application/javascript">
+	function testCreateLesson(){
+        $.post("/create", {content: JSON.stringify({meno:"gabriel"})}, function(data){
+            var socket = io();
+            socket.on('responseData', function(data2) {
+                console.log("data2: ", data2);
+            });
+            socket.emit("startLesson");
+            console.log("data: ", data);
+        });
+    }
 	var colors = ["#191919", "#DFE2DB", "#FFF056", "#FFFFFF", "#C63D0F", "#3B3738", "#FDF3E7",
 				  "#7E8F7C", "#005A31", "#A8CD1B", "#CBE32D", "#F3FAB6", "#558C89", "#74AFAD",
 				  "#D9853B", "#ECECEA", "#2B2B2B", "#DE1B1B", "#F6F6F6", "#E9E581", "#7D1935",

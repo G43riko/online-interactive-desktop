@@ -319,7 +319,7 @@ class MenuManager{
 				showSavingOptions();
 				break;
 			case "watch":
-				window.open(Sharer.getWatcherUrl(), '_blank');
+				window.open(Sharer.watcherUrl, '_blank');
 				break;
 			case "saveTask":
 				saveSceneAsTask();

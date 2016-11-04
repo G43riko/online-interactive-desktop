@@ -3,28 +3,31 @@
 */
 var initTime 		= window["performance"].now(),
 	movedObject 	= false,
-	Scene 			= new SceneManager(),
-	Creator 		= new objectCreator(),
-	Input 			= new InputManager(),
-	selectedObjects = new ObjectsManager(),
-	Menu 			= new MenuManager(),
-	actContextMenu 	= false,
 	Logger 			= new LogManager(),
+	Project			= new ProjectManager("Gabriel Csollei"),
+	Scene 			= Project.scene,
+	Creator 		= Project.scene.creator,
+	Input 			= new InputManager(),
+	selectedObjects = Project.scene.objectManager,
+	Menu 			= new MenuManager(),//TODO presunuť do noveho objektu na spravu GUI
+	actContextMenu 	= false,//TODO presunuť do noveho objektu na spravu GUI
 	Listeners		= new ListenersManager(),
 	//EventHistory 	= new EventSaver(),
-	Content			= new ContentManager(),
-	Files			= new FileManager(),
-	Project			= new ProjectManager("Gabriel Csollei"),
+	Content			= new ContentManager(),//TODO presunúť do nejakého CONTENTU
+	Files			= new FileManager(),//TODO presunúť do nejakého CONTENTU
 	Paints			= new PaintManager(),
-	Task 			= null,
+	Task 			= null,//TODO presunúť do nejakého CONTENTU
 	Events 			= typeof EventManager !== KEYWORD_UNDEFINED ? new EventManager() : null,
 	SelectedText	= null,
-	Gui 			= new GuiManager(),
-	Options 		= new OptionsManager(),
+	Gui 			= new GuiManager(),//TODO presunuť do noveho objektu na spravu GUI
+	Options 		= Project.options,
 	drawEvent 		= new EventTimer(realDraw, 1000 / FPS),
 	area 			= null,
 	Panel			= null,
+	Forms		 	= null,
+	Connection		= Project.connection,
 	draw 			= () => drawEvent.callIfCan(),
+	//TODO Layers presunuť do noveho objektu na spravu GUI
 	components, drawMousePos, Layers, canvas, context, chatViewer, timeLine;
 
 function setUpComponents(){
@@ -117,28 +120,30 @@ function ajax(url, options, dataType){
 			}
 		};
 	}
+	//console.log(options);
 	xhttp.open(options["method"], url, options["async"]);
 	xhttp.send();
 }
-
-$.getJSON(FOLDER_JSON + "/context.json", data => ContextMenuManager.items = data);
+ajax(FOLDER_JSON + "/context.json", data => ContextMenuManager.items = data, "JSON");
+//$.getJSON(FOLDER_JSON + "/context.json", data => ContextMenuManager.items = data);
+//ajax(FOLDER_JSON + "/attributes.json", data => Entity.attr = data, "JSON");
 $.getJSON(FOLDER_JSON + "/attributes.json", data => Entity.attr = data);
 
 
 function init(){
-	Scene.addToScene(new Rect(new GVector2f(800, 50), new GVector2f(100, 100), "#ff0000"));
+	Project.scene.addToScene(new Rect(new GVector2f(800, 50), new GVector2f(100, 100), "#ff0000"));
 
-	Scene.addToScene(new Line([new GVector2f(10, 400), new GVector2f(300, 450)], 5, "#66CCCC"));
+	Project.scene.addToScene(new Line([new GVector2f(10, 400), new GVector2f(300, 450)], 5, "#66CCCC"));
 
-	Scene.addToScene(new Arc(new GVector2f(600, 300), new GVector2f(50, 50), "#66CCCC"));
+	Project.scene.addToScene(new Arc(new GVector2f(600, 300), new GVector2f(50, 50), "#66CCCC"));
 
-	Scene.addToScene(new Rect(new GVector2f(800, 50), new GVector2f(100, 100), "#ff0000"));
-	Scene.addToScene(new Rect(new GVector2f(250, 250), new GVector2f(100, 100), "#00ff00"));
+	Project.scene.addToScene(new Rect(new GVector2f(800, 50), new GVector2f(100, 100), "#ff0000"));
+	Project.scene.addToScene(new Rect(new GVector2f(250, 250), new GVector2f(100, 100), "#00ff00"));
 
-	Scene.addToScene(new Polygon([new GVector2f(1200, 100), new GVector2f(1150, 150), new GVector2f(1250, 150)], "#ff69b4"));
-	Scene.addToScene(new Table(new GVector2f(800, 250), new GVector2f(200, 800), [["meno", "vek"], ["gabo", 21], ["maros", 35]]), "test2");
+	Project.scene.addToScene(new Polygon([new GVector2f(1200, 100), new GVector2f(1150, 150), new GVector2f(1250, 150)], "#ff69b4"));
+	Project.scene.addToScene(new Table(new GVector2f(800, 250), new GVector2f(200, 800), [["meno", "vek"], ["gabo", 21], ["maros", 35]]), "test2");
 
-	loadImage(e => Scene.addToScene(new ImageObject(new GVector2f(300, 400), new GVector2f(300, 400), e)));
+	loadImage(e => Project.scene.addToScene(new ImageObject(new GVector2f(300, 400), new GVector2f(300, 400), e)));
 
 
 
@@ -179,7 +184,7 @@ function init(){
 			type: "number"
 		}
 	};
-	Scene.addToScene(new Class(new GVector2f(500, 150), new GVector2f(250, 250), "Rectange", attrs, methods));
+	Project.scene.addToScene(new Class(new GVector2f(500, 150), new GVector2f(250, 250), "Rectange", attrs, methods));
 
 	draw();
 }
@@ -188,6 +193,20 @@ function setVisibilityData(data){
 	Menu.visible = data.showTopMenu;
 }
 
+ajax(FOLDER_JSON + "/forms.json", data => {
+	Forms = new FormManager(data);
+	var formList = {
+		shareForm : "sharingForm",
+		optionsForm : "optionsForm",
+		saveXmlForm : "saveXmlForm",
+		saveForm : "saveImgForm"
+	};
+	each(formList, function(e, i){
+		form = document.getElementById(i);
+		if(form)
+			form.appendChild(Forms.createForm(e));
+	});
+}, "json");
 
 $.ajax({
 	dataType: "json",
@@ -207,6 +226,10 @@ var loading = function(){
 	initCanvasSize();
 	context = canvas.getContext("2d");
 
+	//if(typeof ConnectionManager === "function")
+	//	Connection = new ConnectionManager();
+	Project._connection = new ConnectionManager();
+
 	$.getJSON(FOLDER_JSON + "/menu.json",function(data){
 		Menu.init(data);
 		$.getJSON(FOLDER_JSON + "/creator.json", data2 => {
@@ -217,9 +240,9 @@ var loading = function(){
 	});
 	Panel = new PanelManager();
 
-	Scene.createLayer();
-	Scene.createLayer("rightMenu", "gui");
-	Scene.createLayer("test2");
+	Project.scene.createLayer();
+	Project.scene.createLayer("rightMenu", "gui");
+	Project.scene.createLayer("test2");
 
 	context.shadowColor = DEFAULT_SHADOW_COLOR;
 	Input.initListeners(canvas);
@@ -228,11 +251,11 @@ var loading = function(){
 		chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
 
 	Layers = new LayersViewer();
-	Scene.addToScene(Layers, "rightMenu");
+	Project.scene.addToScene(Layers, "rightMenu");
 	var xOffset = Menu.position.x + (Menu.size.x + MENU_OFFSET) * Menu.visibleElements - MENU_OFFSET;
 	Creator.view = new CreatorViewer(new GVector2f(Menu.visible ? xOffset : MENU_OFFSET, Menu.position.y - MENU_OFFSET));
 
-	Options.init();
+	Project.options.init();
 	console.log("stranka sa nacítala za: ", (window["performance"].now() - initTime) + " ms");
 	
 	draw();
@@ -243,21 +266,19 @@ $(function(){
 });
 
 function realDraw(){
-	if(typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected)
+	if((typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected) || !isObject(context))
 		return;
 
 	drawMousePos = new Date().getMilliseconds();
-	if(!isObject(context))
-		return Logger.notif("context počas kreslenia nieje definovaný");
 	resetCanvas();
 
-	if(Options.grid)
+	if(Project.options.grid)
 		drawGrid();
 
 	if(Creator.operation == OPERATION_AREA && area)
 		area.draw();
 
-	Scene.draw();
+	Project.scene.draw();
 	Creator.draw();
 	Menu.draw();
 	if(actContextMenu)

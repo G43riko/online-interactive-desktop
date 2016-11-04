@@ -25,9 +25,6 @@ class SharerManager{
 		this._socket.emit("sendBuffer", this._buffer);
 		this._buffer = [];
 	}
-	startConnection(){
-		
-	}
 	startShare(options){
 		this._socket = io();
 		this._sharing = true;
@@ -72,7 +69,7 @@ class SharerManager{
 
 			var a = document.createElement("a");
 			a.setAttribute("target", "_blank");
-			a.setAttribute("href", inst.getWatcherUrl());
+			a.setAttribute("href", inst.watcherUrl);
 			a.appendChild(document.createTextNode("adrese"));
 			a.style.float="none";
 
@@ -129,7 +126,7 @@ class SharerManager{
 
 	copyUrl(){
 		var area = document.createElement("textarea");
-		area.appendChild(document.createTextNode(this.getWatcherUrl()));
+		area.appendChild(document.createTextNode(this.watcherUrl));
 		document.body.appendChild(area);
 		area.select();
 		try{
@@ -152,7 +149,7 @@ class SharerManager{
 		this._sendMessage('changeCreator', data);
 	}
 
-	getWatcherUrl(){
+	get watcherUrl(){
 		return location.origin + "/watcher?id=" + this._id;
 	}
 
@@ -197,7 +194,7 @@ class SharerManager{
 		this._sendMessage('chatMessage', data);
 	}
 
-	mouseChange(){
+	mouseChange(x, y, isLeftButtonD){
 		if(!this._id)
 			return false;
 		var data = {

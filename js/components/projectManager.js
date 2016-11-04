@@ -6,6 +6,14 @@ class ProjectManager{
 		this._createdAt = Date.now();
 		this._title = title;
 		this._autor = author;
+		this._idCounter = 0;
+		this._scene = new SceneManager();
+		this._options = new OptionsManager();
+		this._connection = null;
+
+		if(typeof ConnectionManager === "function")
+			this._connection = new ConnectionManager();
+
 		ProjectManager.url = "http://192.168.0.123:3000/anonymousData";
 		//PAINT_MANAGER
 		//CREATOR
@@ -20,6 +28,16 @@ class ProjectManager{
 	    }
 	}
 
+	generateId(){
+		var s = "000000000" + (this._idCounter++);
+		return (this._connection ? this._connection.userId : "") + s.substr(s.length - 6);
+	}
+
+	get scene(){return this._scene;}
+	get options(){return this._options;}
+	get connection(){return this._connection;}
+
+	
 	_analyzeWindow(data){
 		data["userAgent"] = navigator.userAgent;
 		data["language"] = navigator.language;

@@ -37,10 +37,14 @@ class LogManager {
 			console.log(msg);
 	};
 
-	error(msg){
+	error(msg, id){
 		this._data[LogManager.ERRORS][Date.now()] = msg;
-		if(this._show[LogManager.ERRORS])
-			console.error(msg);
+		if(this._show[LogManager.ERRORS]){
+			if(id)
+				console.error(getErrorMessage(id) + msg);
+			else
+				console.error(typeof msg === "number" ? getErrorMessage(msg) : msg);
+		}
 	};
 
 	warn(msg){
@@ -53,3 +57,18 @@ class LogManager {
 		return this_data;
 	}
 }
+
+getErrorMessage = function(id){
+	switch(id){
+		case 0 :
+			return "Nezadaný parameter";
+		case 1 :
+			return "Neznáma Input akcia: ";
+		case 2 :
+			return "Neznáma Object akcia: ";
+		case 3 :
+			return "Neznáma Paint akcia: ";
+		default :
+			return "Neznáma chyba";
+	}
+};

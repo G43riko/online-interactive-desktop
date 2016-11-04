@@ -11,16 +11,19 @@ class Layer{
 		this._locked 	= false;
 		this._drawPaint	= true;
 		this._opacity	= 1;
+		this._raster	= false;
+		this._canvas	= null;
 		this._layerType = layerType;
 	};
 
 	get locked(){return this._locked || this._layerType !== ""}
 	get taskLayer(){return this._layerType === "layer";}
 	get guiLayer(){return this._layerType === "gui";}
-	get drawPaint (){return this._drawPaint;}
+	get drawPaint(){return this._drawPaint;}
 	get layerType(){return this._layerType;}
 	get visible(){return this._visible;}
 	get objects(){return this._objects;}
+	get raster(){return this._raster;}
 	get title(){return this._title;}
 	get paint(){
 		if(isNull(this._paint))
@@ -37,11 +40,17 @@ class Layer{
 		this.forEach(e => callIfFunc(e.cleanUp));
 		this._objects = [];
 		Paints.cleanUp(this._title);
-		Logger.log("Bol vyčistený objekt " + this.constructor.name + "[" + this._title + "]", LOGGER_OBJECT_CLEANED);
+		Events.layerCleanUp(this._title);
 	};
 
-	rename(){
-		//TODO doplniť premenovávanie vrstiev
+	rename(title){
+		Events.layerRename(this._title, title);
+		this._title = title;
+	}
+
+	makeRaster(){
+		this._raster = true;
+		//TODO pri rastrovaní vrstvy nakresliť všetko do canvasu
 	}
 
 

@@ -11,6 +11,10 @@ class EventManager{
 		if(isSharing())
 			Sharer.paint.addPoint(position, activeLayerName);
 	}
+	paintAddPath(activeLayerName, path){//PaintManager.breakLine
+		if(Project.connection)
+			Project.connection.paint.addPath(activeLayerName, path);
+	}
 
 	paintBreakLine(activeLayerName){//PaintManager.breakLine
 		if(isSharing())
@@ -38,11 +42,22 @@ class EventManager{
 	}
 
 	layerCreate(title, type){//Scene.createLayer
-		Logger.log("Vytvorila sa vrstva " + title + "typu: " + type, LOGGER_LAYER_CHANGE);
+		Logger.log("Vytvorila sa vrstva: " + title + "typu: " + type, LOGGER_LAYER_CHANGE);
 	}
 
 	layerDelete(title){//Scene
-		Logger.log("Vymazala sa vrstva " + title, LOGGER_LAYER_CHANGE);
+		Logger.log("Vymazala sa vrstva: " + title, LOGGER_LAYER_CHANGE);
+	}
+
+	layerRaster(title){//Scene.makeRaster
+		Logger.log("vrstva " + title + " bola rastrovaná", LOGGER_LAYER_RASTERED);
+	}
+
+	layerCleanUp(title){//Layer.cleanUp
+		Logger.log("Bola vyčistená vrstva: " + title, LOGGER_LAYER_CLEANED);
+	}
+	layerRename(oldTitle, newTitle){//Layer.rename
+		Logger.log("Bola premenovaná vrstva: " + oldTitle + " na " + newTitle, LOGGER_LAYER_RENAMED);
 	}
 
 	creatorChange(key, val){//Creator.setOpt
@@ -77,5 +92,32 @@ class EventManager{
 
 	loadScene(){//Scene
 
+	}
+
+	keyDown(key){
+		if(Project.connection)
+			Project.connection.input.keyDown(key);
+		Logger.log("stlačené klavesa " + key, LOGGER_KEY_EVENT);
+	}
+	keyUp(key){
+		if(Project.connection)
+			Project.connection.input.keyUp(key);
+		Logger.log("pustená klavesa " + key, LOGGER_KEY_EVENT);
+	}
+
+	mouseMove(x, y){//Input._mouseMove
+		if(isSharing())
+			Sharer.mouseChange(x, y);
+	}
+	mouseDown(key, x, y){//Input._buttonDown
+		Logger.log("stlačené tlačítko myši ::" + key + "::" + x + "::"+ y, LOGGER_MOUSE_EVENT);
+
+		if(isSharing())
+			Sharer.mouseChange(key);
+	}
+	mouseUp(key, x, y){//Input._buttonUp
+		Logger.log("pustené tlačítko myši ::" + key + "::" + x + "::"+ y, LOGGER_MOUSE_EVENT);
+		if(isSharing())
+			Sharer.mouseChange(key);
 	}
 }

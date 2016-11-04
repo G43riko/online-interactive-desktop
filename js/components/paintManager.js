@@ -70,6 +70,14 @@ class PaintManager{
 		return result;
 	}
 
+	/**
+	 * Pridá novú čiaru
+	 * @param layer
+	 * @param path
+	 */
+	addPath(layer, path){
+		Scene.getLayer(layer).paint.animateLine(path, 0);
+	}
 
 	/**
 	 * Preruší ťah štetcom
@@ -80,9 +88,9 @@ class PaintManager{
 		this._paintHistory.push(activeLayerName);
 		this._undoHistory = [];
 
-		Scene.getLayer(activeLayerName).paint.breakLine();
-
+		var newPath = Scene.getLayer(activeLayerName).paint.breakLine();
 		Events.paintBreakLine(activeLayerName);
+		Events.paintAddPath(activeLayerName, newPath);
 
 		this._setButtons();
 	}

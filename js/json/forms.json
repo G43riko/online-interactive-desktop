@@ -1,0 +1,287 @@
+{
+	"sharingForm" : {
+		"title" : "Sharing options",
+		"elements" : [
+			{
+				"id" : "idMaxWatchers",
+				"type" : "number",
+				"value" : 20,
+				"name" : "maxWatchers",
+				"label" : "Maximálny počet watcherov"
+			},
+			{
+				"id" : "idSharingPassword",
+				"type" : "password",
+				"name" : "sharingPassword",
+				"label" : "Heslo"
+			},
+			{
+				"id" : "idRealtimeSharing",
+				"type" : "checkbox",
+				"name" : "realtimeSharing",
+				"checked" : true,
+				"label" : "Realtime zdielatie"
+			},
+			{
+				"id" : "idPublicShare",
+				"type" : "checkbox",
+				"name" : "publicShare",
+				"label" : "Verejné zdielanie"
+			},
+			{
+				"id" : "idDetailMovement",
+				"type" : "checkbox",
+				"name" : "detailMovement",
+				"checked" : true,
+				"label" : "Odosielať podrobný pohyb"
+			},
+			{
+				"type" : "multiCheckbox",
+				"label" : "Čo zdielať",
+				"items" : [
+					{
+						"id" : "idShareAll",
+						"type" : "checkbox",
+						"onclick" : "shareALl(this)",
+						"checked" : true,
+						"label" : "Všetko"
+					},
+					{
+						"id" : "idShareMenu",
+						"type" : "checkbox",
+						"name" : "shareMenu",
+						"checked" : true,
+						"label" : "Menu"
+					},
+					{
+						"id" : "idSharePaints",
+						"type" : "checkbox",
+						"name" : "sharePaints",
+						"checked" : true,
+						"label" : "Kresby"
+					},
+					{
+						"id" : "idShareObjects",
+						"type" : "checkbox",
+						"name" : "shareObjects",
+						"checked" : true,
+						"label" : "Objekty"
+					},
+					{
+						"id" : "idShareCreator",
+						"type" : "checkbox",
+						"name" : "shareCreator",
+						"checked" : true,
+						"label" : "Creator"
+					},
+					{
+						"id" : "idShareLayers",
+						"type" : "checkbox",
+						"name" : "shareLayers",
+						"checked" : true,
+						"label" : "Správcu vrstiev"
+					}
+				]
+			},
+			{
+				"type" : "button",
+				"value" : "Začať zdielanie",
+				"onclick" : "serializeShareData()"
+			}
+		]
+	},
+	"optionsForm" : {
+		"title" : "Options",
+		"elements" : [
+			{
+				"id" : "idAllowedSnapping",
+				"type" : "combobox",
+				"name" : "allowedSnapping",
+				"label" : "Prichytávanie",
+				"value" : 90,
+				"options" : [
+					{
+						"value" : 0,
+						"label" : "Žiadne"
+					},
+					{
+						"value" : 90,
+						"label" : "90 stupňov"
+					},
+					{
+						"value" : 45,
+						"label" : "45 stupňov"
+					},
+					{
+						"value" : 30,
+						"label" : "30 stupňov"
+					}
+				]
+			},
+			{
+				"id" : "idShowGrid",
+				"type" : "checkbox",
+				"name" : "showGrid",
+				"label" : "Zobraziť mriežku"
+			},
+			{
+				"id" : "idShowLayersViewer",
+				"type" : "checkbox",
+				"name" : "showLayersViewer",
+				"label" : "Zobraziť správcu vrstiev"
+			},
+			{
+				"id" : "idShadows",
+				"type" : "checkbox",
+				"name" : "shadows",
+				"label" : "Zobraziť tiene"
+			},
+			{
+				"id" : "idMovingSilhouette",
+				"type" : "checkbox",
+				"name" : "movingSilhouette",
+				"label" : "Zobraziť pri pohybe iba siluetu"
+			},
+			{
+				"id" : "idCanvasBlur",
+				"type" : "checkbox",
+				"name" : "canvasBlur",
+				"label" : "Rozmazať canvas pri zobratzení modaloveho okna"
+			},
+			{
+				"id" : "idChangeCursor",
+				"type" : "checkbox",
+				"name" : "changeCursor",
+				"label" : "Meniť typ kurzoru pri pohybe myši(môže znížiť výkon)"
+			}
+
+		]
+	},
+	"saveXmlForm" : {
+		"title" : "Save XML form",
+		"elements" : [
+			{
+				"id" : "idProjectTitle",
+				"type" : "text",
+				"name" : "saveCreator",
+				"label" : "Názov"
+			},
+			{
+				"id" : "idSaveCreator",
+				"type" : "checkbox",
+				"name" : "savePaint",
+				"label" : "Uložiť creator"
+			},
+			{
+				"id" : "idSavePaint",
+				"type" : "checkbox",
+				"name" : "savePaint",
+				"label" : "Uložiť malbu"
+			},
+			{
+				"id" : "idSaveTask",
+				"type" : "checkbox",
+				"name" : "saveTask",
+				"label" : "Uložiť ako úlohu",
+				"onchange" : "document.getElementById('saveTaskOptions').style.display = this.checked ? 'block' : 'none'"
+			},
+			{
+				"id" : "saveTaskOptions",
+				"style" : "display: none;",
+				"type" : "wrapper",
+				"items" : [
+					{
+						"id" : "idTaskHint",
+						"type" : "text",
+						"name" : "taskHint",
+						"label" : "Zadanie úlohy"
+					},
+					{
+						"id" : "idTaskTimeLimit",
+						"type" : "number",
+						"name" : "taskTimeLimit",
+						"label" : "Časový limit(min)"
+					},
+					{
+						"id" : "idSaveHistory",
+						"type" : "checkbox",
+						"name" : "saveHistory",
+						"label" : "Ukladať históriu"
+					},
+					{
+						"id" : "idStoreStatistics",
+						"type" : "checkbox",
+						"name" : "storeStatistics",
+						"label" : "Zobraziť štatistiky online"
+					}
+				]
+			},
+			{
+				"type" : "button",
+				"onclick" : "serializeSaveXmlData(); return false",
+				"value" : "Uložiť súbor"
+			}
+		]
+	},
+	"saveImgForm" : {
+		"title" : "Saving options",
+		"elements" : [
+			{
+				"id" : "idImageName",
+				"type" : "text",
+				"name" : "imageName",
+				"placeholder" : "desktopScreen",
+				"label" : "Názov súboru"
+			},
+			{
+				"id" : "idImageFormat",
+				"type" : "combobox",
+				"name" : "imageFormat",
+				"value" : "image/jpeg",
+				"label" : "Formát",
+				"options" : [
+					{
+						"value" : "image/jpeg",
+						"label" : "JPEG"
+					},
+					{
+						"value" : "image/png",
+						"label" : "PNG"
+					},
+					{
+						"value" : "image/gif",
+						"label" : "GIF"
+					}
+				]
+			},
+			{
+				"id" : "idBackground",
+				"type" : "text",
+				"name" : "background",
+				"value" : "transparent",
+				"label" : "Pozadie"
+			},
+			{
+				"id" : "idImageWidth",
+				"type" : "number",
+				"name" : "width",
+				"label" : "Width"
+			},
+			{
+				"id" : "idImageHeight",
+				"type" : "number",
+				"name" : "height",
+				"label" : "Height"
+			},
+			{
+				"type" : "plainText",
+				"text" : "<div class=\"panel\"><div>Vrstvy:</div><div id=\"layersSavionOptions\"></div></div>"
+			},
+			{
+				"type" : "button",
+				"value" : "Uložiť obrázok",
+				"onclick" : "serializeSaveData()"
+			}
+		]
+	}
+}
