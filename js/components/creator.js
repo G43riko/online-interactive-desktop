@@ -238,11 +238,19 @@ class objectCreator{
 		 */
 		redrawPaint && Paints.rePaintImage(this.brushSize, this.brushColor);
 
-		/*
-		 * Ak s zmení nejaká farba musí sa prekresliť aj view zobtrazujúci aktuálnu farbu
-		 */
-		if(isIn(key, "_fillColor", "_borderColor", "_fontColor", "_color", "_brushColor") && isDefined(this._view))
-			this._view.init();
+		if(isDefined(this._view)){
+			/*
+			 * Ak s zmení nejaká farba musí sa prekresliť aj view zobtrazujúci aktuálnu farbu
+			 */
+			if(isIn(key, "_fillColor", "_borderColor", "_fontColor", "_color", "_brushColor"))
+				this._view.init();
+			/*
+			 * tak isto to platí aj pre typ štetca
+			 */
+			else if(isIn(key, "_brushSize", "_brushType"))
+				this._view.init();
+
+		}
 
 	}
 

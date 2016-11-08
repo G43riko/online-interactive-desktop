@@ -6,7 +6,6 @@ class ConnectionManager{
 	constructor(){
 		this._user_id = false;
 		this._socket = false;
-		this._sharing = false;
 		this.paint = {
 			addPoint: (point, layer) => this._paintAction(ACTION_PAINT_ADD_POINT, point, layer),
 			breakLine: (layer) => this._paintAction(ACTION_PAINT_BREAK_LINE, layer),
@@ -26,12 +25,13 @@ class ConnectionManager{
 			keyDown : (key) => this._inputAction(ACTION_KEY_DOWN, key),
 			keyUp : (key) => this._inputAction(ACTION_KEY_UP, key)
 		};
+		this._sharing = false;
 		this._sender = new EventTimer(e => this._sendStack(), 1000);
 		this._buffer = [];
 		var inst = this;
-		 $.post("/create", {content: JSON.stringify({meno:"gabriel"})}, function(data){
-		 	inst._user_id = data["cookies"]["user_id"];
-		 }, "json");
+		$.post("/create", {content: JSON.stringify({meno:"gabriel"})}, function(data){
+			inst._user_id = data["cookies"]["user_id"];
+		}, "json");
 
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
@@ -74,7 +74,6 @@ class ConnectionManager{
 
 	_connect(data){
 		this._socket = io();
-		this._sharing = true;
 		this._startTime = Date.now();
 		this._type = data["type"];
 
@@ -89,19 +88,30 @@ class ConnectionManager{
 
 		this._socket.on('confirmConnection', function(response) {
 			inst._less_id = response["data"]["less_id"];
+			inst._connectTime = Date.now();
+			inst._messageTime = Date.now();
 			if(inst._type === "watch" || inst._type === "teach"){
 				if(inst._type === "watch")
 					Scene.initSecondCanvas();
+				inst._watching = true;
 				inst._sendMessage("requireAllData", {target: inst._user_id});
+			}
+			else{
+				inst._sharing = true;
 			}
 		});
 
 		this._socket.on('receivedBuffer', function(response) {
+
 			inst._processStack(response);
 		});
 
-		this._socket.on('error', function(response) {
-			Alert.notif(response.msg);
+		this._socket.on('errorLog', function(response) {
+			Alert.danger(response.msg);
+		});
+
+		this._socket.on("notifLog", function(response){
+			Logger.notif(response.msg);
 		});
 
 		this._socket.emit("initConnection", data);
@@ -119,6 +129,8 @@ class ConnectionManager{
 		this._socket.disconnect();
 		this._socket = false;
 		this._sharing = false;
+		this._wathing = false;
+
 		Panel.stopShare();
 	}
 
@@ -130,9 +142,11 @@ class ConnectionManager{
 	 }
 	 
 	_processStack(data){
+		console.log("prijaty buffer po: " + (Date.now() - this._messageTime));
+		this._messageTime = Date.now();
 		var inst = this;
 	 	each(data.buffer, function(e){
-			console.log("prijata akcia:" + e["action"]);
+			//console.log("prijata akcia:" + e["action"]);
 			switch(e["action"]){
 				case "requireAllData" :
 					Handler.processRequireAllData(inst, e["data"]);
@@ -145,6 +159,14 @@ class ConnectionManager{
 					break;
 				case "inputAction" :
 					inst._processInputAction(e["data"]);
+					break;
+				case "creatorAction" :
+					Creator.setOpt(e["data"]["key"], e["data"]["value"]);
+					draw();
+					break;
+				case "objectAction" :
+					Handler.processObjectAction(e["data"]);
+					break;
 				default:
 					Logger.error("neznáma akcia: " + e["action"]);
 			}
@@ -168,7 +190,7 @@ class ConnectionManager{
 	}
 
 	_sendMessage(action, data){
-		console.log("odosiela sa akcia: ", action);
+		//console.log("odosiela sa akcia: ", action);
 		this._buffer.push({action: action, time: Date.now(), data: data});
 		this._sender.callIfCan();
 	}
@@ -196,7 +218,17 @@ class ConnectionManager{
 	/*********************
 	 * ACTIONS
 	 ********************/
+	creatorChange(key, value){
+		if(!this._socket || !this._shareCreator || this._watching)
+			return;
 
+		var data = {
+			key: key,
+			value: value
+		};
+		this._sendMessage('creatorAction', data);
+
+	}
 	_objectAction(type, object, keys){
 		if(!this._socket || !this._shareObjects)
 			return;
@@ -311,6 +343,13 @@ class ConnectionManager{
 	get userId(){
 		return this._user_id;
 	}
+
+	get sharing(){
+		return this._sharing;
+	}
+	get watching(){
+		return this._watching;
+	}
 }
 
 class Handler{
@@ -357,6 +396,30 @@ class Handler{
 		Menu.visible = shareOptions.share.menu;
 		Creator.visibleView = shareOptions.share.menu;
 		Options.setOpt("showLayersViewer", shareOptions.share.layers);
+	}
+
+	static processObjectAction(data){
+		var obj;
+		switch(data.action){
+			case ACTION_OBJECT_MOVE:
+				obj = Scene.get(data.oL, data.oId);
+				obj.position.set(data.oX, data.oY);
+				obj.size.set(data.oW, data.oH);
+				break;
+			case ACTION_OBJECT_DELETE:
+				Scene.remove(Scene.get(data.oL, data.oId), data.oL, false);
+				break;
+			case ACTION_OBJECT_CHANGE:
+				obj = Scene.get(data.oL, data.oId);
+				each(data.keys, (e, i) => obj[i] = e);
+				break;
+			case ACTION_OBJECT_CREATE:
+				Creator.create(data.o);
+				break;
+			default :
+				Logger.error("bola prijatá neznáma akcia: " + data.action);
+		}
+		draw();
 	}
 
 	static processPaintAction(data){

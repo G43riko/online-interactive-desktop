@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<in>
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<style type="text/css">
@@ -11,8 +11,55 @@
 			margin: 0 auto;
 		}
 	</style>
+
+    <button onclick="startConnection()">Pripoj sa</button>
+    <input type="text" placeholder="username" id="idUsername">
+    <select id="connectionType" onchange="changeInputs()">
+        <option value="share">Share</option>;
+        <option value="watch">Watch</option>;
+        <option value="teach">Teach</option>;
+        <option value="exercise">Exercise</option>;
+    </select>
+    <input type="text" placeholder="id vyučovania" id="idLess_id" style="display: none">
 </head>
 <body>
-	<iframe src="/app#a"></iframe>
+	<iframe id="canvasFrame" src="/app#a"></iframe>
+	<script type="text/javascript">
+        frame = document.getElementById("canvasFrame");
+        less_id_input = document.getElementById("idLess_id");
+        typeInput = document.getElementById("connectionType");
+        function startConnection(){
+            var usernameInput = document.getElementById("idUsername");
+            var data = {
+                user_name : usernameInput && usernameInput.value ? usernameInput.value : "Nezadané",
+                shareInput : true,
+                sharePaints : true,
+                shareCreator : true
+            };
+
+            if(typeInput.options[typeInput.selectedIndex].value == "watch" ||
+                    typeInput.options[typeInput.selectedIndex].value == "exercise"){
+                data["less_id"] = less_id_input.value;
+            }
+
+            if(typeInput.options[typeInput.selectedIndex].value == "share")
+                frame.contentWindow.Project.connection.startShare(data);
+            else if(typeInput.options[typeInput.selectedIndex].value == "watch")
+                frame.contentWindow.Project.connection.startWatch(data);
+            else if(typeInput.options[typeInput.selectedIndex].value == "teach")
+                frame.contentWindow.Project.connection.startTeach(data);
+            else if(typeInput.options[typeInput.selectedIndex].value == "exercise")
+                frame.contentWindow.Project.connection.startExercise(data);
+        }
+        function changeInputs(){
+            if(typeInput.options[typeInput.selectedIndex].value == "watch" ||
+               typeInput.options[typeInput.selectedIndex].value == "exercise"){
+                less_id_input.style.display = "inline-block";
+            }
+            else{
+                less_id_input.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>

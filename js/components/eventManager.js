@@ -8,29 +8,34 @@ class EventManager{
 	}
 
 	paintAddPoint(position, activeLayerName){//PaintManager.addPoint
-		if(isSharing())
-			Sharer.paint.addPoint(position, activeLayerName);
+		if(Project.connection)
+			Project.connection.paint.addPoint(position, activeLayerName);
+		//if(isSharing())
+		//	Sharer.paint.addPoint(position, activeLayerName);
 	}
 	paintAddPath(activeLayerName, path){//PaintManager.breakLine
-		if(Project.connection)
-			Project.connection.paint.addPath(activeLayerName, path);
+		//if(Project.connection && path)
+		//	Project.connection.paint.addPath(activeLayerName, path);
 	}
 
 	paintBreakLine(activeLayerName){//PaintManager.breakLine
-		if(isSharing())
-			Sharer.paint.breakLine(activeLayerName);
+		if(Project.connection)
+			Project.connection.paint.breakLine(activeLayerName);
+		//if(isSharing())
+		//	Sharer.paint.breakLine(activeLayerName);
 		Logger.log("bola ukončená čiara vo vrstve " + activeLayerName, LOGGER_PAINT_ACTION);
 	}
 
 	paintCleanUp(activeLayerName){//PaintManager.cleanUp
-		if(isSharing())
-			Sharer.paint.clean(activeLayerName);
+		if(Project.connection)
+			Project.connection.paint.clean(activeLayerName);
+		//if(isSharing())
+		//	Sharer.paint.clean(activeLayerName);
 		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	}
 
 	paintBrushChange(size, color, imageTitle){//PaintManager
 		Logger.log("Bol prekreslený štetec " + size + ", " + color + ", " + imageTitle, LOGGER_PAINT_HISTORY);
-
 	}
 
 	paintUndo(layer){//PaintManager
@@ -61,8 +66,10 @@ class EventManager{
 	}
 
 	creatorChange(key, val){//Creator.setOpt
-		if(isSharing())
-			Sharer.changeCreator(key, val);
+		if(Project.connection)
+			Project.connection.creatorChange(key, val);
+		//if(isSharing())
+		//	Sharer.changeCreator(key, val);
 		Logger.log("Creatorovi sa nastavuje " + key + " na " + val, LOGGER_CREATOR_CHANGE);
 	}
 

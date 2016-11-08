@@ -4,13 +4,56 @@
 
 var lessons = {};
 var users = {};
+var eventManager = null;
 
 var createUser = function(user_id, lesson_id,socket){
 	users[user_id] = {
 		socket: socket,
 		status: "connected",
-		lesson: lesson_id
+		lesson: lesson_id,
+		buffer: []
 	};
+};
+
+var sendBuffers = function(){
+	var user = null;
+	for(var i in users){
+		if(users.hasOwnProperty(i)){
+			user = users[i];
+			if(user["buffer"].length){
+				user["socket"].emit("receivedBuffer", {buffer: user["buffer"]});
+				user["buffer"] = [];
+			}
+		}
+	}
+};
+
+module.exports.init = function(utils, time){
+	eventManager = new utils.EventTimer(function(){sendBuffers()}, time);
+};
+
+module.exports.existLesson = function(lesson_id){
+	return typeof lessons[lesson_id] === "object";
+};
+
+module.exports.sendMessage = function(user_id, action, message, trySend){
+	if(trySend !== false)
+		trySend = true;
+
+	users[user_id]["buffer"].push({action: action, data: message});
+
+	if(trySend)
+		eventManager.callIfCan();
+};
+
+module.exports.sendMessageAllMembers = function(less_id, action, message){
+	var lesson = lessons[less_id];
+	for(var i in lesson["members"]){
+		if(lesson["members"].hasOwnProperty(i)){
+			module.exports.sendMessage(lesson["members"][i], action, message, false);
+		}
+	}
+	eventManager.callIfCan();
 };
 
 module.exports.startLesson = function(lesson_id, user_id, type, socket){
@@ -38,6 +81,9 @@ module.exports.getLesson = function(lesson_id){
 
 module.exports.getOwner = function(lesson_id){
 	return lessons[lesson_id]["owner"];
+};
+module.exports.isSharing = function(lesson_id){
+	return lessons[lesson_id]["type"] == "share" || lessons[lesson_id]["type"] == "teach";
 };
 
 module.exports.getUserSocket = function(user_id){

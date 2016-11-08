@@ -95,7 +95,10 @@ class Paint extends Entity{
 		this.redraw(this._points); // toto nemusí prepisovať celé
 	}
 
-
+	addLine(line){
+		console.log("prijala sa line: ", line);
+	}
+	/*
 	animateLine(line, time = 0){
 		if(time === 0){
 			//console.log("pred: ", this._points);
@@ -115,6 +118,7 @@ class Paint extends Entity{
 		}
 		draw();
 	}
+	 */
 
 	/**
 	 * Pridá nový pod do malby podla aktualne nakresleneho štetca

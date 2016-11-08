@@ -10,16 +10,14 @@ var express 		= require('express'),
 	serverLogs		= require('./js/utils/serverLogs'),
 	connection 		= require('./js/utils/connectionManager'),
 	RedisClient 	= require('./js/utils/RedisClient'),
-	client 			= new RedisClient.Redis(redis, config),
-	bufferManager	= require('./js/utils/BufferManager'),
-	buffer 			= new bufferManager.BufferManager(utils);
+	client 			= new RedisClient.Redis(redis, config);
 
+lessonsManager.init(utils, 1000);
 
 connection.callLogInit(serverLogs.init);
 app.use("/css", express.static(__dirname + '/css'));
 app.use("/img", express.static(__dirname + '/img'));
 app.use("/js", express.static(__dirname + '/js'));
-
 app.get('/app', function(req, res) {
 	serverLogs.increase("pageLoad");
 	var cookies = parseCookies(req);
@@ -33,7 +31,6 @@ app.get('/app', function(req, res) {
 
 	res.sendFile('/index.html' , { root : __dirname});
 });
-
 app.get('/watch', function(req, res){
 	res.sendFile('/watch.html' , { root : __dirname});
 	serverLogs.increase("watchLoad");
@@ -41,7 +38,6 @@ app.get('/watch', function(req, res){
 app.get('/', function(req, res){
 	res.sendFile('/welcomeBootstrap.html' , { root : __dirname});
 });
-
 app.get('/watcher', function(req, res){
 	res.sendFile('/watchIndex.html' , { root : __dirname});
 });
@@ -178,7 +174,12 @@ http.listen(config.port, function(){
 
 function logError(msg, socket){
 	console.log(msg);
-	socket.emit("error", {msg: msg});
+	socket.emit("errorLog", {msg: msg});
+}
+
+function logNotif(msg, socket){
+	console.log(msg);
+	socket.emit("notifLog", {msg: msg});
 }
 
 function processRequireAllDataAction(data, user_id, less_id){
@@ -190,11 +191,41 @@ function processRequireAllDataAction(data, user_id, less_id){
 	data["target"] = user_id;
 
 	if(lesson["type"] === "share"){
-		buffer.addMessage(lesson["owner"], "requireAllData", data);
+		lessonsManager.sendMessage(lesson["owner"], "requireAllData", data)
 	}
 	else if(lesson["type"] === "teach"){
 		//TODO ak som teacher tak chcem získať dáta od všetkých priopjených
 	}
+}
+
+function processObjectAction(data, user_id, less_id){
+	if(lessonsManager.isSharing(less_id) && lessonsManager.getOwner(less_id) === user_id) {
+		lessonsManager.sendMessageAllMembers(less_id, "objectAction", data);
+	}
+	/*
+	var lesson = lessonsManager.getLesson(less_id);
+	if(lesson["type"] === "share" && lesson["owner"] === user_id){
+		for(var i in lesson["members"])
+			if(lesson["members"].hasOwnProperty(i)){
+				lessonsManager.sendMessage(lesson["members"][i], "objectAction", data);
+			}
+	}
+	*/
+}
+
+function processCreatorAction(data, user_id, less_id){
+	if(lessonsManager.isSharing(less_id) && lessonsManager.getOwner(less_id) === user_id) {
+		lessonsManager.sendMessageAllMembers(less_id, "creatorAction", data);
+	}
+	/*
+	var lesson = lessonsManager.getLesson(less_id);
+	if(lesson["type"] === "share" && lesson["owner"] === user_id){
+		for(var i in lesson["members"])
+			if(lesson["members"].hasOwnProperty(i)){
+				lessonsManager.sendMessage(lesson["members"][i], "creatorAction", data);
+			}
+	}
+	*/
 }
 
 function processSendAllDataAction(data){
@@ -220,7 +251,7 @@ function processSendAllDataAction(data){
 		}
 	};
 
-	buffer.addMessage(data["target"], "sendAllData", data["msg"]);
+	lessonsManager.sendMessage(data["target"], "sendAllData", data["msg"]);
 }
 
 function processInputAction(data, user_id, less_id, type){
@@ -234,26 +265,41 @@ function processInputAction(data, user_id, less_id, type){
 }
 
 function processPaintAction(data, user_id, less_id){
+	if(lessonsManager.isSharing(less_id) && lessonsManager.getOwner(less_id) === user_id) {
+		lessonsManager.sendMessageAllMembers(less_id, "paintAction", data);
+	}
+	/*
 	var lesson = lessonsManager.getLesson(less_id);
 	if(lesson["type"] === "share" && lesson["owner"] === user_id){
 		for(var i in lesson["members"])
 			if(lesson["members"].hasOwnProperty(i)){
-				buffer.addMessage(lesson["members"][i], "paintAction", data);
+				lessonsManager.sendMessage(lesson["members"][i], "paintAction", data);
 			}
 	}
+	*/
 }
 
 var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect, action, mouseData, paintAction, chatMessage, dataReqiere, sendBuffer, createWatcher, initConnection;
 
 
 initConnection = function(data){
+	/*****************
+	 * KONTROLY
+	 *****************/
 	if(typeof data !== "object"){
-		logError("data nieje objekt");
+		logError("data nieje objekt", this);
 		return false;
 	}
 	if(!data["type"]){
-		logError("nieje zadaný typ");
+		logError("nieje zadaný typ", this);
 		return false;
+	}
+	//ak sa pripája k vyučovaniu skontroluje či vyučovanie existuje
+	if(data["type"] === "exercise" || data["type"] === "watch"){
+		if(!lessonsManager.existLesson(data["less_id"])){
+			logError("Vyučovanie s id " + data["less_id"] + " neexistuje", this);
+			return false;
+		}
 	}
 
 	var cookies = parseCookies(this.handshake);
@@ -262,9 +308,9 @@ initConnection = function(data){
 	if(!data["less_id"] || typeof data["create_new"] === "undefined")
 		data["create_new"] = true;
 
-
 	if(cookies["user_id"])
 		data["user_id"] = cookies["user_id"];
+
 
 	var lesson_id = client.initConnection(data);
 	var socket = this;
@@ -277,9 +323,6 @@ initConnection = function(data){
 		console.log("k vyucovanie s lesson id " + lesson_id + " sa pripojil " + data["user_id"]);
 		lessonsManager.addMember(lesson_id, data["user_id"], this);
 	}
-
-	buffer.addUser(data["user_id"], this);
-
 
 	client.getAllLessonData(lesson_id, function(err, data){
 		var date = new Date();
@@ -395,6 +438,13 @@ sendBuffer = function(data){
 				case "paintAction" :
 					processPaintAction(message["data"], data["user_id"], data["less_id"]);
 					break;
+				case "creatorAction" :
+					processCreatorAction(message["data"], data["user_id"], data["less_id"]);
+					break;
+				case "objectAction" :
+					processObjectAction(message["data"], data["user_id"], data["less_id"]);
+					break;
+
 			}
 		}
 	//writeToWatchers(connection.getWatchers(data.id), "processBuffer", data.msg);

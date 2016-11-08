@@ -76,7 +76,7 @@ class PaintManager{
 	 * @param path
 	 */
 	addPath(layer, path){
-		Scene.getLayer(layer).paint.animateLine(path, 0);
+		Scene.getLayer(layer).paint.addLine(path);
 	}
 
 	/**
