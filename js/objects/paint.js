@@ -3,7 +3,7 @@ class Paint extends Entity{
 		super(OBJECT_PAINT, new GVector2f(), new GVector2f());
 		this._points 		= [Paint.defArray()];
 		this._count 		= 0;
-		this._canvas		= new CanvasManager();
+		this._canvas		= new CanvasHandler();
 		this.onScreenResize();
 		this._editBackup	= [];
 	}
@@ -224,7 +224,7 @@ class Paint extends Entity{
 						else // prvá časť
 							line2Points.push(ee);
 					}
-				})
+				});
 				//vymaže povodnu čiaru
 				console.log(e.line.points, e.points, line1Points, line2Points)
 				this._points.splice(e.lineIndex, 1);

@@ -7,7 +7,7 @@ class objectCreator{
 		this._fillColor 	= DEFAULT_FILL_COLOR;
 		this._borderColor 	= DEFAULT_BORDER_COLOR;
 		this._borderWidth 	= DEFAULT_STROKE_WIDTH;
-		this._operation 	= OPERATION_DRAW_RECT;
+		this._operation 	= OPERATION_DRAW_PATH;//OPERATION_DRAW_RECT;
 		this._lineWidth 	= DEFAULT_STROKE_WIDTH;
 		this._fontSize		= DEFAULT_FONT_SIZE;
 		this._fontColor		= DEFAULT_FONT_COLOR;

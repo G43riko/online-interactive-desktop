@@ -245,8 +245,8 @@ class ListenersManager{
 			draw();
 		}
 		else if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
-			var radius = 50;
-			Paints.addPoint(position.div(radius).round().mul(radius));
+			var radius = 1;
+			Paints.addPoint(radius === 1 ? position : position.div(radius).round().mul(radius));
 			draw();
 		}
 

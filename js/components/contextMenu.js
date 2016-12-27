@@ -45,7 +45,7 @@ class ContextMenuManager{
 
 		var hasExtension = false;
 
-		if(titles.length)
+		if(this._titles.length){
 			//titles.forEach(function(e, i, arr){
 			each(titles, function(e, i ,arr){
 				if(e["type"] == INPUT_TYPE_RADIO){
@@ -65,7 +65,7 @@ class ContextMenuManager{
 						arr[i]["value"] = selectedObjects.movedObject.taskResult;
 				}
 			}, this);
-
+		}
 		this._menuWidth = getMaxWidth(this._titles.map(e => e["label"])) + (CONTEXT_MENU_OFFSET << 1);
 
 		if(hasExtension)

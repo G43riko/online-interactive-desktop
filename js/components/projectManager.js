@@ -9,6 +9,7 @@ class ProjectManager{
 		this._idCounter = 0;
 		this._scene = new SceneManager();
 		this._options = new OptionsManager();
+		this._canvasManager = null;
 		this._drawCounter = 0;
 		this._connection = null;
 
@@ -29,11 +30,18 @@ class ProjectManager{
 	    }
 	}
 
+	initCanvas(){
+		this._canvasManager = new CanvasManager(window.innerWidth, window.innerHeight);
+	}
+
 	generateId(){
 		var s = "000000000" + (this._idCounter++);
 		return (this._connection ? this._connection.userId : "") + s.substr(s.length - 6);
 	}
 
+	get canvasManager(){return this._canvasManager;}
+	get canvas(){return this._canvasManager && this._canvasManager.canvas.canvas;}
+	get context(){return this._canvasManager && this._canvasManager.canvas.context;}
 	get drawCounter(){return this._drawCounter;}
 	get scene(){return this._scene;}
 	get options(){return this._options;}

@@ -13,7 +13,7 @@ class SceneManager{
 	};
 
 	initSecondCanvas(){
-		this._secondCanvas = new CanvasManager();
+		this._secondCanvas = new CanvasHandler();
 	}
 
 	get creator(){return this._creator;}
@@ -161,6 +161,7 @@ class SceneManager{
 
 	};
 
+
 	toString(){
 		return JSON.stringify(this.toObject());
 	}
@@ -169,9 +170,19 @@ class SceneManager{
 		each(content, e => Creator.create(e));
 	}
 
+	fromObjectToSingleLayer(layer, content){
+		each(content, e => {
+			e._layer = layer;
+			Creator.create(e);
+		});
+	}
+
 	toObject(){
 		var result = [];
-		this.forEach(e => e.name == "LayerViewer" || result.push(e));
+		each(this._layers, e => e.forEach(function(ee){//pre každu vrstvu prejde všetkými objektami
+			if(ee.name != "LayerViewer")
+				result.push(ee)
+		}));
 		return result;
 	}
 }

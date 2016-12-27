@@ -47,10 +47,14 @@ class EventManager{
 	}
 
 	layerCreate(title, type){//Scene.createLayer
+		if(Project.connection)
+			Project.connection.layer.create(title, type);
 		Logger.log("Vytvorila sa vrstva: " + title + "typu: " + type, LOGGER_LAYER_CHANGE);
 	}
 
 	layerDelete(title){//Scene
+		if(Project.connection)
+			Project.connection.layer.delete(title);
 		Logger.log("Vymazala sa vrstva: " + title, LOGGER_LAYER_CHANGE);
 	}
 
@@ -59,9 +63,13 @@ class EventManager{
 	}
 
 	layerCleanUp(title){//Layer.cleanUp
+		if(Project.connection)
+			Project.connection.layer.clean(title);
 		Logger.log("Bola vyčistená vrstva: " + title, LOGGER_LAYER_CLEANED);
 	}
 	layerRename(oldTitle, newTitle){//Layer.rename
+		if(Project.connection)
+			Project.connection.layer.rename(oldTitle, newTitle)
 		Logger.log("Bola premenovaná vrstva: " + oldTitle + " na " + newTitle, LOGGER_LAYER_RENAMED);
 	}
 

@@ -137,7 +137,7 @@ class Line extends Entity{
 
 		var last = this._points[this._points.length - 1].getClone();
 		var subLast = this._points[this._points.length - 2].getClone();
-		var offset = CanvasManager.calcTextWidth(ctx, this._text_A, "10pt Comic Sans MS");
+		var offset = CanvasHandler.calcTextWidth(ctx, this._text_A, "10pt Comic Sans MS");
 		var point = last.add(subLast.sub(last).normalize().mul((offset >> 1) + 10));
 		doRect({
 			position: point,

@@ -11,6 +11,7 @@ var createUser = function(user_id, lesson_id,socket){
 		socket: socket,
 		status: "connected",
 		lesson: lesson_id,
+		nickname : "Unnamed",
 		buffer: []
 	};
 };
@@ -64,6 +65,10 @@ module.exports.startLesson = function(lesson_id, user_id, type, socket){
 		type: type
 	}
 };
+
+module.exports.isMember = function(lesson_id, user_id){
+	return lessons[lesson_id] && lessons[lesson_id]["members"].indexOf(user_id) >= 0;
+}
 
 module.exports.addMember = function(lesson_id, user_id, socket){
 	createUser(user_id, lesson_id, socket);

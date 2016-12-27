@@ -1,32 +1,41 @@
 /**
  * Created by Gabriel on 29. 10. 2016.
  */
+const REFRESH_TIME = 1000;
 
 class ConnectionManager{
 	constructor(){
 		this._user_id = false;
 		this._socket = false;
+        this._connectedUsers = {};
 		this.paint = {
-			addPoint: (point, layer) => this._paintAction(ACTION_PAINT_ADD_POINT, point, layer),
-			breakLine: (layer) => this._paintAction(ACTION_PAINT_BREAK_LINE, layer),
-			clean: (layer) => this._paintAction(ACTION_PAINT_CLEAN, layer),
-			addPath: (layer, path) => this._paintAction(ACTION_PAINT_ADD_PATH, layer, path)
+			addPoint : (point, layer) => this._paintAction(ACTION_PAINT_ADD_POINT, point, layer),
+			breakLine : (layer) => this._paintAction(ACTION_PAINT_BREAK_LINE, layer),
+			clean : (layer) => this._paintAction(ACTION_PAINT_CLEAN, layer),
+			addPath : (layer, path) => this._paintAction(ACTION_PAINT_ADD_PATH, layer, path)
 		};
 		this.object = {
-			move: (object) => this._objectAction(ACTION_OBJECT_MOVE, object),
-			change: (object, keys) => this._objectAction(ACTION_OBJECT_CHANGE, object, keys),
-			delete: (object) => this._objectAction(ACTION_OBJECT_DELETE, object),
-			create: (object) => this._objectAction(ACTION_OBJECT_CREATE, object)
+			move : (object) => this._objectAction(ACTION_OBJECT_MOVE, object),
+			change : (object, keys) => this._objectAction(ACTION_OBJECT_CHANGE, object, keys),
+			delete : (object) => this._objectAction(ACTION_OBJECT_DELETE, object),
+			create : (object) => this._objectAction(ACTION_OBJECT_CREATE, object)
 		};
 		this.input = {
-			mouseMove: (dir, pos) => this._inputAction(ACTION_MOUSE_MOVE, dir, pos),
+			mouseMove : (dir, pos) => this._inputAction(ACTION_MOUSE_MOVE, dir, pos),
 			mouseDown : (key, pos) => this._inputAction(ACTION_MOUSE_DOWN, key, pos),
 			mouseUp : (key, pos) => this._inputAction(ACTION_MOUSE_UP, key, pos),
 			keyDown : (key) => this._inputAction(ACTION_KEY_DOWN, key),
 			keyUp : (key) => this._inputAction(ACTION_KEY_UP, key)
 		};
+		this.layer = {
+            create : (title, type) => this._layerAction(ACTION_LAYER_CREATE, title, type),
+            delete : (title) => this._layerAction(ACTION_LAYER_DELETE, title),
+            clean : (title) => this._layerAction(ACTION_LAYER_CLEAN, title),
+            visible : (title, val) => this._layerAction(ACTION_LAYER_VISIBLE, val),
+            rename : (title, val) => this._layerAction(ACTION_LAYER_RENAME, val)
+        };
 		this._sharing = false;
-		this._sender = new EventTimer(e => this._sendStack(), 1000);
+		this._sender = new EventTimer(e => this._sendStack(), REFRESH_TIME);
 		this._buffer = [];
 		var inst = this;
 		$.post("/create", {content: JSON.stringify({meno:"gabriel"})}, function(data){
@@ -46,7 +55,6 @@ class ConnectionManager{
 
 	startTeach(data){
 		data["type"] = "teach";
-
 		this._connect(data);
 	}
 
@@ -83,6 +91,7 @@ class ConnectionManager{
 		this._sharePaints = data["sharePaints"];
 		this._shareInput = data["shareInput"];
 		this._shareCreator = data["shareCreator"];
+        this._shareLayers = data["shareLayers"];
 		this._shareObjects = data["shareObjects"];
 		this._maximalWatchers = data["maxWatchers"];
 
@@ -94,7 +103,9 @@ class ConnectionManager{
 				if(inst._type === "watch")
 					Scene.initSecondCanvas();
 				inst._watching = true;
-				inst._sendMessage("requireAllData", {target: inst._user_id});
+                if(inst._type === "watch"){
+				    inst._sendMessage("requireAllData", {target: inst._user_id});
+                }
 			}
 			else{
 				inst._sharing = true;
@@ -152,11 +163,20 @@ class ConnectionManager{
 					Handler.processRequireAllData(inst, e["data"]);
 					break;
 				case "sendAllData" :
-					Handler.processSendAllData(e["data"]);
+					Handler.processSendAllData(inst, e["data"]);
 					break;
+                case "userDisconnect" :
+                    Handler.processUserDisconnect(inst, e["data"]);
+                    break;
+                case "userConnect" :
+                    Handler.processUserConnect(inst, e["data"]);
+                    break;
 				case "paintAction" :
 					Handler.processPaintAction(e["data"]);
 					break;
+                case "layerAction" :
+                    Handler.processLayerAction(e["data"]);
+                    break;
 				case "inputAction" :
 					inst._processInputAction(e["data"]);
 					break;
@@ -190,7 +210,6 @@ class ConnectionManager{
 	}
 
 	_sendMessage(action, data){
-		//console.log("odosiela sa akcia: ", action);
 		this._buffer.push({action: action, time: Date.now(), data: data});
 		this._sender.callIfCan();
 	}
@@ -227,8 +246,39 @@ class ConnectionManager{
 			value: value
 		};
 		this._sendMessage('creatorAction', data);
-
 	}
+
+	_layerAction(type, arg1, arg2){
+        if(!this._socket || !this._shareLayers)
+            return;
+        var data = {
+            action: type
+        };
+
+        switch(type){
+            case ACTION_LAYER_CREATE :
+                data["title"] = arg1;
+                data["type"] = arg2;
+                break;
+            case ACTION_LAYER_DELETE :
+                data["title"] = arg1;
+                break;
+            case ACTION_LAYER_CLEAN :
+                data["title"] = arg1;
+                break;
+            case ACTION_LAYER_VISIBLE :
+                data["title"] = arg1;
+                data["value"] = arg2;
+                break;
+            case ACTION_LAYER_RENAME :
+                data["title"] = arg1;
+                data["value"] = arg2;
+                break;
+        }
+
+        this._sendMessage('layerAction', data);
+    }
+
 	_objectAction(type, object, keys){
 		if(!this._socket || !this._shareObjects)
 			return;
@@ -353,49 +403,94 @@ class ConnectionManager{
 }
 
 class Handler{
+    static processUserDisconnect(inst, data){
+        Logger.notif("používatel " + data["user_name"] + "[ " + data["user_id"] + "] sa odpojil");
+        var user = inst._connectedUsers[data["user_id"]];
+        if(user){
+            user.status = "disconnected",
+            lastConnectionTime = Date.now();
+        }
+    }
+
+    static processUserConnect(inst, data){
+        inst._connectedUsers[data["user_id"]] = {
+            user_name : data["user_name"],
+            status : "connected",
+            connectTime : Date.now()
+        };
+        if(inst._type === "teach"){
+
+            Scene.createLayer(data["user_name"]);
+        }
+        inst._sendMessage("requireAllData", {target: inst._user_id, from: data["user_id"]});
+        Logger.notif("používatel" + data["user_name"] + "[" + data["user_id"] + "] sa pripojil");
+        draw();
+    }
+
 	static processRequireAllData(inst, data){
-		var result = {
-			msg: {
-				scene: Scene.toObject(),
-				creator: Creator.toObject(),
-				paint: Paints.toObject()
-			},
-			target: data["target"]
-		};
-		//Panel.addWatcher(recData.nickName);
-		//inst._actualWatchers.push(recData.nickName);
-		inst._sendMessage('sendAllData',result);
+        var result = {};
+        if(inst._type === "share"){
+            result = {
+                msg: {
+                    scene: Scene.toObject(),
+                    creator: Creator.toObject(),
+                    paint: Paints.toObject()
+                },
+                target: data["target"]
+            };
+            //Panel.addWatcher(recData.nickName);
+            //inst._actualWatchers.push(recData.nickName);
+            inst._sendMessage('sendAllData',result);
+        }
+        else if(inst._type === "exercise"){
+            result = {
+                msg: {
+                    scene: Scene.toObject()
+                },
+                target: data["target"]
+            };
+            inst._sendMessage('sendAllData',result);
+        }
 	}
 
-	static processSendAllData(data){
-		var shareOptions = data.shareOptions;
-		var watchOptions = data.watchOptions;
+	static processSendAllData(inst, data){
+        if(inst._type == "watch"){//chce udaje všetko dostupné o 1 používatelovi
+            var shareOptions = data.shareOptions;
+            var watchOptions = data.watchOptions;
 
-		if(shareOptions.share.objects)
-			Scene.fromObject(data.scene);
-		if(shareOptions.share.creator)
-			Creator.fromObject(data.creator);
-		if(shareOptions.share.paints)
-			Paints.fromObject(data.paint);
+            if(shareOptions.share.objects)
+                Scene.fromObject(data.scene);
+            if(shareOptions.share.creator)
+                Creator.fromObject(data.creator);
+            if(shareOptions.share.paints)
+                Paints.fromObject(data.paint);
 
 
-		if(watchOptions.show.chat){
-			/*
-			 chatViewer = new ChatViewer(Project.title + "'s chat", watchOptions.nickName, sendMessage);
-			 chatViewer.show();
-			 */
-			Panel.startWatch(sendMessage);
-		}
+            if(watchOptions.show.chat){
+                /*
+                 chatViewer = new ChatViewer(Project.title + "'s chat", watchOptions.nickName, sendMessage);
+                 chatViewer.show();
+                 */
+                Panel.startWatch(sendMessage);
+            }
 
-		if(watchOptions.show.timeLine)
-			timeLine = new TimeLine();
+            if(watchOptions.show.timeLine)
+                timeLine = new TimeLine();
 
-		Project.autor = watchOptions.nickName;
+            Project.autor = watchOptions.nickName;
 
-		console.log("nastavuje sa", data);
-		Menu.visible = shareOptions.share.menu;
-		Creator.visibleView = shareOptions.share.menu;
-		Options.setOpt("showLayersViewer", shareOptions.share.layers);
+            console.log("nastavuje sa", data);
+            Menu.visible = shareOptions.share.menu;
+            Creator.visibleView = shareOptions.share.menu;
+            Options.setOpt("showLayersViewer", shareOptions.share.layers);
+        }
+        else if(inst._type == "teach"){//volá sa pre každého pripojeného študenta
+            Scene.fromObjectToSingleLayer(data["user_name"], data.scene);
+
+            //TODO načíta všetky objekty používatela
+
+            //TODO načíta všetky kresby
+        }
 	}
 
 	static processObjectAction(data){
@@ -422,6 +517,32 @@ class Handler{
 		draw();
 	}
 
+	static processLayerAction(data){
+        switch(data.action){
+            case ACTION_LAYER_CREATE :
+                Project.scene.createLayer(data["title"], data["type"]);
+                break;
+            case ACTION_LAYER_DELETE :
+                Project.scene.deleteLayer(data["title"]);
+                break;
+            case ACTION_LAYER_CLEAN :
+                var layer = Project.scene.getLayer(data["title"]);
+                if(layer)
+                    layer.cleanUp();
+                break;
+            case ACTION_LAYER_VISIBLE :
+                var layer = Project.scene.getLayer(data["title"]);
+                if(layer)
+                    layer.visible = data["value"];
+                break;
+            case ACTION_LAYER_RENAME :
+                var layer = Project.scene.getLayer(data["title"]);
+                if(layer)
+                    layer.rename(data["value"]);
+                break;
+        }
+    }
+
 	static processPaintAction(data){
 		switch(data.action){
 			case ACTION_PAINT_ADD_POINT :
@@ -431,7 +552,7 @@ class Handler{
 				Paints.breakLine(data["layer"]);
 				break;
 			case ACTION_PAINT_CLEAN :
-				Paints.clean(data["layer"]);
+				Paints.cleanUp(data["layer"]);
 				break;
 			case ACTION_PAINT_ADD_PATH :
 				Paints.addPath(data["layer"], data["path"]);
@@ -443,3 +564,34 @@ class Handler{
 	}
 }
 
+function testExercise(lessId, name){
+    Project.connection.startExercise({
+        user_name : name,
+        less_id: lessId
+    });
+}
+
+function testTeach(name = "teacherName"){
+    Project.connection.startTeach({
+        user_name : name,
+        user_id: name
+    });
+}
+
+function testWatch(lessId, name = "watcherName"){
+    Project.connection.startWatch({
+        user_name : name,
+        less_id: lessId
+    });
+}
+
+function testShare (name = "SharerName", watchers = 100){
+    Project.connection.startShare({
+        user_name : name,
+        sharePaints: true,
+        shareCreator: true,
+        shareObjects: true,
+        shareLayers: true,
+        maxWatchers: watchers});
+
+};

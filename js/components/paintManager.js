@@ -25,8 +25,9 @@ class PaintManager{
 	 */
 	addPoint(position, activeLayerName = Layers.activeLayerName){
 		Events.paintAddPoint(position, activeLayerName);
-
-		Scene.getLayer(activeLayerName).paint.addPoint(position);
+		var layer = Scene.getLayer(activeLayerName);
+		if(layer)
+			layer.paint.addPoint(position);
 	}
 
 	findPathsForRemove(position, activeLayerName = Layers.activeLayerName){
@@ -54,7 +55,12 @@ class PaintManager{
 	 * @param content - objekt obsahujúci všetky malby
 	 */
 	fromObject(content){
-		each(content, (e, i) =>	Scene.getLayer(i).paint.fromObject(e));
+		each(content, (e, i) =>	{
+			var layer = Scene.getLayer(i);
+			if(!layer)
+				layer = Scene.createLayer(i);
+			layer.paint.fromObject(e)
+		});
 	}
 
 

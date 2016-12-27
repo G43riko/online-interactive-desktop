@@ -224,9 +224,9 @@ var loading = function(){
 	/////DOLEZITE!!!
 	Listeners.hashChange();
 	area = new Area();
-	canvas = document.getElementById("myCanvas");
-	initCanvasSize();
-	context = canvas.getContext("2d");
+	Project.initCanvas();
+	canvas = Project.canvas;
+	context = Project.context;
 
 	//if(typeof ConnectionManager === "function")
 	//	Connection = new ConnectionManager();
@@ -246,8 +246,8 @@ var loading = function(){
 	Project.scene.createLayer("rightMenu", "gui");
 	Project.scene.createLayer("test2");
 
-	context.shadowColor = DEFAULT_SHADOW_COLOR;
-	Input.initListeners(canvas);
+	Project.context.shadowColor = DEFAULT_SHADOW_COLOR;
+	Input.initListeners(Project.canvas);
 
 	if(typeof Sharer !== "undefined")
 		chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
@@ -265,14 +265,12 @@ var loading = function(){
 $(function(){
 	loading();
 });
-
 function realDraw(){
-	if((typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected) || !isObject(context))
+	if((typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected) || !Project.context || !isObject(Project.context))
 		return;
 	Project.increaseDrawCounter();
 	drawMousePos = new Date().getMilliseconds();
-	resetCanvas();
-
+	CanvasHandler.clearCanvas(Project.context);
 	if(Project.options.grid)
 		drawGrid();
 
@@ -288,7 +286,7 @@ function realDraw(){
 	if(typeof timeLine !== KEYWORD_UNDEFINED && timeLine)
 		timeLine.draw();
 
-	context.font = "30px Comic Sans MS";
-	context.fillStyle = "red";
-	context.fillText("draw(ms): " + (new Date().getMilliseconds() - drawMousePos), window.innerWidth - 100, 15);
+	Project.context.font = "30px Comic Sans MS";
+	Project.context.fillStyle = "red";
+	Project.context.fillText("draw(ms): " + (new Date().getMilliseconds() - drawMousePos), window.innerWidth - 100, 15);
 }

@@ -194,7 +194,17 @@ function processRequireAllDataAction(data, user_id, less_id){
 		lessonsManager.sendMessage(lesson["owner"], "requireAllData", data)
 	}
 	else if(lesson["type"] === "teach"){
-		//TODO ak som teacher tak chcem získať dáta od všetkých priopjených
+		if(lesson["owner"] == user_id){ //ten kto poslal žiadosť o všetky dáta musí byť zakladatel spojenia
+			if(lessonsManager.isMember(less_id, data["from"]))
+				lessonsManager.sendMessage(data["from"], "requireAllData", data);
+
+		}
+	}
+}
+
+function processLayerAction(data, user_id, less_id){
+	if(lessonsManager.isSharing(less_id) && lessonsManager.getOwner(less_id) === user_id) {
+		lessonsManager.sendMessageAllMembers(less_id, "layerAction", data);
 	}
 }
 
@@ -316,11 +326,16 @@ initConnection = function(data){
 	var socket = this;
 
 	if(data["type"] == "teach" || data["type"] == "share"){//ak zakladá vyučovanie
-		console.log("vytvorilo sa vyucovanie s id: " + lesson_id);
+		console.log("vytvorilo sa vyucovanie s id: " + lesson_id + "[" + data["type"] + "]");
 		lessonsManager.startLesson(lesson_id, data["user_id"], data["type"], this);
 	}
 	else if(data["type"] === "exercise" || data["type"] === "watch"){//ak sa pripája k vyučovaniu
 		console.log("k vyucovanie s lesson id " + lesson_id + " sa pripojil " + data["user_id"]);
+
+		lessonsManager.sendMessage(lessonsManager.getOwner(lesson_id), "userConnect",{
+			user_name : data["user_name"],
+			user_id : data["user_id"],
+		});
 		lessonsManager.addMember(lesson_id, data["user_id"], this);
 	}
 
@@ -443,6 +458,9 @@ sendBuffer = function(data){
 					break;
 				case "objectAction" :
 					processObjectAction(message["data"], data["user_id"], data["less_id"]);
+					break;
+				case "layerAction" :
+					processLayerAction(message["data"], data["user_id"], data["less_id"]);
 					break;
 
 			}
