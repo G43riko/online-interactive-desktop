@@ -67,7 +67,6 @@ class MenuManager{
 				else
 					posX += this._size.x + this._offset;
 			}, this);
-
 		if(result){
 			if(result.disabled)
 				setCursor(CURSOR_NOT_ALLOWED);

@@ -104,6 +104,15 @@ class LayersViewer extends Entity{
 		return true;
 	}
 
+	_hover(x, y){
+		if(this.clickInBoundingBox(x, y)){
+			setCursor(CURSOR_NOT_ALLOWED);
+			return true;
+		}
+
+		setCursor(CURSOR_DEFAULT);
+		return false;
+	}
 
 	/**
 	 * Vymaže vrstvu s LayerViewera a zo scény

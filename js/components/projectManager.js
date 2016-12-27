@@ -9,6 +9,7 @@ class ProjectManager{
 		this._idCounter = 0;
 		this._scene = new SceneManager();
 		this._options = new OptionsManager();
+		this._drawCounter = 0;
 		this._connection = null;
 
 		if(typeof ConnectionManager === "function")
@@ -33,10 +34,14 @@ class ProjectManager{
 		return (this._connection ? this._connection.userId : "") + s.substr(s.length - 6);
 	}
 
+	get drawCounter(){return this._drawCounter;}
 	get scene(){return this._scene;}
 	get options(){return this._options;}
 	get connection(){return this._connection;}
 
+	increaseDrawCounter(){
+		this._drawCounter++;
+	}
 	
 	_analyzeWindow(data){
 		data["userAgent"] = navigator.userAgent;

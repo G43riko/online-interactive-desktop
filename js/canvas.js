@@ -99,8 +99,8 @@ function drawGrid(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD,
 		else
 			pointsBold.push([i, 0, i, canvas.height]);
 	}
-
-	//horizontálne čiaty
+	boldCounter = 0;
+	//horizontálne čiary
 	for(i=0 ; i<canvas.height ; i+=dist){
 		if(boldCounter++ % nthBold)
 			pointsNormal.push([0, i, canvas.width, i]);

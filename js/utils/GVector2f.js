@@ -70,6 +70,11 @@ class GVector2f{
 		}
 		return this
 	}
+	round(){
+		this._x = Math.round(this._x);
+		this._y = Math.round(this._y);
+		return this;
+	}
 
 	br(){return this._process(arguments, (a, b) => a >> b);}
 	bl(){return this._process(arguments, (a, b) => a << b);}

@@ -9,10 +9,7 @@ class Arc extends Entity{
 		this.size.y = pos.y - this.position.y;
 	};
 
-	clickIn(x, y){
-		if (!this.clickInBoundingBox(x, y))
-			return false;
-
+	_clickIn(x, y){
 		var vec = new GVector2f(x, y);
 		this.moveType = -1;
 
@@ -25,10 +22,7 @@ class Arc extends Entity{
 		return this.moveType >= 0;
 	};
 
-	draw(ctx = context){
-		if (!this.visible)
-			return;
-
+	_draw(ctx){
 		doArc({
 			position: this.position,
 			size: this.size,
@@ -38,9 +32,9 @@ class Arc extends Entity{
 			shadow: this.moving && !this.locked,
 			ctx: ctx
 		});
-		
-		drawBorder(ctx, this);
 
 		Entity.drawConnectors(this, ctx);
+		
+		drawBorder(ctx, this);
 	};
 }

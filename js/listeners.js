@@ -123,6 +123,10 @@ class ListenersManager{
 	}
 
 	mouseUp(position){
+		var possibleChild = null;
+		if(selectedObjects.size() === 1)
+			possibleChild = selectedObjects.firstObject;
+
 		this._movedObject = null;
 
 		var result = false;
@@ -177,11 +181,20 @@ class ListenersManager{
 			this._movedObject = null;
 		}
 
+		var clickOnParent = false;
 		Scene.forEach(o => {
 			if(result)
 				return;
 			if(o.clickIn(position.x, position.y)) {
-				if(Creator.object){
+				if(possibleChild){
+					if(possibleChild.parent === o) //ak klikol na svojho rodiča tak sa nekontroluje priradenie dietata
+						clickOnParent = true;
+					else if(possibleChild !== o){//TODO treba asi prerobiť na jedno dieťa;
+						o.addChildren(possibleChild);
+						clickOnParent = true;
+					}
+				}
+				if(Creator.object){//toto sa stará o konektory
 					if(o.selectedConnector){
 						Creator.object.obj2 = o;
 						Scene.addToScene(Creator.object);
@@ -193,19 +206,31 @@ class ListenersManager{
 			}
 		});
 
+		if(possibleChild && !clickOnParent)
+			possibleChild.removeParent();
+
 		Creator.object = false;
 		result || selectedObjects.clear();
 	}
 
 	mouseMove(position, movX, movY){
 		if(Options.changeCursor){//TODO timeline, layersViewer, creator, Line & polygon, selectors, connectors
-			Menu.hover(position.x, position.y);
+			var isHoverTrue = Menu.hover(position.x, position.y);
+
 			/*
 			if(actContextMenu)
 				actContextMenu.hover(position.x, position.y);
 			*/
-			if(area)
-				area.hover(position.x, position.y);
+			if(!isHoverTrue && Creator.operation === OPERATION_AREA)
+				isHoverTrue = area.hover(position.x, position.y);
+
+			if(!isHoverTrue){
+				Scene.forEach(e => {
+					if(isHoverTrue)
+						return;
+					isHoverTrue = e.hover(position.x, position.y);
+				})
+			}
 		}
 
 		if(Creator.operation == OPERATION_AREA && area && area.isCreating){
@@ -220,7 +245,8 @@ class ListenersManager{
 			draw();
 		}
 		else if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
-			Paints.addPoint(position);
+			var radius = 50;
+			Paints.addPoint(position.div(radius).round().mul(radius));
 			draw();
 		}
 

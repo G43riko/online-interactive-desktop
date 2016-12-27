@@ -124,7 +124,7 @@ function ajax(url, options, dataType){
 	xhttp.open(options["method"], url, options["async"]);
 	xhttp.send();
 }
-ajax(FOLDER_JSON + "/context.json", data => ContextMenuManager.items = data, "JSON");
+ajax(FOLDER_JSON + "/context.json", data => ContextMenuManager.items = data, "json");
 //$.getJSON(FOLDER_JSON + "/context.json", data => ContextMenuManager.items = data);
 //ajax(FOLDER_JSON + "/attributes.json", data => Entity.attr = data, "JSON");
 $.getJSON(FOLDER_JSON + "/attributes.json", data => Entity.attr = data);
@@ -206,6 +206,8 @@ ajax(FOLDER_JSON + "/forms.json", data => {
 		if(form)
 			form.appendChild(Forms.createForm(e));
 	});
+
+	Project.options.init();
 }, "json");
 
 $.ajax({
@@ -255,7 +257,6 @@ var loading = function(){
 	var xOffset = Menu.position.x + (Menu.size.x + MENU_OFFSET) * Menu.visibleElements - MENU_OFFSET;
 	Creator.view = new CreatorViewer(new GVector2f(Menu.visible ? xOffset : MENU_OFFSET, Menu.position.y - MENU_OFFSET));
 
-	Project.options.init();
 	console.log("stranka sa nacítala za: ", (window["performance"].now() - initTime) + " ms");
 	
 	draw();
@@ -268,7 +269,7 @@ $(function(){
 function realDraw(){
 	if((typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected) || !isObject(context))
 		return;
-
+	Project.increaseDrawCounter();
 	drawMousePos = new Date().getMilliseconds();
 	resetCanvas();
 

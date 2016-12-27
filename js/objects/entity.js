@@ -10,13 +10,18 @@ class Entity{
 		this._size 				= size;
 		this._name 				= name;
 
+		this._drawCounter		= -1;
 		this._selected 			= false;
 		this._visible 			= true;
 		this._moving 			= false;
 		this._locked			= false;
 		this._minSize 			= false;
 		this._selectedConnector = false;
+
 		this._layer				= "default";
+
+		this._parent			= null;
+		this._childrens			= [];
 
 		Entity.changeAttr(this, data);
 
@@ -37,6 +42,43 @@ class Entity{
 
 		if(isUndefined(this._borderColor))
 			this._borderColor 	= Creator.borderColor;
+	}
+
+	removeChildren(element){
+		var index = this._childrens.indexOf(element);
+		if(index >= 0){
+			this._childrens.splice(index, 1);
+			element._parent = null;
+		}
+		return element;
+	}
+
+	removeParent(){
+		if(this._parent)
+			this._parent.removeChildren(this);
+
+		return this;
+	}
+
+	get parent(){
+		return this._parent;
+	}
+
+	addChildren(element){
+		if(element._parent !== this && this._parent !== element){
+			var index = this._childrens.indexOf(element);
+			if(index < 0){
+				this._childrens.push(element);
+				element._parent = this;
+			}
+		}
+		return element;
+	}
+
+	eachChildren(func){
+		each(this._childrens, (e) => {
+			func(e);
+		});
 	}
 
 	/**
@@ -79,8 +121,22 @@ class Entity{
 	 * @param y
 	 * @returns {boolean}
 	 */
-	clickIn(x, y){return false;};
+	clickIn(x, y){
+		if (!this.clickInBoundingBox(x, y))
+			return false;
 
+		return this._clickIn(x, y);
+	};
+
+	_clickIn(x, y){return false;};
+
+	hover(x, y){
+		return this._hover(x, y);
+	}
+
+	_hover(x, y){
+		return false;
+	}
 
 	/**
 	 * Vykoná príslušnú akciu po kliknutí
@@ -109,10 +165,28 @@ class Entity{
 	cleanUp(){};
 
 
+	_draw(){}
+
 	/**
 	 * Vykreslí objekt
 	 */
-	draw(){};
+	draw(ctx = context){
+		//skontroluje či sa túto snímku už nevykresloval
+		if(this._drawCounter === Project.drawCounter)
+			return;
+		this._drawCounter = Project.drawCounter;
+
+		//ak je neviditelný nevykreslí sa
+		if (!this.visible)
+			return;
+
+
+		this._draw(ctx);
+
+
+		for(var e in this._childrens)
+			this._childrens[e].draw(ctx);
+	};
 
 
 	/**

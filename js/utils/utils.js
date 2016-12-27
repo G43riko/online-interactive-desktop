@@ -25,7 +25,7 @@ class Animation{
 
 		var test = (time) => {
 			Animation._mainLoop(time)
-		}
+		};
 		requestAnimationFrame(test);
 	}
 }
@@ -143,16 +143,19 @@ function extendObject(){
 }
 
 Movement = {
-	move: function(o, x, y){
+	move: function(o, x, y, moveChildrens = true){
 		if(isDefined(o.locked) && o.locked)
 			return;
+
+
 
 		if(isDefined(o.selectedConnector) && Creator.operation == OPERATION_DRAW_JOIN && o.selectedConnector){
 
 		}
 		else if(isDefined(o.moveType)){
+
 			if(Creator.operation == OPERATION_DRAW_LINE && Menu.isToolActive()){
-				
+
 			}
 			else{
 				var oldPos = o.position.getClone();
@@ -174,6 +177,12 @@ Movement = {
 						break;
 					case 4:
 						o.position.add(x, y);
+						if(moveChildrens)
+							o.eachChildren(e => {
+								e.moveType = 4;
+								Movement.move(e, x, y, false);
+								e.moveType = -1;
+							});
 						break;
 					case 5:
 						if(!o.minSize || o.size.x + x >= o.minSize.x)
@@ -197,8 +206,11 @@ Movement = {
 			}
 			Entity.findMinAndMax(o.points, o.position, o.size);
 		}
-		else
+		else{
 			o.position.add(x, y);
+			if(moveChildrens)
+				o.eachChildren(e => e.position.add(x, y));
+		}
 
 		Events.objectMove(o);
 	}

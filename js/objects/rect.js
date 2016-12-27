@@ -22,10 +22,20 @@ class Rect extends Entity {
 		this.size.y = pos.y - this.position.y;
 	};
 
-	clickIn(x, y){
-		if (!this.clickInBoundingBox(x, y))
-			return false;
+	_hover(x, y){
+		if(this.clickInBoundingBox(x, y)){
+			if(this._locked)
+				setCursor(CURSOR_NOT_ALLOWED);
+			else
+				setCursor(CURSOR_POINTER);
+			return true;
+		}
 
+		setCursor(CURSOR_DEFAULT);
+		return false;
+	}
+
+	_clickIn(x, y){
 		var vec = new GVector2f(x, y);
 		this.moveType = -1;
 
@@ -43,9 +53,7 @@ class Rect extends Entity {
 		return this._radius > minRadius ? minRadius : this._radius;
 	}
 
-	draw(ctx = context){
-		if (!this.visible)
-			return;
+	_draw(ctx){
 		doRect({
 			position: this.position,
 			size: this.size,

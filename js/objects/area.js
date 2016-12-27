@@ -41,19 +41,18 @@ class Area{
 		//TODO skontrolovať nerozpoznane čiary;
 
 		return true;
-
 	}
 
 	hover(x, y){
 		if(this._isCreating)
 			return false;
 
-		var val = x > this._min.x && y > this._min.y &&
-				  x < this._max.x && y < this._max.y;
+		var val = x > this._min.x && y > this._min.y && x < this._max.x && y < this._max.y;
 
 		if(val)
 			val = this._isPointIn(x, y);
 		setCursor(val ? CURSOR_POINTER : CURSOR_DEFAULT);
+		return val !== false;
 	}
 
 
@@ -64,7 +63,7 @@ class Area{
 			points: [last.x, last.y, position.x, position.y],
 			borderWidth: 5,
 			borderColor: "blue"
-		})
+		});
 
 		this._min.x = Math.min(this._min.x, position.x);
 		this._min.y = Math.min(this._min.y, position.y);
