@@ -153,15 +153,14 @@ class Paint extends Entity{
 		arr.push(point);
 	}
 
-	fromObject(content){
-		each(content, ee => each(ee["points"], (e, i , arr) => arr[i] = new GVector2f(e._x, e._y)));
-
+	fromObject(content, concat = false){
+		//each(content, ee => each(ee["points"], (e, i , arr) => arr[i] = new GVector2f(e._x, e._y)));
 		each(content, ee => {
 			each(ee["points"], (e, i , arr) => {
 				arr[i] = new GVector2f(e._x, e._y);
 			})
 		});
-		this.redraw(content);
+		this.redraw(concat ? content.concat(this._points) : content);
 	}
 
 	toObject(){

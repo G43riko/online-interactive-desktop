@@ -191,6 +191,7 @@ class objectCreator{
 	create(obj){
 		var result = Entity.create(obj, false);
 		if(result){
+			//console.log("pridava sa nový objekt do vrstvy ", result.layer, result, obj);
 			Scene.addToScene(result, result.layer, false);
 			draw();
 		}

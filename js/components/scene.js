@@ -39,14 +39,16 @@ class SceneManager{
 	}
 
 	createLayer(title = DEFAULT_LAYER_TITLE, layerType = ""){
-		if(this._layers.hasOwnProperty(title))
+		if(this._layers.hasOwnProperty(title)){
 			Logger.error("ide sa vytvoriť vrstva ktorá už existuje: " + title);
+		}
 		this._layers[title] = new Layer(title, layerType);
 		this._layersCount++;
 
 
-		if(isDefined(Layers))
+		if(isDefined(Layers)){
 			Layers.createLayer(this._layers[title]);
+		}
 
 		Events.layerCreate(title, layerType);
 		return this._layers[title];

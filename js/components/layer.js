@@ -17,8 +17,9 @@ class Layer{
 	};
 
 	get locked(){return this._locked || this._layerType !== ""}
-	get taskLayer(){return this._layerType === "layer";}
-	get guiLayer(){return this._layerType === "gui";}
+	get taskLayer(){return this._layerType === LAYER_TASK;}
+	get guiLayer(){return this._layerType === LAYER_GUI;}
+	get userLayer(){return this._layerType === LAYER_USER;}
 	get drawPaint(){return this._drawPaint;}
 	get layerType(){return this._layerType;}
 	get visible(){return this._visible;}

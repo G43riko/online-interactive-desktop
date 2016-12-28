@@ -12,7 +12,7 @@ var setAttr = (el, key, val) => {
 				el.setAttribute(i, key[i]);
 	
 	return el;
-}
+};
 
 var append = function(element, content){
 	if(typeof content === "object")
@@ -186,10 +186,13 @@ function serializeSaveData(){
 function serializeShareData(){
 	var getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
 	var result = {};
-	result["realTime"] = getValueIfExists(document.getElementById("idRealtimeSharing"));
-	result["maxWatchers"] = getValueIfExists(document.getElementById("idMaxWatchers"));
+	//NEW
+	result["user_name"] = getValueIfExists(document.getElementById("idUserName"));
+	result["type"] = getValueIfExists(document.getElementById("idType"));
+	result["limit"] = getValueIfExists(document.getElementById("idMaxWatchers"));
+
+	//BOTH
 	result["password"] = getValueIfExists(document.getElementById("idSharingPassword"));
-	result["detailMovement"] = getValueIfExists(document.getElementById("idDetailMovement"));
 
 	result["shareMenu"] = getValueIfExists(document.getElementById("idShareMenu"));
 	result["sharePaints"] = getValueIfExists(document.getElementById("idSharePaints"));
@@ -197,16 +200,37 @@ function serializeShareData(){
 	result["shareCreator"] = getValueIfExists(document.getElementById("idShareCreator"));
 	result["shareLayers"] = getValueIfExists(document.getElementById("idShareLayers"));
 	result["shareTitle"] = getValueIfExists(document.getElementById("idShareTitle"));
+
+
+	//OLD
+	result["realTime"] = getValueIfExists(document.getElementById("idRealtimeSharing"));
+	result["maxWatchers"] = getValueIfExists(document.getElementById("idMaxWatchers"));
+	result["detailMovement"] = getValueIfExists(document.getElementById("idDetailMovement"));
+
 	result["publicShare"] = getValueIfExists(document.getElementById("idPublicShare"));
-	
-	
-	closeDialog();
-	Sharer.startShare(result);
+
+
+	$.post("/checkConnectionData", {content: JSON.stringify(result)}, function(response){
+		if(response.result > 0){
+			closeDialog();
+			Project.connection.connect(result);
+		}
+		else
+			Alert.danger(response.msg);
+	}, "JSON");
+
+	//Sharer.startShare(result);
 }
 
 function serializeWatcherData(){
 	var getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
 	var result = {};
+	//NEW
+	result["user_name"]          = getValueIfExists(document.getElementById("idWatchUserName"));
+	result["less_id"]          = getValueIfExists(document.getElementById("idLessonId"));
+	//BOTH
+	result["password"]          = getValueIfExists(document.getElementById("idWatchSharingPassword"));
+	//OLD
 	result["nickName"]          = getValueIfExists(document.getElementById("idNickName"));
 	result["password"]          = getValueIfExists(document.getElementById("idSharingPassword"));
 	result["timeLine"]          = getValueIfExists(document.getElementById("idShowTimeLine"));
@@ -225,7 +249,7 @@ function serializeSaveXmlData(){
 		process(document.getElementById(el));
 		each(args, e => process(document.getElementById(e)));
 		return result;
-	}
+	};
 	saveSceneAsFile(processValues({}, "idProjectTitle", "idSaveCreator", "idSavePaint", "idSaveTask", "idTaskHint", "idTaskTimeLimit", "idSaveHistory", "idStoreStatistics"));
 }
 
@@ -246,6 +270,17 @@ function processWatchData(data){
 		};
 	data["innerWidth"] = window.innerWidth;
 	data["innerHeight"] = window.innerHeight;
+	data["type"] = "watch";
+	$.post("/checkConnectionData", {content: JSON.stringify(data)}, function(response){
+		if(response["result"] > 0){
+			closeDialog();
+			data["type"] = response["type"];
+			Project.connection.connect(data);
+		}
+		else
+			Alert.danger(response.msg);
+	}, "JSON");
+	/*
 	$.post("/checkWatchData", {content: JSON.stringify(data)}, function(response){
 		if(response.result > 0){
 			location.href = "/watch?id=" + data["shareId"] + "&userId=" + response["userId"];
@@ -260,6 +295,7 @@ function processWatchData(data){
 		else
 			Alert.danger(response.msg);
 	}, "JSON");
+	*/
 	return false;
 
 	/*

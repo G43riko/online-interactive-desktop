@@ -5,7 +5,7 @@
 class FormManager{
 	constructor(data){
 		this._data = data;
-		this._allowerAttributes = ["id", "style", "name", "value", "onclick", "onchange", "placeholder"]
+		this._allowerAttributes = ["id", "style", "name", "value", "onclick", "onchange", "placeholder", "disabled", "visible"]
 	}
 
 	createForm(id){
@@ -19,6 +19,8 @@ class FormManager{
 	}
 
 	_createInput(data, isChildren = false){
+		if(data["visible"] === false)
+			return null;
 		var result = document.createElement("div"),
 			i, input;
 		if(isIn(data["type"], "checkbox", "multiCheckbox") && !isChildren)
@@ -87,10 +89,13 @@ class FormManager{
 		var result = document.createElement("form");
 		result.innerHTML += "<h2>" + form.title + "</h2><br/>";
 
-		for(var i in form.elements)
-			if(form.elements.hasOwnProperty(i))
-				result.appendChild(this._createInput(form.elements[i]));
-
+		for(var i in form.elements){
+			if(form.elements.hasOwnProperty(i)){
+				var element = this._createInput(form.elements[i]);
+				if(element)
+					result.appendChild(element);
+			}
+		}
 
 		return result;
 	}

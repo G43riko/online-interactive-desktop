@@ -33,6 +33,16 @@ module.exports.init = function(utils, time){
 	eventManager = new utils.EventTimer(function(){sendBuffers()}, time);
 };
 
+module.exports.getMemberType = function(lesson_id){
+	var type = lessons[lesson_id]["type"];
+	if (type === "share"){
+		return "watch";
+	}
+	if(type === "teach"){
+		return "exercise";
+	}
+};
+
 module.exports.existLesson = function(lesson_id){
 	return typeof lessons[lesson_id] === "object";
 };
@@ -68,11 +78,15 @@ module.exports.startLesson = function(lesson_id, user_id, type, socket){
 
 module.exports.isMember = function(lesson_id, user_id){
 	return lessons[lesson_id] && lessons[lesson_id]["members"].indexOf(user_id) >= 0;
-}
+};
 
 module.exports.addMember = function(lesson_id, user_id, socket){
 	createUser(user_id, lesson_id, socket);
 	lessons[lesson_id]["members"].push(user_id);
+};
+
+module.exports.getAllMembers = function(lesson_id){
+	return lessons[lesson_id]["members"];
 };
 
 module.exports.disconnectUser = function(user_id){

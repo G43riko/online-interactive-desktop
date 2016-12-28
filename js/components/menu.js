@@ -318,7 +318,8 @@ class MenuManager{
 				showSavingOptions();
 				break;
 			case "watch":
-				window.open(Sharer.watcherUrl, '_blank');
+				showWatcherOptions();
+				//window.open(Sharer.watcherUrl, '_blank');
 				break;
 			case "saveTask":
 				saveSceneAsTask();

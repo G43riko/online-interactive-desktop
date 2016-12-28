@@ -3,10 +3,25 @@
  */
 const REFRESH_TIME = 1000;
 
+const KEY_USER_NAME	= "user_name";
+const KEY_USER_ID	= "user_id";
+const KEY_LESS_ID	= "less_id";
+const KEY_TARGET	= "target";
+const KEY_TYPE		= "type";
+const KEY_LAYER		= "layer";
+const KEY_WATCH		= "watch";
+const KEY_SHARE		= "share";
+const KEY_TITLE		= "title";
+const KEY_VALUE		= "value";
+const KEY_TEACH		= "teach";
+const KEY_DATA		= "data";
+const KEY_EXERCISE	= "exercise";
+
 class ConnectionManager{
 	constructor(){
 		this._user_id = false;
 		this._socket = false;
+		this._user_name = DEFAULT_USER_NAME;
         this._connectedUsers = {};
 		this.paint = {
 			addPoint : (point, layer) => this._paintAction(ACTION_PAINT_ADD_POINT, point, layer),
@@ -39,7 +54,7 @@ class ConnectionManager{
 		this._buffer = [];
 		var inst = this;
 		$.post("/create", {content: JSON.stringify({meno:"gabriel"})}, function(data){
-			inst._user_id = data["cookies"]["user_id"];
+			inst._user_id = data["cookies"][KEY_USER_ID];
 		}, "json");
 
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
@@ -49,42 +64,42 @@ class ConnectionManager{
 	 * INITIALIZATIONS
 	 ********************/
 	startShare(data){
-		data["type"] = "share";
-		this._connect(data);
+		data[KEY_TYPE] = KEY_SHARE;
+		this.connect(data);
 	}
 
 	startTeach(data){
-		data["type"] = "teach";
-		this._connect(data);
+		data[KEY_TYPE] = KEY_TEACH;
+		this.connect(data);
 	}
 
 	startWatch(data){
-		data["type"] = "watch";
+		data[KEY_TYPE] = KEY_WATCH;
 
-		if(isUndefined(data["less_id"])){
+		if(isUndefined(data[KEY_LESS_ID])){
 			Logger.error("nieje zadane less_id");
 			return false;
 		}
 
-		this._connect(data);
+		this.connect(data);
 	}
 
 	startExercise(data){
-		data["type"] = "exercise";
+		data[KEY_TYPE] = KEY_EXERCISE;
 
-		if(isUndefined(data["less_id"])){
+		if(isUndefined(data[KEY_LESS_ID])){
 			Logger.error("nieje zadane less_id");
 			return false;
 		}
 
-		this._connect(data);
+		this.connect(data);
 	}
 
-	_connect(data){
+	connect(data){
 		this._socket = io();
 		this._startTime = Date.now();
-		this._type = data["type"];
-
+		this._type = data[KEY_TYPE];
+		this._user_name = data[KEY_USER_NAME] || this._user_name;
 		data["resolution"] = window.innerWidth + "_" + window.innerHeight;
 		var inst = this;
 
@@ -95,20 +110,30 @@ class ConnectionManager{
 		this._shareObjects = data["shareObjects"];
 		this._maximalWatchers = data["maxWatchers"];
 
+
 		this._socket.on('confirmConnection', function(response) {
-			inst._less_id = response["data"]["less_id"];
+			inst._less_id = response[KEY_DATA][KEY_LESS_ID];
 			inst._connectTime = Date.now();
 			inst._messageTime = Date.now();
-			if(inst._type === "watch" || inst._type === "teach"){
-				if(inst._type === "watch")
+			if(inst._type === KEY_WATCH || inst._type === KEY_TEACH){
+				if(inst._type === KEY_WATCH)
 					Scene.initSecondCanvas();
+				//inst._sendMessage("requireAllData", {target: inst._user_id});
 				inst._watching = true;
-                if(inst._type === "watch"){
-				    inst._sendMessage("requireAllData", {target: inst._user_id});
-                }
 			}
 			else{
 				inst._sharing = true;
+			}
+
+
+			//upraví menu a dá vedieť používatelovi
+			Logger.notif("jupíííí spojenie bolo úspešné");
+			if(isFunction(Menu.disabled)) {
+				Menu.disabled("sharing", "watch");
+				Menu.disabled("sharing", "stopShare");
+				Menu.disabled("sharing", "shareOptions");
+				Menu.disabled("sharing", "copyUrl");
+				Menu.disabled("sharing", "startShare");
 			}
 		});
 
@@ -130,7 +155,7 @@ class ConnectionManager{
 
 	disconnect(){
 		if(isFunction(Menu.disabled)){
-			Menu.disabled("sharing", "watch");
+			Menu.disabled("sharing", KEY_WATCH);
 			Menu.disabled("sharing", "stopShare");
 			Menu.disabled("sharing", "shareOptions");
 			Menu.disabled("sharing", "copyUrl");
@@ -160,32 +185,32 @@ class ConnectionManager{
 			//console.log("prijata akcia:" + e["action"]);
 			switch(e["action"]){
 				case "requireAllData" :
-					Handler.processRequireAllData(inst, e["data"]);
+					Handler.processRequireAllData(inst, e[KEY_DATA]);
 					break;
 				case "sendAllData" :
-					Handler.processSendAllData(inst, e["data"]);
+					Handler.processSendAllData(inst, e[KEY_DATA]);
 					break;
                 case "userDisconnect" :
-                    Handler.processUserDisconnect(inst, e["data"]);
+                    Handler.processUserDisconnect(inst, e[KEY_DATA]);
                     break;
                 case "userConnect" :
-                    Handler.processUserConnect(inst, e["data"]);
+                    Handler.processUserConnect(inst, e[KEY_DATA]);
                     break;
 				case "paintAction" :
-					Handler.processPaintAction(e["data"]);
+					Handler.processPaintAction(e[KEY_DATA]);
 					break;
                 case "layerAction" :
-                    Handler.processLayerAction(e["data"]);
+                    Handler.processLayerAction(e[KEY_DATA]);
                     break;
 				case "inputAction" :
-					inst._processInputAction(e["data"]);
+					inst._processInputAction(e[KEY_DATA]);
 					break;
 				case "creatorAction" :
-					Creator.setOpt(e["data"]["key"], e["data"]["value"]);
+					Creator.setOpt(e[KEY_DATA]["key"], e[KEY_DATA][KEY_VALUE]);
 					draw();
 					break;
 				case "objectAction" :
-					Handler.processObjectAction(e["data"]);
+					Handler.processObjectAction(e[KEY_DATA]);
 					break;
 				default:
 					Logger.error("neznáma akcia: " + e["action"]);
@@ -204,7 +229,7 @@ class ConnectionManager{
 			user_id: this._user_id
 		};
 		if(this._less_id)
-			result["less_id"] = this._less_id;
+			result[KEY_LESS_ID] = this._less_id;
 		this._socket.emit("sendBuffer", result);
 		this._buffer = [];
 	}
@@ -257,22 +282,22 @@ class ConnectionManager{
 
         switch(type){
             case ACTION_LAYER_CREATE :
-                data["title"] = arg1;
-                data["type"] = arg2;
+                data[KEY_TITLE] = arg1;
+                data[KEY_TYPE] = arg2;
                 break;
             case ACTION_LAYER_DELETE :
-                data["title"] = arg1;
+                data[KEY_TITLE] = arg1;
                 break;
             case ACTION_LAYER_CLEAN :
-                data["title"] = arg1;
+                data[KEY_TITLE] = arg1;
                 break;
             case ACTION_LAYER_VISIBLE :
-                data["title"] = arg1;
-                data["value"] = arg2;
+                data[KEY_TITLE] = arg1;
+                data[KEY_VALUE] = arg2;
                 break;
             case ACTION_LAYER_RENAME :
-                data["title"] = arg1;
-                data["value"] = arg2;
+                data[KEY_TITLE] = arg1;
+                data[KEY_VALUE] = arg2;
                 break;
         }
 
@@ -364,20 +389,20 @@ class ConnectionManager{
 			case ACTION_PAINT_ADD_POINT :
 				data["pX"] = arg1.x;
 				data["pY"] = arg1.y;
-				data["layer"] = arg2;
+				data[KEY_LAYER] = arg2;
 				break;
 			case ACTION_PAINT_BREAK_LINE :
-				data["layer"] = arg1;
+				data[KEY_LAYER] = arg1;
 				break;
 			case ACTION_PAINT_CLEAN :
-				data["layer"] = arg1;
+				data[KEY_LAYER] = arg1;
 				break;
 			case ACTION_PAINT_ADD_PATH :
-				data["layer"] = arg1;
+				data[KEY_LAYER] = arg1;
 				data["path"] = arg2;
 				break;
 			case ACTION_PAINT_REMOVE_PATH :
-				data["layer"] = arg1;
+				data[KEY_LAYER] = arg1;
 				break;
 			default:
 				Logger.error(type, 3);
@@ -404,57 +429,61 @@ class ConnectionManager{
 
 class Handler{
     static processUserDisconnect(inst, data){
-        Logger.notif("používatel " + data["user_name"] + "[ " + data["user_id"] + "] sa odpojil");
-        var user = inst._connectedUsers[data["user_id"]];
+        Logger.notif("používatel " + data[KEY_USER_NAME] + "[ " + data[KEY_USER_ID] + "] sa odpojil");
+        var user = inst._connectedUsers[data[KEY_USER_ID]];
         if(user){
-            user.status = "disconnected",
+            user.status = STATUS_DISCONNECTED,
             lastConnectionTime = Date.now();
         }
     }
 
     static processUserConnect(inst, data){
-        inst._connectedUsers[data["user_id"]] = {
-            user_name : data["user_name"],
-            status : "connected",
+        inst._connectedUsers[data[KEY_USER_ID]] = {
+            user_name : data[KEY_USER_NAME],
+            status : STATUS_CONNECTED,
             connectTime : Date.now()
         };
-        if(inst._type === "teach"){
-
-            Scene.createLayer(data["user_name"]);
+        if(inst._type === KEY_TEACH){
+            //Scene.createLayer(data[KEY_USER_NAME]);
+			//inst._sendMessage("requireAllData", {target: inst._user_id, from: data[KEY_USER_ID]});
         }
-        inst._sendMessage("requireAllData", {target: inst._user_id, from: data["user_id"]});
-        Logger.notif("používatel" + data["user_name"] + "[" + data["user_id"] + "] sa pripojil");
-        draw();
+        Logger.notif("používatel" + data[KEY_USER_NAME] + "[" + data[KEY_USER_ID] + "] sa pripojil");
+        //draw();
     }
 
 	static processRequireAllData(inst, data){
+		console.log("prijal som žiadosť o všetky udaje pre " + data[KEY_TARGET]);
         var result = {};
-        if(inst._type === "share"){
+        if(inst._type === KEY_SHARE){
             result = {
                 msg: {
                     scene: Scene.toObject(),
                     creator: Creator.toObject(),
-                    paint: Paints.toObject()
+                    paint: Paints.toObject(),
+					user_name : inst._user_name
                 },
-                target: data["target"]
+                target: data[KEY_TARGET]
             };
             //Panel.addWatcher(recData.nickName);
             //inst._actualWatchers.push(recData.nickName);
             inst._sendMessage('sendAllData',result);
         }
-        else if(inst._type === "exercise"){
+        else if(inst._type === KEY_EXERCISE){
             result = {
                 msg: {
-                    scene: Scene.toObject()
+                    scene: Scene.toObject(),
+					paint: Paints.toObject(),
+					user_name : inst._user_name
                 },
-                target: data["target"]
+                target: data[KEY_TARGET]
             };
             inst._sendMessage('sendAllData',result);
         }
 	}
 
 	static processSendAllData(inst, data){
-        if(inst._type == "watch"){//chce udaje všetko dostupné o 1 používatelovi
+		console.log("prijal som všetky udaje ");
+        if(inst._type == KEY_WATCH){//chce udaje všetko dostupné o 1 používatelovi
             var shareOptions = data.shareOptions;
             var watchOptions = data.watchOptions;
 
@@ -484,13 +513,15 @@ class Handler{
             Creator.visibleView = shareOptions.share.menu;
             Options.setOpt("showLayersViewer", shareOptions.share.layers);
         }
-        else if(inst._type == "teach"){//volá sa pre každého pripojeného študenta
-            Scene.fromObjectToSingleLayer(data["user_name"], data.scene);
-
-            //TODO načíta všetky objekty používatela
-
+        else if(inst._type == KEY_TEACH){//volá sa pre každého pripojeného študenta
+			if(Scene.getLayer(data[KEY_USER_NAME]))
+				Scene.deleteLayer(data[KEY_USER_NAME]);
+			Scene.createLayer(data[KEY_USER_NAME], LAYER_USER);
+            Scene.fromObjectToSingleLayer(data[KEY_USER_NAME], data.scene);
+			Paints.fromObjectToSingleLayer(data[KEY_USER_NAME], data.paint);
             //TODO načíta všetky kresby
         }
+        draw();
 	}
 
 	static processObjectAction(data){
@@ -520,25 +551,25 @@ class Handler{
 	static processLayerAction(data){
         switch(data.action){
             case ACTION_LAYER_CREATE :
-                Project.scene.createLayer(data["title"], data["type"]);
+                Project.scene.createLayer(data[KEY_TITLE], data[KEY_TYPE]);
                 break;
             case ACTION_LAYER_DELETE :
-                Project.scene.deleteLayer(data["title"]);
+                Project.scene.deleteLayer(data[KEY_TITLE]);
                 break;
             case ACTION_LAYER_CLEAN :
-                var layer = Project.scene.getLayer(data["title"]);
+                var layer = Project.scene.getLayer(data[KEY_TITLE]);
                 if(layer)
                     layer.cleanUp();
                 break;
             case ACTION_LAYER_VISIBLE :
-                var layer = Project.scene.getLayer(data["title"]);
+                var layer = Project.scene.getLayer(data[KEY_TITLE]);
                 if(layer)
-                    layer.visible = data["value"];
+                    layer.visible = data[KEY_VALUE];
                 break;
             case ACTION_LAYER_RENAME :
-                var layer = Project.scene.getLayer(data["title"]);
+                var layer = Project.scene.getLayer(data[KEY_TITLE]);
                 if(layer)
-                    layer.rename(data["value"]);
+                    layer.rename(data[KEY_VALUE]);
                 break;
         }
     }
@@ -546,16 +577,16 @@ class Handler{
 	static processPaintAction(data){
 		switch(data.action){
 			case ACTION_PAINT_ADD_POINT :
-				Paints.addPoint(new GVector2f(data["pX"], data["pY"]), data["layer"]);
+				Paints.addPoint(new GVector2f(data["pX"], data["pY"]), data[KEY_LAYER]);
 				break;
 			case ACTION_PAINT_BREAK_LINE :
-				Paints.breakLine(data["layer"]);
+				Paints.breakLine(data[KEY_LAYER]);
 				break;
 			case ACTION_PAINT_CLEAN :
-				Paints.cleanUp(data["layer"]);
+				Paints.cleanUp(data[KEY_LAYER]);
 				break;
 			case ACTION_PAINT_ADD_PATH :
-				Paints.addPath(data["layer"], data["path"]);
+				Paints.addPath(data[KEY_LAYER], data["path"]);
 				break;
 			default :
 				Logger.error("bola prijatá neznáma akcia: " + data["action"]);
@@ -594,4 +625,4 @@ function testShare (name = "SharerName", watchers = 100){
         shareLayers: true,
         maxWatchers: watchers});
 
-};
+}

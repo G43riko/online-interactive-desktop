@@ -20,6 +20,13 @@ class CanvasManager{
         this._canvasCounter++;
     }
 
+    onResize(){
+        this._canvases[MAIN_CANVAS].setCanvasSize();
+        if(this._canvases[POINTER_CANVAS]){
+            this._canvases[POINTER_CANVAS].setCanvasSize();
+        }
+    }
+
     get canvas(){
         return this._canvases[MAIN_CANVAS];
     }

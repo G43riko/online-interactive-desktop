@@ -198,6 +198,7 @@ ajax(FOLDER_JSON + "/forms.json", data => {
 	var formList = {
 		shareForm : "sharingForm",
 		optionsForm : "optionsForm",
+		watchForm : "watchForm",
 		saveXmlForm : "saveXmlForm",
 		saveForm : "saveImgForm"
 	};

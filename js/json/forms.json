@@ -3,11 +3,34 @@
 		"title" : "Sharing options",
 		"elements" : [
 			{
+				"id" : "idUserName",
+				"type" : "text",
+				"name" : "username",
+				"label" : "Použivatelské meno"
+			},
+			{
+				"id" : "idType",
+				"type" : "combobox",
+				"name" : "type",
+				"label" : "Typ zdielania",
+				"value" : "teach",
+				"options" : [
+					{
+						"value" : "share",
+						"label" : "Zdielanie obrazovky viacerím používatelom"
+					},
+					{
+						"value" : "teach",
+						"label" : "Sledovanie obrazoviek viacerích klientov"
+					}
+				]
+			},
+			{
 				"id" : "idMaxWatchers",
 				"type" : "number",
 				"value" : 20,
 				"name" : "maxWatchers",
-				"label" : "Maximálny počet watcherov"
+				"label" : "Maximálny počet pripojených používatelov"
 			},
 			{
 				"id" : "idSharingPassword",
@@ -17,6 +40,7 @@
 			},
 			{
 				"id" : "idRealtimeSharing",
+				"visible" : false,
 				"type" : "checkbox",
 				"name" : "realtimeSharing",
 				"checked" : true,
@@ -31,6 +55,7 @@
 			{
 				"id" : "idDetailMovement",
 				"type" : "checkbox",
+				"visible" : false,
 				"name" : "detailMovement",
 				"checked" : true,
 				"label" : "Odosielať podrobný pohyb"
@@ -87,6 +112,34 @@
 				"type" : "button",
 				"value" : "Začať zdielanie",
 				"onclick" : "serializeShareData()"
+			}
+		]
+	},
+	"watchForm" : {
+		"title" : "Watch form",
+		"elements" : [
+			{
+				"id" : "idLessonId",
+				"type" : "text",
+				"name" : "lesson_id",
+				"label" : "Id zdielania"
+			},
+			{
+				"id" : "idWatchUserName",
+				"type" : "text",
+				"name" : "username",
+				"label" : "Použivatelské meno"
+			},
+			{
+				"id" : "idWatchSharingPassword",
+				"type" : "password",
+				"name" : "sharingPassword",
+				"label" : "Heslo"
+			},
+			{
+				"type" : "button",
+				"value" : "Pripojiť sa",
+				"onclick" : "serializeWatcherData()"
 			}
 		]
 	},

@@ -64,6 +64,13 @@ class PaintManager{
 	}
 
 
+	fromObjectToSingleLayer(title, content){
+		var layer = Scene.getLayer(title);
+		each(content, (e) =>	{
+			layer.paint.fromObject(e, true);
+		});
+	}
+
 	/**
 	 * Uloží všetky malby do jedného objektu
 	 *

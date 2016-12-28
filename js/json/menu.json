@@ -150,7 +150,7 @@
 		},
 		"watch" : {
 			"visible" : true,
-			"disabled" : true
+			"disabled" : false
 		}
 	},
 	"lineWidth" : {

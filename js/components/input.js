@@ -17,7 +17,8 @@ class InputManager{
 	get mousePos(){return this._mousePos;}
 
 	_onResize(){
-		initCanvasSize();
+		Project.canvasManager.onResize();
+		//initCanvasSize();
 
 		Scene.onScreenResize();
 
