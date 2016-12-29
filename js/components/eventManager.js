@@ -4,14 +4,11 @@
 class EventManager{
 	constructor(){
 		this._history = [];
-
 	}
 
 	paintAddPoint(position, activeLayerName){//PaintManager.addPoint
 		if(Project.connection)
 			Project.connection.paint.addPoint(position, activeLayerName);
-		//if(isSharing())
-		//	Sharer.paint.addPoint(position, activeLayerName);
 	}
 	paintAddPath(activeLayerName, path){//PaintManager.breakLine
 		//if(Project.connection && path)
@@ -21,16 +18,14 @@ class EventManager{
 	paintBreakLine(activeLayerName){//PaintManager.breakLine
 		if(Project.connection)
 			Project.connection.paint.breakLine(activeLayerName);
-		//if(isSharing())
-		//	Sharer.paint.breakLine(activeLayerName);
+
 		Logger.log("bola ukončená čiara vo vrstve " + activeLayerName, LOGGER_PAINT_ACTION);
 	}
 
 	paintCleanUp(activeLayerName){//PaintManager.cleanUp
 		if(Project.connection)
 			Project.connection.paint.clean(activeLayerName);
-		//if(isSharing())
-		//	Sharer.paint.clean(activeLayerName);
+
 		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	}
 
@@ -76,29 +71,30 @@ class EventManager{
 	creatorChange(key, val){//Creator.setOpt
 		if(Project.connection)
 			Project.connection.creatorChange(key, val);
-		//if(isSharing())
-		//	Sharer.changeCreator(key, val);
+
 		Logger.log("Creatorovi sa nastavuje " + key + " na " + val, LOGGER_CREATOR_CHANGE);
 	}
 
 	objectAdded(resend, object){//Scene.addToScene
-		if(resend && isSharing())
-			Sharer.objectChange(object, ACTION_OBJECT_CREATE);
+		if(resend && Project.connection)
+			Project.connection.object.create(object);
+		Logger.log("Vytvára sa objekt ", LOGGER_OBJECT_CREATED);
 	}
 
 	objectChange(object, attribute){//Entity.setAttr
-		if(isSharing())
-			Sharer.objectChange(object, ACTION_OBJECT_CHANGE, [attribute]);
+		if(Project.connection)
+			Project.connection.object.change(object, attribute);
 	}
 
 	objectDeleted(resend, object){//Scene.remove
-		if(resend && isSharing())
-			Sharer.objectChange(object, ACTION_OBJECT_DELETE);
+		if(resend && Project.connection)
+			Project.connection.object.delete(object);
 	}
 
 	objectMove(object){//Utils.Movement.move
-		if(isSharing())
-			Sharer.objectChange(object, ACTION_OBJECT_MOVE);
+
+		if(Project.connection)
+			Project.connection.object.move(object);
 	}
 
 	sceneCleanUp(){//Scene.cleanUp

@@ -275,6 +275,13 @@ function processWatchData(data){
 		if(response["result"] > 0){
 			closeDialog();
 			data["type"] = response["type"];
+			if(data["type"] === "exercise"){ //pri exercise chceme aby to čo sa má zdielať nastavoval zakladatel
+				data["sharePaints"] = response["sharePaints"];
+				data["shareInput"] = response["shareInput"];
+				data["shareCreator"] = response["shareCreator"];
+				data["shareLayers"] = response["shareLayers"];
+				data["shareObjects"] = response["shareObjects"];
+			}
 			Project.connection.connect(data);
 		}
 		else

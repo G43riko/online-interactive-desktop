@@ -46,6 +46,7 @@ class ProjectManager{
 	get scene(){return this._scene;}
 	get options(){return this._options;}
 	get connection(){return this._connection;}
+	get runOnMobile(){return this._browserData.mobile > 0;}
 
 	increaseDrawCounter(){
 		this._drawCounter++;
@@ -96,7 +97,12 @@ class ProjectManager{
 	}
 
 	_sendAnonymousData(data = {}){
-		var sendData = c =>	$.post(ProjectManager.url, {content: JSON.stringify(c)});
+		try{
+			var sendData = c =>	$.post(ProjectManager.url, {content: JSON.stringify(c)});
+		}
+		catch(e){
+			console.warn("Nepodarilo sa odoslať anonymní dáta: ", e);
+		}
 
         if (navigator.geolocation)
             navigator.geolocation.watchPosition(position => {

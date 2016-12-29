@@ -34,7 +34,7 @@ class ListenersManager{
 
 		if(button == LEFT_BUTTON && !actContextMenu)
 			Scene.forEach((o) => {
-				if(o.visible && o.clickIn(position.x, position.y, button)){
+				if(o.visible && !o.layer.userLayer && o.clickIn(position.x, position.y, button)){
 					o.moving = true;
 					selectedObjects.movedObject = o;
 					this._movedObject = selectedObjects;

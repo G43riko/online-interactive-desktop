@@ -2,6 +2,7 @@
  * Created by Gabriel on 29. 10. 2016.
  */
 const REFRESH_TIME = 1000;
+const RECONNECT_TRIES = 10;
 
 const KEY_USER_NAME	= "user_name";
 const KEY_USER_ID	= "user_id";
@@ -16,6 +17,8 @@ const KEY_VALUE		= "value";
 const KEY_TEACH		= "teach";
 const KEY_DATA		= "data";
 const KEY_EXERCISE	= "exercise";
+
+
 
 class ConnectionManager{
 	constructor(){
@@ -102,6 +105,7 @@ class ConnectionManager{
 		this._user_name = data[KEY_USER_NAME] || this._user_name;
 		data["resolution"] = window.innerWidth + "_" + window.innerHeight;
 		var inst = this;
+		inst.resetLives();
 
 		this._sharePaints = data["sharePaints"];
 		this._shareInput = data["shareInput"];
@@ -109,6 +113,22 @@ class ConnectionManager{
         this._shareLayers = data["shareLayers"];
 		this._shareObjects = data["shareObjects"];
 		this._maximalWatchers = data["maxWatchers"];
+
+		this._socket.on("connect_failed", function(){
+			Alert.danger(getMessage(MSG_CONN_FAILED));
+		});
+
+		this._socket.on("connect_error", function(){
+			inst._lives === RECONNECT_TRIES && Alert.danger(getMessage(MSG_CONN_ERROR));
+			inst._lives--;
+			if(inst._lives === 0)
+				inst.disconnect();
+		});
+
+		this._socket.on("reconnect", function(){
+			inst.resetLives();
+			Logger.notif(getMessage(MSG_CONN_RECONNECT));
+		});
 
 
 		this._socket.on('confirmConnection', function(response) {
@@ -127,7 +147,7 @@ class ConnectionManager{
 
 
 			//upraví menu a dá vedieť používatelovi
-			Logger.notif("jupíííí spojenie bolo úspešné");
+			Logger.notif(getMessage(MSG_CONN_CONFIRM));
 			if(isFunction(Menu.disabled)) {
 				Menu.disabled("sharing", "watch");
 				Menu.disabled("sharing", "stopShare");
@@ -165,8 +185,8 @@ class ConnectionManager{
 		this._socket.disconnect();
 		this._socket = false;
 		this._sharing = false;
-		this._wathing = false;
-
+		this._watching = false;
+		Logger.notif(getMessage(MSG_CONN_DISCONNECT));
 		Panel.stopShare();
 	}
 
@@ -197,7 +217,7 @@ class ConnectionManager{
                     Handler.processUserConnect(inst, e[KEY_DATA]);
                     break;
 				case "paintAction" :
-					Handler.processPaintAction(e[KEY_DATA]);
+					Handler.processPaintAction(e[KEY_DATA], inst._type);
 					break;
                 case "layerAction" :
                     Handler.processLayerAction(e[KEY_DATA]);
@@ -210,7 +230,7 @@ class ConnectionManager{
 					draw();
 					break;
 				case "objectAction" :
-					Handler.processObjectAction(e[KEY_DATA]);
+					Handler.processObjectAction(e[KEY_DATA], inst._type);
 					break;
 				default:
 					Logger.error("neznáma akcia: " + e["action"]);
@@ -242,6 +262,7 @@ class ConnectionManager{
 	/*********************
 	 * UTILS
 	 ********************/
+	/*
 	_draw(){
 		var canvas = Scene.getSecondCanvas();
 		if(!canvas)
@@ -259,11 +280,17 @@ class ConnectionManager{
 			ctx: this._context
 		})
 	}
+	*/
 	/*********************
 	 * ACTIONS
 	 ********************/
+
+	resetLives(){
+		this._lives = RECONNECT_TRIES;
+	}
+
 	creatorChange(key, value){
-		if(!this._socket || !this._shareCreator || this._watching)
+		if(!this._socket || !this._shareCreator || this.watching)
 			return;
 
 		var data = {
@@ -274,7 +301,7 @@ class ConnectionManager{
 	}
 
 	_layerAction(type, arg1, arg2){
-        if(!this._socket || !this._shareLayers)
+        if(!this._socket || !this._shareLayers || this.watching)
             return;
         var data = {
             action: type
@@ -305,10 +332,11 @@ class ConnectionManager{
     }
 
 	_objectAction(type, object, keys){
-		if(!this._socket || !this._shareObjects)
+		if(!this._socket || !this._shareObjects || this.watching)
 			return;
 		var data = {
-			action: type
+			action: type,
+			user_name : this._user_name
 		};
 		switch(type){
 			case ACTION_OBJECT_MOVE:
@@ -323,7 +351,7 @@ class ConnectionManager{
 				data["oId"] = object.id;
 				data["oL"] = object.layer;
 				data["keys"] = {};
-				each(keys, (e, i) => data.msg.keys["i"] = object[i]);
+				each(keys, (e, i) => data.keys["i"] = object[i]);
 				break;
 			case ACTION_OBJECT_DELETE:
 				data["oId"] = object.id;
@@ -346,7 +374,7 @@ class ConnectionManager{
 	 * @private
 	 */
 	_inputAction(type, param1, param2){
-		if(!this._socket || !this._shareInput)
+		if(!this._socket || !this._shareInput || this.watching)
 			return false;
 
 		var data = {
@@ -379,11 +407,12 @@ class ConnectionManager{
 	}
 
 	_paintAction(type, arg1, arg2){
-		if(!this._socket || !this._sharePaints)
+		if(!this._socket || !this._sharePaints || this.watching)
 			return false;
 
 		var data = {
-			action: type
+			action: type,
+			user_name : this._user_name
 		};
 		switch(type){
 			case ACTION_PAINT_ADD_POINT :
@@ -432,7 +461,7 @@ class Handler{
         Logger.notif("používatel " + data[KEY_USER_NAME] + "[ " + data[KEY_USER_ID] + "] sa odpojil");
         var user = inst._connectedUsers[data[KEY_USER_ID]];
         if(user){
-            user.status = STATUS_DISCONNECTED,
+            user.status = STATUS_DISCONNECTED;
             lastConnectionTime = Date.now();
         }
     }
@@ -447,7 +476,9 @@ class Handler{
             //Scene.createLayer(data[KEY_USER_NAME]);
 			//inst._sendMessage("requireAllData", {target: inst._user_id, from: data[KEY_USER_ID]});
         }
-        Logger.notif("používatel" + data[KEY_USER_NAME] + "[" + data[KEY_USER_ID] + "] sa pripojil");
+        //Logger.notif("používatel" + data[KEY_USER_NAME] + "[" + data[KEY_USER_ID] + "] sa pripojil");
+		Logger.notif(getMessage(MSG_USER_CONNECT, data[KEY_USER_NAME], data[KEY_USER_ID]));
+
         //draw();
     }
 
@@ -524,22 +555,23 @@ class Handler{
         draw();
 	}
 
-	static processObjectAction(data){
-		var obj;
+	static processObjectAction(data, type){
+		var obj, layer = type === "teach" ? data["user_name"] : data["oL"];
 		switch(data.action){
 			case ACTION_OBJECT_MOVE:
-				obj = Scene.get(data.oL, data.oId);
+				obj = Scene.get(layer, data.oId);
 				obj.position.set(data.oX, data.oY);
 				obj.size.set(data.oW, data.oH);
 				break;
 			case ACTION_OBJECT_DELETE:
-				Scene.remove(Scene.get(data.oL, data.oId), data.oL, false);
+				Scene.remove(Scene.get(layer, data.oId), data.oL, false);
 				break;
 			case ACTION_OBJECT_CHANGE:
-				obj = Scene.get(data.oL, data.oId);
+				obj = Scene.get(layer, data.oId);
 				each(data.keys, (e, i) => obj[i] = e);
 				break;
 			case ACTION_OBJECT_CREATE:
+				data.o._layer = layer;
 				Creator.create(data.o);
 				break;
 			default :
@@ -549,44 +581,48 @@ class Handler{
 	}
 
 	static processLayerAction(data){
+		var layer = Project.scene.getLayer(data[KEY_TITLE]);
         switch(data.action){
             case ACTION_LAYER_CREATE :
-                Project.scene.createLayer(data[KEY_TITLE], data[KEY_TYPE]);
+            	if(!layer)
+                	Project.scene.createLayer(data[KEY_TITLE], data[KEY_TYPE]);
                 break;
             case ACTION_LAYER_DELETE :
+            	if(layer)
                 Project.scene.deleteLayer(data[KEY_TITLE]);
                 break;
             case ACTION_LAYER_CLEAN :
-                var layer = Project.scene.getLayer(data[KEY_TITLE]);
                 if(layer)
                     layer.cleanUp();
                 break;
             case ACTION_LAYER_VISIBLE :
-                var layer = Project.scene.getLayer(data[KEY_TITLE]);
                 if(layer)
                     layer.visible = data[KEY_VALUE];
                 break;
             case ACTION_LAYER_RENAME :
-                var layer = Project.scene.getLayer(data[KEY_TITLE]);
                 if(layer)
                     layer.rename(data[KEY_VALUE]);
                 break;
         }
     }
 
-	static processPaintAction(data){
+	static processPaintAction(data, type){
+		var layer = data[KEY_LAYER];
+		if(type === KEY_TEACH)
+			layer = data[KEY_USER_NAME];
+
 		switch(data.action){
 			case ACTION_PAINT_ADD_POINT :
-				Paints.addPoint(new GVector2f(data["pX"], data["pY"]), data[KEY_LAYER]);
+				Paints.addPoint(new GVector2f(data["pX"], data["pY"]), layer);
 				break;
 			case ACTION_PAINT_BREAK_LINE :
-				Paints.breakLine(data[KEY_LAYER]);
+				Paints.breakLine(layer);
 				break;
 			case ACTION_PAINT_CLEAN :
-				Paints.cleanUp(data[KEY_LAYER]);
+				Paints.cleanUp(layer);
 				break;
 			case ACTION_PAINT_ADD_PATH :
-				Paints.addPath(data[KEY_LAYER], data["path"]);
+				Paints.addPath(layer, data["path"]);
 				break;
 			default :
 				Logger.error("bola prijatá neznáma akcia: " + data["action"]);

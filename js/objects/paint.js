@@ -14,6 +14,7 @@ class Paint extends Entity{
 	}
 	static defArray(){
 		return {
+			id: PaintManager.getId(),
 			color: null,
 			action: null,
 			size: null,

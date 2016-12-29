@@ -122,15 +122,20 @@ class Entity{
 	 * @returns {boolean}
 	 */
 	clickIn(x, y){
+		//TODO nechceme aby to rátalo ani ak je zamknutý
+		//if(this.locked)
+		//	return false;
+
 		if (!this.clickInBoundingBox(x, y))
 			return false;
-
 		return this._clickIn(x, y);
 	};
 
 	_clickIn(x, y){return false;};
 
 	hover(x, y){
+		if(!this.clickInBoundingBox(x, y))
+			return false;
 		return this._hover(x, y);
 	}
 
@@ -149,7 +154,9 @@ class Entity{
 	 * @param x
 	 * @param y
 	 */
-	pressIn(x, y){}
+	pressIn(x, y){
+		return false;
+	}
 
 
 

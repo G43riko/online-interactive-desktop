@@ -56,6 +56,9 @@ class LayersViewer extends Entity{
 		};
 	}
 
+	/**
+	 * Funkia upraví pozíciu a veľkosť viewera pri zmene rozlíšenia
+	 */
 	onScreenResize(){
 		/*
 		if(this._size.x > window.innerWidth)
@@ -75,26 +78,16 @@ class LayersViewer extends Entity{
 			this._position.y = window.innerHeight - this._size.y;
 	}
 
-	clickIn(x, y){
-		if(!this.clickInBoundingBox(x, y) || !Input.isButtonDown(LEFT_BUTTON))
+	_clickIn(x, y){
+		if(!Input.isButtonDown(LEFT_BUTTON))
 			return false;
-		var i = this._getLayerOfYPos(y),
-			offsetX = (this.size.x - this._buttonSize * 3) >> 2,
-			offsetY = (this._layerPanelHeight - this._buttonSize) >> 1,
-			j, xx, yy;
+		var i = this._getLayerOfYPos(y);
 
 		if(i !== 0 && this._minimalized)
 			return false;
 
 		if(i == 0){
-			for(j=0 ; j<3 ; j++){
-				xx = this.position.x + this._buttonSize * j + offsetX * (j + 1);
-				yy = this.position.y + offsetY;
-				if(x > xx && y > yy && x < xx + this._buttonSize && y < yy + this._buttonSize){
-					this._buttonClick(j);
-					break;
-				}
-			}
+			this._buttonClick(this._getButtonNumber(x, y));
 		}
 		else 
 			each(this._layers, function(e){
@@ -104,13 +97,42 @@ class LayersViewer extends Entity{
 		return true;
 	}
 
-	_hover(x, y){
-		if(this.clickInBoundingBox(x, y)){
-			setCursor(CURSOR_NOT_ALLOWED);
-			return true;
+	/**
+	 * Vráti poradie klinuteho tlačítka(počíta od 0) alebo vráti -1
+	 *
+	 * @param x
+	 * @param y
+	 * @returns {number}
+	 * @private
+	 */
+	_getButtonNumber(x, y){
+		var offsetX = (this.size.x - this._buttonSize * 3) >> 2,
+			offsetY = (this._layerPanelHeight - this._buttonSize) >> 1,
+			xx, yy;
+		for(var j=0 ; j<3 ; j++){
+			xx = this.position.x + this._buttonSize * j + offsetX * (j + 1);
+			yy = this.position.y + offsetY;
+			if(x > xx && y > yy && x < xx + this._buttonSize && y < yy + this._buttonSize){
+				return j;
+			}
 		}
+		return -1;
+	}
 
-		setCursor(CURSOR_DEFAULT);
+	_hover(x, y){
+		var i = this._getLayerOfYPos(y);
+		if(i !== 0 && this._minimalized)
+			return false;
+
+		if(i == 0){
+			var button = this._getButtonNumber(x, y);
+			if(isIn(button, 0, 1, 2))
+				setCursor(CURSOR_POINTER);
+		}
+		else{
+			//TODO kontrola tlačítiek
+		}
+		//setCursor(CURSOR_DEFAULT);
 		return false;
 	}
 
@@ -226,7 +248,7 @@ class LayersViewer extends Entity{
 		});
 	}
 
-	draw(){
+	_draw(){
 		doRect({
 			position: this.position,
 			width: this.size.x,

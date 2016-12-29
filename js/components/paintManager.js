@@ -16,6 +16,13 @@ class PaintManager{
 		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 
+	static getId(){
+		if(!PaintManager._idCounter)
+			PaintManager._idCounter = 1;
+
+		return PaintManager._idCounter++;
+	}
+
 
 	/**
 	 * Pridá nový bod na danú vrstvu
@@ -100,10 +107,9 @@ class PaintManager{
 	breakLine(activeLayerName = Layers.activeLayerName){
 		this._paintHistory.push(activeLayerName);
 		this._undoHistory = [];
-
 		var newPath = Scene.getLayer(activeLayerName).paint.breakLine();
 		Events.paintBreakLine(activeLayerName);
-		Events.paintAddPath(activeLayerName, newPath);
+		//Events.paintAddPath(activeLayerName, newPath);
 
 		this._setButtons();
 	}

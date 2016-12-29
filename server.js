@@ -153,8 +153,16 @@ function processLayerAction(data, user_id, less_id){
 }
 
 function processObjectAction(data, user_id, less_id){
-	if(lessonsManager.isSharing(less_id) && lessonsManager.getOwner(less_id) === user_id) {
+	if(!lessonsManager.isSharing(less_id))
+		return false;
+
+	var owner = lessonsManager.getOwner(less_id);
+
+	if(owner === user_id) {
 		lessonsManager.sendMessageAllMembers(less_id, "objectAction", data);
+	}
+	else{
+		lessonsManager.sendMessage(owner, "objectAction", data);
 	}
 	/*
 	var lesson = lessonsManager.getLesson(less_id);
@@ -221,8 +229,16 @@ function processInputAction(data, user_id, less_id, type){
 }
 
 function processPaintAction(data, user_id, less_id){
-	if(lessonsManager.isSharing(less_id) && lessonsManager.getOwner(less_id) === user_id) {
+	if(!lessonsManager.isSharing(less_id))//TOTO pravdepodobne zbytočné
+		return false;
+
+	var owner = lessonsManager.getOwner(less_id);
+
+	if(owner === user_id) { //ak zakladatel zdiela === share
 		lessonsManager.sendMessageAllMembers(less_id, "paintAction", data);
+	}
+	else{
+		lessonsManager.sendMessage(owner, "paintAction", data);
 	}
 	/*
 	var lesson = lessonsManager.getLesson(less_id);
@@ -354,10 +370,23 @@ function checkConnectionRequest(data, res){
 					}));
 				}
 				else {
-					res.send(JSON.stringify({
-						result: 1,
-						type : lessonsManager.getMemberType(data["less_id"])
-					}));
+					var realType = lessonsManager.getMemberType(data["less_id"])
+					if(realType === "exercise"){//USPECH PRE EXERCISE
+						res.send(JSON.stringify({
+							result: 1,
+							sharePaints: true,
+							shareInput: false,
+							shareCreator: false,
+							shareLayers: false,
+							shareObjects: true,
+							type : realType
+						}));
+					}
+					else{
+						res.send(JSON.stringify({
+							result: 1
+						}));
+					}
 				}
 			}
 			else{

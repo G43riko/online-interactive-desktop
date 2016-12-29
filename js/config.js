@@ -293,3 +293,23 @@ const ACTION_KEY_DOWN			= 2321;
 const ACTION_KEY_UP				= 2322;
 const ACTION_PAINT_ADD_PATH		= 2323;
 const ACTION_PAINT_REMOVE_PATH	= 2324;
+
+const MSG_DIVIDER = "########";
+
+const MSG_CONN_RECONNECT	= "Spojenie zo serverom bolo uspešne znovunadviazané";
+const MSG_CONN_CONFIRM		= "jupíííí spojenie bolo úspešné";
+const MSG_CONN_FAILED		= "Nepodarilo sa nadviazať spojenie zo serverom";
+const MSG_CONN_ERROR		= "Spojenie zo serverom bolo prerušené";
+const MSG_CONN_DISCONNECT	= "Spojenie zo serverom bolo úspešne ukončené";
+const MSG_USER_CONNECT		= "používatel " + MSG_DIVIDER + "[" + MSG_DIVIDER + "] sa pripojil";
+
+function getMessage(text){
+	if(!arguments.length)
+		return text;
+
+
+	for(var i=1 ; i<arguments.length ; i++)
+		text = text.replace(MSG_DIVIDER, arguments[i]);
+
+	return text;
+}
