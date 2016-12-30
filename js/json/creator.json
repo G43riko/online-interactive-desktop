@@ -47,6 +47,12 @@
 		"action" : "selectNumber",
 		"type" : "number"
 	},
+	"controll" : {
+		"allowedFor" : ["Rect", "Arc"],
+		"label" : "controll",
+		"action" : "switch",
+		"type" : "bool"
+	},
 	"fillColor" : {
 		"label" : "Fill Color",
 		"allowedFor" : ["Rect", "Arc", "Polygon", "Text"],

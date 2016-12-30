@@ -517,10 +517,10 @@ class MenuManager{
 				fillText("REDO", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "watch":
-				fillText("WATCH", x + (width >> 1), y + (height >> 1), height / 6, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("JOIN", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "copyUrl":
-				fillText("LINK", x + (width >> 1), y + (height >> 1), height / 6, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("LINK", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "shareOptions":
 				fillText("OPT", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
@@ -532,13 +532,13 @@ class MenuManager{
 				fillText("AREA", x + (width >> 1), y + (height >> 1), height / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "stopShare":
-				fillText("STOP", x + (width >> 1), y + (height >> 1), height  / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("STOP", x + (width >> 1), y + (height >> 1), height  >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "startShare":
-				fillText("START", x + (width >> 1), y + (height >> 1), height  / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("START", x + (width >> 1), y + (height >> 1), height  >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "sharing":
-				fillText("SHARE", x + (width >> 1), y + (height >> 1), height / 5, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("CONN", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			case "loadLocalImage":
 				fillText("locImg", x + (width >> 1), y + (height >> 1), height / 6, strokeColor, 0, FONT_ALIGN_CENTER, this._context);

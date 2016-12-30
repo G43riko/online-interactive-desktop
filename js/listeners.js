@@ -11,8 +11,17 @@ class ListenersManager{
 			return;
 		}
 
-		if(!actContextMenu && Creator.operation == OPERATION_AREA && area)
-			area.startCreate(position);
+		if(!actContextMenu && Creator.operation == OPERATION_AREA && area){
+			if(area.isReady && area.clickIn(position.x, position.y)){ //ak sa kliklo na už vytvorene tak sa bude posuvať
+				selectedObjects.movedObject = area;
+				area.moving = true;
+				this._movedObject = selectedObjects;
+			}
+			else {//ináč sa začne vytvárať nová
+				area.startCreate(position);
+			}
+		}
+
 
 		if(SelectedText){
 			var textArea = document.getElementById("selectedEditor");
@@ -61,6 +70,15 @@ class ListenersManager{
 			Entity.setAttr(Layers, "visible", Components.layers());
 
 		Gui.showOptionsByComponents();
+		draw();
+	}
+
+	keyDown(key, isCtrlDown){
+		if(DELETE_KEY === key){
+			if(area.isReady){
+				area.removeSelected(isCtrlDown);//ak je aj ALT dole tak revertne mazanie
+			}
+		}
 		draw();
 	}
 
@@ -134,8 +152,13 @@ class ListenersManager{
 		if(Creator.operation === OPERATION_RUBBER)
 			Paints.removeSelectedPaths();
 
-		if(Creator.operation == OPERATION_AREA && area && area.isCreating){
-			area.endCreate(position);
+		if(Creator.operation == OPERATION_AREA && area){
+			if(area.isCreating){
+				area.endCreate(position);
+			}
+			else if(area.moving){
+				area.moving = false;
+			}
 		}
 
 		/*

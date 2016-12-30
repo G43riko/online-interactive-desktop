@@ -135,6 +135,9 @@ class Line extends Entity{
 			ctx: ctx
 		});
 
+		Arrow.drawArrow(ctx, this._points[1], this._points[0], this, this._arrowEndType);
+		Arrow.drawArrow(ctx, this._points[size - 2], this._points[size - 1], this, this._arrowStartType);
+
 		var last = this._points[this._points.length - 1].getClone();
 		var subLast = this._points[this._points.length - 2].getClone();
 		var offset = CanvasHandler.calcTextWidth(ctx, this._text_A, "10pt Comic Sans MS");
@@ -146,13 +149,11 @@ class Line extends Entity{
 			height: 10,
 			center: true,
 			ctx: ctx
-		})
+		});
 		ctx.fillStyle = "black";
 		ctx.textAlign = FONT_HALIGN_CENTER;
 		ctx.textBaseline = FONT_VALIGN_MIDDLE;
 		ctx.fillText(this._text_A, point.x, point.y);
-		Arrow.drawArrow(ctx, this._points[1], this._points[0], this, this._arrowEndType);
-		Arrow.drawArrow(ctx, this._points[size - 2], this._points[size - 1], this, this._arrowStartType);
 
 		context.lineWidth = DEFAULT_STROKE_WIDTH << 1;
 		if(this.selected){

@@ -43,7 +43,7 @@ class CreatorViewer extends Entity{
 				ctx: this._context
 			});
 
-			if(isDefined(e["values"]))
+			if(isDefined(e["values"])){
 				//e["values"].forEach(function(ee, ii){
 				each(e["values"], function(ee, ii){
 					if(posY > 0)
@@ -66,8 +66,13 @@ class CreatorViewer extends Entity{
 					this._drawIcon(i, ee, counter, posY);
 					posY += MENU_HEIGHT;
 				}, this);
-			else if(i == ATTRIBUTE_FONT_COLOR)
+			}
+			else if(e["type"] = "bool"){
+
+			}
+			else if(i == ATTRIBUTE_FONT_COLOR){
 				fillText("Abc", counter + (MENU_WIDTH >> 1), posY + (MENU_HEIGHT >> 1), DEFAULT_FONT_SIZE, Creator.fontColor, 0, FONT_ALIGN_CENTER, this._context);
+			}
 			else{
 				arr[i]["selectedIndex"] = 0;
 				this._drawIcon(i, Creator[i], counter, posY);

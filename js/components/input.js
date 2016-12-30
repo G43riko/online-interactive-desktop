@@ -134,6 +134,7 @@ class InputManager{
 	_keyDown(val){
 		this._keys[val] = true;
 		Events.keyDown(val);
+		Listeners.keyDown(val, this.isKeyDown(L_CTRL_KEY));
 	};
 
 	_keyUp(val){
@@ -145,8 +146,6 @@ class InputManager{
 			this._hist[val] = 0;
 
 		this._hist[val]++;
-
-
 	};
 
 	isKeyDown(val){

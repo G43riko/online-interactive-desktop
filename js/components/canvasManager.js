@@ -95,7 +95,9 @@ function doPolygon(obj){
     if(isUndefined(obj.points))
         Logger.error("chce sa vykresliť " + "Polygon" + " bez pointov");
 
-    var res = $.extend(_initDef(obj), obj);
+    var res = $.extend(_initDef(obj), obj),
+        offX = obj.offset ? obj.offset.x : 0,
+        offY = obj.offset ? obj.offset.y : 0;
 
 
     res.ctx.beginPath();
@@ -104,18 +106,18 @@ function doPolygon(obj){
         var size = points.length;
 
         if(res.radius == 0 || isNaN(res.radius))
-            each(points, (e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
-            //points.forEach((e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
+            each(points, (e, i) => i ? res.ctx.lineTo(e.x + offX, e.y + offY) : res.ctx.moveTo(e.x + offX, e.y + offY));
         else
-            //points.forEach(function(e, i){
             each(points, (e, i) => {
-                var v1, v2, l1, l2;
+                var v1, l1,
+                    v2 = e.getClone().sub(points[size - 1]),
+                    l2 = v2.getLength();
+                v2.div(l2);
+
                 if (i == 0) {
                     v1 = points[i + 1].getClone().sub(e);
-                    v2 = e.getClone().sub(points[size - 1]);
                     l1 = v1.getLength();
-                    l2 = v2.getLength();
-                    v2.div(l2);
+
                     v1.div(l1);
                     if(isNumber(res.radius)){
                         l1 >>= 1;
@@ -126,16 +128,12 @@ function doPolygon(obj){
                         l1 = l2 = 1;
                         res.radius = parseInt(res.radius);
                     }
-                    res.ctx.moveTo(points[size - 1].x + v2.x * l2 * res.radius, points[size - 1].y + v2.y * l2 * res.radius);
-                    res.ctx.quadraticCurveTo(e.x, e.y, e.x + v1.x * l1 * res.radius, e.y + v1.y * l1 * res.radius);
+                    res.ctx.moveTo(points[size - 1].x + v2.x * l2 * res.radius + offX, points[size - 1].y + v2.y * l2 * res.radius + offY);
+                    res.ctx.quadraticCurveTo(e.x + offX, e.y + offY, e.x + v1.x * l1 * res.radius + offX, e.y + v1.y * l1 * res.radius + offY);
                 }
                 else{
                     v1 = points[(i + 1) % size].getClone().sub(e);
-                    v2 = e.getClone().sub(points[i - 1]);
-
                     l1 = v1.getLength();
-                    l2 = v2.getLength();
-                    v2.div(l2);
                     v1.div(l1);
                     if(isNumber(res.radius)){
                         l1 >>= 1;
@@ -145,8 +143,8 @@ function doPolygon(obj){
                         res.radius.replace("px", "");
                         l1 = l2 = 1;
                     }
-                    res.ctx.lineTo(e.x - v2.x * l2 * res.radius, e.y - v2.y * l2 * res.radius);
-                    res.ctx.quadraticCurveTo(e.x, e.y, e.x + v1.x * l1 * res.radius, e.y + v1.y * l1 * res.radius);
+                    res.ctx.lineTo(e.x - v2.x * l2 * res.radius + offX, e.y - v2.y * l2 * res.radius + offY);
+                    res.ctx.quadraticCurveTo(e.x + offX, e.y + offY, e.x + v1.x * l1 * res.radius + offX, e.y + v1.y * l1 * res.radius + offY);
                 }
             });
         res.ctx.closePath();
@@ -210,15 +208,17 @@ function doLine(obj){
         Logger.error("chce sa vykresliť " + "Line" + " s 1 bodom");
 
     var res = $.extend(_initDef(obj), obj),
+        offX = obj.offset ? obj.offset.x : 0,
+        offY = obj.offset ? obj.offset.y : 0,
         v1, v2, l1, l2;
-
     res.ctx.beginPath();
+
 
     var drawLines = function(points){
         if(isNaN(points[0])){
             if(res.radius == 0 || isNaN(res.radius))
                 //points.forEach((e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
-                each(points, (e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y))
+                each(points, (e, i) => i ? res.ctx.lineTo(e.x + offX, e.y + offY) : res.ctx.moveTo(e.x + offX, e.y + offY))
             else
                 //points.forEach(function(e, i){
                 each(points, (e, i) => {
@@ -239,17 +239,17 @@ function doLine(obj){
                             res.radius.replace("px", "");
                             l1 = l2 = 1;
                         }
-                        res.ctx.lineTo(e.x - v2.x * l2 * res.radius, e.y - v2.y * l2 * res.radius);
-                        res.ctx.quadraticCurveTo(e.x, e.y, e.x + v1.x * l1 * res.radius, e.y + v1.y * l1 * res.radius);
+                        res.ctx.lineTo(e.x - v2.x * l2 * res.radius + offX, e.y - v2.y * l2 * res.radius + offY);
+                        res.ctx.quadraticCurveTo(e.x + offX, e.y + offY, e.x + v1.x * l1 * res.radius + offX, e.y + v1.y * l1 * res.radius + offY);
                     }
                     else
-                        res.ctx.lineTo(e.x, e.y);
+                        res.ctx.lineTo(e.x + offX, e.y + offY);
                 });
 
         }
         else{
-            res.ctx.moveTo(points[0], points[1]);
-            res.ctx.lineTo(points[2], points[3]);
+            res.ctx.moveTo(points[0] + offX, points[1] + offY);
+            res.ctx.lineTo(points[2] + offX, points[3] + offY);
         }
     };
 
@@ -301,10 +301,8 @@ function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COL
 
 function getMaxWidth(val, max = 0){
     if(isArray(val))
-        //val.forEach(function(e){
         each(val, e => {
             if(isArray(e))
-                //e.forEach(a => max = Math.max(calcTextWidth(a), max));
                 each(e, a => max = Math.max(calcTextWidth(a), max));
             else
                 max = Math.max(calcTextWidth(e), max);
@@ -370,6 +368,7 @@ function _initDef(obj){
         shadow: false,
         lineCap: LINE_CAP_BUTT,
         center: false,
+        offset: null,
         joinType: LINE_JOIN_MITER,
         lineStyle: LINE_STYLE_NORMAL,
         lineType: JOIN_LINEAR,

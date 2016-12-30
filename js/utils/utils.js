@@ -152,6 +152,9 @@ Movement = {
 		if(isDefined(o.selectedConnector) && Creator.operation == OPERATION_DRAW_JOIN && o.selectedConnector){
 
 		}
+		else if(o.name === OBJECT_AREA){
+			o.move(x, y);
+		}
 		else if(isDefined(o.moveType)){
 
 			if(Creator.operation == OPERATION_DRAW_LINE && Menu.isToolActive()){
@@ -309,6 +312,19 @@ function drawBorder(ctx, o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 
 	if(selectors.hasOwnProperty("br"))
 		drawSelectArc(ctx, o.position.x + o.size.x, o.position.y + o.size.y);
+}
+
+function rectRectCollision(minA, sizeA, minB, sizeB){
+	var ax = minA.x;
+	var ay = minA.y;
+	var bx = minB.x;
+	var by = minB.y;
+	var aw = sizeA.x;
+	var ah = sizeA.y;
+	var bw = sizeB.x;
+	var bh = sizeB.y;
+
+	return (bx + bw > ax) && (by + bh > ay) && (bx < ax + aw) && (by < ay + ah);
 }
 
 function objectToArray(obj){
