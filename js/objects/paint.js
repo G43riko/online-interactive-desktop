@@ -3,7 +3,8 @@ class Paint extends Entity{
 		super(OBJECT_PAINT, new GVector2f(), new GVector2f());
 		this._points 		= [Paint.defArray()];
 		this._count 		= 0;
-		this._canvas		= new CanvasHandler();
+		//this._canvas		= new CanvasHandler();
+		this._canvas		= Project.canvasManager.createCanvas(Project.canvas.width, Project.canvas.height, "canvas" + Project.generateId())
 		this.onScreenResize();
 		this._editBackup	= [];
 	}

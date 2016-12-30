@@ -394,7 +394,15 @@ function shareALl(el){
 
 class GuiManager{
 	constructor(){
+		this._topMenu = new MenuManager();
+		this._actContextMenu = null;
+	}
 
+	get menu(){
+		return this._topMenu;
+	}
+	get contextMenu(){
+		return this._actContextMenu;
 	}
 
 	showOptionsByComponents(){

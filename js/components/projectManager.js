@@ -9,6 +9,8 @@ class ProjectManager{
 		this._idCounter = 0;
 		this._scene = new SceneManager();
 		this._options = new OptionsManager();
+		this._input = new InputManager();
+		this._gui = new GuiManager();
 		this._canvasManager = null;
 		this._drawCounter = 0;
 		this._connection = null;
@@ -39,11 +41,15 @@ class ProjectManager{
 		return (this._connection ? this._connection.userId : "") + s.substr(s.length - 6);
 	}
 
+	get input(){return this._input;}
 	get canvasManager(){return this._canvasManager;}
 	get canvas(){return this._canvasManager && this._canvasManager.canvas.canvas;}
 	get context(){return this._canvasManager && this._canvasManager.canvas.context;}
 	get drawCounter(){return this._drawCounter;}
+	get creator(){return this._scene.creator;}
 	get scene(){return this._scene;}
+	get gui(){return this._gui;}
+	get topMenu(){return this._gui.menu;}
 	get options(){return this._options;}
 	get connection(){return this._connection;}
 	get runOnMobile(){return this._browserData.mobile > 0;}

@@ -1,15 +1,15 @@
 /*
 	compatible:	indexOf, canvas, canvasText, JSON parsing 14.9.2016
 */
-var initTime 		= window["performance"].now(),
+var initTime 		= Date.now(),
 	movedObject 	= false,
-	Logger 			= new LogManager(),
+	Logger 			= new LogManager(),//samostatne lebo loguje aj Projekt preto nie v ňom
 	Project			= new ProjectManager("Gabriel Csollei"),
 	Scene 			= Project.scene,
-	Creator 		= Project.scene.creator,
-	Input 			= new InputManager(),
+	Creator 		= Project.creator,
+	Input 			= Project.input,
 	selectedObjects = Project.scene.objectManager,
-	Menu 			= new MenuManager(),//TODO presunuť do noveho objektu na spravu GUI
+	Menu 			= Project.topMenu,
 	actContextMenu 	= false,//TODO presunuť do noveho objektu na spravu GUI
 	Listeners		= new ListenersManager(),
 	//EventHistory 	= new EventSaver(),
@@ -19,7 +19,7 @@ var initTime 		= window["performance"].now(),
 	Task 			= null,//TODO presunúť do nejakého CONTENTU
 	Events 			= typeof EventManager !== KEYWORD_UNDEFINED ? new EventManager() : null,
 	SelectedText	= null,
-	Gui 			= new GuiManager(),//TODO presunuť do noveho objektu na spravu GUI
+	Gui 			= Project.gui,
 	Options 		= Project.options,
 	drawEvent 		= new EventTimer(realDraw, 1000 / FPS),
 	area 			= null,
@@ -190,7 +190,7 @@ function init(){
 }
 
 function setVisibilityData(data){
-	Menu.visible = data.showTopMenu;
+	Project.topMenu.visible = data.showTopMenu;
 }
 
 ajax(FOLDER_JSON + "/forms.json", data => {
@@ -234,7 +234,7 @@ var loading = function(){
 	Project._connection = new ConnectionManager();
 
 	$.getJSON(FOLDER_JSON + "/menu.json",function(data){
-		Menu.init(data);
+		Project.topMenu.init(data);
 		$.getJSON(FOLDER_JSON + "/creator.json", data2 => {
 			Creator.init(data2);
 			Paints.rePaintImage(Creator.brushSize, Creator.brushColor);
@@ -248,17 +248,18 @@ var loading = function(){
 	Project.scene.createLayer("test2");
 
 	Project.context.shadowColor = DEFAULT_SHADOW_COLOR;
-	Input.initListeners(Project.canvas);
+	Project.input.initListeners(Project.canvas);
 
 	if(typeof Sharer !== "undefined")
 		chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
 
 	Layers = new LayersViewer();
 	Project.scene.addToScene(Layers, "rightMenu");
-	var xOffset = Menu.position.x + (Menu.size.x + MENU_OFFSET) * Menu.visibleElements - MENU_OFFSET;
-	Creator.view = new CreatorViewer(new GVector2f(Menu.visible ? xOffset : MENU_OFFSET, Menu.position.y - MENU_OFFSET));
+	var xOffset = Project.topMenu.position.x + (Project.topMenu.size.x + MENU_OFFSET) * Project.topMenu.visibleElements - MENU_OFFSET;
+	Creator.view = new CreatorViewer(new GVector2f(Project.topMenu.visible ? xOffset : MENU_OFFSET, Project.topMenu.position.y - MENU_OFFSET));
 
-	console.log("stranka sa nacítala za: ", (window["performance"].now() - initTime) + " ms");
+	console.log("stranka sa nacítala za: ", (Date.now() - initTime) + " ms");
+	console.log("to by malo byť: " + window["performance"].now() + " ms");
 	
 	draw();
 };
@@ -280,7 +281,7 @@ function realDraw(){
 
 	Project.scene.draw();
 	Creator.draw();
-	Menu.draw();
+	Project.topMenu.draw();
 	if(actContextMenu)
 		actContextMenu.draw();
 	Logger.log("kreslí sa všetko", LOGGER_DRAW);
