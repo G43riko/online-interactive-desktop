@@ -67,8 +67,9 @@ class CreatorViewer extends Entity{
 					posY += MENU_HEIGHT;
 				}, this);
 			}
-			else if(e["type"] = "bool"){
-
+			else if(e["type"] === "bool"){
+				arr[i]["selectedIndex"] = 0;
+				this._drawIcon(i, e["value"], counter, posY);
 			}
 			else if(i == ATTRIBUTE_FONT_COLOR){
 				fillText("Abc", counter + (MENU_WIDTH >> 1), posY + (MENU_HEIGHT >> 1), DEFAULT_FONT_SIZE, Creator.fontColor, 0, FONT_ALIGN_CENTER, this._context);
@@ -83,8 +84,37 @@ class CreatorViewer extends Entity{
 		//window.open(this._canvas.toDataURL("image/png"), '_blank');
 	}
 
+	_drawBool(value, posX, posY, width, height, offset){
+		var center = posY + height / 2;
+
+		if(value){
+			doLine({
+				points:[new GVector2f(posX + offset, center),
+						new GVector2f(posX + offset + width / 4, center + offset * 3),
+						new GVector2f(posX + width - offset, center - offset * 2)],
+				borderWidth: MENU_BORDER_WIDTH * 2,
+				borderColor: MENU_BORDER_COLOR,
+				ctx: this._context
+			})
+		}
+		else{
+			doLine({
+				points:[[new GVector2f(posX + offset, posY + offset),
+						 new GVector2f(posX + width - offset, posY + height - offset)],
+						[new GVector2f(posX + offset, posY + height - offset),
+						 new GVector2f(posX + width - offset, posY + offset)]],
+				borderWidth: MENU_BORDER_WIDTH * 2,
+				borderColor: MENU_BORDER_COLOR,
+				ctx: this._context
+			})
+		}
+	}
+
 	_drawIcon(key, value, posX, posY, width = MENU_WIDTH, height = MENU_HEIGHT,  offset = 5){
 		switch(key){
+			case "controll" :
+				this._drawBool(value, posX, posY, width, height, offset);
+				break;
 			case ATTRIBUTE_LINE_WIDTH :
 				doLine({
 					points: [posX + offset, posY + (height >> 1), posX + width - offset, posY + (height >> 1)],
@@ -172,33 +202,25 @@ class CreatorViewer extends Entity{
 		}
 	}
 
-	clickIn(x, y){//TODO skúsiť prerobiť do čitatelnejšej formy
+	_clickOn(x, y){
 		if(y < this.position.y || x < this.position.x || x > this.position.x + this.size.x)
 			return false;
 		var counter =  this.position.x + MENU_OFFSET,
-			click 	= false,
+			click 	= null,
 			num;
-		//this._items.forEach(function(e, i, arr){
 		each(this._items, function(e, i, arr){
 			if(!click && x > counter && x < counter + MENU_WIDTH){
 				if(y < this.position.y + MENU_OFFSET + MENU_HEIGHT){
-					if(e["item"]["type"] == "color")
-						pickUpColor(color => Creator.setOpt(e["key"], color));
-					else
-						arr[i]["itemsSelected"] = !e["itemsSelected"];
-					click = true;
+					click = e;
 				}
 				else if(e["itemsSelected"]){
 					num = this.position.y + MENU_OFFSET;
 					if(isDefined(e["item"]["values"]))
-						//e["item"]["values"].forEach(function(ee, ii){
 						each(e["item"]["values"], function(ee, ii){
 							num += MENU_HEIGHT + MENU_OFFSET;
 							if(!click && y > num && y < num + MENU_HEIGHT){
-								Creator.setOpt(e["key"], ee);
-								arr[i]["item"]["selectedIndex"] = ii;
-								click = true;
-								arr[i]["itemsSelected"] = !arr[i]["itemsSelected"];
+								click = e;
+								e["item"]["selectedIndex"] = ii;
 							}
 						});
 				}
@@ -209,6 +231,31 @@ class CreatorViewer extends Entity{
 			counter += MENU_OFFSET + MENU_WIDTH;
 		}, this);
 		return click;
+	}
+
+	clickIn(x, y, doAct = true){//TODO skúsiť prerobiť do čitatelnejšej formy
+		var inst = this,
+			e = this._clickOn(x, y);
+		if(!e)
+			return false;
+		if(!doAct && e)
+			return true;
+		if(isDefined(e["item"]["values"])){
+			Creator.setOpt(e["key"], e["item"]["values"][e["item"]["selectedIndex"]]);
+			console.log(e["item"]["selectedIndex"]);
+			e["itemsSelected"] = !e["itemsSelected"];
+		}
+		else if(e["item"]["type"] == "color")
+			pickUpColor(color => Creator.setOpt(e["key"], color));
+		else if(e["item"]["type"] == "bool"){
+			e["item"]["value"] = !e["item"]["value"];
+			if(e["key"] === "controll"){
+				Creator._controllPress = e["item"]["value"];
+			}
+			inst.init();
+			draw();
+		}
+		return true;
 	}
 
 	static allowedOption(operation, allowed){

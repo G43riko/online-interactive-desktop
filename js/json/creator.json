@@ -51,7 +51,8 @@
 		"allowedFor" : ["Rect", "Arc"],
 		"label" : "controll",
 		"action" : "switch",
-		"type" : "bool"
+		"type" : "bool",
+		"value" : false
 	},
 	"fillColor" : {
 		"label" : "Fill Color",

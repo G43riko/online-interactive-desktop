@@ -302,6 +302,7 @@ const MSG_CONN_FAILED		= "Nepodarilo sa nadviazať spojenie zo serverom";
 const MSG_CONN_ERROR		= "Spojenie zo serverom bolo prerušené";
 const MSG_CONN_DISCONNECT	= "Spojenie zo serverom bolo úspešne ukončené";
 const MSG_USER_CONNECT		= "používatel " + MSG_DIVIDER + "[" + MSG_DIVIDER + "] sa pripojil";
+const MSG_ANNONYM_FAILED	= "Nepodarilo sa odoslať anonymné dáta o prehliadači";
 
 function getMessage(text){
 	if(!arguments.length)

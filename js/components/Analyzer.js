@@ -21,7 +21,9 @@ class Analyzer{
 
     _sendAnonymousData(data = {}){
         try{
-            var sendData = c =>	$.post(this._url, {content: JSON.stringify(c)});
+            var sendData = c =>	$.post(this._url, {content: JSON.stringify(c)}).fail(()=>{
+                Alert.danger(getMessage(MSG_ANNONYM_FAILED));
+            });
         }
         catch(e){
             console.warn("Nepodarilo sa odoslať anonymní dáta: ", e);

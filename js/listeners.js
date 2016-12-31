@@ -6,11 +6,17 @@ class ListenersManager{
 		this._movedObject = null;
 	}
 	mouseDown(position, button){
+		/*
+		 * SKONTROLUJE SA KLIKNUTIE NA ČASOVÚ OS
+		 */
 		if(isDefined(timeLine) && timeLine.clickIn(position.x, position.y)){
 			this._movedObject = timeLine;
 			return;
 		}
 
+		/*
+		 * SKONTROLUJE SA KLIKNUTIE NA AREU, BUĎ SA ZAČNE PRESÚVAŤ ALEBO VYTVÁRAŤ
+		 */
 		if(!actContextMenu && Creator.operation == OPERATION_AREA && area){
 			if(area.isReady && area.clickIn(position.x, position.y)){ //ak sa kliklo na už vytvorene tak sa bude posuvať
 				selectedObjects.movedObject = area;
@@ -22,7 +28,9 @@ class ListenersManager{
 			}
 		}
 
-
+		/*
+		 * AK JE OZNAČENÝ TEXT TAK SA ULOŽÍ DO NEHO AKTUÁLNA HODNOTA INPUT A TEN SA SCHOVÁ
+		 */
 		if(SelectedText){
 			var textArea = document.getElementById("selectedEditor");
 			if(textArea){
@@ -40,7 +48,9 @@ class ListenersManager{
 			return;
 		*/
 
-
+		/*
+		 * SKONTROLUJÚ SA NA KLIKNUTIE VŠETKY OBJEKTY V SCÉNE 
+		 */
 		if(button == LEFT_BUTTON && !actContextMenu)
 			Scene.forEach((o) => {
 				if(o.visible && !o.layer.userLayer && o.clickIn(position.x, position.y, button)){
@@ -51,8 +61,10 @@ class ListenersManager{
 				}
 			});
 
-
-		if(Menu.isToolActive() && !Creator.object){
+		/*
+		 * SKONTROLUE SA ČI SA MÁ VYTVÁRAŤ NOVÝ OBJEKT 
+		 */
+		if(!Creator.clickIn(position.x, position.y, false) && (Menu.isToolActive() || Creator.controllPress) && !Creator.object){
 			Creator.createObject(position);
 			this._movedObject = Creator;
 		}
@@ -106,14 +118,22 @@ class ListenersManager{
 	}
 
 	mousePress(position){
+		/*
+		 * SKONTROLUJE SA HORNE MENU
+		 */
 		if(Menu.pressIn(position.x, position.y)){
 			draw();
 			return true;
 		}
 
+		/*
+		 * VYTVORI SA KONTEXTOVÉ MENU
+		 */
 		actContextMenu = new ContextMenuManager(position);
 
-
+		/*
+		 * AK SA PRESUVAL NEJAKÝ OBJEKT TAK SA ZRUŠÍ PRESÚVANIE
+		 */
 		if(selectedObjects.movedObject){
 			selectedObjects.movedObject.moving = false;
 			selectedObjects.movedObject = false;
@@ -149,9 +169,15 @@ class ListenersManager{
 
 		var result = false;
 
+		/*
+		 * AK JE VYBRANY NASTROJ RUBBER TAK SA VYMAŽÚ OBJEKTY KTORÉ BOLY VYGUMOVANÉ
+		 */
 		if(Creator.operation === OPERATION_RUBBER)
 			Paints.removeSelectedPaths();
 
+		/*
+		 * AK JE VYBRANY NASTROJ AREA TAK SA BUĎ DOKONČÍ VYTVARANIE ALEBO PRESUN
+		 */
 		if(Creator.operation == OPERATION_AREA && area){
 			if(area.isCreating){
 				area.endCreate(position);
@@ -170,14 +196,17 @@ class ListenersManager{
 			else
 				return
 		}
-
+		
+		/*
+		 * AK SA VYTVARAL OBJEKT TAK SA JEHO VYTVARANIE DOKONČÍ
+		 */
 		if(Creator.object && Creator.object.name != OBJECT_JOIN){
 			Creator.finishCreating(position);
 			return;
 		}
 
 		/*
-		 * AK JE VYBRATY NASTROJ KRESBA TAK SA PRERUSI CIARA
+		 * AK JE VYBRANY NASTROJ KRESBA TAK SA PRERUSI CIARA
 		 */
 		if(Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
 			Paints.addPoint(position);
@@ -237,6 +266,9 @@ class ListenersManager{
 	}
 
 	mouseMove(position, movX, movY){
+		/*
+		 * KONTROLA HOVER LISTENEROV
+		 */
 		if(Options.changeCursor){//TODO timeline, layersViewer, creator, Line & polygon, selectors, connectors
 			var isHoverTrue = Menu.hover(position.x, position.y);
 
@@ -256,24 +288,40 @@ class ListenersManager{
 			}
 		}
 
+		/*
+		 * AK JE VYBRANY NASTROJ AREA A AREA JE VYTVARANA TAK SA PRIDA BOD
+		 */
 		if(Creator.operation == OPERATION_AREA && area && area.isCreating){
 			area.addPoint(position);
 		}
 
+		/*
+		 * AK JE VYBRANY NASTROJ RUBBER A JE STLAČENE TLAČITKO MYŠI TAK SA PRIDA NOVY BOD
+		 */
+		if(Creator.operation === OPERATION_RUBBER && Input.isButtonDown(LEFT_BUTTON)) {
+			Paints.drawLine(context, position, {x: position.x - movX, y: position.y - movY}, Creator.brushSize, "grey", PAINT_ACTION_LINE);
+			Paints.findPathsForRemove(position);
+		}
 
-		Creator.drawRubber(position, {x: position.x - movX, y: position.y - movY});
-
+		/*
+		 * AK JE OZNACENNY OBJEKT S KTORYM SA HYBE TAK SA POHNE
+		 */
 		if(this._movedObject && isFunction(this._movedObject.onMouseMove)){
 			this._movedObject.onMouseMove(position, movX, movY);
 			draw();
+			return false;
 		}
-		else if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
+
+		/*
+		 * AK JE VYBRANY NASTROJ DRAW A TLACITKO MYŠI JE STLAČENE TAK SA PRIDA NOVÝ BOD
+		 */
+		if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
 			var radius = 1;
 			Paints.addPoint(radius === 1 ? position : position.div(radius).round().mul(radius));
 			draw();
+			return false
 		}
 
-		return false;
 		/*
 		/////OBJEKTY PRI POHYBE
 

@@ -18,6 +18,7 @@ class objectCreator{
 		this._brushColor	= DEFAULT_BRUSH_COLOR;
 		this._radius		= DEFAULT_RADIUS;
 		this._items 		= null;
+		this._controllPress	= false;
 		this._view			= null;
 		this._lastOperation = this._operation;
 		this._visibleView	= true;
@@ -35,6 +36,10 @@ class objectCreator{
 
 	get view(){
 		return this._view;
+	}
+
+	get controllPress(){
+		return this._controllPress;
 	}
 
 	set visibleView(val){this._visibleView = val;}
@@ -166,21 +171,6 @@ class objectCreator{
 			this._view.draw();
 
 	}
-	drawRubber(pointA, pointB){
-		if(this._operation === OPERATION_RUBBER && Input.isButtonDown(LEFT_BUTTON)) {
-			Paints.drawLine(context, pointA, pointB, this._brushSize, "grey", PAINT_ACTION_LINE);
-			Paints.findPathsForRemove(pointA);
-		}
-			/*
-			doArc({
-				position:Input.mousePos,
-				center: true,
-				width: 20,
-				height: 20,
-				fillColor: "grey"
-			});
-			*/
-	}
 
 	/**
 	 * Vytvorý objekt bud s objektu alebo s JSON stringu a vloží ho do scény
@@ -262,8 +252,8 @@ class objectCreator{
 	 * @param y
 	 * @returns {*} - vráti TRUE alebo FALSE
 	 */
-	clickIn(x, y){
-		return isDefined(this._view) && this._visibleView ? this._view.clickIn(x, y) : false;
+	clickIn(x, y, doAct = true){
+		return isDefined(this._view) && this._visibleView ? this._view.clickIn(x, y, doAct) : false;
 	}
 
 	get items(){return this._items;}
