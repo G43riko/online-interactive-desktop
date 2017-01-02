@@ -59,6 +59,8 @@ const LINE_STYLE_NORMAL		= 2100;
 const LINE_STYLE_STRIPPED	= 2101;
 const LINE_STYLE_FILLED		= 2102;
 
+
+const LIMIT_LAYERS_COUNT = 10;
 /*
  * NIKINE
  * #CCC51C
@@ -294,15 +296,31 @@ const ACTION_KEY_UP				= 2322;
 const ACTION_PAINT_ADD_PATH		= 2323;
 const ACTION_PAINT_REMOVE_PATH	= 2324;
 
+const CUT_OFF_AFTER_DISTANCE = 100;
+const CUT_OFF_PATHS_AFTER = false;
+const CUT_OFF_PATHS_BEFORE = false;
+const CUT_OFF_BEFORE_DISTANCE = 100;
+
 const MSG_DIVIDER = "########";
 
-const MSG_CONN_RECONNECT	= "Spojenie zo serverom bolo uspešne znovunadviazané";
-const MSG_CONN_CONFIRM		= "jupíííí spojenie bolo úspešné";
-const MSG_CONN_FAILED		= "Nepodarilo sa nadviazať spojenie zo serverom";
-const MSG_CONN_ERROR		= "Spojenie zo serverom bolo prerušené";
-const MSG_CONN_DISCONNECT	= "Spojenie zo serverom bolo úspešne ukončené";
-const MSG_USER_CONNECT		= "používatel " + MSG_DIVIDER + "[" + MSG_DIVIDER + "] sa pripojil";
-const MSG_ANNONYM_FAILED	= "Nepodarilo sa odoslať anonymné dáta o prehliadači";
+const MSG_CONN_RECONNECT				= "Spojenie zo serverom bolo uspešne znovunadviazané";
+const MSG_CONN_CONFIRM					= "jupíííí spojenie bolo úspešné";
+const MSG_CONN_FAILED					= "Nepodarilo sa nadviazať spojenie zo serverom";
+const MSG_CONN_ERROR					= "Spojenie zo serverom bolo prerušené";
+const MSG_CONN_DISCONNECT				= "Spojenie zo serverom bolo úspešne ukončené";
+const MSG_USER_CONNECT					= "používatel " + MSG_DIVIDER + "[" + MSG_DIVIDER + "] sa pripojil";
+const MSG_ANNONYM_FAILED				= "Nepodarilo sa odoslať anonymné dáta o prehliadači";
+const MSG_MISS_LESS_ID					= "Nieje zadané 'less_id'";
+const MSG_UNKNOW_ACTION					= "neznáma akcia: " + MSG_DIVIDER;
+const MSG_RECIEVED_UNKNOWN_ACTION		= "bola prijatá neznáma akcia: " + MSG_DIVIDER;
+const MSG_TRY_DRAW_EMPTY_POLYGON		= "chce sa vykresliť Polygon bez pointov";
+const MSG_TRY_DRAW_EMPTY_LINE			= "chce sa vykresliť Line bez pointov";
+const MSG_TRY_DRAW_ONE_POINT_LINE		= "chce sa vykresliť Line bez pointov";
+const MSG_TRY_DRAW_WITHOUT_POSITION		= "chce sa vykresliť " + MSG_DIVIDER + " bez pozície";
+const MSG_TRY_DRAW_WITHOUT_SIZE			= "chce sa vykresliť " + MSG_DIVIDER + " bez veľkosti";
+const MSG_TRY_DRAW_WITH_NEG_POSITION	= "chce sa vykresliť " + MSG_DIVIDER + " zo zápornou velkosťou";
+const MSG_RECREATE_LAYER 				= "ide sa vytvoriť vrstva ktorá už existuje: " + MSG_DIVIDER
+const MSG_MAXIMUM_LAYER					= "bolo vytvorené maximálne množstvo vrstiev(" + MSG_DIVIDER + ")";
 
 function getMessage(text){
 	if(!arguments.length)

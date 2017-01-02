@@ -76,6 +76,16 @@ class GVector2f{
 		return this;
 	}
 
+	static angle(v1, v2){
+		var v1Len = v1.length();
+		var v2Len = v2.length();
+		var dotProduct = (v1.x / v1Len) * (v2.x / v2Len) + 
+						 (v1.y / v1Len) * (v2.y / v2Len);
+		return Math.acos(dotProduct) * (180 / Math.PI);
+	}
+
+	
+
 	br(){return this._process(arguments, (a, b) => a >> b);}
 	bl(){return this._process(arguments, (a, b) => a << b);}
 	add(){return this._process(arguments, (a, b) => a + b);}
@@ -83,6 +93,10 @@ class GVector2f{
 	sub(){return this._process(arguments, (a, b) => a - b);}
 	mul(){return this._process(arguments, (a, b) => a * b);}
 	set(){return this._process(arguments, (a, b) => b);}
+	
+	length(){
+		return Math.sqrt(this._x * this._x + this._y * this._y)
+	}
 
 	dist(){
 		if(arguments.length == 1)

@@ -37,11 +37,13 @@ class PaintManager{
 			layer.paint.addPoint(position);
 	}
 
-	findPathsForRemove(position, activeLayerName = Layers.activeLayerName){
-		Scene.getLayer(activeLayerName).paint.findPathsForRemove(position);
+	findPathsForRemove(position, radius, activeLayerName = Layers.activeLayerName){
+		//TODO bud aktualna ale všetky vrstvy, podla Creator.allLayers
+		Scene.getLayer(activeLayerName).paint.findPathsForRemove(position, radius);
 	}
 
 	removeSelectedPaths(activeLayerName = Layers.activeLayerName){
+		//TODO bud aktualna ale všetky vrstvy, podla Creator.allLayers
 		Scene.getLayer(activeLayerName).paint.removeSelectedPaths();
 	}
 

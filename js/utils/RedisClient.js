@@ -1,7 +1,6 @@
 /**
  * Created by Gabriel on 29. 10. 2016.
  */
-
 function pad(num, size) {
 	var s = "000000000" + num;
 	return s.substr(s.length - size);
@@ -61,15 +60,18 @@ module.exports.Redis.prototype._updateUser = function(data){
 	if(data["action"] === "create"){
 		changedData["last_connection"] = Date.now();
 		changedData["last_load"] = data["last_load"] || Date.now();
-		if(data["clear_scene"])
+		if(data["clear_scene"]){
 			changedData["scene"] = "";
+		}
 	}
 
-	if(data["action"] === "update")
+	if(data["action"] === "update"){
 		changedData["last_update"] = Date.now();
+	}
 
-	if(data["user_name"])
+	if(data["user_name"]){
 		changedData["user_name"] = data["user_name"];
+	}
 
 	this._client.hmset('user_' + data["user_id"], changedData);
 };

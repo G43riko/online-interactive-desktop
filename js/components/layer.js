@@ -13,9 +13,19 @@ class Layer{
 		this._opacity	= 1;
 		this._raster	= false;
 		this._canvas	= null;
+		this._forRemove = [];
 		this._layerType = layerType;
 	};
 
+	setForRemove(el){
+		this._forRemove.push(el);
+	}
+
+	removeElements(){
+		each(this._forRemove, e => Project.scene.remove(e));
+		this._forRemove = [];
+	}
+	
 	get locked(){return this._locked || this._layerType !== ""}
 	get taskLayer(){return this._layerType === LAYER_TASK;}
 	get guiLayer(){return this._layerType === LAYER_GUI;}
@@ -53,9 +63,10 @@ class Layer{
 		this._raster = true;
 		//TODO pri rastrovaní vrstvy nakresliť všetko do canvasu
 	}
+	
 
 
-	get(id){
+	getObject(id){
 		return this._objects[id];
 	}
 

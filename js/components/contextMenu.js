@@ -38,8 +38,9 @@ class ContextMenuManager{
 						this._addFields("deleteLayer", "renameLayer", "clearLayer");
 				}
 			}
-			else
+			else if(!parent){
 				this._addFields("clearWorkspace");
+			}
 		}
 		context.font = (30 - CONTEXT_MENU_OFFSET) + "pt " + DEFAULT_FONT;
 
@@ -207,6 +208,9 @@ class ContextMenuManager{
 
 		Logger.log("Klikol v contextMenu na položku " + act, LOGGER_CONTEXT_CLICK);
 		switch (act) {
+			case "changeLayer" : 
+
+				break;
 			case "changeFillColor":
 				pickUpColor(color => Entity.changeAttr(this._selectedObject, ATTRIBUTE_FILL_COLOR, color), this);
 				actContextMenu = false;
@@ -337,6 +341,11 @@ class ContextMenuManager{
 					this._selectedObject.horizontalTextAlign = opt.name;
 					actContextMenu = false;
 				}
+				else if(opt.group === "layerValue"){
+					Project.scene.changeLayer(this._selectedObject, opt.name);
+					actContextMenu = false;
+					draw();
+				}
 
 		}
 	}
@@ -352,6 +361,16 @@ class ContextMenuManager{
 			var pos = this._position.getClone().add(this._menuWidth, i * CONTEXT_MENU_LINE_HEIGHT);
 			if(pos.x + this._menuWidth > canvas.width)
 				pos.x -= this._menuWidth << 1;
+			if(this._titles[i]["key"] === "changeLayer"){
+				this._titles[i]["fields"] = [];
+				each(Scene.layers, e => {
+					this._titles[i]["fields"].push({
+						group : "layerValue",
+						name : e.title,
+						label : e.title
+					});
+				})
+			}
 			this._subMenu = new ContextMenuManager(pos, objectToArray(this._titles[i]["fields"]), this, this._titles[i]["key"]);
 		}
 		else

@@ -46,7 +46,7 @@ class CreatorViewer extends Entity{
 			if(isDefined(e["values"])){
 				//e["values"].forEach(function(ee, ii){
 				each(e["values"], function(ee, ii){
-					if(posY > 0)
+					if(posY > 0){
 						doRect({
 							//bgColor: e.image,
 							x: counter,
@@ -59,9 +59,10 @@ class CreatorViewer extends Entity{
 							borderWidth: this._borderWidth,
 							ctx: this._context
 						});
-
-					if(ee == Creator[i])
+					}
+					if(ee == Creator[i]){
 						arr[i]["selectedIndex"] = ii;
+					}
 
 					this._drawIcon(i, ee, counter, posY);
 					posY += MENU_HEIGHT;
@@ -85,15 +86,15 @@ class CreatorViewer extends Entity{
 	}
 
 	_drawBool(value, posX, posY, width, height, offset){
-		var center = posY + height / 2;
+		var center = posY + height >> 1;
 
 		if(value){
 			doLine({
 				points:[new GVector2f(posX + offset, center),
 						new GVector2f(posX + offset + width / 4, center + offset * 3),
 						new GVector2f(posX + width - offset, center - offset * 2)],
-				borderWidth: MENU_BORDER_WIDTH * 2,
-				borderColor: MENU_BORDER_COLOR,
+				borderWidth: MENU_BORDER_WIDTH << 2,
+				borderColor: CHECKBOX_COLOR_TRUE,
 				ctx: this._context
 			})
 		}
@@ -103,8 +104,8 @@ class CreatorViewer extends Entity{
 						 new GVector2f(posX + width - offset, posY + height - offset)],
 						[new GVector2f(posX + offset, posY + height - offset),
 						 new GVector2f(posX + width - offset, posY + offset)]],
-				borderWidth: MENU_BORDER_WIDTH * 2,
-				borderColor: MENU_BORDER_COLOR,
+				borderWidth: MENU_BORDER_WIDTH << 2,
+				borderColor: CHECKBOX_COLOR_FALSE,
 				ctx: this._context
 			})
 		}
@@ -112,6 +113,9 @@ class CreatorViewer extends Entity{
 
 	_drawIcon(key, value, posX, posY, width = MENU_WIDTH, height = MENU_HEIGHT,  offset = 5){
 		switch(key){
+			case "allLayers" :
+				this._drawBool(value, posX, posY, width, height, offset);
+				break;
 			case "controll" :
 				this._drawBool(value, posX, posY, width, height, offset);
 				break;
@@ -215,7 +219,7 @@ class CreatorViewer extends Entity{
 				}
 				else if(e["itemsSelected"]){
 					num = this.position.y + MENU_OFFSET;
-					if(isDefined(e["item"]["values"]))
+					if(isDefined(e["item"]["values"])){
 						each(e["item"]["values"], function(ee, ii){
 							num += MENU_HEIGHT + MENU_OFFSET;
 							if(!click && y > num && y < num + MENU_HEIGHT){
@@ -223,10 +227,12 @@ class CreatorViewer extends Entity{
 								e["item"]["selectedIndex"] = ii;
 							}
 						});
+					}
 				}
 			}
-			else if(e["itemsSelected"])
+			else if(e["itemsSelected"]){
 				arr[i]["itemsSelected"] = false;
+			}
 
 			counter += MENU_OFFSET + MENU_WIDTH;
 		}, this);
@@ -236,21 +242,27 @@ class CreatorViewer extends Entity{
 	clickIn(x, y, doAct = true){//TODO skúsiť prerobiť do čitatelnejšej formy
 		var inst = this,
 			e = this._clickOn(x, y);
-		if(!e)
+		if(!e){
 			return false;
-		if(!doAct && e)
+		}
+		if(!doAct && e){
 			return true;
+		}
 		if(isDefined(e["item"]["values"])){
 			Creator.setOpt(e["key"], e["item"]["values"][e["item"]["selectedIndex"]]);
 			console.log(e["item"]["selectedIndex"]);
 			e["itemsSelected"] = !e["itemsSelected"];
 		}
-		else if(e["item"]["type"] == "color")
+		else if(e["item"]["type"] == "color"){
 			pickUpColor(color => Creator.setOpt(e["key"], color));
+		}
 		else if(e["item"]["type"] == "bool"){
 			e["item"]["value"] = !e["item"]["value"];
 			if(e["key"] === "controll"){
 				Creator._controllPress = e["item"]["value"];
+			}
+			if(e["key"] === "allLayers"){
+				Creator._allLayers = e["item"]["value"];
 			}
 			inst.init();
 			draw();
@@ -272,6 +284,8 @@ class CreatorViewer extends Entity{
 				return isIn(OBJECT_JOIN, allowed);
 			case 1006:
 				return isIn(OBJECT_RUBBER, allowed);
+			case 1007:
+				return isIn(OBJECT_AREA, allowed);
 		}
 		return false;
 	}
@@ -279,8 +293,9 @@ class CreatorViewer extends Entity{
 	changeOperation(){
 		this._items = [];
 		each(Creator.items, function(e, i){
-			if(!CreatorViewer.allowedOption(Creator.operation, e["allowedFor"]))
+			if(!CreatorViewer.allowedOption(Creator.operation, e["allowedFor"])){
 				return;
+			}
 
 			this._items.push({
 				item: e,

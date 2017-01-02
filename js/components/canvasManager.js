@@ -93,7 +93,7 @@ function drawGrid(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD,
 
 function doPolygon(obj){
     if(isUndefined(obj.points))
-        Logger.error("chce sa vykresliť " + "Polygon" + " bez pointov");
+        Logger.error(getMessage(MSG_TRY_DRAW_EMPTY_POLYGON));
 
     var res = $.extend(_initDef(obj), obj),
         offX = obj.offset ? obj.offset.x : 0,
@@ -202,10 +202,10 @@ function doRect(obj){
 
 function doLine(obj){
     if(isUndefined(obj.points))
-        Logger.error("chce sa vykresliť " + "Line" + " bez pointov");
+        Logger.error(getMessage(MSG_TRY_DRAW_EMPTY_LINE));
 
     if(!isArray(obj.points[0]) && obj.points.length < 2)
-        Logger.error("chce sa vykresliť " + "Line" + " s 1 bodom");
+        Logger.error(getMessage(MSG_TRY_DRAW_ONE_POINT_LINE));
 
     var res = $.extend(_initDef(obj), obj),
         offX = obj.offset ? obj.offset.x : 0,
@@ -384,13 +384,13 @@ function _initDef(obj){
 function _checkPosAndSize(obj, name){
 
     if((isUndefined(obj["x"]) || isUndefined(obj["y"])) && isUndefined(obj["position"]))
-        Logger.error("chce sa vykresliť " + name + " bez pozície");
+        Logger.error(getMessage(MSG_TRY_DRAW_WITHOUT_POSITION, name));
 
     if((isUndefined(obj["width"]) || isUndefined(obj["height"])) && isUndefined(obj["size"]))
-        Logger.error("chce sa vykresliť " + name + " bez velkosti");
+        Logger.error(getMessage(MSG_TRY_DRAW_WITHOUT_SIZE, name));
 
     if(obj["width"] <= 0 || obj["height"] <= 0)
-        Logger.error("chce sa vykresliť " + name + " zo zápornou velkosťou");
+        Logger.error(getMessage(MSG_TRY_DRAW_WITH_NEG_POSITION, name));
 
     return _initDef(obj);
 }

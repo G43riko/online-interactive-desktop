@@ -300,7 +300,9 @@ class ListenersManager{
 		 */
 		if(Creator.operation === OPERATION_RUBBER && Input.isButtonDown(LEFT_BUTTON)) {
 			Paints.drawLine(context, position, {x: position.x - movX, y: position.y - movY}, Creator.brushSize, "grey", PAINT_ACTION_LINE);
-			Paints.findPathsForRemove(position);
+			Paints.findPathsForRemove(position, 1);
+			Project.scene.findObjectsForRemove(position.x, position.y, 1);
+			
 		}
 
 		/*

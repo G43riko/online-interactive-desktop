@@ -8,6 +8,9 @@ class Paint extends Entity{
 		this.onScreenResize();
 		this._editBackup	= [];
 	}
+	get points(){
+		return this._points;
+	}
 
 	onScreenResize(){
 		this._canvas.setCanvasSize(canvas.width, canvas.height);
@@ -70,6 +73,9 @@ class Paint extends Entity{
 		this._points = res;
 		if(points.length > 0 && points[points.length - 1]["points"].length)
 			this.breakLine();
+		if(!points[points.length - 1]["points"].length){
+			this._points.push(Paint.defArray());
+		}
 		Logger.log("prekresluje sa " + this.constructor.name, LOGGER_DRAW);
 	}
 
@@ -134,6 +140,14 @@ class Paint extends Entity{
 		var lastArr = this._points[this._points.length - 1],
 			arr = lastArr["points"];
 
+		if(CUT_OFF_PATHS_BEFORE && arr.length > 2){
+			var p1 = arr[arr.length - 2].getClone().sub(arr[arr.length - 1]);
+			var p2 = arr[arr.length - 1].getClone().sub(point);
+			var angle = GVector2f.angle(p1, p2) * p2.length();
+			if(angle < CUT_OFF_BEFORE_DISTANCE)
+				return;
+		}
+
 		this._editBackup = [];
 		this._count++;
 
@@ -177,19 +191,39 @@ class Paint extends Entity{
 		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
 	}
 
+	static roundPath(path, maxDist){
+		for(var i = path.points.length - 3 ; i-- ; i > 0){
+			var p1 = path.points[i], 
+				p2 = path.points[i + 1], 
+				p3 = path.points[i + 2];
+			var angle = GVector2f.angle(p2.getClone().sub(p1), p3.getClone().sub(p1));
+			var b = p2.getClone().sub(p3).length();
+			var height = b * angle;
+			if(height < maxDist){
+				path.points.splice(i + 1, 1);
+			}
+		}
+	}
+
 	breakLine(){
-		if(this._points.length === 0)
+		if(this._points.length === 0){
 			this._points.push(Paint.defArray());
-		else if(this._points[this._points.length - 1].points.length < 2)
+		}
+		else if(this._points[this._points.length - 1].points.length < 2){
 			this._points[this._points.length - 1] = Paint.defArray();
+		}
 		else{
 			this._points.push(Paint.defArray());
+			if(CUT_OFF_PATHS_AFTER){
+				Paint.roundPath(this._points[this._points.length - 2], CUT_OFF_AFTER_DISTANCE)
+				this.redraw(this._points);
+			}
 			return this._points[this._points.length - 2];
 		}
 		return false;
 	}
 
-	findPathsForRemove(pos){
+	findPathsForRemove(pos, radius){
 		//TODO dorobiť na porovnávanie čiarok pretože toto porovnáva len body a pri rýchlich pohyboch to nemusí trafiť
 		var pointsToRemove = [];
 		each(this._points, (e, i) => {
@@ -240,7 +274,6 @@ class Paint extends Entity{
 				line1["size"] = e.line["size"];
 				line1["type"] = e.line["type"];
 				this._points.push(line1);
-				console.log(line1, this._points);
 				this.redraw(this._points);
 			})
 		}

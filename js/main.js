@@ -1,6 +1,8 @@
 /*
 	compatible:	indexOf, canvas, canvasText, JSON parsing 14.9.2016
 */
+"use strict";
+
 var initTime 		= Date.now(),
 	movedObject 	= false,
 	Logger 			= new LogManager(),//samostatne lebo loguje aj Projekt preto nie v ňom
@@ -203,7 +205,7 @@ ajax(FOLDER_JSON + "/forms.json", data => {
 		saveForm : "saveImgForm"
 	};
 	each(formList, function(e, i){
-		form = document.getElementById(i);
+		var form = document.getElementById(i);
 		if(form)
 			form.appendChild(Forms.createForm(e));
 	});

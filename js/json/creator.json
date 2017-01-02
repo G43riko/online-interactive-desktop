@@ -54,6 +54,13 @@
 		"type" : "bool",
 		"value" : false
 	},
+	"allLayers" : {
+		"allowedFor" : ["Rubber", "Area"],
+		"label" : "All layers",
+		"action" : "switch",
+		"type" : "bool",
+		"value" : false
+	},
 	"fillColor" : {
 		"label" : "Fill Color",
 		"allowedFor" : ["Rect", "Arc", "Polygon", "Text"],

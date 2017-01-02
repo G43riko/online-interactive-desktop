@@ -19,6 +19,7 @@ class objectCreator{
 		this._radius		= DEFAULT_RADIUS;
 		this._items 		= null;
 		this._controllPress	= false;
+		this._allLayers		= false;
 		this._view			= null;
 		this._lastOperation = this._operation;
 		this._visibleView	= true;
@@ -31,7 +32,9 @@ class objectCreator{
 
 	onMouseMove(pos, movX, movY){
 		updateSelectedObjectView(this._object);
-		this._object.updateCreatingPosition(pos);
+		if(isFunction(this._object.updateCreatingPosition)){
+			this._object.updateCreatingPosition(pos);
+		}
 	}
 
 	get view(){
@@ -40,6 +43,10 @@ class objectCreator{
 
 	get controllPress(){
 		return this._controllPress;
+	}
+
+	get allLAyers(){
+		return this._allLayers;
 	}
 
 	set visibleView(val){this._visibleView = val;}
@@ -51,8 +58,9 @@ class objectCreator{
 	set view(val){
 		this._view = val;
 
-		if(this._items !== null)
+		if(this._items !== null){
 			this.init()
+		}
 	}
 
 
@@ -62,11 +70,13 @@ class objectCreator{
 	 * @param data - objekt ktorý vznikol s parsovaním načítaneho súboru s dátami pre CreatorView
 	 */
 	init(data = false){
-		if(this._items === null && data !== false)
+		if(this._items === null && data !== false){
 			this._items = data;
+		}
 
-		if(this._view !== null)
+		if(this._view !== null){
 			this._view.init();
+		}
 	}
 
 
@@ -101,12 +111,13 @@ class objectCreator{
 	 * Dokončí vytváranie objektu
 	 */
 	finishCreating(){
-		if(this._object.name === OBJECT_IMAGE)
+		if(this._object.name === OBJECT_IMAGE){
 			loadImage(e => {
 				this._object.image = e;
 				Scene.addToScene(this._object);
 				this._object = false;
 			});
+		}
 		else{
 			Scene.addToScene(this._object);
 			this._object = false;
@@ -115,12 +126,14 @@ class objectCreator{
 
 	toggleArea(){
 		if(this._operation !== OPERATION_AREA){
-			if(this._operation !== OPERATION_RUBBER)
+			if(this._operation !== OPERATION_RUBBER){
 				this._lastOperation = this._operation;
+			}
 			this.operation = OPERATION_AREA;
 		}
-		else
+		else{
 			this.operation = this._lastOperation;
+		}
 	}
 
 	/**
@@ -128,12 +141,14 @@ class objectCreator{
 	 */
 	toggleRubber(){
 		if(this._operation !== OPERATION_RUBBER){
-			if(this._operation !== OPERATION_AREA)
+			if(this._operation !== OPERATION_AREA){
 				this._lastOperation = this._operation;
+			}
 			this.operation = OPERATION_RUBBER;
 		}
-		else
+		else{
 			this.operation = this._lastOperation;
+		}
 	};
 
 
@@ -144,8 +159,9 @@ class objectCreator{
 	 */
 	fromObject(content){
 		each(content, function(e, i){
-			if(isIn(i, this._allowedItems))
+			if(isIn(i, this._allowedItems)){
 				this.setOpt(i, e);
+			}
 		}, this);
 	}
 
@@ -164,11 +180,13 @@ class objectCreator{
 	 * Nakreslí akuálne vytváraný objekt a takisto aj view ak existuje
 	 */
 	draw(){
-		if(this._object)
+		if(this._object){
 			this._object.draw();
+		}
 
-		if(this._view !== null && this._items !== null && this._visibleView)
+		if(this._view !== null && this._items !== null && this._visibleView){
 			this._view.draw();
+		}
 
 	}
 
@@ -200,13 +218,15 @@ class objectCreator{
 			each(key, (e, i) => this.setOpt(i, e));
 			return;
 		}
-		if(key[0] != "_")
+		if(key[0] != "_"){
 			key = "_" + key;
+		}
 
 		//console.log("key: ", key, " vaĺ: ", val, "normal: ", this[key]);
 
-		if(this[key] == val)
+		if(this[key] == val){
 			return false;
+		}
 
 		var redrawPaint = isIn(key, "_brushColor", "_brushSize", "_brushType") && this[key] != val;
 
@@ -218,8 +238,9 @@ class objectCreator{
 				Paints.selectedImage = val;
 				Paints.action = PAINT_ACTION_BRUSH;
 			}
-			else
+			else{
 				Paints.action = PAINT_ACTION_LINE;
+			}
 		}
 
 		Events.creatorChange(key, val);
@@ -233,13 +254,15 @@ class objectCreator{
 			/*
 			 * Ak s zmení nejaká farba musí sa prekresliť aj view zobtrazujúci aktuálnu farbu
 			 */
-			if(isIn(key, "_fillColor", "_borderColor", "_fontColor", "_color", "_brushColor"))
+			if(isIn(key, "_fillColor", "_borderColor", "_fontColor", "_color", "_brushColor")){
 				this._view.init();
+			}
 			/*
 			 * tak isto to platí aj pre typ štetca
 			 */
-			else if(isIn(key, "_brushSize", "_brushType"))
+			else if(isIn(key, "_brushSize", "_brushType")){
 				this._view.init();
+			}
 
 		}
 

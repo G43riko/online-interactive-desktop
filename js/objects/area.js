@@ -51,8 +51,10 @@ class Area{
 	removeSelected(onBorder, revert = false){
 		var inst = this;
 		var size = this._max.getClone().sub(this._min);
-		Project.scene.forEach(function(e){
-
+		
+		//TODO spojiť vymazavanie objektov a malieb do jedneho ciklu
+		
+		Project.scene.forEach(function(e){//prejde všetky objekty
 			var tl = inst._isPointIn(e.position.x, e.position.y),
 				tr = inst._isPointIn(e.position.x + e.size.x, e.position.y),
 				bl = inst._isPointIn(e.position.x, e.position.y + e.size.y),
@@ -69,7 +71,42 @@ class Area{
 				}
 			}
 
-		})
+		});
+
+		each(Project.scene.layers, layer => {
+			var paths = layer.paint.points;
+			each(paths, path => {
+				if(!path.points.length)
+					return false;
+				var tl = inst._isPointIn(path.min.x, path.min.y),
+					tr = inst._isPointIn(path.max.x, path.min.y),
+					bl = inst._isPointIn(path.min.x, path.max.y),
+					br = inst._isPointIn(path.max.x, path.max.y);
+
+				if(!tl && !tr && !bl && !br)	//nieje šanca že je vo vnutry
+					return false;
+
+				var result;
+				if(onBorder){//ak maže z hranice tak sa hlada taky ktory je vo vnutry
+					var result = false;
+					each(path.points, point => {
+						if(result)
+							return;
+						result = inst._isPointIn(point.x, point.y);
+					});
+				}
+				else{//ak iba vo vnutry tak sa hlada taky ktory je mimo hranice
+					result = true;
+					each(path.points, point => {
+						if(!result)
+							return;
+						result = inst._isPointIn(point.x, point.y);
+					});
+				}
+				path.forRemove = result;
+			});
+			layer.paint.removeSelectedPaths();
+		});
 	}
 
 	_isPointIn(x, y){

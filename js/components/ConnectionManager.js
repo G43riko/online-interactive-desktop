@@ -1,6 +1,7 @@
 /**
  * Created by Gabriel on 29. 10. 2016.
  */
+
 const REFRESH_TIME = 1000;
 const RECONNECT_TRIES = 10;
 
@@ -80,7 +81,7 @@ class ConnectionManager{
 		data[KEY_TYPE] = KEY_WATCH;
 
 		if(isUndefined(data[KEY_LESS_ID])){
-			Logger.error("nieje zadane less_id");
+			Logger.error(getMessage(MSG_MISS_LESS_ID));
 			return false;
 		}
 
@@ -91,7 +92,7 @@ class ConnectionManager{
 		data[KEY_TYPE] = KEY_EXERCISE;
 
 		if(isUndefined(data[KEY_LESS_ID])){
-			Logger.error("nieje zadane less_id");
+			Logger.error(getMessage(MSG_MISS_LESS_ID));
 			return false;
 		}
 
@@ -115,11 +116,11 @@ class ConnectionManager{
 		this._maximalWatchers = data["maxWatchers"];
 
 		this._socket.on("connect_failed", function(){
-			Alert.danger(getMessage(MSG_CONN_FAILED));
+			Logger.error(getMessage(MSG_CONN_FAILED));
 		});
 
 		this._socket.on("connect_error", function(){
-			inst._lives === RECONNECT_TRIES && Alert.danger(getMessage(MSG_CONN_ERROR));
+			inst._lives === RECONNECT_TRIES && Logger.error(getMessage(MSG_CONN_ERROR));
 			inst._lives--;
 			if(inst._lives === 0)
 				inst.disconnect();
@@ -163,7 +164,7 @@ class ConnectionManager{
 		});
 
 		this._socket.on('errorLog', function(response) {
-			Alert.danger(response.msg);
+			Logger.error(response.msg);
 		});
 
 		this._socket.on("notifLog", function(response){
@@ -233,7 +234,7 @@ class ConnectionManager{
 					Handler.processObjectAction(e[KEY_DATA], inst._type);
 					break;
 				default:
-					Logger.error("neznáma akcia: " + e["action"]);
+					Logger.error(getMessage(MSG_UNKNOW_ACTION, e["action"]));
 			}
 	 	});
 	}
@@ -559,15 +560,15 @@ class Handler{
 		var obj, layer = type === "teach" ? data["user_name"] : data["oL"];
 		switch(data.action){
 			case ACTION_OBJECT_MOVE:
-				obj = Scene.get(layer, data.oId);
+				obj = Scene.getObject(layer, data.oId);
 				obj.position.set(data.oX, data.oY);
 				obj.size.set(data.oW, data.oH);
 				break;
 			case ACTION_OBJECT_DELETE:
-				Scene.remove(Scene.get(layer, data.oId), data.oL, false);
+				Scene.remove(Scene.getObject(layer, data.oId), data.oL, false);
 				break;
 			case ACTION_OBJECT_CHANGE:
-				obj = Scene.get(layer, data.oId);
+				obj = Scene.getObject(layer, data.oId);
 				each(data.keys, (e, i) => obj[i] = e);
 				break;
 			case ACTION_OBJECT_CREATE:
@@ -575,7 +576,7 @@ class Handler{
 				Creator.create(data.o);
 				break;
 			default :
-				Logger.error("bola prijatá neznáma akcia: " + data.action);
+				Logger.error(getMessage(MSG_RECIEVED_UNKNOWN_ACTION, data.action));
 		}
 		draw();
 	}
@@ -625,7 +626,7 @@ class Handler{
 				Paints.addPath(layer, data["path"]);
 				break;
 			default :
-				Logger.error("bola prijatá neznáma akcia: " + data["action"]);
+				Logger.error(getMessage(MSG_RECIEVED_UNKNOWN_ACTION, data.action));
 		}
 		draw();
 	}

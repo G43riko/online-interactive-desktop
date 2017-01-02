@@ -147,7 +147,8 @@
 		"label" : "Change layer",
 		"type" : "text",
 		"visible" : true,
-		"disabled" : false
+		"disabled" : false,
+		"fields" : {}
 	},
 	"changeOpacity" : {
 		"label" : "Change opacity",

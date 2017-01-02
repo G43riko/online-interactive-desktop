@@ -35,12 +35,7 @@ module.exports.init = function(utils, time){
 
 module.exports.getMemberType = function(lesson_id){
 	var type = lessons[lesson_id]["type"];
-	if (type === "share"){
-		return "watch";
-	}
-	if(type === "teach"){
-		return "exercise";
-	}
+	return type === "share" ? "watch" : type === "teach" ? "exercise" : "unknown"
 };
 
 module.exports.existLesson = function(lesson_id){
@@ -48,13 +43,15 @@ module.exports.existLesson = function(lesson_id){
 };
 
 module.exports.sendMessage = function(user_id, action, message, trySend){
-	if(trySend !== false)
+	if(trySend !== false){
 		trySend = true;
+	}
 
 	users[user_id]["buffer"].push({action: action, data: message});
 
-	if(trySend)
+	if(trySend){
 		eventManager.callIfCan();
+	}
 };
 
 module.exports.sendMessageAllMembers = function(less_id, action, message){
@@ -102,7 +99,8 @@ module.exports.getOwner = function(lesson_id){
 	return lessons[lesson_id]["owner"];
 };
 module.exports.isSharing = function(lesson_id){
-	return lessons[lesson_id]["type"] == "share" || lessons[lesson_id]["type"] == "teach";
+	var type = lessons[lesson_id]["type"];
+	return type == "share" || type == "teach";
 };
 
 module.exports.getUserSocket = function(user_id){

@@ -173,15 +173,15 @@ class WatcherManager{
 		var obj;
 		switch(data.action){
 			case ACTION_OBJECT_MOVE:
-				obj = Scene.get(data.oL, data.oId);
+				obj = Scene.getObject(data.oL, data.oId);
 				obj.position.set(data.oX, data.oY);
 				obj.size.set(data.oW, data.oH);
 				break;
 			case ACTION_OBJECT_DELETE:
-				Scene.remove(Scene.get(data.oL, data.oId), data.oL, false);
+				Scene.remove(Scene.getObject(data.oL, data.oId), data.oL, false);
 				break;
 			case ACTION_OBJECT_CHANGE:
-				obj = Scene.get(data.oL, data.oId);
+				obj = Scene.getObject(data.oL, data.oId);
 				each(data.keys, (e, i) => obj[i] = e);
 				break;
 			case ACTION_OBJECT_CREATE:

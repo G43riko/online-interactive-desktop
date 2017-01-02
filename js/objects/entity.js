@@ -44,6 +44,11 @@ class Entity{
 			this._borderColor 	= Creator.borderColor;
 	}
 
+	isIn(x, y, radius = 0){
+		return x + radius > this._position.x && x - radius < this._position.x + this._size.x &&
+			   y + radius > this._position.y && y - radius < this._position.y + this._size.y;
+	}
+
 	removeChildren(element){
 		var index = this._childrens.indexOf(element);
 		if(index >= 0){
@@ -332,7 +337,6 @@ class Entity{
 		else if (vec.x > obj.position.x && vec.y > obj.position.y && vec.x < obj.position.x + obj.size.x && vec.y < obj.position.y + obj.size.y)
 			obj.moveType = 4;
 	}
-
 
 	/**
 	 * Vráti nový objekt buď podla stringu alebo podla objektu ktorý obsahuje typ inštancie

@@ -1,4 +1,4 @@
-class LogManager {
+	class LogManager {
 	constructor(){
 		LogManager.LOGS = "logs";
 		LogManager.WARNS = "warns";
@@ -19,31 +19,27 @@ class LogManager {
 		this._logs.push([Date.now(), msg, type]);
 	}
 
-	set(val, type = false){
-		if(type)
-			this._show[type] = val;
-		else
-			this._show[LogManager.LOGS] = this._show[LogManager.WARNS] = this._show[LogManager.ERRORS] = val;
-
-	};
-
 	notif(msg){
 		Alert.info(msg);
 	}
 
 	write(msg){
 		this._data[LogManager.LOGS][Date.now()] = msg;
-		if(this._show[LogManager.LOGS])
+		if(this._show[LogManager.LOGS]){
 			console.log(msg);
+		}
 	};
 
 	error(msg, id){
+		Alert.danger(msg);
 		this._data[LogManager.ERRORS][Date.now()] = msg;
 		if(this._show[LogManager.ERRORS]){
-			if(id)
+			if(id){
 				console.error(getErrorMessage(id) + msg);
-			else
+			}
+			else{
 				console.error(typeof msg === "number" ? getErrorMessage(msg) : msg);
+			}
 		}
 	};
 
@@ -52,6 +48,7 @@ class LogManager {
 		if(this._show[LogManager.WARNS])
 			console.warn(msg);
 	};
+
 
 	get data(){
 		return this_data;
