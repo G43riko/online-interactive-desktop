@@ -74,7 +74,7 @@
 		"type" : "color"
 	},
 	"borderWidth" : {
-		"allowedFor" : ["Line", "Rect", "Arc", "Polygon", "Text"],
+		"allowedFor" : ["Rect", "Arc", "Polygon", "Text"],
 		"label" : "Border width",
 		"values": [1, 2, 3, 5, 8, 10, 15],
 		"action" : "selectNumber",

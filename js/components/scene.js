@@ -182,7 +182,6 @@ class SceneManager{
 		return this._layers[layer].getObject(id);
 	}
 
-
 	draw(){
 		each(this._layers, e => e.draw());
 	};

@@ -47,9 +47,8 @@ class ObjectsManager{
 	}
 
 	add(o){
-		if((isDefined(o.locked) && o.locked) || !o)
+		if((isDefined(o.locked) && o.locked) || !o || this._objects.indexOf(o) >= 0)
 			return;
-
 		this._objects.push(o);
 
 		o.selected = true;

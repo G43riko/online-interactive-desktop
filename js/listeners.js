@@ -4,20 +4,29 @@
 class ListenersManager{
 	constructor(){
 		this._movedObject = null;
+		this._clickedOnObject = false;
 	}
 	mouseDown(position, button){
+		this._clickedOnObject = false;
+
+		if($(canvas).hasClass("blur")){
+			closeDialog();
+			this._clickedOnObject = true;
+			return false;
+		}
 		/*
 		 * SKONTROLUJE SA KLIKNUTIE NA ČASOVÚ OS
 		 */
 		if(isDefined(timeLine) && timeLine.clickIn(position.x, position.y)){
 			this._movedObject = timeLine;
-			return;
+			this._clickedOnObject = true;
+			return false;
 		}
 
 		/*
 		 * SKONTROLUJE SA KLIKNUTIE NA AREU, BUĎ SA ZAČNE PRESÚVAŤ ALEBO VYTVÁRAŤ
 		 */
-		if(!actContextMenu && Creator.operation == OPERATION_AREA && area){
+		if(!this._clickedOnObject && !actContextMenu && Creator.operation == OPERATION_AREA && area){
 			if(area.isReady && area.clickIn(position.x, position.y)){ //ak sa kliklo na už vytvorene tak sa bude posuvať
 				selectedObjects.movedObject = area;
 				area.moving = true;
@@ -26,40 +35,27 @@ class ListenersManager{
 			else {//ináč sa začne vytvárať nová
 				area.startCreate(position);
 			}
+			this._clickedOnObject = true;
 		}
 
 		/*
 		 * AK JE OZNAČENÝ TEXT TAK SA ULOŽÍ DO NEHO AKTUÁLNA HODNOTA INPUT A TEN SA SCHOVÁ
 		 */
 		if(SelectedText){
-			var textArea = document.getElementById("selectedEditor");
-			if(textArea){
+			var textArea = new G("#selectedEditor");
+			if(!textArea.isEmpty()){
 				console.log("res: " + parseInt(window.getComputedStyle(textArea).fontSize, 10));
-				SelectedText.text = textArea.innerText;
-				document.body.removeChild(textArea);
+				SelectedText.text = textArea.text();
+				textArea.delete();
 			}
 		}
 
-		if($(canvas).hasClass("blur"))
-			return false;
 
 		/*
 		if(actContextMenu && actContextMenu.clickIn(position.x, position.y))
 			return;
 		*/
 
-		/*
-		 * SKONTROLUJÚ SA NA KLIKNUTIE VŠETKY OBJEKTY V SCÉNE 
-		 */
-		if(button == LEFT_BUTTON && !actContextMenu)
-			Scene.forEach((o) => {
-				if(o.visible && !o.layer.userLayer && o.clickIn(position.x, position.y, button)){
-					o.moving = true;
-					selectedObjects.movedObject = o;
-					this._movedObject = selectedObjects;
-					return true;
-				}
-			});
 
 		/*
 		 * SKONTROLUE SA ČI SA MÁ VYTVÁRAŤ NOVÝ OBJEKT 
@@ -67,7 +63,31 @@ class ListenersManager{
 		if(!Creator.clickIn(position.x, position.y, false) && (Menu.isToolActive() || Creator.controllPress) && !Creator.object){
 			Creator.createObject(position);
 			this._movedObject = Creator;
+			this._clickedOnObject = true;
+			return false;
 		}
+
+		/*
+		 * SKONTROLUJÚ SA NA KLIKNUTIE VŠETKY OBJEKTY V SCÉNE 
+		 */
+		if(!this._clickedOnObject && button == LEFT_BUTTON && !actContextMenu){
+			Scene.forEach((o) => {
+				if(o.visible && !o.layer.userLayer && o.clickIn(position.x, position.y, button)){
+					if(Creator.operation === OPERATION_DRAW_LINE && Input.isKeyDown(L_CTRL_KEY) && o.selectedConnector){
+						Creator.createObject(position, o);
+						this._movedObject = Creator;
+					}
+					else{
+						o.moving = true;
+						selectedObjects.movedObject = o;
+						this._movedObject = selectedObjects;
+					}
+					this._clickedOnObject = true;
+					return true;
+				}
+			});
+		}
+
 
 		draw();
 	}
@@ -109,11 +129,36 @@ class ListenersManager{
 					break;
 			}
 		}
-		else if(ESCAPE_KEY === key)
-			closeDialog();
-		else if(DELETE_KEY === key){
-			selectedObjects.deleteAll();
-			draw();
+		else{
+			switch(key){
+				case DELETE_KEY:
+					selectedObjects.deleteAll();
+					draw();
+					break;
+				case ESCAPE_KEY:
+					closeDialog();
+					break;
+				case KEY_NUM_1:
+					Creator.operation = OPERATION_DRAW_PATH;
+					draw();
+					break;
+				case KEY_NUM_2:
+					Creator.operation = OPERATION_DRAW_RECT;
+					draw();
+					break;
+				case KEY_NUM_3:
+					Creator.operation = OPERATION_DRAW_LINE;
+					draw();
+					break;
+				case KEY_NUM_4:
+					Creator.operation = OPERATION_DRAW_ARC;
+					draw();
+					break;
+				case KEY_NUM_5:
+					Creator.operation = OPERATION_DRAW_IMAGE;
+					draw();
+					break;
+			}
 		}
 	}
 
@@ -125,6 +170,8 @@ class ListenersManager{
 			draw();
 			return true;
 		}
+
+		Paints.breakLine();
 
 		/*
 		 * VYTVORI SA KONTEXTOVÉ MENU
@@ -172,8 +219,10 @@ class ListenersManager{
 		/*
 		 * AK JE VYBRANY NASTROJ RUBBER TAK SA VYMAŽÚ OBJEKTY KTORÉ BOLY VYGUMOVANÉ
 		 */
-		if(Creator.operation === OPERATION_RUBBER)
+		if(Creator.operation === OPERATION_RUBBER){
 			Paints.removeSelectedPaths();
+			//return false;
+		}
 
 		/*
 		 * AK JE VYBRANY NASTROJ AREA TAK SA BUĎ DOKONČÍ VYTVARANIE ALEBO PRESUN
@@ -185,25 +234,30 @@ class ListenersManager{
 			else if(area.moving){
 				area.moving = false;
 			}
+			//return false;
 		}
 
 		/*
 		 * SKONTROLUJE KONTEXTOVE MENU A AK SA KLILKLO NA NEHO TAK HO VYPNE A SKONCI
 		 */
 		if(actContextMenu){
-			if(!actContextMenu.clickIn(position.x, position.y))
+			if(!actContextMenu.clickIn(position.x, position.y)){
 				actContextMenu = false;
-			else
-				return
+			}
+			else{
+				return false;
+			}
 		}
 		
 		/*
 		 * AK SA VYTVARAL OBJEKT TAK SA JEHO VYTVARANIE DOKONČÍ
 		 */
-		if(Creator.object && Creator.object.name != OBJECT_JOIN){
+		 
+		if(Creator.object && Creator.object.name != OBJECT_LINE){
 			Creator.finishCreating(position);
-			return;
+			return false;
 		}
+		
 
 		/*
 		 * AK JE VYBRANY NASTROJ KRESBA TAK SA PRERUSI CIARA
@@ -211,57 +265,75 @@ class ListenersManager{
 		if(Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
 			Paints.addPoint(position);
 			Paints.breakLine();
+			//return false;
 		}
 
 		/*
 		 * SKONTROLUJE SA MENU A CREATOR
 		 */
-		if(Menu.clickIn(position.x, position.y))
+		if(Menu.clickIn(position.x, position.y)){
 			return;
+		}
 
-		if(Creator.clickIn(position.x, position.y))
+		if(Creator.clickIn(position.x, position.y)){
 			return;
+		}
 
 		closeDialog();
+
+		var clickOnParent = false;
+		var clickOnConnectorObject = null;
+		Scene.forEach(o => {
+			if(!result && o.clickIn(position.x, position.y)) {
+				if(possibleChild){
+					if(possibleChild.parent === o){ //ak klikol na svojho rodiča tak sa nekontroluje priradenie dietata
+						clickOnParent = true;
+					}
+					else if(possibleChild !== o){//TODO treba asi prerobiť na jedno dieťa;
+						//o.addChildren(possibleChild);
+						//clickOnParent = true;
+					}
+				}
+				if(o.selectedConnector){
+					clickOnConnectorObject = o;
+				}
+				if(Creator.object){//toto sa stará o konektory
+					if(o.selectedConnector){
+						console.log("teraz");
+						Creator.object.targetB = o;
+					}
+					//Scene.addToScene(Creator.object);
+					result = true;
+					return;
+				}
+				else{
+					Input.isKeyDown(L_CTRL_KEY) ? selectedObjects.add(o) : selectedObjects.clearAndAdd(o);
+				}
+				result = true;
+			}
+		});
 
 		/*
 		 * AK SA HYBALO S NEJAKYM OBJEKTOM TAK SA DOKONCI POHYB
 		 */
 		if(selectedObjects.movedObject){
+			if(clickOnConnectorObject && selectedObjects.movedObject.name === OBJECT_LINE){
+				selectedObjects.movedObject.setTarget(clickOnConnectorObject);
+				console.log("teraz");
+			}
 			selectedObjects.movedObject.moving = false;
 			selectedObjects.movedObject = false;
 			this._movedObject = null;
+			//return false;
 		}
 
-		var clickOnParent = false;
-		Scene.forEach(o => {
-			if(result)
-				return;
-			if(o.clickIn(position.x, position.y)) {
-				if(possibleChild){
-					if(possibleChild.parent === o) //ak klikol na svojho rodiča tak sa nekontroluje priradenie dietata
-						clickOnParent = true;
-					else if(possibleChild !== o){//TODO treba asi prerobiť na jedno dieťa;
-						o.addChildren(possibleChild);
-						clickOnParent = true;
-					}
-				}
-				if(Creator.object){//toto sa stará o konektory
-					if(o.selectedConnector){
-						Creator.object.obj2 = o;
-						Scene.addToScene(Creator.object);
-					}
-				}
-				else
-					Input.isKeyDown(L_CTRL_KEY) ? selectedObjects.add(o) : selectedObjects.clearAndAdd(o);
-				result = true;
-			}
-		});
-
-		if(possibleChild && !clickOnParent)
+		if(possibleChild && !clickOnParent){
 			possibleChild.removeParent();
-
-		Creator.object = false;
+		}
+		if(Creator.object){//tu može byť iba line ktorá nebola pripojená na konektor
+			Creator.finishCreating();
+		}
+		//Creator.object = false;
 		result || selectedObjects.clear();
 	}
 
@@ -293,6 +365,8 @@ class ListenersManager{
 		 */
 		if(Creator.operation == OPERATION_AREA && area && area.isCreating){
 			area.addPoint(position);
+			this._clickedOnObject = true;//TODO overiť
+			return false;
 		}
 
 		/*
@@ -302,7 +376,8 @@ class ListenersManager{
 			Paints.drawLine(context, position, {x: position.x - movX, y: position.y - movY}, Creator.brushSize, "grey", PAINT_ACTION_LINE);
 			Paints.findPathsForRemove(position, 1);
 			Project.scene.findObjectsForRemove(position.x, position.y, 1);
-			
+			this._clickedOnObject = true;//TODO overiť
+			return false;
 		}
 
 		/*
@@ -311,6 +386,7 @@ class ListenersManager{
 		if(this._movedObject && isFunction(this._movedObject.onMouseMove)){
 			this._movedObject.onMouseMove(position, movX, movY);
 			draw();
+			this._clickedOnObject = true;
 			return false;
 		}
 
@@ -321,6 +397,7 @@ class ListenersManager{
 			var radius = 1;
 			Paints.addPoint(radius === 1 ? position : position.div(radius).round().mul(radius));
 			draw();
+			this._clickedOnObject = true;
 			return false
 		}
 

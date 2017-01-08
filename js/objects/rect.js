@@ -38,11 +38,12 @@ class Rect extends Entity {
 	_clickIn(x, y){
 		var vec = new GVector2f(x, y);
 		this.moveType = -1;
-
-		this.checkConnectors(vec);
-		if(this._selectedConnector)
-			return true;
-
+		if(Input.isKeyDown(L_CTRL_KEY)){
+			this.checkConnectors(vec);
+			if(this._selectedConnector)
+				return true;
+		}
+		
 		Entity.setMoveType(this, vec);
 
 		return this.moveType >= 0;
@@ -64,7 +65,6 @@ class Rect extends Entity {
 			radius: this._checkRadius(),
 			ctx: ctx
 		});
-
 		Entity.drawConnectors(this, ctx);
 
 		drawBorder(ctx, this);

@@ -9,6 +9,15 @@
 /*R*/const Y_KEY		= 89;
 /*R*/const DELETE_KEY	= 46;
 /*R*/const A_KEY		= 65;
+const KEY_NUM_1			= 49;
+const KEY_NUM_2			= 50;
+const KEY_NUM_3			= 51;
+const KEY_NUM_4			= 52;
+const KEY_NUM_5			= 53;
+const KEY_NUM_6			= 54;
+const KEY_NUM_7			= 55;
+const KEY_NUM_8			= 56;
+const KEY_NUM_9			= 57;
 
 const FPS = 60;
 
@@ -102,7 +111,7 @@ const DEFAULT_BRUSH_SIZE		= 20;
 const DEFAULT_BRUSH_TYPE		= "line";
 const DEFAULT_BRUSH_COLOR		= "#000000";
 const DEFAULT_LAYER_TITLE		= "default";
-const DEFAULT_USER_NAME		= "DEFAULT_NAME";
+const DEFAULT_USER_NAME			= "DEFAULT_NAME";
 
 const CONTEXT_MENU_LINE_HEIGHT		= 40;
 const CONTEXT_MENU_FONT_COLOR		= DEFAULT_FONT_COLOR;
@@ -183,7 +192,7 @@ const KEYWORD_TRANSPARENT	= "transparent";
 /*R*/const IMAGE_FORMAT_JPG	= "image/jpeg";
 /*R*/const IMAGE_FORMAT_PNG	= "image/png";
 /*R*/const IMAGE_FORMAT_GIF	= "image/gif";
-const FORMAT_FILE_XML	= "text/xml";
+const FORMAT_FILE_XML		= "text/xml";
 
 const ATTRIBUTE_FILL_COLOR		= "fillColor";
 const ATTRIBUTE_BORDER_COLOR	= "borderColor";
@@ -296,10 +305,10 @@ const ACTION_KEY_UP				= 2322;
 const ACTION_PAINT_ADD_PATH		= 2323;
 const ACTION_PAINT_REMOVE_PATH	= 2324;
 
-const CUT_OFF_AFTER_DISTANCE = 100;
-const CUT_OFF_PATHS_AFTER = false;
-const CUT_OFF_PATHS_BEFORE = false;
-const CUT_OFF_BEFORE_DISTANCE = 100;
+const CUT_OFF_AFTER_DISTANCE	= 100;
+const CUT_OFF_PATHS_AFTER		= false;
+const CUT_OFF_PATHS_BEFORE		= false;
+const CUT_OFF_BEFORE_DISTANCE	= 100;
 
 const MSG_DIVIDER = "########";
 

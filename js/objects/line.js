@@ -1,5 +1,5 @@
 class Line extends Entity{
-	constructor(points, width, fillColor, targetA = null, targetConnectionA = null) {
+	constructor(points, width, fillColor, targetA = null, targetB = null) {
 		super(OBJECT_LINE, new GVector2f(), new GVector2f(), {fillColor: fillColor, borderWidth: width});
 		this._points 			= points;
 		this.movingPoint		= -1;
@@ -11,10 +11,8 @@ class Line extends Entity{
 		this._arrow.src 		= "img/arrow.png";
 		this._arrowEndType		= 0;
 		this._arrowStartType	= 0;
-		this._targetA			= targetA;
-		this._targetConnectionA	= targetConnectionA;
-		this._targetB			= null;
-		this._targetConnectionB	= null;
+		this.targetA 			= targetA;
+		this.targetB 			= targetB;
 
 		this._text_A = "začiatok 10%";
 		this._text_B = "koniec 90%";
@@ -46,16 +44,16 @@ class Line extends Entity{
 			}
 		}, this);
 
-		if(this._points.length < 2)
+		//TODO determineClick ak niečo vráti tak sa vytvorí text
+
+		if(this._points.length < 2){
 			Scene.remove(this);
+		}
 
 		return true;
 	};
 
-	clickIn(x, y){
-		if(!this.clickInBoundingBox(x, y))
-			return false;
-
+	_clickIn(x, y){
 		this.movingPoint = -1;
 		this._points.forEach(function(e,i, points){
 			if(this.movingPoint >= 0)
@@ -67,17 +65,46 @@ class Line extends Entity{
 					(e.y + (points[i + 1].y) >> 1)) < SELECTOR_SIZE)
 				this.movingPoint = parseFloat(i) + 0.5;
 		}, this);
-
-		if(this.movingPoint >= 0)
+		if(this.movingPoint >= 0){
 			return this.movingPoint >= 0;
+		}
 
-		for(var i=1 ; i<this._points.length ; i++)
-			if(Line.determineClick(this._points[i-1], this._points[i], x, y, 10))
+		for(var i=1 ; i<this._points.length ; i++){
+			if(Line.determineClick(this._points[i-1], this._points[i], x, y, 10)){
 				return true;
-
-
+			}
+		}
 		return false;
 	};
+
+	set targetB(val){
+		var object = val ? val.id : "";
+		if(this._targetB == object){
+			return;
+		}
+		this._targetB			= object;
+		this._targetLayerB		= val ? val.layer : "";
+		this._targetConnectionB	= val ? val.selectedConnector : "";
+	}
+
+	set targetA(val){
+		var object = val ? val.id : "";
+		if(this._targetA == object){
+			return;
+		}
+		this._targetA			= object;
+		this._targetLayerA		= val ? val.layer : "";
+		this._targetConnectionA	= val ? val.selectedConnector : "";
+	}
+
+	setTarget(val){
+		if(this.movingPoint === 0){
+			this.targetA = val;
+		}
+		else if(this.movingPoint == this.points.length - 1){
+			this.targetB = val;
+		}
+	}
 
 	static determineClick(p1, p2, x, y, maxDist){
 		if(x < Math.min(p1.x, p2.x) || x > Math.max(p1.x, p2.x) || y < Math.min(p1.y, p2.y) || y > Math.max(p1.y, p2.y))
@@ -118,6 +145,29 @@ class Line extends Entity{
 
 	draw(ctx = context){
 		var size = this._points.length;
+
+		if(this._targetA){
+			var obj = Project.scene.getObject(this._targetLayerA, this._targetA);
+			if(obj){
+				this._points[0].set(obj.getConnectorPosition(this._targetConnectionA));
+			}
+			else{
+				this.targetA = obj;
+			}
+		}
+
+		if(this._targetB){
+			var obj = Project.scene.getObject(this._targetLayerB, this._targetB);
+			if(obj){
+				this._points[size - 1].set(obj.getConnectorPosition(this._targetConnectionB));
+			}
+			else{
+				this.targetB = obj;
+			}
+		}
+		if(this._targetA || this._targetB){
+			Entity.findMinAndMax(this._points, this.position, this.size);
+		}
 
 		if(isNumber(this._radius) && this._radius > 1)
 			this._radius += "";

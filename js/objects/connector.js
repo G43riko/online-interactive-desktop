@@ -8,7 +8,9 @@ class Connector{
 	}
 
 	get position(){return this._position;}
-
+	get data(){
+		return this._data;
+	}
 	addTarget(target){
 		this._targets.push(target);
 	}

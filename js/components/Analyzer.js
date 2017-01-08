@@ -46,15 +46,15 @@ class Analyzer{
 	}
 
 	_analyzeWindow(data){
-		data["userAgent"] = navigator.userAgent;
-		data["language"] = navigator.language;
-		data["platform"] = navigator.platform;
-		data["vendor"] = navigator.vendor;
-		data["innerHeight"] = window.innerHeight;
-		data["innerWidth"] = window.innerWidth;
-		data["availHeight"] = screen.availHeight;
-		data["availWidth"] = screen.availWidth;
-		data["connectedAt"] = getFormattedDate();
+		data["userAgent"]	= navigator.userAgent;
+		data["language"]	= navigator.language;
+		data["platform"]	= navigator.platform;
+		data["vendor"]		= navigator.vendor;
+		data["innerHeight"]	= window.innerHeight;
+		data["innerWidth"]	= window.innerWidth;
+		data["availHeight"]	= screen.availHeight;
+		data["availWidth"]	= screen.availWidth;
+		data["connectedAt"]	= getFormattedDate();
 		return data;
 	}
 

@@ -1,17 +1,17 @@
 	class LogManager {
 	constructor(){
-		LogManager.LOGS = "logs";
-		LogManager.WARNS = "warns";
-		LogManager.ERRORS = "errors";
+		LogManager.LOGS 	= "logs";
+		LogManager.WARNS 	= "warns";
+		LogManager.ERRORS 	= "errors";
 
 		this._logs = [];
 		this._data = {};
-		this._data[LogManager.LOGS] = {};
-		this._data[LogManager.WARNS] = {};
-		this._data[LogManager.ERRORS] = {};
-
-
 		this._show = {};
+		
+		this._data[LogManager.LOGS]		= {};
+		this._data[LogManager.WARNS]	= {};
+		this._data[LogManager.ERRORS]	= {};
+
 		this._show[LogManager.LOGS] = this._show[LogManager.WARNS] = this._show[LogManager.ERRORS] = true;
 	};
 
@@ -50,10 +50,20 @@
 	};
 
 
+	showLogs(){
+		var div = G("#showLogs");
+		if(div.length() > 0){
+			div.empty().append(createTable(["Time", "Message", "Type"], this._logs));
+			G("#showLogs").show();
+    		G("#modalWindow").show();
+		}
+	}
+
 	get data(){
 		return this_data;
 	}
 }
+
 
 getErrorMessage = function(id){
 	switch(id){

@@ -250,7 +250,6 @@ class CreatorViewer extends Entity{
 		}
 		if(isDefined(e["item"]["values"])){
 			Creator.setOpt(e["key"], e["item"]["values"][e["item"]["selectedIndex"]]);
-			console.log(e["item"]["selectedIndex"]);
 			e["itemsSelected"] = !e["itemsSelected"];
 		}
 		else if(e["item"]["type"] == "color"){

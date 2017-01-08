@@ -134,6 +134,7 @@ function eachFiltered(obj, func1, func2, thisArg = false){
 	each(obj, (e, i, arr) => func1(e, i, arr) && func2(e, i, arr), thisArg);
 }
 
+/*
 function extendObject(){
 	for(var i=1; i<arguments.length; i++)
 		for(var key in arguments[i])
@@ -141,12 +142,12 @@ function extendObject(){
 				arguments[0][key] = arguments[i][key];
 	return arguments[0];
 }
+*/
 
 Movement = {
 	move: function(o, x, y, moveChildrens = true){
 		if(isDefined(o.locked) && o.locked)
 			return;
-
 
 
 		if(isDefined(o.selectedConnector) && Creator.operation == OPERATION_DRAW_JOIN && o.selectedConnector){
@@ -156,7 +157,6 @@ Movement = {
 			o.move(x, y);
 		}
 		else if(isDefined(o.moveType)){
-
 			if(Creator.operation == OPERATION_DRAW_LINE && Menu.isToolActive()){
 
 			}
@@ -267,7 +267,7 @@ function getText(text, position, size, func, thisArg){
 
 function getFormattedDate(ms = Date.now()) {
 	var date = new Date(ms);
-	return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+	return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + " " + date.getMilliseconds();
 }
 
 function setCookie(cname, cvalue, exdays) {

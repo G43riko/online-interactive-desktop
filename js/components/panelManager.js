@@ -1,11 +1,30 @@
+
+var setAttr = (el, key, val) => {
+	if(typeof key === "string")
+		el.setAttribute(key, val);
+	else if(typeof key === "object")
+		for(var i in key)
+			if(key.hasOwnProperty(i))
+				el.setAttribute(i, key[i]);
+	
+	return el;
+};
+
+var append = function(element, content){
+	if(typeof content === "object")
+		element.appendChild(content);
+	return element
+};
+var createEl = (type, attr, cont) => append(setAttr(document.createElement(type), attr), cont);
+var createText = title => document.createTextNode(title);
+var createIcon = text => createEl("i", {class: "material-icons"}, createText(text));
+
 class PanelManager{
 	constructor(){
 		this._running = false;
 		//this._panel = document.getElementsByClassName("panel")[0];
 		this._panel = createEl("div", {class: "guiPanel minimalized showChat", style: "display: none;"});
-
-		this._bodyPanel =createEl("div", {class: "panelBody"});
-
+		this._bodyPanel = createEl("div", {class: "panelBody"});
 		this._headerPanel = createEl("div", {class: "panelHeader noselect"});
 		append(this._panel, this._headerPanel);
 		append(this._panel, this._bodyPanel);

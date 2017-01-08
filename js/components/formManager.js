@@ -1,6 +1,27 @@
 /**
  * Created by Gabriel on 29. 10. 2016.
  */
+ function createTable(titles, data){
+	var row = G("tr", {}), tbl = new G("table", {
+		attr: {border: "1"}, 
+		style: {borderCollapse : "collapse",width: "100%"}
+	});
+	for(let title of titles){
+		row.append(new G("td", {cont: title, style: {padding: "5px", fontWeight: "bold", textAlign: "center"}}));
+	}
+	tbl.append(row);
+	for(var i in data){
+		row = G("tr", {});
+		for(var j in data[i]){
+			row.append(new G("td", {
+				style: {padding: "5px"},
+				cont: j != 0 ? data[i][j] : getFormattedDate(data[i][j])
+			}));
+		}
+		tbl.append(row);
+	}
+	return tbl;
+}
 
 class FormManager{
 	constructor(data){
@@ -13,90 +34,97 @@ class FormManager{
 	}
 
 	static _setAllCheckedAttributes(element, allowedAttributes, data){
-		for(var i in allowedAttributes)
-			if(allowedAttributes.hasOwnProperty(i) && data[allowedAttributes[i]])
+		for(var i in allowedAttributes){
+			if(allowedAttributes.hasOwnProperty(i) && data[allowedAttributes[i]]){
 				element.setAttribute(allowedAttributes[i], data[allowedAttributes[i]]);
+			}
+		}
 	}
 
 	_createInput(data, isChildren = false){
 		if(data["visible"] === false)
 			return null;
-		var result = document.createElement("div"),
-			i, input;
-		if(isIn(data["type"], "checkbox", "multiCheckbox") && !isChildren)
-			result.setAttribute("class", "panel");
+		var i, input, result = new G("div", {});
 
-		if(data["label"] && data["id"] && !isChildren)
-			result.innerHTML += '<label for="' + data["id"] + '">' + data["label"] + ': </label>';
+		if(isIn(data["type"], "checkbox", "multiCheckbox") && !isChildren){
+			result.attr("class", "panel");
+		}
+
+		if(data["label"] && data["id"] && !isChildren){
+			result.append('<label for="' + data["id"] + '">' + data["label"] + ': </label>');
+		}
 
 		if(data["type"] === "multiCheckbox"){
-			var title = document.createElement("div");
-			title.appendChild(document.createTextNode(data["label"]));
-			result.appendChild(title);
+			result.append(G.createElement("div", {cont: data["label"]}));
+			var container = new G("div", {});
 
-			var container = document.createElement("div");
-			for(i in data["items"])
-				if(data["items"].hasOwnProperty(i))
-					container.appendChild(this._createInput(data["items"][i], true));
+			for(i in data["items"]){
+				if(data["items"].hasOwnProperty(i)){
+					container.append(this._createInput(data["items"][i], true));
+				}
+			}
 
-			result.appendChild(container);
+			result.append(container);
 		}
 		else if(data["type"] == "wrapper"){
-			var wrapper = document.createElement("div");
-			FormManager._setAllCheckedAttributes(wrapper, this._allowerAttributes, data);
+			var wrapper = new G("div", {});
+			FormManager._setAllCheckedAttributes(wrapper.first(), this._allowerAttributes, data);
 
-			for(i in data["items"])
-				if(data["items"].hasOwnProperty(i))
-					wrapper.appendChild(this._createInput(data["items"][i]));
-			result.appendChild(wrapper);
+			for(i in data["items"]){
+				if(data["items"].hasOwnProperty(i)){
+					wrapper.append(this._createInput(data["items"][i]));
+				}
+			}
+			result.append(wrapper);
 		}
 		else if(data["type"] === "combobox"){
-			input = document.createElement("select");
+			input = new G("select", {});
 
-			FormManager._setAllCheckedAttributes(input, this._allowerAttributes, data);
+			FormManager._setAllCheckedAttributes(input.first(), this._allowerAttributes, data);
 
-			if(data["disabled"] === true)
-				input.setAttribute("disabled", data["disabled"]);
+			if(data["disabled"] === true){
+				input.attr("disabled", data["disabled"]);
+			}
 
-			for(i in data["options"])
+			for(i in data["options"]){
 				if(data["options"].hasOwnProperty(i)){
-					var option = document.createElement("option");
-					option.value = data["options"][i].value;
-					option.appendChild(document.createTextNode(data["options"][i].label));
-					input.appendChild(option);
+					input.append(G.createElement("option", {value: data["options"][i].value}, data["options"][i].label));
 				}
-			result.appendChild(input);
+			}
+			result.append(input);
 		}
 		else if(data["type"] === "plainText"){
-			result.innerHTML += data["text"];
+			result.append(data["text"]);
 		}
 		else{
-			input = document.createElement("input");
-			input.setAttribute("type", data["type"]);
-			if(typeof data["checked"] === "boolean")
-				input.setAttribute("checked", data["checked"]);
+			input = new G("input", {attr: {type: data["type"]}});
+			if(typeof data["checked"] === "boolean"){
+				input.attr("checked", data["checked"]);
+			}
 
-			FormManager._setAllCheckedAttributes(input, this._allowerAttributes, data);
+			FormManager._setAllCheckedAttributes(input.first(), this._allowerAttributes, data);
 
-			result.appendChild(input);
+			result.append(input);
 		}
-		if(isChildren)
-			result.innerHTML += '<label for="' + data["id"] + '">' + data["label"] + ': </label>';
+		if(isChildren){
+			result.append('<label for="' + data["id"] + '">' + data["label"] + ': </label>');
+		}
 
-		return result;
+		return result.first();
 	}
+
 	_generateForm(form){
-		var result = document.createElement("form");
-		result.innerHTML += "<h2>" + form.title + "</h2><br/>";
+		var result = new G("form", {cont: "<h2>" + form.title + "</h2><br/>"});
 
 		for(var i in form.elements){
 			if(form.elements.hasOwnProperty(i)){
 				var element = this._createInput(form.elements[i]);
-				if(element)
-					result.appendChild(element);
+				if(element){
+					result.append(element);
+				}
 			}
 		}
 
-		return result;
+		return result.first();
 	}
 }

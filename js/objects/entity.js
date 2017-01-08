@@ -248,12 +248,12 @@ class Entity{
 		position.set(points[0]);
 		size.set(points[0]);
 		points.forEach(function(e, i){
-			if(i == 0)
-				return;
-			position.x = Math.min(points[i].x, position.x);
-			position.y = Math.min(points[i].y, position.y);
-			size.x = Math.max(points[i].x, size.x);
-			size.y = Math.max(points[i].y, size.y);
+			if(i){
+				position.x = Math.min(points[i].x, position.x);
+				position.y = Math.min(points[i].y, position.y);
+				size.x = Math.max(points[i].x, size.x);
+				size.y = Math.max(points[i].y, size.y);
+			}
 		});
 
 		size.sub(position);
@@ -266,20 +266,32 @@ class Entity{
 	 * @param vec
 	 */
 	checkConnectors(vec){
-		if(Creator.operation != OPERATION_DRAW_JOIN)
-			return;
+		//if(Creator.operation != OPERATION_DRAW_JOIN)
+		//	return;
 
 		this._selectedConnector = false;
-		this._connectors.forEach(function(e){
+		//this._connectors.forEach(function(e){
+		each(this._connectors, (e, i) => {
 			if(this._selectedConnector)
 				return;
 			var d = e.getClone().mul(this.size);
 			if (vec.dist(this.position.x + d.x, this.position.y + d.y) < SELECTOR_SIZE){
-				this._selectedConnector = e;
-				if(!Creator.object)
-					Creator.createObject(this);
+				this._selectedConnector = i;
+				//if(!Creator.object)
+				//	Creator.createObject(this);
 			}
-		}, this);
+		});
+	}
+
+	get selectedConnector(){
+		return this._selectedConnector;
+	}
+
+	getConnectorPosition(i){
+		var conn = this._connectors[i];
+		if(conn){
+			return this._position.getClone().add(this._size.getClone().mul(conn));
+		}
 	}
 
 
@@ -289,8 +301,10 @@ class Entity{
 	 * @param obj
 	 */
 	static drawConnectors(obj, ctx){
-		if(Creator.operation != OPERATION_DRAW_JOIN && (Creator.operation != OPERATION_DRAW_LINE || !Menu.isToolActive()))
+		if(Creator.operation != OPERATION_DRAW_JOIN &&
+			(Creator.operation != OPERATION_DRAW_LINE || !Input.isKeyDown(L_CTRL_KEY))){
 			return;
+		}
 
 		obj._connectors.forEach(e => drawConnector(e, obj, ctx));
 	};

@@ -85,7 +85,7 @@ class objectCreator{
 	 *
 	 * @param position - pozícia kde sa má objaviť objekt
 	 */
-	createObject(position){
+	createObject(position, target = null){
 		switch(this._operation){
 			case OPERATION_DRAW_RECT:
 				this._object = new Rect(position, new GVector2f(), this._fillColor);
@@ -94,7 +94,7 @@ class objectCreator{
 				this._object = new Arc(position, new GVector2f(), this._fillColor);
 				break;
 			case OPERATION_DRAW_LINE:
-				this._object = new Line([position, position.getClone()], this._lineWidth, this._fillColor);
+				this._object = new Line([position, position.getClone()], this._lineWidth, this._fillColor, target);
 				break;
 			case OPERATION_DRAW_JOIN:
 				this._object = new Join(position);
@@ -222,7 +222,8 @@ class objectCreator{
 			key = "_" + key;
 		}
 
-		//console.log("key: ", key, " vaĺ: ", val, "normal: ", this[key]);
+
+		console.log("key: ", key, " vaĺ: ", val, "normal: ", this[key]);
 
 		if(this[key] == val){
 			return false;

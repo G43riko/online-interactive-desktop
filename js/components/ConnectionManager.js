@@ -28,30 +28,30 @@ class ConnectionManager{
 		this._user_name = DEFAULT_USER_NAME;
         this._connectedUsers = {};
 		this.paint = {
-			addPoint : (point, layer) => this._paintAction(ACTION_PAINT_ADD_POINT, point, layer),
-			breakLine : (layer) => this._paintAction(ACTION_PAINT_BREAK_LINE, layer),
-			clean : (layer) => this._paintAction(ACTION_PAINT_CLEAN, layer),
-			addPath : (layer, path) => this._paintAction(ACTION_PAINT_ADD_PATH, layer, path)
+			addPoint 	: (pos, layer)	=> this._paintAction(ACTION_PAINT_ADD_POINT, pos, layer),
+			breakLine 	: (layer)		=> this._paintAction(ACTION_PAINT_BREAK_LINE, layer),
+			clean 		: (layer)		=> this._paintAction(ACTION_PAINT_CLEAN, layer),
+			addPath 	: (layer, path) => this._paintAction(ACTION_PAINT_ADD_PATH, layer, path)
 		};
 		this.object = {
-			move : (object) => this._objectAction(ACTION_OBJECT_MOVE, object),
-			change : (object, keys) => this._objectAction(ACTION_OBJECT_CHANGE, object, keys),
-			delete : (object) => this._objectAction(ACTION_OBJECT_DELETE, object),
-			create : (object) => this._objectAction(ACTION_OBJECT_CREATE, object)
+			move 		: (obj)			=> this._objectAction(ACTION_OBJECT_MOVE, obj),
+			change 		: (obj, keys)	=> this._objectAction(ACTION_OBJECT_CHANGE, obj, keys),
+			delete 		: (obj)			=> this._objectAction(ACTION_OBJECT_DELETE, obj),
+			create 		: (obj)			=> this._objectAction(ACTION_OBJECT_CREATE, obj)
 		};
 		this.input = {
-			mouseMove : (dir, pos) => this._inputAction(ACTION_MOUSE_MOVE, dir, pos),
-			mouseDown : (key, pos) => this._inputAction(ACTION_MOUSE_DOWN, key, pos),
-			mouseUp : (key, pos) => this._inputAction(ACTION_MOUSE_UP, key, pos),
-			keyDown : (key) => this._inputAction(ACTION_KEY_DOWN, key),
-			keyUp : (key) => this._inputAction(ACTION_KEY_UP, key)
+			mouseMove 	: (dir, pos) 	=> this._inputAction(ACTION_MOUSE_MOVE, dir, pos),
+			mouseDown 	: (key, pos) 	=> this._inputAction(ACTION_MOUSE_DOWN, key, pos),
+			mouseUp 	: (key, pos)	=> this._inputAction(ACTION_MOUSE_UP, key, pos),
+			keyDown 	: (key) 		=> this._inputAction(ACTION_KEY_DOWN, key),
+			keyUp 		: (key) 		=> this._inputAction(ACTION_KEY_UP, key)
 		};
 		this.layer = {
-            create : (title, type) => this._layerAction(ACTION_LAYER_CREATE, title, type),
-            delete : (title) => this._layerAction(ACTION_LAYER_DELETE, title),
-            clean : (title) => this._layerAction(ACTION_LAYER_CLEAN, title),
-            visible : (title, val) => this._layerAction(ACTION_LAYER_VISIBLE, val),
-            rename : (title, val) => this._layerAction(ACTION_LAYER_RENAME, val)
+            create 		: (title, type) => this._layerAction(ACTION_LAYER_CREATE, title, type),
+            delete 		: (title) 		=> this._layerAction(ACTION_LAYER_DELETE, title),
+            clean 		: (title) 		=> this._layerAction(ACTION_LAYER_CLEAN, title),
+            visible 	: (title, val) 	=> this._layerAction(ACTION_LAYER_VISIBLE, val),
+            rename 		: (title, val) 	=> this._layerAction(ACTION_LAYER_RENAME, val)
         };
 		this._sharing = false;
 		this._sender = new EventTimer(e => this._sendStack(), REFRESH_TIME);
@@ -108,12 +108,12 @@ class ConnectionManager{
 		var inst = this;
 		inst.resetLives();
 
-		this._sharePaints = data["sharePaints"];
-		this._shareInput = data["shareInput"];
-		this._shareCreator = data["shareCreator"];
-        this._shareLayers = data["shareLayers"];
-		this._shareObjects = data["shareObjects"];
-		this._maximalWatchers = data["maxWatchers"];
+		this._sharePaints		= data["sharePaints"];
+		this._shareInput		= data["shareInput"];
+		this._shareCreator		= data["shareCreator"];
+        this._shareLayers		= data["shareLayers"];
+		this._shareObjects		= data["shareObjects"];
+		this._maximalWatchers	= data["maxWatchers"];
 
 		this._socket.on("connect_failed", function(){
 			Logger.error(getMessage(MSG_CONN_FAILED));
@@ -182,11 +182,11 @@ class ConnectionManager{
 			Menu.disabled("sharing", "copyUrl");
 			Menu.disabled("sharing", "startShare");
 		}
-		this._user_id = false;
 		this._socket.disconnect();
-		this._socket = false;
-		this._sharing = false;
-		this._watching = false;
+		this._user_id	= false;
+		this._socket	= false;
+		this._sharing	= false;
+		this._watching	= false;
 		Logger.notif(getMessage(MSG_CONN_DISCONNECT));
 		Panel.stopShare();
 	}
@@ -311,7 +311,7 @@ class ConnectionManager{
         switch(type){
             case ACTION_LAYER_CREATE :
                 data[KEY_TITLE] = arg1;
-                data[KEY_TYPE] = arg2;
+                data[KEY_TYPE]	= arg2;
                 break;
             case ACTION_LAYER_DELETE :
                 data[KEY_TITLE] = arg1;
@@ -341,22 +341,22 @@ class ConnectionManager{
 		};
 		switch(type){
 			case ACTION_OBJECT_MOVE:
-				data["oId"] = object.id;
-				data["oL"] = object.layer;
-				data["oX"] = object.position.x;
-				data["oY"] = object.position.y;
-				data["oW"] = object.size.x;
-				data["oH"] = object.size.y;
+				data["oId"]	= object.id;
+				data["oL"]	= object.layer;
+				data["oX"]	= object.position.x;
+				data["oY"]	= object.position.y;
+				data["oW"]	= object.size.x;
+				data["oH"]	= object.size.y;
 				break;
 			case ACTION_OBJECT_CHANGE:
-				data["oId"] = object.id;
-				data["oL"] = object.layer;
-				data["keys"] = {};
+				data["oId"]		= object.id;
+				data["oL"]		= object.layer;
+				data["keys"]	= {};
 				each(keys, (e, i) => data.keys["i"] = object[i]);
 				break;
 			case ACTION_OBJECT_DELETE:
-				data["oId"] = object.id;
-				data["oL"] = object.layer;
+				data["oId"]	= object.id;
+				data["oL"]	= object.layer;
 				break;
 			case ACTION_OBJECT_CREATE:
 				data["o"] = object;
