@@ -63,11 +63,13 @@ var Components = {
 };
 
 function sendMessage(message){
-	if(typeof Watcher !== "undefined")
+	if(typeof Watcher !== "undefined"){
 		Watcher.sendMessage(message, Project.autor);
+	}
 
-	if(typeof Sharer !== "undefined" && Sharer.isSharing)
+	if(typeof Sharer !== "undefined" && Sharer.isSharing){
 		Sharer.sendMessage(message, Project.autor);
+	}
 
 	//chatViewer.recieveMessage(message, Project.autor);
 	Panel.recieveMessage(message, Project.autor);
@@ -76,11 +78,13 @@ function sendMessage(message){
 function ajax(url, options, dataType){
 	if(isFunction(options)){
 		options = {success: options};
-		if(isString(dataType))
+		if(isString(dataType)){
 			options["dataType"] = dataType;
+		}
 	}
-	else if(!isObject(options))
+	else if(!isObject(options)){
 		options = {};
+	}
 
 	options["method"] = options["method"] || "GET";
 	options["async"] = options["async"] || true;
@@ -88,21 +92,27 @@ function ajax(url, options, dataType){
 	var start = 0;
 	var xhttp = window.XMLHttpRequest ?  new XMLHttpRequest() :  new ActiveXObject("Microsoft.XMLHTTP");
 
-	if(isFunction(options["abort"]))
+	if(isFunction(options["abort"])){
 		xhttp.onabort = options["abort"];
-	if(isFunction(options["error"]))
+	}
+	if(isFunction(options["error"])){
 		xhttp.onerror = options["error"];
-	if(isFunction(options["progress"]))
+	}
+	if(isFunction(options["progress"])){
 		xhttp.onprogress = options["progress"];
-	if(isFunction(options["timeout"]))
+	}
+	if(isFunction(options["timeout"])){
 		xhttp.ontimeout = options["timeout"];
-	if(isFunction(options["loadEnd"]))
+	}
+	if(isFunction(options["loadEnd"])){
 		xhttp.onloadend = () => options["loadEnd"]((window["performance"].now() - start));
-	if(isFunction(options["loadStart"]))
+	}
+	if(isFunction(options["loadStart"])){
 		xhttp.onloadstart = function(){
 			options["loadStart"]();
 			start = window["performance"].now();
 		};
+	}
 	if(isFunction(options["success"])){
 		xhttp.onreadystatechange = function() {
 			if (xhttp.readyState == 4 && xhttp.status == 200 && isFunction(options["success"])){
@@ -252,8 +262,10 @@ var loading = function(){
 	Project.context.shadowColor = DEFAULT_SHADOW_COLOR;
 	Project.input.initListeners(Project.canvas);
 
-	if(typeof Sharer !== "undefined")
+	//if(typeof Sharer !== "undefined"){
+	if(isDefined(Sharer)){
 		chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
+	}
 
 	Layers = new LayersViewer();
 	Project.scene.addToScene(Layers, "rightMenu");
@@ -266,29 +278,33 @@ var loading = function(){
 	draw();
 };
 
-$(function(){
-	loading();
-});
+$(loading);
+
 function realDraw(){
-	if((typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected) || !Project.context || !isObject(Project.context))
+	if((typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected) || !Project.context || !isObject(Project.context)){
 		return;
+	}
 	Project.increaseDrawCounter();
 	drawMousePos = new Date().getMilliseconds();
 	CanvasHandler.clearCanvas(Project.context);
-	if(Project.options.grid)
+	if(Project.options.grid){
 		drawGrid();
+	}
 
-	if(Creator.operation == OPERATION_AREA && area)
+	if(Creator.operation == OPERATION_AREA && area){
 		area.draw();
+	}
 
 	Project.scene.draw();
 	Creator.draw();
 	Project.topMenu.draw();
-	if(actContextMenu)
+	if(actContextMenu){
 		actContextMenu.draw();
+	}
 	Logger.log("kreslí sa všetko", LOGGER_DRAW);
-	if(typeof timeLine !== KEYWORD_UNDEFINED && timeLine)
+	if(typeof timeLine !== KEYWORD_UNDEFINED && timeLine){
 		timeLine.draw();
+	}
 
 	Project.context.font = "30px Comic Sans MS";
 	Project.context.fillStyle = "red";

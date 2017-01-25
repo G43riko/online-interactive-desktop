@@ -1,8 +1,10 @@
 /*
 	compatible:	forEach, getComputedStyle, JSON parsing 14.9.2016
 */
+
 class ListenersManager{
 	constructor(){
+		//console.log("strict: " + (function() { return !this; })());
 		this._movedObject = null;
 		this._clickedOnObject = false;
 	}
@@ -95,11 +97,13 @@ class ListenersManager{
 	hashChange(){
 		setUpComponents();
 
-		if(MenuManager.dataBackup)
+		if(MenuManager.dataBackup){
 			Menu.init(JSON.parse(MenuManager.dataBackup));
+		}
 
-		if(Layers)
+		if(Layers){
 			Entity.setAttr(Layers, "visible", Components.layers());
+		}
 
 		Gui.showOptionsByComponents();
 		draw();
@@ -200,8 +204,9 @@ class ListenersManager{
 				result = e;
 		});
 
-		if(!result)
+		if(!result){
 			getText("", position, vec, val => val.length && Scene.addToScene(new TextField(val, position, vec)));
+		}
 
 		draw();
 		return true;
@@ -348,13 +353,15 @@ class ListenersManager{
 			if(actContextMenu)
 				actContextMenu.hover(position.x, position.y);
 			*/
-			if(!isHoverTrue && Creator.operation === OPERATION_AREA)
+			if(!isHoverTrue && Creator.operation === OPERATION_AREA){
 				isHoverTrue = area.hover(position.x, position.y);
+			}
 
 			if(!isHoverTrue){
 				Scene.forEach(e => {
-					if(isHoverTrue)
+					if(isHoverTrue){
 						return;
+					}
 					isHoverTrue = e.hover(position.x, position.y);
 				})
 			}
