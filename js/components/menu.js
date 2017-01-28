@@ -135,10 +135,9 @@ class MenuManager{
 						tmp["disabled"] = e["disabled"];
 						tmp["key"] = i.replace("XYZ ", "");
 
-						counter.x > counter.y && counter.y++ || counter.x++;
-
 						tmp["posX"] = counter.x;
 						tmp["posY"] = counter.y;
+						counter.x++;
 						tmp["value"] = ee;
 						this._tmpDrawArray.push({
 							x: counter.x,
@@ -153,9 +152,9 @@ class MenuManager{
 
 				e["key"] = i;
 
-				counter.x > counter.y && counter.y++ || counter.x++;
-				if(ii === "mainMenu" && e.visible)
+				if(ii === "mainMenu" && e.visible){
 					this._visibleElements++;
+				}
 				
 				e["posX"] = counter.x;
 				e["posY"] = counter.y;
@@ -164,14 +163,17 @@ class MenuManager{
 					y: counter.y,
 					key: i
 				});
+				counter.x++;
 
 				array[ii].push(e);
 			}, this);
 
-			if(isIn(ii, "tools", "file", "content", "sharing"))
+			if(isIn(ii, "tools", "file", "content", "sharing")){
 				store[ii] = num;
-			if(ii !== "mainMenu" && data["mainMenu"][ii]["visible"])
+			}
+			if(ii !== "mainMenu" && data["mainMenu"][ii]["visible"]){
 				num++;
+			}
 		}, this);
 		this._canvas.width 	= this._tmpDrawArray[this._tmpDrawArray.length - 1].x * this._size.x + this._size.x;
 		this._canvas.height	= this._tmpDrawArray[this._tmpDrawArray.length - 1].y * this._size.y + this._size.y;

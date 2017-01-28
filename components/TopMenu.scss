@@ -1,0 +1,102 @@
+$backgroundColor : #1abc9c;
+$backgroundColorDisabled : #abd6bb;
+$borderColor : #537864;
+$borderHoverColor: darken($borderColor, 20%);
+$menuOffset: 10px;
+$menuWidth: 50px;
+$menuHeight: 50px;
+
+*{
+	margin: 0;
+	padding: 0;
+}
+
+.hidden{
+	display: none;
+}
+
+#topMenuHolder{
+	position: absolute;
+	margin: 10px 0 0 10px;
+
+	ul{
+		list-style: none;
+		position: relative;
+
+		ul{
+			position: absolute;	
+			overflow: hidden;
+			top: -10px;
+			left: 0;
+			padding-top: $menuOffset;
+			transition: all 0.5s linear;
+			z-index: 50;
+		}
+	}
+
+	li{
+		position: relative;
+		top:0;
+		width: $menuWidth;
+		height: $menuHeight;
+		margin: 0 $menuOffset $menuOffset 0;
+		float: left;
+		transition: all 0.5s linear;
+
+		li{
+			height: -100%;
+			margin: 0 $menuOffset -70px 0;
+		}
+
+		a{
+			line-height: $menuHeight;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			text-align: center;
+		    color:$borderColor;
+		    text-decoration: none;
+			background-color: $backgroundColor;
+			width: $menuWidth;
+			height: $menuHeight;
+			border-radius: 10px;
+			border: 2px solid $borderColor;
+		}
+
+		&.selected {
+
+			> a{
+				color:$borderHoverColor;
+				border: 2px solid $borderHoverColor;
+
+				&:only-child{
+					text-decoration: underline;
+					font-weight: bold;
+				}
+			}
+
+			ul{
+				top: $menuHeight;
+				
+				li{
+					height: $menuHeight;
+					margin: 0 $menuOffset $menuOffset 0;
+				}
+			}
+		}
+
+		&.disabled a{
+			background-color: $backgroundColorDisabled;
+			cursor: not-allowed;
+		}
+
+		&:not(.disabled) > a:hover{
+			color:$borderHoverColor;
+			border: 2px solid $borderHoverColor;
+		}
+	}
+
+	> ul > li > a{
+		z-index: 100;
+	}
+}

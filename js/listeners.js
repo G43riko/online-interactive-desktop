@@ -89,8 +89,6 @@ class ListenersManager{
 				}
 			});
 		}
-
-
 		draw();
 	}
 

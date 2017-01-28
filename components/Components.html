@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Compoentns</title>
+</head>
+<body>
+	
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang='sk'>
+ 	<head>
+		<meta charset="UTF-8">
+		<base href="href"/>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="robots" content="all"/>
+		<meta name="keywords" content="keyword"/>
+		<meta name="author" content="Gabriel Csöllei" />
+		<meta name="description" content="description"/>
+		<title>Components viewer</title>
+		<link rel="stylesheet" type="text/css" href="Components.css">
+		<script src="LayersViewer.js"></script>
+		<script src="ContextMenu.js"></script>
+		<script src="TopMenu.js"></script>
+		<script src="../js/G.js"></script>
+ 	</head>
+ 	<body>
+		<nav id="topMenuHolder"></nav>
+ 		<div id="contextMenuHolder"></div>
+		<nav class="context-menu" id="context-menu">
+			<ul class="items">
+				<li class="item">
+					<a href="#" class="link">View Task</a>
+					<ul class="item">
+						<li class="item">
+							<a href="#" class="link">a</a>
+						</li>
+						<li class="item">
+							<a href="#" class="link">b</a>
+						</li>
+						<li class="item">
+							<a href="#" class="link">c</a>
+						</li>
+						<li class="item">
+							<a href="#" class="link">c</a>
+						</li>
+					</ul>
+				</li>
+				<li class="item">
+					<a href="#" class="link">Edit Task</a>
+				</li>
+				<li class="item">
+					<a href="#" class="link">Delete Task</a>
+					<ul class="item">
+						<li class="item">
+							<a href="#" class="link">a</a>
+						</li>
+						<li class="item">
+							<a href="#" class="link">b</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+ 		<div id="layerViewerPlaceholder"></div>
+ 		<script type="text/javascript">
+			var layersViewer = new LayersViewer(G.byId("layerViewerPlaceholder"));
+			var menu = new TopMenu(data);
+			initContextMenu("#contextMenuHolder");
+			layersViewer.createLayer("destiA");
+			layersViewer.createLayer("destiB"); 
+		</script>
+	</body>
+</html>

@@ -12,8 +12,9 @@ class Animation{
 	static _mainLoop(timestamp){
 		Animation._loop(timestamp);
 		
-		if(Animation._running)
+		if(Animation._running){
 			requestAnimationFrame(Animation._mainLoop);
+		}
 	}
 
 	static stop(){
@@ -34,14 +35,19 @@ function isIn(obj, data){
 	//return arguments.some((e, i) => i && e === obj);
 	var i;
 	if(isArray(data)){
-		for(i=0 ; i<data.length ; i++)
-			if(data[i] == obj)
+		for(i=0 ; i<data.length ; i++){
+			if(data[i] == obj){
 				return true;
+			}
+		}
 	}
-	else
-		for(i=1 ; i<arguments.length ; i++)
-			if(arguments[i] === obj)
+	else{
+		for(i=1 ; i<arguments.length ; i++){
+			if(arguments[i] === obj){
 				return true;
+			}
+		}
+	}
 
 	return false;
 }
@@ -53,17 +59,22 @@ function roughSizeOfObject(object) {
 
 	while (stack.length) {
 		var value = stack.pop();
-		if(isBoolean(value))
+		if(isBoolean(value)){
 			bytes += 4;
-		else if(isString(value))
+		}
+		else if(isString(value)){
 			bytes += value.length << 1;
-		else if(isNumber(value))
+		}
+		else if(isNumber(value)){
 			bytes += 8;
+		}
 		else if(isObject(value) && objectList.indexOf( value ) === -1){
 			objectList.push(value);
-			for(var i in value)
-				if(value.hasOwnProperty(i))
+			for(var i in value){
+				if(value.hasOwnProperty(i)){
 					stack.push(value[i]);
+				}
+			}
 		}
 	}
 	return bytes;
@@ -98,35 +109,45 @@ function toHHMMSS(time, decimals = 0) {
     var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
     var seconds = sec_num - (hours * 3600) - (minutes * 60);
 
-    if (hours   < 10) hours   = "0" + hours;
-    if (minutes < 10) minutes = "0" + minutes;
-    if (seconds < 10) 
+    if (hours   < 10){ hours   = "0" + hours;}
+    if (minutes < 10){ minutes = "0" + minutes;}
+    if (seconds < 10){
     	seconds = "0" + seconds.toFixed(decimals)
-    else 
+    }
+    else {
     	seconds = seconds.toFixed(decimals);
+    }
     return hours + ':' + minutes + ':' + seconds;
 }
 
 function each(obj, func, thisArg = false){
 	var i;
 	if(Array.isArray(obj)){
-		if(thisArg)
-			for(i=0 ; i<obj.length ; i++)
+		if(thisArg){
+			for(i=0 ; i<obj.length ; i++){
 				func.call(thisArg, obj[i], i, obj);
-		else
-			for(i=0 ; i<obj.length ; i++)
+			}
+		}
+		else{
+			for(i=0 ; i<obj.length ; i++){
 				func(obj[i], i, obj);
+			}
+		}
 	}
 	else{
 		if(thisArg){
-			for(i in obj)
-				if(obj.hasOwnProperty(i))
+			for(i in obj){
+				if(obj.hasOwnProperty(i)){
 					func.call(thisArg, obj[i], i, obj);
+				}
+			}
 		}
-		else
-			for(i in obj)
+		else{
+			for(i in obj){
 				if(obj.hasOwnProperty(i))
 					func(obj[i], i, obj);
+			}
+		}
 	}
 }
 
@@ -146,8 +167,9 @@ function extendObject(){
 
 Movement = {
 	move: function(o, x, y, moveChildrens = true){
-		if(isDefined(o.locked) && o.locked)
+		if(isDefined(o.locked) && o.locked){
 			return;
+		}
 
 
 		if(isDefined(o.selectedConnector) && Creator.operation == OPERATION_DRAW_JOIN && o.selectedConnector){
@@ -198,11 +220,19 @@ Movement = {
 		}
 		else if(isDefined(o.movingPoint)){
 			var intVal = 0;
-			if(o.movingPoint < 0)
+			if(o.movingPoint < 0){//ak sa hýbe celým objektom
 				o.points.forEach(a => a.add(x, y));
-			else if(isInt(o.movingPoint))
+			}
+			else if(isInt(o.movingPoint)){//ak sa kliklo na bod zlomu tak sa bodom hýbe
+				if(o.movingPoint == 0){
+					o.targetA = "";
+				}
+				else if(o.movingPoint == o.points.length - 1){
+					o.targetB = "";
+				}
 				o.points[o.movingPoint].add(x, y);
-			else{
+			}
+			else{//ináč sa vytvára nový bod
 				intVal = parseInt(o.movingPoint) + 1;
 				o.points.splice(intVal, 0, o.points[intVal - 1].getClone().add(o.points[(intVal % o.points.length)]).br(1));
 				o.movingPoint = intVal;
@@ -211,8 +241,9 @@ Movement = {
 		}
 		else{
 			o.position.add(x, y);
-			if(moveChildrens)
+			if(moveChildrens){
 				o.eachChildren(e => e.position.add(x, y));
+			}
 		}
 
 		Events.objectMove(o);
@@ -237,8 +268,9 @@ function closeDialog(){
 function getText(text, position, size, func, thisArg){
 	var T, x = $(document.createElement("INPUT"));
 
-	if (arguments.length > 1)
+	if (arguments.length > 1){
 		T = thisArg;
+	}
 
 	x.attr({
 		type: "text",
@@ -282,17 +314,20 @@ function getCookie(cname) {
 		i, c;
 	for(i = 0; i <ca.length; i++) {
 		c = ca[i];
-		while (c.charAt(0)==' ')
+		while (c.charAt(0)==' '){
 			c = c.substring(1);
-		if (c.indexOf(name) == 0)
+		}
+		if (c.indexOf(name) == 0){
 			return c.substring(name.length,c.length);
+		}
 	}
 	return "";
 }
 
 function drawBorder(ctx, o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
-	if(!o.selected && o.name != "Paint")
+	if(!o.selected && o.name != "Paint"){
 		return;
+	}
 	doRect({
 		position: o.position,
 		size: o.size,
@@ -301,17 +336,22 @@ function drawBorder(ctx, o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 		ctx: ctx
 	});
 
-	if(selectors.hasOwnProperty("tc"))
+	if(selectors.hasOwnProperty("tc")){
 		drawSelectArc(ctx, o.position.x + (o.size.x >> 1), o.position.y);
-	if(selectors.hasOwnProperty("cl"))
+	}
+	if(selectors.hasOwnProperty("cl")){
 		drawSelectArc(ctx, o.position.x, o.position.y + (o.size.y >> 1));
-	if(selectors.hasOwnProperty("bc"))
+	}
+	if(selectors.hasOwnProperty("bc")){
 		drawSelectArc(ctx, o.position.x + (o.size.x >> 1), o.position.y + o.size.y);
-	if(selectors.hasOwnProperty("cr"))
+	}
+	if(selectors.hasOwnProperty("cr")){
 		drawSelectArc(ctx, o.position.x + o.size.x, o.position.y + (o.size.y >> 1));
+	}
 
-	if(selectors.hasOwnProperty("br"))
+	if(selectors.hasOwnProperty("br")){
 		drawSelectArc(ctx, o.position.x + o.size.x, o.position.y + o.size.y);
+	}
 }
 
 function rectRectCollision(minA, sizeA, minB, sizeB){
@@ -398,8 +438,9 @@ class EventTimer{
 	}
 
 	_setTimeOut(diff){
-		if(this._timeOut)
+		if(this._timeOut){
 			return;
+		}
 		this._timeOut = setTimeout(() => this._callEvent(this) , this._time - diff);
 	}
 
@@ -425,18 +466,21 @@ function setConstants(data){
 						if(typeof eee === "object"){
 							each(eee, (eeee, iiii) => {
 								setConstant(i + "_" + ii + "_" + iii + "_" + iiii, eeee);
-							})
+							});
 						}
-						else
+						else{
 							setConstant(i + "_" + ii + "_" + iii, eee);
-					})
+						}
+					});
 				}
-				else
+				else{
 					setConstant(i + "_" + ii, ee);
-			})
+				}
+			});
 		}
-		else
+		else{
 			setConstant(i, e);
+		}
 	});
 	return constants;
 }
