@@ -85,7 +85,7 @@ $borderHoverColor: darken($borderColor, 20%);
           padding-left: 20px;
           color: #293c32; }
           .context-menu ul li:hover > a:after {
-            content: ▶; }
+            content: "▶"; }
   .context-menu.left ul ul {
     left: calc(-100% - 2px); }
   .context-menu.active {

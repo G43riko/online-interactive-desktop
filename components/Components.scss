@@ -124,7 +124,7 @@ $menuHeight: 50px;
 				    color: $borderHoverColor;
 
 				    &:after{
-				    	content:▶;
+				    	content:"▶";
 				    }
 				}
 			}
@@ -173,7 +173,7 @@ $menuHeight: 50px;
 		background-color: $bgColor;
 		z-index: 20;
 		box-sizing: border-box;
-		box-shadow: 0px 2px 6px $borderColor;
+		box-shadow: 0 2px 6px $borderColor;
 		.layersHeaderButton{
 			position: relative;
 			display: inline-block;
@@ -330,8 +330,8 @@ $menuHeight: 50px;
 		a{
 			line-height: $menuHeight;
 			position: absolute;
-			top: 0px;
-			left: 0px;
+			top: 0;
+			left: 0;
 			text-align: center;
 		    color:$borderColor;
 		    text-decoration: none;

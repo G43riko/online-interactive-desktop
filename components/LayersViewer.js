@@ -1,8 +1,4 @@
-"use strict"
-
-class LayersViewerAbstract{
-
-};
+"use strict";
 
 
 class LayersViewer extends LayersViewerAbstract{
@@ -136,4 +132,4 @@ class LayersViewer extends LayersViewerAbstract{
 		delete this._layers[title];
 		this._existingLayers--;
 	};
-};
+}

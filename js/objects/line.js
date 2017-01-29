@@ -14,6 +14,14 @@ class Line extends Entity{
 		this.targetA 			= targetA;
 		this.targetB 			= targetB;
 
+		this._startText = null;
+		/*
+		this._startText = {
+			text: "startText",
+			dist: 70,
+			angle: Math.PI / 2
+		};
+		*/
 		this._text_A = "začiatok 10%";
 		this._text_B = "koniec 90%";
 
@@ -22,6 +30,25 @@ class Line extends Entity{
 			Scene.remove(this);
 		}
 		Entity.findMinAndMax(this._points, this.position, this.size);
+	}
+
+	setStartText(text, dist = 0, angle = 0, ctx = context){
+		if(arguments.length === 0 || !isString(text) || text.length === 0){
+			this._startText = null;
+			return;
+		}
+		var fontSize = 10;
+		this._startText = {
+			text: text,
+			dist: dist,
+			fontSize: fontSize,
+			angle: angle,
+			textWidth : CanvasHandler.calcTextWidth(ctx, text, fontSize + "pt Comic Sans MS")
+		};
+
+		if(this._startText.dist === 0){
+			this._startText.dist = this._startText.textWidth;
+		}
 	}
 
 	get points(){return this._points;}
@@ -55,6 +82,21 @@ class Line extends Entity{
 
 	_clickIn(x, y){
 		this.movingPoint = -1;
+
+		if(this._startText !== null){
+			var final = this._points[this._points.length - 1].getClone();
+			var semiFinal = this._points[this._points.length - 2].getClone();
+			var vector = semiFinal.sub(final).normalize();
+			var angle = this._startText.angle;
+			var newVector = new GVector2f(vector.x * Math.cos(angle) - vector.y * Math.sin(angle),
+				vector.x * Math.sin(angle) + vector.y * Math.cos(angle));
+			var position = final.add(newVector.mul(this._startText.dist));
+			if(position.dist(new GVector2f(x, y)) < this._startText.textWidth){
+				console.log("aaaaaaaaaanooooooooo");
+			}
+		}
+
+
 		this._points.forEach(function(e,i, points){
 			if(this.movingPoint >= 0)
 				return true;
@@ -144,10 +186,10 @@ class Line extends Entity{
 	};
 
 	draw(ctx = context){
-		var size = this._points.length;
+		var obj, size = this._points.length;
 
 		if(this._targetA){
-			var obj = Project.scene.getObject(this._targetLayerA, this._targetA);
+			obj = Project.scene.getObject(this._targetLayerA, this._targetA);
 			if(obj){
 				this._points[0].set(obj.getConnectorPosition(this._targetConnectionA));
 			}
@@ -157,7 +199,7 @@ class Line extends Entity{
 		}
 
 		if(this._targetB){
-			var obj = Project.scene.getObject(this._targetLayerB, this._targetB);
+			obj = Project.scene.getObject(this._targetLayerB, this._targetB);
 			if(obj){
 				this._points[size - 1].set(obj.getConnectorPosition(this._targetConnectionB));
 			}
@@ -188,10 +230,78 @@ class Line extends Entity{
 		Arrow.drawArrow(ctx, this._points[1], this._points[0], this, this._arrowEndType);
 		Arrow.drawArrow(ctx, this._points[size - 2], this._points[size - 1], this, this._arrowStartType);
 
+		var point, offset;
+
+		//text_B
+		var first = this._points[0].getClone();
+		var second = this._points[1].getClone();
+		offset = CanvasHandler.calcTextWidth(ctx, this._text_B, "10pt Comic Sans MS");
+		point = first.add(second.sub(first).normalize().mul((offset >> 1) + 10));
+		doRect({
+			position: point,
+			fillColor: "white",
+			width: offset,
+			height: 10,
+			center: true,
+			ctx: ctx
+		});
+		ctx.fillStyle = "black";
+		ctx.textAlign = FONT_HALIGN_CENTER;
+		ctx.textBaseline = FONT_VALIGN_MIDDLE;
+		ctx.fillText(this._text_B, point.x, point.y);
+
+		if(isObject(this._startText) && this._startText !== null){
+			var final = this._points[this._points.length - 1].getClone();
+			var semiFinal = this._points[this._points.length - 2].getClone();
+			var vector = semiFinal.sub(final).normalize();
+			var angle = this._startText.angle;
+			var newVector = new GVector2f(vector.x * Math.cos(angle) - vector.y * Math.sin(angle),
+										  vector.x * Math.sin(angle) + vector.y * Math.cos(angle));
+			var position = final.add(newVector.mul(this._startText.dist));
+			doRect({
+				position: position,
+				fillColor: "white",
+				width: this._startText.textWidth,
+				height: this._startText.fontSize,
+				center: true,
+				ctx: ctx
+			});
+			ctx.fillStyle = "black";
+			ctx.textAlign = FONT_HALIGN_CENTER;
+			ctx.textBaseline = FONT_VALIGN_MIDDLE;
+			ctx.fillText(this._startText.text, position.x, position.y);
+		}
+		/*
+		if(isObject(this._startText)){
+			var final = this._points[this._points.length - 1].getClone();
+			var semiFinal = this._points[this._points.length - 2].getClone();
+			var vector = semiFinal.sub(final).normalize();
+			var angle = this._startText.angle;
+			var newVector = new GVector2f(vector.x * Math.cos(angle) - vector.y * Math.sin(angle),
+										  vector.x * Math.sin(angle) + vector.y * Math.cos(angle));
+			var textWidth = CanvasHandler.calcTextWidth(ctx, this._startText.text, "10pt Comic Sans MS");
+			var position = final.add(newVector.mul(this._startText.dist));
+			doRect({
+				position: position,
+				fillColor: "white",
+				width: textWidth,
+				height: 10,
+				center: true,
+				ctx: ctx
+			});
+			ctx.fillStyle = "black";
+			ctx.textAlign = FONT_HALIGN_CENTER;
+			ctx.textBaseline = FONT_VALIGN_MIDDLE;
+			ctx.fillText(this._startText.text, position.x, position.y);
+		}
+		*/
+
+		/*
+		//text_A
 		var last = this._points[this._points.length - 1].getClone();
 		var subLast = this._points[this._points.length - 2].getClone();
-		var offset = CanvasHandler.calcTextWidth(ctx, this._text_A, "10pt Comic Sans MS");
-		var point = last.add(subLast.sub(last).normalize().mul((offset >> 1) + 10));
+		offset = CanvasHandler.calcTextWidth(ctx, this._text_A, "10pt Comic Sans MS");
+		point = last.add(subLast.sub(last).normalize().mul((offset >> 1) + 10));
 		doRect({
 			position: point,
 			fillColor: "white",
@@ -204,6 +314,8 @@ class Line extends Entity{
 		ctx.textAlign = FONT_HALIGN_CENTER;
 		ctx.textBaseline = FONT_VALIGN_MIDDLE;
 		ctx.fillText(this._text_A, point.x, point.y);
+		*/
+
 
 		context.lineWidth = DEFAULT_STROKE_WIDTH << 1;
 		if(this.selected){

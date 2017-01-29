@@ -24,7 +24,7 @@ class TopMenu{
 		G(string).class((value ? "+" : "-") + "disabled");
 	}
 
-	visible(value, menu, submenu = null){
+	setVisible(value, menu, submenu = null){
 		var string = "#topMenuHolder .item_" + menu;
 		if(G.isString(submenu)){
 			string += " .item_" + submenu

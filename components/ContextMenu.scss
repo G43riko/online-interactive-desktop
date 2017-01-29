@@ -83,7 +83,7 @@ $bgGradient: linear-gradient($bgHoverColor, $bgColor);
 				    color: $borderHoverColor;
 
 				    &:after{
-				    	content:▶;
+				    	content:"▶";
 				    }
 				}
 			}

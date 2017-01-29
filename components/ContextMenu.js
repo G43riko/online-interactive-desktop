@@ -1,9 +1,9 @@
-"use strict"
+"use strict";
 
 function initContextMenu(query){
-	var taskItemClassName = 'task';
+	//var taskItemClassName = 'task';
 	var items = document.querySelectorAll(query);
-	var menuState = 0;
+	//var menuState = 0;
 	var menu = document.querySelector("#context-menu");
 	document.addEventListener("click", function(e){
 		var target = e.target;
@@ -27,11 +27,11 @@ function initContextMenu(query){
 	var showMenu = function(e){
 		//var contexMenuWidth = 240;
 		menu.classList.add("active");
-		var contexMenuWidth = menu.querySelector("ul").offsetWidth;
-		var contexMenuHeight = menu.querySelector("ul").offsetHeight;
+		var contextMenuWidth = menu.querySelector("ul").offsetWidth;
+		var contextMenuHeight = menu.querySelector("ul").offsetHeight;
 
-		menu.style.top = Math.min(e.clientY, (window.innerHeight - contexMenuHeight)) + "px";
-		menu.style.left = Math.min(e.clientX, (window.innerWidth - contexMenuWidth)) + "px";
+		menu.style.top = Math.min(e.clientY, (window.innerHeight - contextMenuHeight)) + "px";
+		menu.style.left = Math.min(e.clientX, (window.innerWidth - contextMenuWidth)) + "px";
 		console.log(menu.style.left, window.innerWidth - (contexMenuWidth << 1));
 		menu.classList.toggle("left", parseInt(menu.style.left.replace("px", "")) > window.innerWidth - (contexMenuWidth << 1));
 
@@ -39,6 +39,6 @@ function initContextMenu(query){
 	for(var i=0 ; i<items.length; i++){
 		contextMenuListener(items[i]);
 	}
-};
+}
 
 

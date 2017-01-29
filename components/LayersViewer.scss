@@ -38,7 +38,7 @@ $bgGradient: linear-gradient($bgHoverColor, $bgColor);
 		background-color: $bgColor;
 		z-index: 20;
 		box-sizing: border-box;
-		box-shadow: 0px 2px 6px $borderColor;
+		box-shadow: 0 2px 6px $borderColor;
 		.layersHeaderButton{
 			position: relative;
 			display: inline-block;
