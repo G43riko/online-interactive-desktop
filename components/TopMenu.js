@@ -4,14 +4,29 @@ class TopMenu{
 	constructor(data){
 		this._menuHolder = new G("#topMenuHolder").html(this.createMainMenu(data["mainMenu"], data));
 
-		var items = G.byClass("itemLink");
 		document.addEventListener("click", function(e){
-			var elements = G.byId("layersViewer").getElementsByClassName("selected");
-			for(var i=0 ; i<elements.length ; i++){
-				if(G.isDefined(elements[i]) && e.target != elements[i].children[0]){
-					elements[i].classList.remove("selected");	
+			G("#topMenuHolder .selected").each(function(){
+				if(e.target !== this.children[0] && this.childElementCount > 1){
+					this.classList.remove("selected");
 				}
-			}
+			});
+		});
+	}
+
+	static clickOnLi(element){
+		if(!G.hasClass(G.parent(element), "disabled")){//ak nieje disablovany
+			G("#topMenuHolder .selected").each(function(){ //pozrie sa na všetky označené
+				if(element !== this.children[0] && this.childElementCount === 1){ //ak to nieje on
+					this.classList.remove("selected"); //tak ich odznačí
+				}
+			});
+			G.parent(element).classList.toggle("selected");//prehodí samého seba
+		}
+	}
+
+	deselectAll(){
+		G("#topMenuHolder .selected").each(function(){
+			this.classList.remove("selected");
 		});
 	}
 
@@ -48,7 +63,7 @@ class TopMenu{
 				cont: G.createElement("a", {
 					href: "javascript: void(0)",
 					class: "itemLink",
-					onclick: allData !== null ? "if(!G.hasClass(G.parent(this), \"disabled\"))G.parent(this).classList.toggle(\"selected\");" : ""
+					onclick: allData !== null ? "TopMenu.clickOnLi(this);" : ""
 				}, i)
 			});
 			if(allData && allData.hasOwnProperty(i)){

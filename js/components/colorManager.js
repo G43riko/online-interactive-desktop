@@ -6,7 +6,7 @@ function pickUpColor(func, thisArg){
 	if (arguments.length > 1)
 		T = thisArg;
 	$("#colorPalete").delegate(".colorPatern", "click", function(){
-		$(".selected").removeClass("selected");
+		$("#colorPalete .selected").removeClass("selected");
 		func.call(T, $(this).addClass("selected").css("backgroundColor"));
 		closeDialog();
 		draw();

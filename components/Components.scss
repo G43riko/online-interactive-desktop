@@ -65,7 +65,7 @@ $menuHeight: 50px;
 
 	ul{
 		position: absolute;
-		background-color: #fff;
+		//background-color: #fff;
 	    border-radius: 5px;
 	    border: solid 1px $borderColor;
 	    box-shadow: 1px 1px 2px #cfcfcf;
@@ -83,8 +83,9 @@ $menuHeight: 50px;
 
 		li{
 			position:relative;
-		    display: block;
+			display: block;
 		    padding-top: 4px; 
+		    //border-radius: 5px;
     		background: $bgGradient;
 			
 			border-top: 2px solid $borderColor;
@@ -141,9 +142,9 @@ $menuHeight: 50px;
 
 #layersViewer{
 	position: fixed;
-	top:0;
+	top: 10px;
 	bottom: 20px;
-	right: 0;
+	right: 10px;
 	width: 210px;
 	color: $borderColor;
 	background-color: $bgColor;
@@ -151,18 +152,115 @@ $menuHeight: 50px;
 	overflow: hidden;
 	border-radius: 5px;
 	transition: all 1s;
-	box-shadow: -2px 2px 2px #cfcfcf;
+	box-shadow: 2px 2px 2px #cfcfcf;
+
+	
+
+	.visible{
+		position: relative;
+		display: inline-block;
+		width: 26px;
+		height: 26px;
+		background-color: #308834;
+		border-radius: 3px;
+		cursor: pointer;
+		border: 2px solid $borderColor;
+		//top:7px;
+		top:-2px;
+		left:5px;
+
+		&.false{
+			background-color: #A30000;
+		}
+	}
+
+	&.minimalized{
+		bottom: calc(100% - 60px);
+
+		#layersBody{
+			overflow-y: hidden;
+		}
+	}
 
 	#layersBody{
 		overflow-y: auto;
 		height: 100%;
-	}
 
-	&.minimalized{
-		bottom: calc(100% - 50px);
+		.layer{
+			position: relative;
+			width: 100%;
+			box-sizing: border-box;
+			border-top: 2px solid $borderColor;
+			background: $bgGradient;
+			cursor: pointer;
 
-		#layersBody{
-			overflow-y: hidden;
+			.tmpLayerInput{
+				position: relative;
+				width: 120px;
+				height: 26px;
+				background-color: $bgColor;
+				border: 2px solid $borderColor;
+				border-radius: 2px;
+				font-size: 20px;
+			}
+			
+			&:hover{
+				background: $bgHoverColor;
+			}
+
+			&:last-child{
+				border-bottom: 2px solid $borderColor;
+				margin-bottom: 50px; 
+			}
+
+			&.selected{
+				color:$borderHoverColor;
+			}
+
+			.title{
+				position: relative;
+				display: inline-block;
+				margin-left: 10px;
+				line-height: 40px;
+				font-size: 25px;
+				max-width: 130px;
+	    		overflow:hidden; 
+				white-space:nowrap; 
+				text-overflow: ellipsis;
+				&:hover{
+					color: $borderHoverColor;
+				}
+			}
+			.visibile:hover{
+				border: 2px solid $borderHoverColor;
+			}
+			.options{
+				position: relative;
+				display: inline-block;
+				cursor: pointer;
+				top:5px;
+				right: 5px;
+				border-radius: 8px;
+				width: 35px;
+				height: 35px;
+				float:right;
+				box-sizing: border-box;
+
+				&:hover{
+					background-color: darken($bgColor, 3%);
+					color:$borderHoverColor;
+				}
+					
+				&:before{
+					position: absolute;
+					top: -6px;
+					left: 2px;
+					font-weight: bold;
+					font-size: 30px;
+					text-align: center;
+					content: "\2026";	
+				}
+			}
 		}
 	}
 
@@ -194,104 +292,49 @@ $menuHeight: 50px;
 		}
 	}
 
-	.tmpLayerInput{
-		position: relative;
-		width: 126px;
-		height: 26px;
-		background-color: $bgColor;
-		border: 2px solid $borderColor;
-		border-radius: 2px;
-		//top: -2px;
-		font-size: 20px;
-	}
+	#layerContextMenu{
+		position: fixed;
+		z-index: 20000;
+		height: 50px;
+		top: 0;
+		right: 0;
 
-	.layer{
-		position: relative;
-		width: 100%;
-		box-sizing: border-box;
-		border-top: 2px solid $borderColor;
-		background: $bgGradient;
-		cursor: pointer;
+		ul{
+			list-style: none;
+		    border-radius: 5px;
+		    border: solid 1px $borderColor;
+		    //box-shadow: 1px 1px 2px #cfcfcf;
+			li{
+				position:relative;
+				display: block;
+		    	//border-radius: 5px;
+			    padding-top: 4px; 
+				border-top: 2px solid $borderColor;
+	    		background: $bgGradient;
+				&:first-child{
+					border-top: 0;
+				}
+				
+				.visible{
+					float: right;
+					margin-right: 8px;
+				}
 
-		&:hover{
-			background: $bgHoverColor;
-		}
+				a {
+					display: inline-block;
+					position: relative;
+				    padding: 4px 12px;
+				    color: $borderColor;
+					text-decoration: none;
 
-		&:last-child{
-			border-bottom: 2px solid $borderColor;
-			margin-bottom: 50px; 
-		}
-
-		&.selected{
-			color:$borderHoverColor;
-		}
-
-		.visible{
-			position: relative;
-			display: inline-block;
-			width: 26px;
-			height: 26px;
-			background-color: #308834;
-			border-radius: 3px;
-			cursor: pointer;
-			border: 2px solid $borderColor;
-			//top:7px;
-			top:-2px;
-			left:5px;
-
-			&.false{
-				background-color: #A30000;
-			}
-
-			&:hover{
-				border: 2px solid $borderHoverColor;
-			}
-		}
-
-		.title{
-			position: relative;
-			display: inline-block;
-			margin-left: 10px;
-			line-height: 40px;
-			font-size: 25px;
-			max-width: 130px;
-    		overflow:hidden; 
-			white-space:nowrap; 
-			text-overflow: ellipsis;
-			&:hover{
-				color: $borderHoverColor;
-			}
-		}
-
-		.options{
-			position: relative;
-			display: inline-block;
-			cursor: pointer;
-			//top:3px;
-			right: 5px;
-			border-radius: 8px;
-			width: 35px;
-			height: 35px;
-			float:right;
-			box-sizing: border-box;
-
-			&:hover{
-				background-color: darken($bgColor, 3%);
-				color:$borderHoverColor;
-			}
-
-			&:before{
-				position: absolute;
-				top: -6px;
-				left: 2px;
-				font-weight: bold;
-				font-size: 30px;
-				text-align: center;
-				content: "\2026";	
+				}
+				&:hover {
+					background: $bgHoverColor;
+					cursor: pointer;
+				}
 			}
 		}
 	}
-
 }
 
 #topMenuHolder{
@@ -338,7 +381,8 @@ $menuHeight: 50px;
 			background-color: $bgColor;
 			width: $menuWidth;
 			height: $menuHeight;
-			border-radius: 10px;
+			box-shadow: 2px 2px 2px #cfcfcf;
+			border-radius: 5px;
 			border: 2px solid $borderColor;
 		}
 

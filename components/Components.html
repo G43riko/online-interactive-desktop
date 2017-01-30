@@ -67,10 +67,10 @@
  		<div id="layerViewerPlaceholder"></div>
  		<script type="text/javascript">
 			var layersViewer = new LayersViewer(G.byId("layerViewerPlaceholder"));
-			new TopMenu(data);
+			var topMenu = new TopMenu(data);
 			initContextMenu("#contextMenuHolder");
-			layersViewer.createLayer("layer_A");
-			layersViewer.createLayer("layer_B");
+			layersViewer.createLayer({title: "layer_A", layer: {}});
+			layersViewer.createLayer({title: "layer_B", layer: {}});
 		</script>
 	</body>
 </html>

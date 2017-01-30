@@ -46,6 +46,9 @@ class Layer{
 	set visible(val){this._visible = val;}
 	set objects(val){this._objects = val;}
 	set title(val){this._title = val;}
+	set locked(val){
+		locked = val === true ? true : false;
+	}
 
 	cleanUp(){
 		this.forEach(e => callIfFunc(e.cleanUp));

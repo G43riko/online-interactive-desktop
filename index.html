@@ -4,6 +4,12 @@
 		<meta charset="UTF-8">
 		<title>Document</title>
 		<link rel="stylesheet" type="text/css" href="css/styles.css">
+
+
+		<link rel="stylesheet" type="text/css" href="components/Components.css">
+		<script src="components/LayersViewer.js"></script>
+		<script src="components/ContextMenu.js"></script>
+
 		<script src="js/lib/jquery.min.js"></script>
 		<!--<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
 		<!--<link rel="stylesheet" href="css/googleapis.css">-->
@@ -41,7 +47,7 @@
 		<script type="text/javascript" src="js/listeners.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>
 		<script type="text/javascript" src="js/objects/entity.js"></script>
-		<script type="text/javascript" src="js/components/layersViewer.js"></script>
+		<!--<script type="text/javascript" src="js/components/layersViewer.js"></script>-->
 		<script type="text/javascript" src="js/components/creatorViewer.js"></script>
 		<script type="text/javascript" src="js/objects/text.js"></script>
 		<script type="text/javascript" src="js/objects/table.js"></script>
@@ -85,6 +91,43 @@
 		</canvas>
 		<input id="fileInput" type="file" value="files" class="hide">
 		<a href="" class="hide" id="fileLink"></a>
+
+ 		<div id="layerViewerPlaceholder"></div>
+ 		<nav class="context-menu" id="context-menu">
+			<ul class="items">
+				<li class="item">
+					<a href="#" class="link">View Task</a>
+					<ul class="item">
+						<li class="item">
+							<a href="#" class="link">a</a>
+						</li>
+						<li class="item">
+							<a href="#" class="link">b</a>
+						</li>
+						<li class="item">
+							<a href="#" class="link">c</a>
+						</li>
+						<li class="item">
+							<a href="#" class="link">c</a>
+						</li>
+					</ul>
+				</li>
+				<li class="item">
+					<a href="#" class="link">Edit Task</a>
+				</li>
+				<li class="item">
+					<a href="#" class="link">Delete Task</a>
+					<ul class="item">
+						<li class="item">
+							<a href="#" class="link">a</a>
+						</li>
+						<li class="item">
+							<a href="#" class="link">b</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
 	</body>
 </html>
 <script language="javascript" type="application/javascript">
@@ -107,7 +150,6 @@
 
 	$("#colorPalete").append(colors.map(e => '<div class="colorPatern" style="background-color:' + e + '"></div>').join(""));
 	
-
 	if(typeof SharerManager !== "undefined")
 		Sharer = new SharerManager();
 	

@@ -989,7 +989,7 @@ G.prototype.length = function(){
 G.prototype.isEmpty = function(){
 	return this.length() === 0;
 };
-/*
+
  G.prototype.each = function(func, ... args){//TODO otestovať asi prerobiť lebo neviem či bude takto použitelne (args)
  if(G.isFunction(func)){
  G.each(this.elements, e => func.apply(e, args));
@@ -1000,7 +1000,7 @@ G.prototype.isEmpty = function(){
 
  return this;
  };
- */
+ 
 
 /*************************************************************************************
  HTML/CSS FUNKCIE
@@ -1311,12 +1311,17 @@ G.prototype.attr = function(){
  * LISTENERS
  */
 
-G._setListener = function(element, listener, func){
-	var allowedListeners = ["click", "blur", "submit", "focus", "scroll", "keydown", "keyup", "dblclick"];
+G._modifyListener = function(element, listener, func, type){
+	var allowedListeners = ["click", "blur", "submit", "focus", "scroll", "keydown", "keyup", "dblclick"]
 	if(G.isElement(element)){
 		if(G.isIn(listener, allowedListeners)){
 			if(G.isFunction(func)){
-				element.addEventListener(listener, displayDate);
+				if(type === "unset"){
+					element.removeEventListener(listener, displayDate);
+				}
+				else if(type === "set"){
+					element.addEventListener(listener, displayDate);
+				}
 			}
 			else{
 				Logger.error("tretí parameter musí byť funkcia ale je", G.typeOf(func));
@@ -1331,22 +1336,19 @@ G._setListener = function(element, listener, func){
 	}
 	return eleelement;
 };
-
-G.prototype.bind = function(listener, func, all){//todo otestovať
-	if(G.isUndefined(all)){
-		all = false;
-	}
+G.prototype.unbind = function(listener, func){//TODO otestovať
 	if(this.isEmpty()){
 		return this;
 	}
-	if(all){
-		this.each(function(){
-			G._setListener(this, listener, func);
-		});
+	G._modifyListener(this.first(), listener, func, "unset");
+	return this;
+};
+
+G.prototype.bind = function(listener, func){//TODO otestovať
+	if(this.isEmpty()){
+		return this;
 	}
-	else{
-		G._setListener(this.first(), listener, func);
-	}
+	G._modifyListener(this.first(), listener, func, "set");
 	return this;
 };
 
@@ -1358,6 +1360,74 @@ G.prototype.submit = func => this.bind("submit", func);
 G.prototype.scroll = func => this.bind("scroll", func);
 G.prototype.keydown = func => this.bind("keydown", func);
 G.prototype.dblclick = func => this.bind("dblclick", func);
+
+G.position = function(element){
+	if(!G.isElement(element)){
+		G.warn("argument musí byť element");
+		return null;
+	}
+	var top = 0, left = 0;
+	do {
+		top += element.offsetTop  || 0;
+		left += element.offsetLeft || 0;
+		element = element.offsetParent;
+	} while(element);
+	return {
+		y: top,
+		x: left
+	};
+};
+G.left = function(element){
+	if(!G.isElement(element)){
+		G.warn("argument musí byť element");
+		return 0;
+	}
+	var left = 0;
+	do {
+		left += element.offsetLeft || 0;
+		element = element.offsetParent;
+	} while(element);
+	return left
+};
+G.top = function(element){
+	if(!G.isElement(element)){
+		G.warn("argument musí byť element");
+		return 0;
+	}
+	var top = 0;
+	do {
+		top += element.offsetTop  || 0;
+		element = element.offsetParent;
+	} while(element);
+	return top
+};
+
+G.size = function(element, width = true, height = true){
+	if(!G.isElement(element)){
+		G.warn("argument musí byť element");
+		return null;
+	}
+	return {
+		width : element.offsetWidth,
+		height : element.offsetHeight
+	}
+}
+
+G.width = function(element){//testovane 26.1.2016
+	if(!G.isElement(element)){
+		G.warn("argument musí byť element");
+		return 0;
+	}
+	return element.offsetWidth;
+};
+
+G.height = function(element){//testovane 26.1.2016
+	if(!G.isElement(element)){
+		G.warn("argument musí byť element");
+		return 0;
+	}
+	return element.offsetHeight;
+};
 
 /*
  G.ajax();

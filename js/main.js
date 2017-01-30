@@ -238,8 +238,11 @@ var loading = function(){
 	Listeners.hashChange();
 	area = new Area();
 	Project.initCanvas();
+
+
 	canvas = Project.canvas;
 	context = Project.context;
+	
 
 	//if(typeof ConnectionManager === "function")
 	//	Connection = new ConnectionManager();
@@ -267,7 +270,7 @@ var loading = function(){
 		chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
 	}
 
-	Layers = new LayersViewer();
+	Layers = new LayersViewer(G.byId("layerViewerPlaceholder"));
 	Project.scene.addToScene(Layers, "rightMenu");
 	var xOffset = Project.topMenu.position.x + (Project.topMenu.size.x + MENU_OFFSET) * Project.topMenu.visibleElements - MENU_OFFSET;
 	Creator.view = new CreatorViewer(new GVector2f(Project.topMenu.visible ? xOffset : MENU_OFFSET, Project.topMenu.position.y - MENU_OFFSET));

@@ -1,7 +1,7 @@
 {
-  "name": "socket-chat-example",
-  "version": "0.0.1",
-  "description": "my first socket.io app",
+  "name": "Online interaktívna plocha",
+  "version": "0.0.2",
+  "description": "Aplikácia podporujúca zdielane kreslenie",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

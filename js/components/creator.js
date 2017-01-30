@@ -223,7 +223,7 @@ class objectCreator{
 		}
 
 
-		console.log("key: ", key, " vaĺ: ", val, "normal: ", this[key]);
+		//console.log("key: ", key, " vaĺ: ", val, "normal: ", this[key]);
 
 		if(this[key] == val){
 			return false;

@@ -6,9 +6,9 @@ $bgGradient: linear-gradient($bgHoverColor, $bgColor);
 
 #layersViewer{
 	position: fixed;
-	top:0;
+	top: 10px;
 	bottom: 20px;
-	right: 0;
+	right: 10px;
 	width: 210px;
 	color: $borderColor;
 	background-color: $bgColor;

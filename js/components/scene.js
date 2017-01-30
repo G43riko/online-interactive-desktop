@@ -63,6 +63,15 @@ class SceneManager{
 		return this._layers[layer];
 	}
 
+	renameLayer(oldTitle, newTitle){
+		if(this._layers[oldTitle] && !this._layers[newTitle]){
+			this._layers[newTitle] = this._layers[oldTitle];
+			delete this._layers[oldTitle];
+			this._layers[newTitle].rename(newTitle);
+		}
+		
+	}
+
 	deleteLayer(title){
 		if(!this._layers.hasOwnProperty(title))
 			Logger.error("ide sa vymazať vrstva ktorá už neexistuje: " + title);
