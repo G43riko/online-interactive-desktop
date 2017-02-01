@@ -16,8 +16,14 @@ class ProjectManager{
 		this._connection = null;
 		this._analyzer = new Analyzer("http://192.168.0.123:3000/anonymousData");
 
-		if(typeof ConnectionManager === "function")
-			this._connection = new ConnectionManager();
+		try{
+			if(typeof ConnectionManager === "function"){
+				this._connection = new ConnectionManager();
+			}
+		}
+		catch(e){
+			alert("Nastala chyba pri vytváraní pripojenia " + e);
+		}
 
 		//PAINT_MANAGER
 		//CREATOR

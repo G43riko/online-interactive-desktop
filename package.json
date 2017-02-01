@@ -1,14 +1,30 @@
 {
-  "name": "Online interaktívna plocha",
+  "name": "online-interaktivna-plocha",
   "version": "0.0.2",
   "description": "Aplikácia podporujúca zdielane kreslenie",
   "license": "Apache-2.0",
+  "scripts": {
+    "compile": "fuse -i index.js -o js/index.merge.js && babel --plugins minify-simplify --plugins remove-comments js/index.merge.js -o js/index.merge.js && uglifyjs js/index.merge.js -o js/index.min.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/G43riko/Online-interakt-vna-plocha"
   },
   "dependencies": {
+    "babel": "^6.5.2",
     "express": "~4.10.2",
     "socket.io": "~1.4.6"
-  }
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.22.0"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "plugins": [
+    "minify-simplify",
+    "remove-comments"
+  ]
 }

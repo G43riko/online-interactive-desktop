@@ -165,7 +165,7 @@ function extendObject(){
 }
 */
 
-Movement = {
+var Movement = {
 	move: function(o, x, y, moveChildrens = true){
 		if(isDefined(o.locked) && o.locked){
 			return;
@@ -425,7 +425,7 @@ class EventTimer{
 		this._event = event;
 		this._time = time;
 		this._timeOut = false;
-		this._lastTime = window["performance"].now();
+		this._lastTime = Date.now();
 	}
 
 	_callEvent(inst = this){
@@ -434,7 +434,7 @@ class EventTimer{
 			clearTimeout(inst._timeOut);
 			inst._timeOut = false;
 		}
-		inst._lastTime = window["performance"].now();
+		inst._lastTime = Date.now();
 	}
 
 	_setTimeOut(diff){
@@ -445,7 +445,7 @@ class EventTimer{
 	}
 
 	callIfCan(){
-		var diff = window["performance"].now() - this._lastTime;
+		var diff = Date.now() - this._lastTime;
 		diff > this._time ? this._callEvent() : this._setTimeOut(diff);
 	}
 }

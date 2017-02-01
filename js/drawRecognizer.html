@@ -136,7 +136,7 @@
 		statistics.appendTo(document.body);
 
 		paintCanvas.canvas.onmousedown = function(e){
-			var points = [{x: e.offsetX, y: e.offsetY, t:window["performance"].now()}];
+			var points = [{x: e.offsetX, y: e.offsetY, t:Date.now()}];
 			var datas = {
 				angles: [],
 				distances: [],
@@ -150,13 +150,13 @@
 			statistics.clearCanvas();
 
 			paintCanvas.canvas.onmousemove = function(e){
-				drawLine({x: e.offsetX, y: e.offsetY, t:window["performance"].now()}, points[points.length - 1], "red");
-				calcShape({x: e.offsetX, y: e.offsetY, t:window["performance"].now()}, points, datas);
-				points.push({x: e.offsetX, y: e.offsetY, t:window["performance"].now()});
+				drawLine({x: e.offsetX, y: e.offsetY, t:Date.now()}, points[points.length - 1], "red");
+				calcShape({x: e.offsetX, y: e.offsetY, t:Date.now()}, points, datas);
+				points.push({x: e.offsetX, y: e.offsetY, t:Date.now()});
 			};
 			paintCanvas.canvas.onmouseup = function(e){
-				calcShape({x: e.offsetX, y: e.offsetY, t:window["performance"].now()}, points, datas);
-				drawLine({x: e.offsetX, y: e.offsetY, t:window["performance"].now()}, points[points.length - 1], "red");
+				calcShape({x: e.offsetX, y: e.offsetY, t:Date.now()}, points, datas);
+				drawLine({x: e.offsetX, y: e.offsetY, t:Date.now()}, points[points.length - 1], "red");
 				paintCanvas.canvas.onmousemove = null;
 				paintCanvas.canvas.onmouseup = null;
 				if(Math.abs(datas.angles.avg()) < LINE_ANGLE_LIMIT){
@@ -190,7 +190,7 @@
 				var dist = Math.sqrt(dx * dx + dy * dy);
 				//if(dist < POINT_DIST_LIMIT)
 				//	return;
-				datas.times.push(window["performance"].now() - points[points.length - 1].t)
+				datas.times.push(Date.now() - points[points.length - 1].t)
 				datas.distances.push(dist);
 				datas.angles.push(Math.degrees(Math.atan2(v1y, v1x) - Math.atan2(v2y, v2x)));
 			}

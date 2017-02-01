@@ -300,31 +300,39 @@ function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COL
  */
 
 function getMaxWidth(val, max = 0){
-    if(isArray(val))
+    if(isArray(val)){
         each(val, e => {
-            if(isArray(e))
+            if(isArray(e)){
                 each(e, a => max = Math.max(calcTextWidth(a), max));
-            else
+            }
+            else{
                 max = Math.max(calcTextWidth(e), max);
+            }
         });
-    else
+    }
+    else{
         return calcTextWidth(val);
+    }
     return max;
 }
 
 function setShadow(variable){
-    if(variable)
+    if(variable){
         CanvasHandler.setShadow(context, DEFAULT_SHADOW_OFFSET, DEFAULT_SHADOW_OFFSET, "black", DEFAULT_SHADOW_BLUR);
-    else
+    }
+    else{
         CanvasHandler.setShadow(context, 0, 0, "black", 0);
+    }
 }
 
 
 function setLineDash(variable){
-    if(variable)
+    if(variable){
         CanvasHandler.setLineDash(context, 15, 5);
-    else
+    }
+    else{
         CanvasHandler.setLineDash(context, 1);
+    }
 }
 
 
@@ -468,7 +476,9 @@ function _process(res){
 
     res.ctx.lineCap = res.lineCap;
     res.ctx.lineJoin = res.joinType;
-    res.ctx.setLineDash(res.lineDash);
+    if(typeof res.ctx.setLineDash === "function"){
+        res.ctx.setLineDash(res.lineDash);
+    }
 
     if (res.draw){
         res.ctx.lineWidth = res.borderWidth;

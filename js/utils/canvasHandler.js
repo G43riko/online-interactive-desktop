@@ -76,7 +76,9 @@ class CanvasHandler{
 
 	static setLineDash(ctx, ...args){
 		//TODO otestovať;
-		ctx.setLineDash(args);
+		if(typeof ctx.setLineDash === "function"){
+			ctx.setLineDash(args);
+		}
 	}
 
 	static calcTextWidth(ctx, value, font = false){

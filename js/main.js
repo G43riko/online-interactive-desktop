@@ -105,12 +105,12 @@ function ajax(url, options, dataType){
 		xhttp.ontimeout = options["timeout"];
 	}
 	if(isFunction(options["loadEnd"])){
-		xhttp.onloadend = () => options["loadEnd"]((window["performance"].now() - start));
+		xhttp.onloadend = () => options["loadEnd"]((Date.now() - start));
 	}
 	if(isFunction(options["loadStart"])){
 		xhttp.onloadstart = function(){
 			options["loadStart"]();
-			start = window["performance"].now();
+			start = Date.now();
 		};
 	}
 	if(isFunction(options["success"])){
@@ -265,8 +265,7 @@ var loading = function(){
 	Project.context.shadowColor = DEFAULT_SHADOW_COLOR;
 	Project.input.initListeners(Project.canvas);
 
-	//if(typeof Sharer !== "undefined"){
-	if(isDefined(Sharer)){
+	if(typeof Sharer !== "undefined"){
 		chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
 	}
 
@@ -276,7 +275,7 @@ var loading = function(){
 	Creator.view = new CreatorViewer(new GVector2f(Project.topMenu.visible ? xOffset : MENU_OFFSET, Project.topMenu.position.y - MENU_OFFSET));
 
 	console.log("stranka sa nacítala za: ", (Date.now() - initTime) + " ms");
-	console.log("to by malo byť: " + window["performance"].now() + " ms");
+	console.log("to by malo byť: " + Date.now() + " ms");
 	
 	draw();
 };

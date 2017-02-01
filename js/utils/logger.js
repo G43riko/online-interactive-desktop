@@ -65,7 +65,7 @@
 }
 
 
-getErrorMessage = function(id){
+var getErrorMessage = function(id){
 	switch(id){
 		case 0 :
 			return "Nezadaný parameter";
