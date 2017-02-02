@@ -1,5 +1,4 @@
 "use strict";
-
 /* TODO
 	prerobiť nech ID nieje iba nazov vrstvy ale aj nejaky prefix
 */
@@ -37,7 +36,7 @@ class LayersViewer{
 	_createDiv(){
 		this._layersBody = G("div", {attr: {id: "layersBody"}});
 		return G("div", {
-			attr: {id: "layersViewer", onclick:"LayersViewer.clickOnLayersViewer(event)"}, 
+			attr: {id: "layersViewer", onclick:"LayersViewer.clickOnLayersViewer(event)", class: "minimalized"}, 
 			cont: [
 				G.createElement("div", {id: "layersHeader"}, [
 					G.createElement("div", {

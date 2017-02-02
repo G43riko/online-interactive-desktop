@@ -17,6 +17,7 @@ connection.callLogInit(serverLogs.init);
 app.use("/css", express.static(__dirname + '/css'));
 app.use("/img", express.static(__dirname + '/img'));
 app.use("/js", express.static(__dirname + '/js'));
+app.use("/build", express.static(__dirname + '/build'));
 app.use("/components", express.static(__dirname + '/components'));
 
 app.get('/app', function(req, res) {

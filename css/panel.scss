@@ -1,0 +1,187 @@
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none;   /* Chrome/Safari/Opera */
+	-moz-user-select: none;      /* Firefox */
+	-ms-user-select: none;       /* Internet Explorer/Edge */
+	user-select: none;           /* Non-prefixed version, currently*/
+}
+
+.guiPanel{
+	position: absolute;
+	/*top: 50px;
+	left: 100px;
+	*/
+	top: 0;
+	right: 0;
+	width: 300px;
+	background-color: white;
+	border-radius: 5px;
+	transition: all 0.2s ease;
+
+	> .panelBody{
+		overflow: hidden;
+		position: relative;
+		top:-1px;
+		height: 300px;
+		transition: all 0.2s ease;
+		border-color: #1abc9c;
+		border-style: solid;
+		border-width: 2px 2px 2px 2px;
+		border-radius: 0 0 5px 5px;
+		z-index: 20;
+		box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .20);
+	}
+
+	&.minimalized {
+		> .panelHeader{
+			border-radius: 5px 5px 5px 5px;
+		}
+
+		> .panelBody{
+			height: 0;
+			padding: 0;
+			top:-2px;
+			border-width: 0 2px 0 2px;
+		}
+	}
+
+	&.minified {
+		.panelHeader{
+			width: 50px;
+			position: relative;
+			left: calc(100% - 50px);
+		}
+		> .panelBody{
+			border-radius: 5px 0 5px 5px;
+		}
+	}
+	
+	&> .panelHeader{
+		height: 30px;
+		padding:3px;
+		box-sizing: border-box;
+		background-color: white;
+		box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .20);
+		border: 2px solid #1abc9c;
+		border-radius: 5px 5px 0 0;
+		transition: all 0.2s ease;
+		z-index: 30;
+	}
+
+	.headerButton{
+		display: inline-flex;
+		float:right;
+		background-color: #ABD6BB;
+		border: 1px solid #1abc9c;
+		border-radius: 5px;
+		position: relative;
+		min-width:20px;
+		text-align: center;
+		margin-left: 5px;
+		cursor: pointer;
+
+		i{
+			font-size: 19px;
+		}
+
+		&:hover{
+			background-color: #1abc9c;
+			border: 1px solid #ABD6BB;
+		}
+
+		&:active{
+			background-color: red;
+			border: 1px solid blue;
+		}
+	}
+
+	.panelLine{
+		box-sizing: border-box;
+		height: 30px;
+		line-height: 20px;
+		padding: 5px;
+
+		&:not(:last-child) {
+			border-bottom: 2px solid #ABD6BB;
+		}
+	}
+
+	&:not(.showWatchers) #panelWatchers, .guiPanel:not(.showChat) #panelChat{
+		display: none;
+	}
+}
+
+#chatHeader{
+	display: inline;
+}
+
+#title{
+	font-weight: bold;
+}	
+
+.hidden{
+	display: none;
+}
+
+#chatInput{
+	position:absolute;
+	min-height: 20px;
+	max-height: 80px;
+	width: 100%;
+	bottom: 0;
+	overflow-y: auto;
+	overflow-x: hidden;
+	border-top: 2px solid #1abc9c;
+	background-color: white;
+}
+
+#chatHistoryWrapper{
+	position:relative;
+	width: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	.messageC{
+		width: calc(100% - 40px);
+		margin: 5px;
+		background-color: #1abc9c;
+		border-radius: 10px;
+	}
+
+	#headC{
+		height: 30px;
+		padding:5px;
+		box-sizing: border-box;
+		border-bottom: 2px solid #1abc9c;
+		cursor: pointer;
+		box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .20);
+	}
+
+	.myMessage{
+		position: relative;
+		left: 30px;
+		background-color: #ABD6BB;
+
+		div{
+			padding: 5px;
+		}
+	}
+
+	.messageText{
+		border-top: 1px solid white;
+		word-wrap: break-word;
+	}
+}
+
+.blinking{
+    animation-duration: 2s;	
+    animation-name: blink;
+    animation-iteration-count: infinite;
+}
+
+@keyframes blink {
+	49%  {background-color: white;}
+    50%  {background-color: blue;}
+    99%  {background-color: blue;}
+    100%  {background-color: white;}
+}

@@ -1,0 +1,297 @@
+@charset "UTF-8";
+/*
+//NIKINE
+//$bgColor: #0EAD69;
+$bgColor: #E4C1F9;
+//$bgHoverColor: #0EAD69;
+$bgHoverColor: #E4C1F9;
+$backgroundColorDisabled : #FFD23F;
+$borderColor : #540D6E;
+$borderHoverColor: #EE4266;
+*/
+/*
+$bgColor: #9BC1BC;
+$bgHoverColor: #5CA4A9;
+$backgroundColorDisabled : #E6EBE0;
+$borderColor : #F4F1BB;
+$borderHoverColor: darken($borderColor, 20%);
+*/
+*, *::before, *::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0; }
+
+.hidden {
+  display: none; }
+
+#contextMenuHolder {
+  position: absolute;
+  width: 100%;
+  height: 100%; }
+
+.context-menu {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  color: #537864;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.5; }
+  .context-menu ul {
+    position: absolute;
+    border-radius: 5px;
+    border: solid 1px #537864;
+    box-shadow: 1px 1px 2px #cfcfcf;
+    width: 240px;
+    list-style: none; }
+    .context-menu ul ul {
+      display: none;
+      position: absolute;
+      left: 100%;
+      top: -1px; }
+    .context-menu ul li {
+      position: relative;
+      display: block;
+      padding-top: 4px;
+      background: linear-gradient(#2fcaac, #1abc9c);
+      border-top: 2px solid #537864; }
+      .context-menu ul li:first-child {
+        border-top: 0; }
+      .context-menu ul li a {
+        display: block;
+        padding: 4px 12px;
+        color: #537864;
+        text-decoration: none; }
+      .context-menu ul li:hover {
+        /*
+        &:before{
+        	position: absolute;
+        	top: -6px;
+        	left: 2px;
+        	font-weight: bold;
+            color: $borderHoverColor;
+        	font-size: 30;
+        	text-align: center;
+        	content: "▶";	
+        }
+        */ }
+        .context-menu ul li:hover ul {
+          display: block; }
+      .context-menu ul li:hover {
+        background: #2fcaac; }
+        .context-menu ul li:hover > a {
+          padding-left: 20px;
+          color: #293c32; }
+          .context-menu ul li:hover > a:after {
+            content: "▶"; }
+  .context-menu.left ul ul {
+    left: calc(-100% - 2px); }
+  .context-menu.active {
+    display: block; }
+
+#layersViewer {
+  position: fixed;
+  top: 10px;
+  bottom: 20px;
+  right: 10px;
+  width: 210px;
+  color: #537864;
+  background-color: #1abc9c;
+  border: 2px solid #537864;
+  overflow: hidden;
+  border-radius: 5px;
+  transition: all 1s;
+  box-shadow: 2px 2px 2px #cfcfcf; }
+  #layersViewer .visible {
+    position: relative;
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    background-color: #308834;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 2px solid #537864;
+    top: -2px;
+    left: 5px; }
+    #layersViewer .visible.false {
+      background-color: #A30000; }
+  #layersViewer.minimalized {
+    bottom: calc(100% - 60px); }
+    #layersViewer.minimalized #layersBody {
+      overflow-y: hidden; }
+  #layersViewer #layersBody {
+    overflow-y: auto;
+    height: 100%; }
+    #layersViewer #layersBody .layer {
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+      border-top: 2px solid #537864;
+      background: linear-gradient(#2fcaac, #1abc9c);
+      cursor: pointer; }
+      #layersViewer #layersBody .layer .tmpLayerInput {
+        position: relative;
+        width: 120px;
+        height: 26px;
+        background-color: #1abc9c;
+        border: 2px solid #537864;
+        border-radius: 2px;
+        font-size: 20px; }
+      #layersViewer #layersBody .layer:hover {
+        background: #2fcaac; }
+      #layersViewer #layersBody .layer:last-child {
+        border-bottom: 2px solid #537864;
+        margin-bottom: 50px; }
+      #layersViewer #layersBody .layer.selected {
+        color: #293c32; }
+      #layersViewer #layersBody .layer .title {
+        position: relative;
+        display: inline-block;
+        margin-left: 10px;
+        line-height: 40px;
+        font-size: 25px;
+        max-width: 130px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis; }
+        #layersViewer #layersBody .layer .title:hover {
+          color: #293c32; }
+      #layersViewer #layersBody .layer .visibile:hover {
+        border: 2px solid #293c32; }
+      #layersViewer #layersBody .layer .options {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        top: 5px;
+        right: 5px;
+        border-radius: 8px;
+        width: 35px;
+        height: 35px;
+        float: right;
+        box-sizing: border-box; }
+        #layersViewer #layersBody .layer .options:hover {
+          background-color: #18af91;
+          color: #293c32; }
+        #layersViewer #layersBody .layer .options:before {
+          position: absolute;
+          top: -6px;
+          left: 2px;
+          font-weight: bold;
+          font-size: 30px;
+          text-align: center;
+          content: "\2026"; }
+  #layersViewer #layersHeader {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    background-color: #1abc9c;
+    z-index: 20;
+    box-sizing: border-box;
+    box-shadow: 0 2px 6px #537864; }
+    #layersViewer #layersHeader .layersHeaderButton {
+      position: relative;
+      display: inline-block;
+      width: 54px;
+      height: 30px;
+      margin-top: 10px;
+      margin-left: 10px;
+      cursor: pointer;
+      font-size: 50px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 30px;
+      border-radius: 8px; }
+      #layersViewer #layersHeader .layersHeaderButton:hover {
+        color: #293c32; }
+  #layersViewer #layerContextMenu {
+    position: fixed;
+    z-index: 20000;
+    height: 50px;
+    top: 0;
+    right: 0; }
+    #layersViewer #layerContextMenu ul {
+      list-style: none;
+      border-radius: 5px;
+      border: solid 1px #537864; }
+      #layersViewer #layerContextMenu ul li {
+        position: relative;
+        display: block;
+        padding-top: 4px;
+        border-top: 2px solid #537864;
+        background: linear-gradient(#2fcaac, #1abc9c); }
+        #layersViewer #layerContextMenu ul li:first-child {
+          border-top: 0; }
+        #layersViewer #layerContextMenu ul li .visible {
+          float: right;
+          margin-right: 8px; }
+        #layersViewer #layerContextMenu ul li a {
+          display: inline-block;
+          position: relative;
+          padding: 4px 12px;
+          color: #537864;
+          text-decoration: none; }
+        #layersViewer #layerContextMenu ul li:hover {
+          background: #2fcaac;
+          cursor: pointer; }
+
+#topMenuHolder {
+  position: absolute;
+  margin: 10px 0 0 10px; }
+  #topMenuHolder ul {
+    list-style: none;
+    position: relative; }
+    #topMenuHolder ul ul {
+      position: absolute;
+      overflow: hidden;
+      top: -10px;
+      left: 0;
+      padding-top: 10px;
+      transition: all 0.5s linear;
+      z-index: 50; }
+  #topMenuHolder li {
+    position: relative;
+    top: 0;
+    width: 50px;
+    height: 50px;
+    margin: 0 10px 10px 0;
+    float: left;
+    transition: all 0.5s linear; }
+    #topMenuHolder li li {
+      height: -100%;
+      margin: 0 10px -70px 0; }
+    #topMenuHolder li a {
+      line-height: 50px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      text-align: center;
+      color: #537864;
+      text-decoration: none;
+      background-color: #1abc9c;
+      width: 50px;
+      height: 50px;
+      box-shadow: 2px 2px 2px #cfcfcf;
+      border-radius: 5px;
+      border: 2px solid #537864; }
+    #topMenuHolder li.selected > a {
+      color: #293c32;
+      border: 2px solid #293c32; }
+      #topMenuHolder li.selected > a:only-child {
+        text-decoration: underline;
+        font-weight: bold; }
+    #topMenuHolder li.selected ul {
+      top: 50px; }
+      #topMenuHolder li.selected ul li {
+        height: 50px;
+        margin: 0 10px 10px 0; }
+    #topMenuHolder li.disabled a {
+      background-color: #abd6bb;
+      cursor: not-allowed; }
+    #topMenuHolder li:not(.disabled) > a:hover {
+      color: #293c32;
+      border: 2px solid #293c32; }
+  #topMenuHolder > ul > li > a {
+    z-index: 100; }
+
+/*# sourceMappingURL=Components.css.map */
