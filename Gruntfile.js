@@ -1,8 +1,11 @@
-//require('load-grunt-tasks')(grunt);
+//TODO rozdeliť skripty na frontend a backend
+//TODO počúvať backend scripty a pri zmene reštartovať server
 
 module.exports = function(grunt){
 	require('load-grunt-tasks')(grunt);
+	require('time-grunt')(grunt);
 
+	var message = grunt.option("message") || "Drobné úpravy a fixy"
 
 	grunt.initConfig({
 		concat : {
@@ -66,13 +69,6 @@ module.exports = function(grunt){
 			},
 			css : {
 				src: [
-					/*
-					"css/alerts.css", 
-					"css/form.css", 
-					"css/chat.css", 
-					"css/panel.css", 
-					"css/styles.css",
-					*/
 					"css/Components.css",
 					"css/Styles.css"
 				],
@@ -85,14 +81,17 @@ module.exports = function(grunt){
 					tasks : ["concat:js"]
 				},
 				
-				//css : {
-				//	files : ["css/**/*.css"],
-				//	tasks : ["concat:css"]
-				//},
 				sass : {
 					files : ["components/Components.scss", "css/**/*.scss"],
 					tasks : ["sass"]//netreba volať concat lebo sa zavola watch kvoli zmene css suboru
 				}
+				//TODO server files
+				/*
+				server : {
+					files : [],
+					tasks : ["shell:restartServer:kill", "updateBackend", "shell:restartServer"]
+				}
+				*/
 		},
 		sass: {
 			options: {
@@ -122,16 +121,38 @@ module.exports = function(grunt){
 					'build/scripts.min.js': ['build/scripts.min.js']
 				}
 			}
+		},
+		shell: {
+		    restartServer : {
+				command: [
+	                'killall nodejs',
+	                'nodejs /var/www/html/plocha/server.js'
+	            ].join(';'),
+	            options: {
+	            	async: true
+	            }
+		    },
+		    deploy : {
+		    	command : [
+		    		"git add --all",
+		    		"git commit -m \"" + message + "\"",
+		    	].join(";"),
+		    	options : {
+
+		    	}
+		    }
 		}
 	});
 
-	require('time-grunt')(grunt);
 
 	//TODO remove unused CSS
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-sass');
+	grunt.loadNpmTasks('grunt-shell-spawn');
 	grunt.registerTask('default', ["sass", "concat", "watch"]);
 	grunt.registerTask('build', ["sass","concat", "babel", "uglify"]);
+	grunt.registerTask('runAndWork', ["shell:restartServer", "default", "shell:restartServer:kill"]);
+	
 }

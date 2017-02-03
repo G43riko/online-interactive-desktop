@@ -23,6 +23,7 @@
     "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
+    "grunt-shell-spawn": "^0.3.10",
     "load-grunt-tasks": "^3.5.2"
   },
   "babel": {
