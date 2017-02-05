@@ -14,23 +14,25 @@ class ImageObject extends Entity{
 	updateCreatingPosition(pos){
 		this.size.x = pos.x - this.position.x;
 		this.size.y = pos.y - this.position.y;
-	};
+	}
 
 	clickIn(x, y){
-		if (!this.clickInBoundingBox(x, y))
+		if (!this.clickInBoundingBox(x, y)){
 			return false;
+		}
 
 		var vec = new GVector2f(x, y);
 		this.moveType = -1;
 
 		this.checkConnectors(vec);
-		if(this._selectedConnector)
+		if(this._selectedConnector){
 			return true;
+		}
 
 		Entity.setMoveType(this, vec);
 
 		return this.moveType >= 0;
-	};
+	}
 
 	draw(ctx = context){
 		//context.drawImage(this._image, this.position.x, this.position.y, this.size.x, this.size.y);

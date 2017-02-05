@@ -2,25 +2,26 @@ class Arc extends Entity{
 	constructor(position, size, fillColor){
 		super(OBJECT_ARC, position, size, {fillColor: fillColor, minSize: new GVector2f(SELECTOR_SIZE)});
 		this.moveType 	= -1;
-	};
+	}
 
 	updateCreatingPosition(pos){
 		this.size.x = pos.x - this.position.x;
 		this.size.y = pos.y - this.position.y;
-	};
+	}
 
 	_clickIn(x, y){
 		var vec = new GVector2f(x, y);
 		this.moveType = -1;
 
 		this.checkConnectors(vec);
-		if(this._selectedConnector)
+		if(this._selectedConnector){
 			return true;
+		}
 
 
 		Entity.setMoveType(this, vec);
 		return this.moveType >= 0;
-	};
+	}
 
 	_draw(ctx){
 		doArc({
@@ -28,6 +29,7 @@ class Arc extends Entity{
 			size: this.size,
 			fillColor: this.fillColor,
 			borderColor: this.borderColor,
+			fill: this._fill !== false,
 			borderWidth: this.borderWidth,
 			shadow: this.moving && !this.locked,
 			ctx: ctx
@@ -36,5 +38,5 @@ class Arc extends Entity{
 		Entity.drawConnectors(this, ctx);
 		
 		drawBorder(ctx, this);
-	};
+	}
 }

@@ -4,6 +4,10 @@
 			"author" : "DefaultUserName",
 			"layer_title" : "default"
 		},
+		"connection" : {
+			"loop_time" : 1000,
+			"tries" : 10
+		},
 		"fps" : 60,
 		"folder" : {
 			"json" : "/js/json",
@@ -14,7 +18,23 @@
 				"objects" : 100,
 				"paths" : 200,
 				"layers" : 10
+			},
+			"min" : {
+				"screen_width" : 480
 			}
+		},
+		"restore" : {
+			"key" : "projectData"
+		},
+		"click" : {
+			"speed" : 2,
+			"limit" : 30,
+			"color" : "red"
+		},
+		"highlight" : {
+			"speed" : 1,
+			"limit" : 10,
+			"count" : 2
 		},
 		"touch" : {
 			"duration" : 500,
@@ -64,8 +84,8 @@
 		},
 		"layers" : {
 			"border" : {
-				"color": "<%= default.border.color %>",
-				"width": "<%= default.border.width %>"
+				"color" : "<%= default.border.color %>",
+				"width" : "<%= default.border.width %>"
 			},
 			"panel" : {
 				"width" : 180,
@@ -80,8 +100,8 @@
 		},
 		"menu" : {
 			"border" : {
-				"color": "<%= default.border.color %>",
-				"width": "<%= default.border.width %>"
+				"color" : "<%= default.border.color %>",
+				"width" : "<%= default.border.width %>"
 			},
 			"offset" : 10,
 			"radius" : 10,
@@ -96,8 +116,8 @@
 		},
 		"context_menu" : {
 			"border" : {
-				"color": "<%= default.border.color %>",
-				"width": "<%= default.border.width %>"
+				"color" : "<%= default.border.color %>",
+				"width" : "<%= default.border.width %>"
 			},
 			"line_height" : 40,
 			"font" : {
@@ -105,14 +125,14 @@
 			},
 			"offset" : 10,
 			"width" : 240,
-			"fill_color" : "#1abc9c",
-			"disabled_fill_color" : "#abd6bb",
+			"fill_color" : "<?= menu.fill.color %>",
+			"disabled_fill_color" : "<?= menu.disabled_fill_color %>",
 			"selected_fill_color" : "#ff0000"
 		},
 		"table" : {
 			"border" : {
-				"color": "<%= default.border.color %>",
-				"width": "<%= default.border.width %>"
+				"color" : "<%= default.border.color %>",
+				"width" : "<%= default.border.width %>"
 			},
 			"header_fill_color" : "#53cfff",
 			"body_fill_color" : "#5bf2ff",
@@ -159,6 +179,40 @@
 		}
 	},
 	"constants" : {
+		"conn_key" : {
+			"user_name"	: "user_name",
+			"user_id"	: "user_id",
+			"less_id"	: "less_id",
+			"target"	: "target",
+			"type"		: "type",
+			"layer"		: "layer",
+			"watch"		: "watch",
+			"share"		: "share",
+			"title"		: "title",
+			"value"		: "value",
+			"teach"		: "teach",
+			"data"		: "data",
+			"exercise"	: "exercise"
+		},
+		"logger" : {
+			"menu_click" : 2600,
+			"creator_change" : 2601,
+			"context_click" : 2602,
+			"object_created" : 2604,
+			"object_added" : 2605,
+			"object_cleaned" : 2609,
+			"component_create" : 2606,
+			"paint_history" : 2607,
+			"paint_action" : 2608,
+			"mouse_event" : 2610,
+			"key_event" : 2611,
+			"draw" : 2612,
+			"change_option" : 2613,
+			"layer_change" : 2603,
+			"layer_cleaned" : 2614,
+			"layer_renamed" : 2615,
+			"layer_rastered" : 2616
+		},
 		"key" : {
 			"a" : 65,
 			"delete" : 46,
@@ -239,10 +293,11 @@
 				"arc" : 1001,
 				"path" : 1002,
 				"line" : 1003,
-				"join" : 1004
+				"join" : 1004,
+				"image" : 1005
 			},
-			"rubber" : 1005,
-			"area" : 1006
+			"rubber" : 1006,
+			"area" : 1007
 		},
 		"action" : {
 			"object" : {
@@ -365,6 +420,5 @@
 			"default" : "default",
 			"not_allowed" : "not-allowed"
 		}
-
 	}
 }

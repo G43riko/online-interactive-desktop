@@ -1,7 +1,8 @@
 class Arrow{
 	static drawArrow(ctx, pFrom, pTo, parent, type = 0, angle = Math.PI / 6, length = 30){
-		if(type == 0)
+		if(type === 0){
 			return;
+		}
 
 		var vec = pTo.getClone().sub(pFrom).normalize();
 		var cos = Math.cos(angle);

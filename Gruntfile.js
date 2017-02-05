@@ -167,14 +167,14 @@ module.exports = function(grunt){
 				browser: true,
 				esversion: 6, //ES6
 				sub: true, // obj["aa"] vs obj.aa
-				maxparams: 5, //maximum parametrov vo funkcii
-				maxstatements : 15, //maximum statementov vo funkcii
+				maxparams: 7, //maximum parametrov vo funkcii
+				maxstatements : 30, //maximum statementov vo funkcii
 				globals: {
 					jQuery: true
 				},
 			},
 			//uses_defaults: ['components/LayersViewer.js']
-			uses_defaults: ['js/utils/ConfigManager.js']
+			uses_defaults: ['js/main.js']
 			//uses_defaults: '<%= concat.js.src %>'
 			
 		}

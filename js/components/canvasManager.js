@@ -1,5 +1,8 @@
 /**
  * Created by gabriel on 27.12.2016.
+ //TODO treba oifovat:
+    ellipse
+
  */
 
 const MAIN_CANVAS = "mainCanvas";
@@ -163,7 +166,12 @@ function doArc(obj){
     var res = _remakePosAndSize(_checkPosAndSize(obj, "Arc"), obj);
 
     res.ctx.beginPath();
-    res.ctx.ellipse(res.x + (res.width >> 1), res.y + (res.height >> 1), res.width >> 1, res.height >> 1, 0, 0, PI2);
+    if(typeof res.ctx.ellipse === "function"){
+        res.ctx.ellipse(res.x + (res.width >> 1), res.y + (res.height >> 1), res.width >> 1, res.height >> 1, 0, 0, PI2);
+    }
+    else{
+        res.ctx.rect(res.x + (res.width >> 1), res.y + (res.height >> 1), res.width >> 1, res.height >> 1);
+    }
 
     _process(res);
 }

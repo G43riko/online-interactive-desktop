@@ -9,6 +9,7 @@ class ListenersManager{
 		this._clickedOnObject = false;
 	}
 	mouseDown(position, button){
+		Project.scene.mouseDown(position.x, position.y);
 		this._clickedOnObject = false;
 
 		if($(canvas).hasClass("blur")){
@@ -198,8 +199,9 @@ class ListenersManager{
 			vec 	= new GVector2f(100, 40);
 
 		Scene.forEach(e => {
-			if(!result && isDefined(e.doubleClickIn) && e.doubleClickIn(position.x, position.y))
+			if(!result && isDefined(e.doubleClickIn) && e.doubleClickIn(position.x, position.y)){
 				result = e;
+			}
 		});
 
 		if(!result){
@@ -212,8 +214,10 @@ class ListenersManager{
 
 	mouseUp(position){
 		var possibleChild = null;
-		if(selectedObjects.size() === 1)
+		if(selectedObjects.size() === 1){
 			possibleChild = selectedObjects.firstObject;
+		}
+		Scene.mouseUp(position.x, position.y);
 
 		this._movedObject = null;
 
@@ -337,7 +341,9 @@ class ListenersManager{
 			Creator.finishCreating();
 		}
 		//Creator.object = false;
-		result || selectedObjects.clear();
+		if(!result){
+			selectedObjects.clear();
+		}
 	}
 
 	mouseMove(position, movX, movY){
@@ -361,7 +367,7 @@ class ListenersManager{
 						return;
 					}
 					isHoverTrue = e.hover(position.x, position.y);
-				})
+				});
 			}
 		}
 
@@ -403,7 +409,7 @@ class ListenersManager{
 			Paints.addPoint(radius === 1 ? position : position.div(radius).round().mul(radius));
 			draw();
 			this._clickedOnObject = true;
-			return false
+			return false;
 		}
 
 		/*

@@ -2,24 +2,6 @@
  * Created by Gabriel on 29. 10. 2016.
  */
 
-const REFRESH_TIME = 1000;
-const RECONNECT_TRIES = 10;
-
-const KEY_USER_NAME	= "user_name";
-const KEY_USER_ID	= "user_id";
-const KEY_LESS_ID	= "less_id";
-const KEY_TARGET	= "target";
-const KEY_TYPE		= "type";
-const KEY_LAYER		= "layer";
-const KEY_WATCH		= "watch";
-const KEY_SHARE		= "share";
-const KEY_TITLE		= "title";
-const KEY_VALUE		= "value";
-const KEY_TEACH		= "teach";
-const KEY_DATA		= "data";
-const KEY_EXERCISE	= "exercise";
-
-
 
 class ConnectionManager{
 	constructor(){
@@ -54,11 +36,11 @@ class ConnectionManager{
             rename 		: (title, val) 	=> this._layerAction(ACTION_LAYER_RENAME, val)
         };
 		this._sharing = false;
-		this._sender = new EventTimer(e => this._sendStack(), REFRESH_TIME);
+		this._sender = new EventTimer(e => this._sendStack(), CONNECTION_LOOP_TIME);
 		this._buffer = [];
 		var inst = this;
 		$.post("/create", {content: JSON.stringify({meno:"gabriel"})}, function(data){
-			inst._user_id = data["cookies"][KEY_USER_ID];
+			inst._user_id = data["cookies"][CONN_KEY_USER_ID];
 		}, "json");
 
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
@@ -68,19 +50,19 @@ class ConnectionManager{
 	 * INITIALIZATIONS
 	 ********************/
 	startShare(data){
-		data[KEY_TYPE] = KEY_SHARE;
+		data[CONN_KEY_TYPE] = CONN_KEY_SHARE;
 		this.connect(data);
 	}
 
 	startTeach(data){
-		data[KEY_TYPE] = KEY_TEACH;
+		data[CONN_KEY_TYPE] = CONN_KEY_TEACH;
 		this.connect(data);
 	}
 
 	startWatch(data){
-		data[KEY_TYPE] = KEY_WATCH;
+		data[CONN_KEY_TYPE] = CONN_KEY_WATCH;
 
-		if(isUndefined(data[KEY_LESS_ID])){
+		if(isUndefined(data[CONN_KEY_LESS_ID])){
 			Logger.error(getMessage(MSG_MISS_LESS_ID));
 			return false;
 		}
@@ -89,9 +71,9 @@ class ConnectionManager{
 	}
 
 	startExercise(data){
-		data[KEY_TYPE] = KEY_EXERCISE;
+		data[CONN_KEY_TYPE] = CONN_KEY_EXERCISE;
 
-		if(isUndefined(data[KEY_LESS_ID])){
+		if(isUndefined(data[CONN_KEY_LESS_ID])){
 			Logger.error(getMessage(MSG_MISS_LESS_ID));
 			return false;
 		}
@@ -102,8 +84,8 @@ class ConnectionManager{
 	connect(data){
 		this._socket = io();
 		this._startTime = Date.now();
-		this._type = data[KEY_TYPE];
-		this._user_name = data[KEY_USER_NAME] || this._user_name;
+		this._type = data[CONN_KEY_TYPE];
+		this._user_name = data[CONN_KEY_USER_NAME] || this._user_name;
 		data["resolution"] = window.innerWidth + "_" + window.innerHeight;
 		var inst = this;
 		inst.resetLives();
@@ -120,7 +102,7 @@ class ConnectionManager{
 		});
 
 		this._socket.on("connect_error", function(){
-			inst._lives === RECONNECT_TRIES && Logger.error(getMessage(MSG_CONN_ERROR));
+			inst._lives === CONNECTION_TRIES && Logger.error(getMessage(MSG_CONN_ERROR));
 			inst._lives--;
 			if(inst._lives === 0)
 				inst.disconnect();
@@ -133,12 +115,13 @@ class ConnectionManager{
 
 
 		this._socket.on('confirmConnection', function(response) {
-			inst._less_id = response[KEY_DATA][KEY_LESS_ID];
+			inst._less_id = response[CONN_KEY_DATA][CONN_KEY_LESS_ID];
 			inst._connectTime = Date.now();
 			inst._messageTime = Date.now();
-			if(inst._type === KEY_WATCH || inst._type === KEY_TEACH){
-				if(inst._type === KEY_WATCH)
+			if(inst._type === CONN_KEY_WATCH || inst._type === CONN_KEY_TEACH){
+				if(inst._type === CONN_KEY_WATCH){
 					Scene.initSecondCanvas();
+				}
 				//inst._sendMessage("requireAllData", {target: inst._user_id});
 				inst._watching = true;
 			}
@@ -176,7 +159,7 @@ class ConnectionManager{
 
 	disconnect(){
 		if(isFunction(Menu.disabled)){
-			Menu.disabled("sharing", KEY_WATCH);
+			Menu.disabled("sharing", CONN_KEY_WATCH);
 			Menu.disabled("sharing", "stopShare");
 			Menu.disabled("sharing", "shareOptions");
 			Menu.disabled("sharing", "copyUrl");
@@ -206,32 +189,32 @@ class ConnectionManager{
 			//console.log("prijata akcia:" + e["action"]);
 			switch(e["action"]){
 				case "requireAllData" :
-					Handler.processRequireAllData(inst, e[KEY_DATA]);
+					Handler.processRequireAllData(inst, e[CONN_KEY_DATA]);
 					break;
 				case "sendAllData" :
-					Handler.processSendAllData(inst, e[KEY_DATA]);
+					Handler.processSendAllData(inst, e[CONN_KEY_DATA]);
 					break;
                 case "userDisconnect" :
-                    Handler.processUserDisconnect(inst, e[KEY_DATA]);
+                    Handler.processUserDisconnect(inst, e[CONN_KEY_DATA]);
                     break;
                 case "userConnect" :
-                    Handler.processUserConnect(inst, e[KEY_DATA]);
+                    Handler.processUserConnect(inst, e[CONN_KEY_DATA]);
                     break;
 				case "paintAction" :
-					Handler.processPaintAction(e[KEY_DATA], inst._type);
+					Handler.processPaintAction(e[CONN_KEY_DATA], inst._type);
 					break;
                 case "layerAction" :
-                    Handler.processLayerAction(e[KEY_DATA]);
+                    Handler.processLayerAction(e[CONN_KEY_DATA]);
                     break;
 				case "inputAction" :
-					inst._processInputAction(e[KEY_DATA]);
+					inst._processInputAction(e[CONN_KEY_DATA]);
 					break;
 				case "creatorAction" :
-					Creator.setOpt(e[KEY_DATA]["key"], e[KEY_DATA][KEY_VALUE]);
+					Creator.setOpt(e[CONN_KEY_DATA]["key"], e[CONN_KEY_DATA][CONN_KEY_VALUE]);
 					draw();
 					break;
 				case "objectAction" :
-					Handler.processObjectAction(e[KEY_DATA], inst._type);
+					Handler.processObjectAction(e[CONN_KEY_DATA], inst._type);
 					break;
 				default:
 					Logger.error(getMessage(MSG_UNKNOW_ACTION, e["action"]));
@@ -250,7 +233,7 @@ class ConnectionManager{
 			user_id: this._user_id
 		};
 		if(this._less_id)
-			result[KEY_LESS_ID] = this._less_id;
+			result[CONN_KEY_LESS_ID] = this._less_id;
 		this._socket.emit("sendBuffer", result);
 		this._buffer = [];
 	}
@@ -287,7 +270,7 @@ class ConnectionManager{
 	 ********************/
 
 	resetLives(){
-		this._lives = RECONNECT_TRIES;
+		this._lives = CONNECTION_TRIES;
 	}
 
 	creatorChange(key, value){
@@ -310,22 +293,22 @@ class ConnectionManager{
 
         switch(type){
             case ACTION_LAYER_CREATE :
-                data[KEY_TITLE] = arg1;
-                data[KEY_TYPE]	= arg2;
+                data[CONN_KEY_TITLE] = arg1;
+                data[CONN_KEY_TYPE]	= arg2;
                 break;
             case ACTION_LAYER_DELETE :
-                data[KEY_TITLE] = arg1;
+                data[CONN_KEY_TITLE] = arg1;
                 break;
             case ACTION_LAYER_CLEAN :
-                data[KEY_TITLE] = arg1;
+                data[CONN_KEY_TITLE] = arg1;
                 break;
             case ACTION_LAYER_VISIBLE :
-                data[KEY_TITLE] = arg1;
-                data[KEY_VALUE] = arg2;
+                data[CONN_KEY_TITLE] = arg1;
+                data[CONN_KEY_VALUE] = arg2;
                 break;
             case ACTION_LAYER_RENAME :
-                data[KEY_TITLE] = arg1;
-                data[KEY_VALUE] = arg2;
+                data[CONN_KEY_TITLE] = arg1;
+                data[CONN_KEY_VALUE] = arg2;
                 break;
         }
 
@@ -419,20 +402,20 @@ class ConnectionManager{
 			case ACTION_PAINT_ADD_POINT :
 				data["pX"] = arg1.x;
 				data["pY"] = arg1.y;
-				data[KEY_LAYER] = arg2;
+				data[CONN_KEY_LAYER] = arg2;
 				break;
 			case ACTION_PAINT_BREAK_LINE :
-				data[KEY_LAYER] = arg1;
+				data[CONN_KEY_LAYER] = arg1;
 				break;
 			case ACTION_PAINT_CLEAN :
-				data[KEY_LAYER] = arg1;
+				data[CONN_KEY_LAYER] = arg1;
 				break;
 			case ACTION_PAINT_ADD_PATH :
-				data[KEY_LAYER] = arg1;
+				data[CONN_KEY_LAYER] = arg1;
 				data["path"] = arg2;
 				break;
 			case ACTION_PAINT_REMOVE_PATH :
-				data[KEY_LAYER] = arg1;
+				data[CONN_KEY_LAYER] = arg1;
 				break;
 			default:
 				Logger.error(type, 3);
@@ -459,8 +442,8 @@ class ConnectionManager{
 
 class Handler{
     static processUserDisconnect(inst, data){
-        Logger.notif("používatel " + data[KEY_USER_NAME] + "[ " + data[KEY_USER_ID] + "] sa odpojil");
-        var user = inst._connectedUsers[data[KEY_USER_ID]];
+        Logger.notif("používatel " + data[CONN_KEY_USER_NAME] + "[ " + data[CONN_KEY_USER_ID] + "] sa odpojil");
+        var user = inst._connectedUsers[data[CONN_KEY_USER_ID]];
         if(user){
             user.status = STATUS_DISCONNECTED;
             lastConnectionTime = Date.now();
@@ -468,25 +451,25 @@ class Handler{
     }
 
     static processUserConnect(inst, data){
-        inst._connectedUsers[data[KEY_USER_ID]] = {
-            user_name : data[KEY_USER_NAME],
+        inst._connectedUsers[data[CONN_KEY_USER_ID]] = {
+            user_name : data[CONN_KEY_USER_NAME],
             status : STATUS_CONNECTED,
             connectTime : Date.now()
         };
-        if(inst._type === KEY_TEACH){
-            //Scene.createLayer(data[KEY_USER_NAME]);
-			//inst._sendMessage("requireAllData", {target: inst._user_id, from: data[KEY_USER_ID]});
+        if(inst._type === CONN_KEY_TEACH){
+            //Scene.createLayer(data[CONN_KEY_USER_NAME]);
+			//inst._sendMessage("requireAllData", {target: inst._user_id, from: data[CONN_KEY_USER_ID]});
         }
-        //Logger.notif("používatel" + data[KEY_USER_NAME] + "[" + data[KEY_USER_ID] + "] sa pripojil");
-		Logger.notif(getMessage(MSG_USER_CONNECT, data[KEY_USER_NAME], data[KEY_USER_ID]));
+        //Logger.notif("používatel" + data[CONN_KEY_USER_NAME] + "[" + data[CONN_KEY_USER_ID] + "] sa pripojil");
+		Logger.notif(getMessage(MSG_USER_CONNECT, data[CONN_KEY_USER_NAME], data[CONN_KEY_USER_ID]));
 
         //draw();
     }
 
 	static processRequireAllData(inst, data){
-		console.log("prijal som žiadosť o všetky udaje pre " + data[KEY_TARGET]);
+		console.log("prijal som žiadosť o všetky udaje pre " + data[CONN_KEY_TARGET]);
         var result = {};
-        if(inst._type === KEY_SHARE){
+        if(inst._type === CONN_KEY_SHARE){
             result = {
                 msg: {
                     scene: Scene.toObject(),
@@ -494,20 +477,20 @@ class Handler{
                     paint: Paints.toObject(),
 					user_name : inst._user_name
                 },
-                target: data[KEY_TARGET]
+                target: data[CONN_KEY_TARGET]
             };
             //Panel.addWatcher(recData.nickName);
             //inst._actualWatchers.push(recData.nickName);
             inst._sendMessage('sendAllData',result);
         }
-        else if(inst._type === KEY_EXERCISE){
+        else if(inst._type === CONN_KEY_EXERCISE){
             result = {
                 msg: {
                     scene: Scene.toObject(),
 					paint: Paints.toObject(),
 					user_name : inst._user_name
                 },
-                target: data[KEY_TARGET]
+                target: data[CONN_KEY_TARGET]
             };
             inst._sendMessage('sendAllData',result);
         }
@@ -515,16 +498,19 @@ class Handler{
 
 	static processSendAllData(inst, data){
 		console.log("prijal som všetky udaje ");
-        if(inst._type == KEY_WATCH){//chce udaje všetko dostupné o 1 používatelovi
+        if(inst._type == CONN_KEY_WATCH){//chce udaje všetko dostupné o 1 používatelovi
             var shareOptions = data.shareOptions;
             var watchOptions = data.watchOptions;
 
-            if(shareOptions.share.objects)
+            if(shareOptions.share.objects){
                 Scene.fromObject(data.scene);
-            if(shareOptions.share.creator)
+            }
+            if(shareOptions.share.creator){
                 Creator.fromObject(data.creator);
-            if(shareOptions.share.paints)
+            }
+            if(shareOptions.share.paints){
                 Paints.fromObject(data.paint);
+            }
 
 
             if(watchOptions.show.chat){
@@ -545,12 +531,12 @@ class Handler{
             Creator.visibleView = shareOptions.share.menu;
             Options.setOpt("showLayersViewer", shareOptions.share.layers);
         }
-        else if(inst._type == KEY_TEACH){//volá sa pre každého pripojeného študenta
-			if(Scene.getLayer(data[KEY_USER_NAME]))
-				Scene.deleteLayer(data[KEY_USER_NAME]);
-			Scene.createLayer(data[KEY_USER_NAME], LAYER_USER);
-            Scene.fromObjectToSingleLayer(data[KEY_USER_NAME], data.scene);
-			Paints.fromObjectToSingleLayer(data[KEY_USER_NAME], data.paint);
+        else if(inst._type == CONN_KEY_TEACH){//volá sa pre každého pripojeného študenta
+			if(Scene.getLayer(data[CONN_KEY_USER_NAME]))
+				Scene.deleteLayer(data[CONN_KEY_USER_NAME]);
+			Scene.createLayer(data[CONN_KEY_USER_NAME], LAYER_USER);
+            Scene.fromObjectToSingleLayer(data[CONN_KEY_USER_NAME], data.scene);
+			Paints.fromObjectToSingleLayer(data[CONN_KEY_USER_NAME], data.paint);
             //TODO načíta všetky kresby
         }
         draw();
@@ -582,15 +568,15 @@ class Handler{
 	}
 
 	static processLayerAction(data){
-		var layer = Project.scene.getLayer(data[KEY_TITLE]);
+		var layer = Project.scene.getLayer(data[CONN_KEY_TITLE]);
         switch(data.action){
             case ACTION_LAYER_CREATE :
             	if(!layer)
-                	Project.scene.createLayer(data[KEY_TITLE], data[KEY_TYPE]);
+                	Project.scene.createLayer(data[CONN_KEY_TITLE], data[CONN_KEY_TYPE]);
                 break;
             case ACTION_LAYER_DELETE :
             	if(layer)
-                Project.scene.deleteLayer(data[KEY_TITLE]);
+                Project.scene.deleteLayer(data[CONN_KEY_TITLE]);
                 break;
             case ACTION_LAYER_CLEAN :
                 if(layer)
@@ -598,19 +584,19 @@ class Handler{
                 break;
             case ACTION_LAYER_VISIBLE :
                 if(layer)
-                    layer.visible = data[KEY_VALUE];
+                    layer.visible = data[CONN_KEY_VALUE];
                 break;
             case ACTION_LAYER_RENAME :
                 if(layer)
-                    layer.rename(data[KEY_VALUE]);
+                    layer.rename(data[CONN_KEY_VALUE]);
                 break;
         }
     }
 
 	static processPaintAction(data, type){
-		var layer = data[KEY_LAYER];
-		if(type === KEY_TEACH)
-			layer = data[KEY_USER_NAME];
+		var layer = data[CONN_KEY_LAYER];
+		if(type === CONN_KEY_TEACH)
+			layer = data[CONN_KEY_USER_NAME];
 
 		switch(data.action){
 			case ACTION_PAINT_ADD_POINT :

@@ -7,8 +7,8 @@ class Area{
 		this._moving = false;
 		this._min = new GVector2f();
 		this._max = new GVector2f();
-		this._offset = new GVector2f()
-	};
+		this._offset = new GVector2f();
+	}
 
 	get name(){
 		return this._name;
@@ -76,30 +76,34 @@ class Area{
 		each(Project.scene.layers, layer => {
 			var paths = layer.paint.points;
 			each(paths, path => {
-				if(!path.points.length)
+				if(!path.points.length){
 					return false;
+				}
 				var tl = inst._isPointIn(path.min.x, path.min.y),
 					tr = inst._isPointIn(path.max.x, path.min.y),
 					bl = inst._isPointIn(path.min.x, path.max.y),
 					br = inst._isPointIn(path.max.x, path.max.y);
 
-				if(!tl && !tr && !bl && !br)	//nieje šanca že je vo vnutry
+				if(!tl && !tr && !bl && !br){	//nieje šanca že je vo vnutry
 					return false;
+				}
 
 				var result;
 				if(onBorder){//ak maže z hranice tak sa hlada taky ktory je vo vnutry
-					var result = false;
+					result = false;
 					each(path.points, point => {
-						if(result)
+						if(result){
 							return;
+						}
 						result = inst._isPointIn(point.x, point.y);
 					});
 				}
 				else{//ak iba vo vnutry tak sa hlada taky ktory je mimo hranice
 					result = true;
 					each(path.points, point => {
-						if(!result)
+						if(!result){
 							return;
+						}
 						result = inst._isPointIn(point.x, point.y);
 					});
 				}
@@ -110,8 +114,9 @@ class Area{
 	}
 
 	_isPointIn(x, y){
-		if(this._points < 2)
+		if(this._points < 2){
 			return false;
+		}
 		var countLeft = 0; 
 		var countRight = 0;
 		var unRecognized = [];
@@ -119,18 +124,21 @@ class Area{
 			var b = arr[(i + 1) % arr.length];
 			//ak prechadza hor. čiarov kde je bod
 			if((a.y >= y && b.y < y) || (a.y <= y && b.y > y)){
-				if(b.x > x && a.x > x)
+				if(b.x > x && a.x > x){
 					countRight++;
-				else if(b.x < x && a.x < x)
+				}
+				else if(b.x < x && a.x < x){
 					countLeft++;
+				}
 				else{//nenachada sa ani nalavo ani napravo
 					unRecognized.push([a.x, a.y, b.x, b.y]);
 				}
 			}
 		});
 
-		if(unRecognized.length == 0 && (countRight % 2 == 0 || countLeft % 2 == 0 ))
+		if(unRecognized.length === 0 && (countRight % 2 === 0 || countLeft % 2 === 0 )){
 			return false;
+		}
 
 		//TODO skontrolovať nerozpoznane čiary;
 
@@ -138,13 +146,15 @@ class Area{
 	}
 
 	hover(x, y){
-		if(this._isCreating)
+		if(this._isCreating){
 			return false;
+		}
 
 		var val = x > this._min.x && y > this._min.y && x < this._max.x && y < this._max.y;
 
-		if(val)
+		if(val){
 			val = this._isPointIn(x, y);
+		}
 		setCursor(val ? CURSOR_POINTER : CURSOR_DEFAULT);
 		return val !== false;
 	}
@@ -168,7 +178,7 @@ class Area{
 		this._max.y = Math.max(this._max.y, position.y);
 
 		this._points.push(position);
-	};
+	}
 
 	startCreate(position){
 		this.clear();
@@ -176,7 +186,7 @@ class Area{
 		this._isCreating = true;
 		this._min.set(position);
 		this._max.set(position);
-	};
+	}
 
 	endCreate(position){
 		this._points.push(position);
@@ -186,17 +196,18 @@ class Area{
 		this._min.y = Math.min(this._min.y, position.y);
 		this._max.x = Math.max(this._max.x, position.x);
 		this._max.y = Math.max(this._max.y, position.y);
-	};
+	}
 
 	draw(ctx = context){
-		if(this._isCreating || this._points.length <= 3)
+		if(this._isCreating || this._points.length <= 3){
 			return;
+		}
 		doPolygon({
 			points: this._points,
 			offset: this._offset,
 			borderWidth: 5,
 			borderColor: "red"
-		})
+		});
 
 	}
 }

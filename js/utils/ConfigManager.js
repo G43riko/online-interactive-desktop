@@ -1,3 +1,4 @@
+
 class ConfigManager{
 	constructor(){
 		this._options = {};
@@ -27,7 +28,7 @@ class ConfigManager{
 		for(var i in data){
 			if(data.hasOwnProperty(i)){
 				actualKey = key ? key + "_" : "";
-				if(i.startsWith("!")){
+				if(i.charAt(0) === "!"){
 					actualKey = i.substr(1);	
 				}
 				else{
@@ -69,7 +70,7 @@ class ConfigManager{
 		return this._options;
 	}
 }
-
+/*
 
 var data = {
 	"a" : "gabo",
@@ -143,3 +144,4 @@ var getOptions = (function(){
 		}
 	};
 })();
+*/

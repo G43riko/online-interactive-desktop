@@ -1,7 +1,6 @@
 /*
 	compatible:	indexOf, canvas, canvasText, JSON parsing 14.9.2016
 */
-"use strict";
 
 var initTime 		= Date.now(),
 	movedObject 	= false,
@@ -45,21 +44,21 @@ function setUpComponents(){
 		edit : window.location.hash.indexOf(COMPONENT_EDIT) >= 0 || typeof Watcher !== "undefined",
 		layers : window.location.hash.indexOf(COMPONENT_LAYERS) >= 0 || typeof Watcher !== "undefined",
 		task : window.location.hash.indexOf(COMPONENT_TASK) >= 0 || typeof Watcher !== "undefined"
-	}
+	};
 }
 
 var Components = {
-	draw	: () => isDefined(components) && isDefined(components["draw"]) && components["draw"] === true,
-	share	: () => isDefined(components) && isDefined(components["share"]) && components["share"] === true,
-	watch	: () => isDefined(components) && isDefined(components["watch"]) && components["watch"] === true,
-	tools	: () => isDefined(components) && isDefined(components["tools"]) && components["tools"] === true,
-	save	: () => isDefined(components) && isDefined(components["save"]) && components["save"] === true,
-	load	: () => isDefined(components) && isDefined(components["load"]) && components["load"] === true,
-	screen	: () => isDefined(components) && isDefined(components["screen"]) && components["screen"] === true,
-	content	: () => isDefined(components) && isDefined(components["content"]) && components["content"] === true,
-	layers	: () => isDefined(components) && isDefined(components["layers"]) && components["layers"] === true,
-	task	: () => isDefined(components) && isDefined(components["task"]) && components["task"] === true,
-	edit	: () => isDefined(components) && isDefined(components["edit"]) && components["edit"] === true
+	draw	: () => isDefined(components) && isDefined(components.draw) && components.draw === true,
+	share	: () => isDefined(components) && isDefined(components.share) && components.share === true,
+	watch	: () => isDefined(components) && isDefined(components.watch) && components.watch === true,
+	tools	: () => isDefined(components) && isDefined(components.tools) && components.tools === true,
+	save	: () => isDefined(components) && isDefined(components.save) && components.save === true,
+	load	: () => isDefined(components) && isDefined(components.load) && components.load === true,
+	screen	: () => isDefined(components) && isDefined(components.screen) && components.screen === true,
+	content	: () => isDefined(components) && isDefined(components.content) && components.content === true,
+	layers	: () => isDefined(components) && isDefined(components.layers) && components.layers === true,
+	task	: () => isDefined(components) && isDefined(components.task) && components.task === true,
+	edit	: () => isDefined(components) && isDefined(components.edit) && components.edit === true
 };
 
 function sendMessage(message){
@@ -79,61 +78,61 @@ function ajax(url, options, dataType){
 	if(isFunction(options)){
 		options = {success: options};
 		if(isString(dataType)){
-			options["dataType"] = dataType;
+			options.dataType = dataType;
 		}
 	}
 	else if(!isObject(options)){
 		options = {};
 	}
 
-	options["method"] = options["method"] || "GET";
-	options["async"] = options["async"] || true;
+	options.method = options.method || "GET";
+	options.async = options.async || true;
 
 	var start = 0;
 	var xhttp = window.XMLHttpRequest ?  new XMLHttpRequest() :  new ActiveXObject("Microsoft.XMLHTTP");
 
-	if(isFunction(options["abort"])){
-		xhttp.onabort = options["abort"];
+	if(isFunction(options.abort)){
+		xhttp.onabort = options.abort;
 	}
-	if(isFunction(options["error"])){
-		xhttp.onerror = options["error"];
+	if(isFunction(options.error)){
+		xhttp.onerror = options.error;
 	}
-	if(isFunction(options["progress"])){
-		xhttp.onprogress = options["progress"];
+	if(isFunction(options.progress)){
+		xhttp.onprogress = options.progress;
 	}
-	if(isFunction(options["timeout"])){
-		xhttp.ontimeout = options["timeout"];
+	if(isFunction(options.timeout)){
+		xhttp.ontimeout = options.timeout;
 	}
-	if(isFunction(options["loadEnd"])){
-		xhttp.onloadend = () => options["loadEnd"]((Date.now() - start));
+	if(isFunction(options.loadEnd)){
+		xhttp.onloadend = () => options.loadEnd((Date.now() - start));
 	}
-	if(isFunction(options["loadStart"])){
+	if(isFunction(options.loadStart)){
 		xhttp.onloadstart = function(){
-			options["loadStart"]();
+			options.loadStart();
 			start = Date.now();
 		};
 	}
-	if(isFunction(options["success"])){
+	if(isFunction(options.success)){
 		xhttp.onreadystatechange = function() {
-			if (xhttp.readyState == 4 && xhttp.status == 200 && isFunction(options["success"])){
-				switch(options["dataType"]){
+			if (xhttp.readyState == 4 && xhttp.status == 200 && isFunction(options.success)){
+				switch(options.dataType){
 					case "json" :
-						options["success"](JSON.parse(xhttp.responseText));
+						options.success(JSON.parse(xhttp.responseText));
 						break;
 					case "html" :
-						options["success"](new DOMParser().parseFromString(xhttp.responseText, FORMAT_FILE_XML));
+						options.success(new DOMParser().parseFromString(xhttp.responseText, FORMAT_FILE_XML));
 						break;
 					case "xml" :
-						options["success"](new DOMParser().parseFromString(xhttp.responseText, FORMAT_FILE_XML));
+						options.success(new DOMParser().parseFromString(xhttp.responseText, FORMAT_FILE_XML));
 						break;
 					default :
-						options["success"](xhttp.responseText)
+						options.success(xhttp.responseText);
 				}
 			}
 		};
 	}
 	//console.log(options);
-	xhttp.open(options["method"], url, options["async"]);
+	xhttp.open(options.method, url, options.async);
 	xhttp.send();
 }
 ajax(FOLDER_JSON + "/context.json", data => ContextMenuManager.items = data, "json");
@@ -208,16 +207,17 @@ function setVisibilityData(data){
 ajax(FOLDER_JSON + "/forms.json", data => {
 	Forms = new FormManager(data);
 	var formList = {
-		shareForm : "sharingForm",
+		shareForm 	: "sharingForm",
 		optionsForm : "optionsForm",
-		watchForm : "watchForm",
+		watchForm 	: "watchForm",
 		saveXmlForm : "saveXmlForm",
-		saveForm : "saveImgForm"
+		saveForm 	: "saveImgForm"
 	};
 	each(formList, function(e, i){
 		var form = document.getElementById(i);
-		if(form)
+		if(form){
 			form.appendChild(Forms.createForm(e));
+		}
 	});
 
 	Project.options.init();
@@ -236,50 +236,75 @@ $.ajax({
 */
 
 var loading = function(){
-	/////DOLEZITE!!!
-	Listeners.hashChange();
-	area = new Area();
-	Project.initCanvas();
+	//	testCompatibility();
+	try{
+		/////DOLEZITE!!!
+		Listeners.hashChange();
+		area = new Area();
+		Project.initCanvas();
 
 
-	canvas = Project.canvas;
-	context = Project.context;
-	
+		canvas = Project.canvas;
+		context = Project.context;
+		
+		//if(typeof ConnectionManager === "function")
+		//	Connection = new ConnectionManager();
+		Project._connection = new ConnectionManager();
 
-	//if(typeof ConnectionManager === "function")
-	//	Connection = new ConnectionManager();
-	Project._connection = new ConnectionManager();
-
-	$.getJSON(FOLDER_JSON + "/menu.json",function(data){
-		Project.topMenu.init(data);
-		$.getJSON(FOLDER_JSON + "/creator.json", data2 => {
-			Creator.init(data2);
-			Paints.rePaintImage(Creator.brushSize, Creator.brushColor);
-			draw();
+		$.getJSON(FOLDER_JSON + "/menu.json",function(data){
+			try{
+				Project.topMenu.init(data);
+			}
+			catch(e){
+				alert("nepodarila sa inicializacia menu: " + e);
+			}
+			$.getJSON(FOLDER_JSON + "/creator.json", data2 => {
+				try{
+					Creator.init(data2);
+					Paints.rePaintImage(Creator.brushSize, Creator.brushColor);
+					draw();
+				}
+				catch(e){
+					alert("nepodarila sa inicializacia creatora: " + e);
+				}
+			});
 		});
-	});
-	Panel = new PanelManager();
+		Panel = new PanelManager();
 
-	Project.scene.createLayer();
-	Project.scene.createLayer("rightMenu", "gui");
-	Project.scene.createLayer("test2");
+		Project.scene.createLayer();
+		//Project.scene.createLayer("rightMenu", "gui");
+		Project.scene.createLayer("test2");
 
-	Project.context.shadowColor = DEFAULT_SHADOW_COLOR;
-	Project.input.initListeners(Project.canvas);
+		Project.context.shadowColor = DEFAULT_SHADOW_COLOR;
+		Project.input.initListeners(Project.canvas);
 
-	if(typeof Sharer !== "undefined"){
-		chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
+		if(typeof Sharer !== "undefined"){
+			chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
+		}
+
+		Layers = new LayersViewer(G.byId("layerViewerPlaceholder"));
+		//Project.scene.addToScene(Layers, "rightMenu");
+		var xOffset = Project.topMenu.position.x + (Project.topMenu.size.x + MENU_OFFSET) * Project.topMenu.visibleElements - MENU_OFFSET;
+		Creator.view = new CreatorViewer(new GVector2f(Project.topMenu.visible ? xOffset : MENU_OFFSET, Project.topMenu.position.y - MENU_OFFSET));
+
+		console.log("stranka sa nacítala za: ", (Date.now() - initTime) + " ms");
+		console.log("to by malo byť: " + Date.now() + " ms");
+			
+		draw();
+
+		if(localStorage.hasOwnProperty(RESTORE_KEY)){
+			if(confirm(getMessage(MSG_LOAD_OLD_PROJECT))){
+				var data = JSON.parse(localStorage.getItem(RESTORE_KEY));
+				Scene.fromObject(data.scene);
+				Creator.fromObject(data.creator);
+				Paints.fromObject(data.paint);
+			}
+		}
+
 	}
-
-	Layers = new LayersViewer(G.byId("layerViewerPlaceholder"));
-	Project.scene.addToScene(Layers, "rightMenu");
-	var xOffset = Project.topMenu.position.x + (Project.topMenu.size.x + MENU_OFFSET) * Project.topMenu.visibleElements - MENU_OFFSET;
-	Creator.view = new CreatorViewer(new GVector2f(Project.topMenu.visible ? xOffset : MENU_OFFSET, Project.topMenu.position.y - MENU_OFFSET));
-
-	console.log("stranka sa nacítala za: ", (Date.now() - initTime) + " ms");
-	console.log("to by malo byť: " + Date.now() + " ms");
-	
-	draw();
+	catch(e){
+		alert("nepodaril sa loading lebo " + e);
+	}
 };
 
 //$(loading);
@@ -310,7 +335,7 @@ function realDraw(){
 		timeLine.draw();
 	}
 
-	Project.context.font = "30px Comic Sans MS";
+	Project.context.font = "30px " + DEFAULT_FONT_FAMILY;
 	Project.context.fillStyle = "red";
 	Project.context.fillText("draw(ms): " + (new Date().getMilliseconds() - drawMousePos), window.innerWidth - 100, 15);
 }

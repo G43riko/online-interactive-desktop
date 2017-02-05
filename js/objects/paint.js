@@ -3,8 +3,7 @@ class Paint extends Entity{
 		super(OBJECT_PAINT, new GVector2f(), new GVector2f());
 		this._points 		= [Paint.defArray()];
 		this._count 		= 0;
-		//this._canvas		= new CanvasHandler();
-		this._canvas		= Project.canvasManager.createCanvas(Project.canvas.width, Project.canvas.height, "canvas" + Project.generateId())
+		this._canvas		= Project.canvasManager.createCanvas(Project.canvas.width, Project.canvas.height, "canvas" + Project.generateId());
 		this.onScreenResize();
 		this._editBackup	= [];
 	}
@@ -12,6 +11,14 @@ class Paint extends Entity{
 		return this._points;
 	}
 
+	isEmpty(){
+		for(var i=0 ; i<this._points.length ; i++){
+			if(this._points[i].points.length > 0){
+				return false;
+			}
+		}
+		return true;	
+	}
 	onScreenResize(){
 		this._canvas.setCanvasSize(canvas.width, canvas.height);
 		this.redraw(this._points);
@@ -27,7 +34,7 @@ class Paint extends Entity{
 			min: null,
 			max: null,
 			forRemove: false
-		}
+		};
 	}
 
 	animate(speed = 20, limit = this._points.length - 1){
@@ -61,18 +68,21 @@ class Paint extends Entity{
 		this.cleanUp();
 		var res = [];
 		points.forEach(function(e, i){
-			if(i > limit || isNull(e["color"]))
+			if(i > limit || isNull(e["color"])){
 				return;
+			}
 			res.push(e);
 
 			e["points"].forEach(function(ee, ii, arr){
-				if(ii)
+				if(ii){
 					Paints.drawLine(this._canvas.context, ee, arr[ii - 1], e["size"], e["color"], e["action"], e["type"]);
+				}
 			}, this);
 		}, this);
 		this._points = res;
-		if(points.length > 0 && points[points.length - 1]["points"].length)
+		if(points.length > 0 && points[points.length - 1]["points"].length){
 			this.breakLine();
+		}
 		if(!points[points.length - 1]["points"].length){
 			this._points.push(Paint.defArray());
 		}
@@ -80,25 +90,30 @@ class Paint extends Entity{
 	}
 
 	undo(){
-		if(this._points.length === 1)
+		if(this._points.length === 1){
 			return false;
+		}
 
-		if(isNull(this._points[this._points.length - 1]["color"]))
+		if(isNull(this._points[this._points.length - 1]["color"])){
 			this._points.pop();
+		}
 
 		this._editBackup.push(this._points.pop());
 
 		this.redraw(this._points);
-		if(this._points.length === 0)
+		if(this._points.length === 0){
 			this._points.push(Paint.defArray());
+		}
 	}
 
 	redo(){
-		if(this._editBackup.length == 0)
+		if(this._editBackup.length === 0){
 			return false;
+		}
 
-		if(isNull(this._points[this._points.length - 1]["color"]))
+		if(isNull(this._points[this._points.length - 1]["color"])){
 			this._points.pop();
+		}
 		this._points.push(this._editBackup.pop());
 		this.redraw(this._points); // toto nemusí prepisovať celé
 	}
@@ -134,8 +149,9 @@ class Paint extends Entity{
 	 * @param point
 	 */
 	addPoint(point){
-		if(this._points.length === 0)
+		if(this._points.length === 0){
 			this._points.push(Paint.defArray());
+		}
 
 		var lastArr = this._points[this._points.length - 1],
 			arr = lastArr["points"];
@@ -144,8 +160,9 @@ class Paint extends Entity{
 			var p1 = arr[arr.length - 2].getClone().sub(arr[arr.length - 1]);
 			var p2 = arr[arr.length - 1].getClone().sub(point);
 			var angle = GVector2f.angle(p1, p2) * p2.length();
-			if(angle < CUT_OFF_BEFORE_DISTANCE)
+			if(angle < CUT_OFF_BEFORE_DISTANCE){
 				return;
+			}
 		}
 
 		this._editBackup = [];
@@ -160,8 +177,9 @@ class Paint extends Entity{
 			lastArr["max"] = point.getClone();
 		}
 
-		if(arr.length)
+		if(arr.length){
 			Paints.drawLine(this._canvas.context, arr[arr.length - 1], point, Creator.brushSize, Creator.brushColor, Paints.action, Creator.brushType);
+		}
 		lastArr["min"].x = Math.min(lastArr["min"].x, point.x);
 		lastArr["min"].y = Math.min(lastArr["min"].y, point.y);
 		lastArr["max"].x = Math.max(lastArr["max"].x, point.x);
@@ -170,11 +188,10 @@ class Paint extends Entity{
 	}
 
 	fromObject(content, concat = false){
-		//each(content, ee => each(ee["points"], (e, i , arr) => arr[i] = new GVector2f(e._x, e._y)));
 		each(content, ee => {
 			each(ee["points"], (e, i , arr) => {
 				arr[i] = new GVector2f(e._x, e._y);
-			})
+			});
 		});
 		this.redraw(concat ? content.concat(this._points) : content);
 	}
@@ -215,7 +232,7 @@ class Paint extends Entity{
 		else{
 			this._points.push(Paint.defArray());
 			if(CUT_OFF_PATHS_AFTER){
-				Paint.roundPath(this._points[this._points.length - 2], CUT_OFF_AFTER_DISTANCE)
+				Paint.roundPath(this._points[this._points.length - 2], CUT_OFF_AFTER_DISTANCE);
 				this.redraw(this._points);
 			}
 			return this._points[this._points.length - 2];
@@ -245,6 +262,7 @@ class Paint extends Entity{
 			}
 		});
 		return false;
+		/*
 		if(pointsToRemove.length){//ak existuje čiara ktorá sa má vymazať
 			console.log(pointsToRemove);
 			each(pointsToRemove, (e) => {
@@ -277,27 +295,24 @@ class Paint extends Entity{
 				this.redraw(this._points);
 			})
 		}
+		*/
 		
 	}
 
 	removeSelectedPaths(){
 		var i = this._points.length;
-		while (i--)
-			if(this._points[i]["forRemove"])
+		while (i--){
+			if(this._points[i]["forRemove"]){
 				this._points.splice(i, 1);
-		/*
-		each(this._points, (e, i, arr) => {
-			if(e["forRemove"]){
-				arr.splice(i, 1);
 			}
-		});
-		*/
+		}
 		this.redraw(this._points);
 	}
 
 	draw(ctx = context) {
-		if (!this.visible)
+		if (!this.visible){
 			return;
+		}
 		ctx.drawImage(this._canvas.canvas, 0, 0);
 		/*
 		each(this._points, e => {
@@ -312,5 +327,5 @@ class Paint extends Entity{
 				})
 		})
 		*/
-	};
+	}
 }

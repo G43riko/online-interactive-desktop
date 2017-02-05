@@ -12,34 +12,46 @@ class InputManager{
 		this._lastTouch = false;
 		this._hist = {};
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
-	};
+	}
 
 	get mousePos(){return this._mousePos;}
 
 	_onResize(){
-		var MIN_WIDTH = 480;
 		//initCanvasSize();
-		if(window.innerWidth < MIN_WIDTH){
-			Logger.error("Minimálna šírka obrazovky je " + MIN_WIDTH + "px");
+		if(window.innerWidth < LIMIT_MIN_SCREEN_WIDTH){
+			Logger.error("Minimálna šírka obrazovky je " + LIMIT_MIN_SCREEN_WIDTH + "px");
 			return;
 		}
-		
+		Content.onResize();
 		
 		Project.canvasManager.onResize();
 		Scene.onScreenResize();
 
-		if(isDefined(timeLine))
+		if(isDefined(timeLine)){
 			timeLine.onScreenResize();
+		}
 
-		if(isDefined(Layers))
+		if(isDefined(Layers)){
 			Layers.onScreenResize();
+		}
 
 		draw();
 	}
 
 	_initWindowListeners(){
 		window.onresize = this._onResize;
-
+		window.onunload = function(event){
+			if(Scene.isEmpty()){
+				localStorage.removeItem(RESTORE_KEY);
+				return;
+			}
+			var result = {
+				scene: Scene.toObject(),
+				creator: Creator.toObject(),
+				paint: Paints.toObject()
+			};
+			localStorage.setItem(RESTORE_KEY, JSON.stringify(result));
+		}
 		window.orientationchange = this._onResize;
 
 		window.onbeforeunload= function(event){
@@ -79,12 +91,14 @@ class InputManager{
 
 			e.target.onmouseup = ee => {
 
-				if(!this.isButtonDown(ee.button))
+				if(!this.isButtonDown(ee.button)){
 					return  false;
+				}
 				this._buttonUp(ee);
 
-				if(!Options.changeCursor)
+				if(!Options.changeCursor){
 					ee.target.onmousemove = false;
+				}
 				ee.target.onmouseup = false;
 
 				Listeners.mouseUp(new GVector2f(ee.offsetX, ee.offsetY), ee.button);
@@ -119,8 +133,9 @@ class InputManager{
 
 			e.target.addEventListener("touchend", (ee) => {
 				ee.preventDefault();
-				if(!Input.isButtonDown(LEFT_BUTTON))
+				if(!Input.isButtonDown(LEFT_BUTTON)){
 					return false;
+				}
 				Input._buttonUp({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
 				Listeners.mouseUp(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
 				draw();
@@ -128,8 +143,9 @@ class InputManager{
 
 			e.target.addEventListener("touchcancel", (ee) => {
 				ee.preventDefault();
-				if(!Input.isButtonDown(LEFT_BUTTON))
+				if(!Input.isButtonDown(LEFT_BUTTON)){
 					return false;
+				}
 				Input._buttonUp({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
 				Listeners.mouseUp(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
 				draw();
@@ -141,26 +157,28 @@ class InputManager{
 		this._keys[val] = true;
 		Events.keyDown(val);
 		Listeners.keyDown(val, this.isKeyDown(KEY_L_CTRL));
-	};
+	}
 
 	_keyUp(val){
 		this._keys[val] = false;
 		Events.keyUp(val);
 		Listeners.keyUp(val, this.isKeyDown(KEY_L_CTRL));
 
-		if(!this._hist[val])
+		if(!this._hist[val]){
 			this._hist[val] = 0;
+		}
 
 		this._hist[val]++;
-	};
+	}
 
 	isKeyDown(val){
 		return this._keys[val];
-	};
+	}
 
 	_checkPress(button){
-		if(SelectedText)
+		if(SelectedText){
 			return;
+		}
 		var inst = this;
 		this._buttons[button] = false;
 		canvas.onmousepress({
@@ -169,43 +187,48 @@ class InputManager{
 		});
 		Logger.log("podržané tlačítko myši ::" + button + "::" + inst._pressPosition.x + "::"+ inst._pressPosition.y, LOGGER_MOUSE_EVENT);
 
-		if(this._timer){}
-		this._clearTimer();
-	};
+		if(this._timer){//TODO čo je toto?? :D
+			this._clearTimer();
+		}
+	}
 
 	_clearTimer(){
 		clearTimeout(this._timer);
 		this._timer = false;
-	};
+	}
 
 	_mouseMove(val){
 		this._mousePos.set(val.offsetX, val.offsetY);
 		Events.mouseMove(val.offsetX, val.offsetY);
 
-		if(this._timer)
-			if(this._pressPosition.dist(val.offsetX, val.offsetY) > TOUCH_VARIATION)
+		if(this._timer){
+			if(this._pressPosition.dist(val.offsetX, val.offsetY) > TOUCH_VARIATION){
 				this._clearTimer();
-	};
+			}
+		}
+	}
 
 	_buttonDown(val){
 		this._buttons[val.button] = true;
 		Events.mouseDown(val.button, val.offsetX, val.offsetY);
 
 		var t = this;
-		if (this._timer)
+		if (this._timer){
 			this._clearTimer();
+		}
 		this._timer = setTimeout(function(){t._checkPress(val.button)}, TOUCH_DURATION);
 		this._pressPosition.set(val.offsetX, val.offsetY);
-	};
+	}
 
 	_buttonUp(val){
-		if (this._timer)
+		if (this._timer){
 			this._clearTimer();
+		}
 		this._buttons[val.button] = false;
 		Events.mouseUp(val.button, val.offsetX, val.offsetY);
-	};
+	}
 
 	isButtonDown(val){
 		return this._buttons[val];
-	};
+	}
 }

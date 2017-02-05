@@ -9,19 +9,19 @@ class Join extends Entity{
 		Entity.changeAttr(this, {borderColor: "blue", borderWidth: 5});
 
 		this._tmpPos 			= obj1.position.getClone();
-	};
+	}
 
 	set obj2(val){
 		this._obj2 = val;
 		this._obj2_connector = val.selectedConnector;
 		this._obj1.selectedConnector = false;
 		this._obj2.selectedConnector = false;
-	};
+	}
 
 	set type(val){
 		this._lineType = val;
 		draw();
-	};
+	}
 
 	updateCreatingPosition(pos){
 		this._tmpPos.set(pos);
@@ -39,10 +39,12 @@ class Join extends Entity{
 			array = [];
 
 
-		if(this._obj2 != null)
+		if(this._obj2 != null){
 			obj2pos = this._obj2.position.getClone().add(this._obj2.size.getClone().mul(this._obj2_connector));
-		else
+		}
+		else{
 			obj2pos = this._tmpPos;
+		}
 
 		array.push(obj1pos);
 
@@ -60,8 +62,9 @@ class Join extends Entity{
 					array.push(new GVector2f(center.x, obj2pos.y));
 					array.push(obj2pos);
 				}
-				else if (this._lineType == JOIN_BAZIER)
+				else if (this._lineType == JOIN_BAZIER){
 					array.push([new GVector2f(center.x, obj1pos.y),new GVector2f(center.x, obj2pos.y), obj2pos]);
+				}
 			}
 			else if(diff.x <= diff.y){
 				if(this._lineType == JOIN_SEQUENCAL) {
@@ -73,12 +76,15 @@ class Join extends Entity{
 					array.push([new GVector2f(obj1pos.x, center.y), new GVector2f(obj2pos.x, center.y), obj2pos]);
 			}
 		}
-		else
+		else{
 			array.push(obj2pos);
+		}
 
-		if(this._lineType == JOIN_BAZIER)
+		if(this._lineType == JOIN_BAZIER){
 			drawBazierCurve(array, this.borderWidth, this.borderColor);
-		else
+		}
+		else{
 			doLine({points: array, borderWidth: this.borderWidth, borderColor: this.borderColor, ctx: ctx});
-	};
+		}
+	}
 }

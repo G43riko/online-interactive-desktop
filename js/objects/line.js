@@ -61,8 +61,9 @@ class Line extends Entity{
 	set arrowStartType(val){this._arrowStartType = val;}
 
 	doubleClickIn(x, y){
-		if(!this.clickInBoundingBox(x, y))
+		if(!this.clickInBoundingBox(x, y)){
 			return false;
+		}
 
 		this._points.forEach(function(e, i){
 			if(new GVector2f(x, y).dist(e) < SELECTOR_SIZE){
@@ -78,7 +79,7 @@ class Line extends Entity{
 		}
 
 		return true;
-	};
+	}
 
 	_clickIn(x, y){
 		this.movingPoint = -1;
@@ -98,14 +99,17 @@ class Line extends Entity{
 
 
 		this._points.forEach(function(e,i, points){
-			if(this.movingPoint >= 0)
+			if(this.movingPoint >= 0){
 				return true;
-			if(new GVector2f(x, y).dist(e) < SELECTOR_SIZE)
+			}
+			if(new GVector2f(x, y).dist(e) < SELECTOR_SIZE){
 				this.movingPoint = i;
+			}
 			else if(i + 1 < points.length &&
 				new GVector2f(x, y).dist((e.x + (points[i + 1].x) >> 1),
-					(e.y + (points[i + 1].y) >> 1)) < SELECTOR_SIZE)
+					(e.y + (points[i + 1].y) >> 1)) < SELECTOR_SIZE){
 				this.movingPoint = parseFloat(i) + 0.5;
+			}
 		}, this);
 		if(this.movingPoint >= 0){
 			return this.movingPoint >= 0;
@@ -117,7 +121,7 @@ class Line extends Entity{
 			}
 		}
 		return false;
-	};
+	}
 
 	set targetB(val){
 		var object = val ? val.id : "";
@@ -149,8 +153,9 @@ class Line extends Entity{
 	}
 
 	static determineClick(p1, p2, x, y, maxDist){
-		if(x < Math.min(p1.x, p2.x) || x > Math.max(p1.x, p2.x) || y < Math.min(p1.y, p2.y) || y > Math.max(p1.y, p2.y))
+		if(x < Math.min(p1.x, p2.x) || x > Math.max(p1.x, p2.x) || y < Math.min(p1.y, p2.y) || y > Math.max(p1.y, p2.y)){
 			return false;
+		}
 
 		var dist = p1.dist(p2),
 			log = Math.ceil(Math.log2(dist)),
@@ -168,22 +173,25 @@ class Line extends Entity{
 		}
 		center = min.getClone().add(max).br(1);
 		for(i=0 ; i<log ; i++){
-			if(x > center.x)
+			if(x > center.x){
 				min = center;
-			else
+			}
+			else{
 				max = center;
+			}
 			center = min.add(max).br(1);
 
-			if(Math.abs(y - center.y) < maxDist)
+			if(Math.abs(y - center.y) < maxDist){
 				return true;
+			}
 		}
 		return false;
-	};
+	}
 
 	updateCreatingPosition(pos){
 		this._points[this._points.length - 1].set(pos);
 		Entity.findMinAndMax(this._points, this.position, this.size);
-	};
+	}
 
 	draw(ctx = context){
 		var obj, size = this._points.length;
@@ -211,8 +219,9 @@ class Line extends Entity{
 			Entity.findMinAndMax(this._points, this.position, this.size);
 		}
 
-		if(isNumber(this._radius) && this._radius > 1)
+		if(isNumber(this._radius) && this._radius > 1){
 			this._radius += "";
+		}
 
 		doLine({
 			shadow: this.moving && !this.locked,
@@ -326,5 +335,5 @@ class Line extends Entity{
 				drawSelectArc(ctx, (this._points[i].x + this._points[i - 1].x) >> 1, (this._points[i].y + this._points[i - 1].y) >> 1);
 			}
 		}
-	};
+	}
 }

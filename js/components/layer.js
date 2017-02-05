@@ -42,6 +42,18 @@ class Layer{
 		return this._paint;
 	};
 
+	isEmpty(){
+		if(this._paint && !this._paint.isEmpty()){
+			return false;
+		}
+		for(var i in this._objects){
+			if(this._objects.hasOwnProperty(i)){
+				return false;
+			}
+		}
+		return true;
+	}
+
 	set drawPaint(val){this._drawPaint = val;}
 	set visible(val){this._visible = val;}
 	set objects(val){this._objects = val;}

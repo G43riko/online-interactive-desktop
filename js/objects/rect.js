@@ -20,14 +20,16 @@ class Rect extends Entity {
 	updateCreatingPosition(pos){
 		this.size.x = pos.x - this.position.x;
 		this.size.y = pos.y - this.position.y;
-	};
+	}
 
 	_hover(x, y){
 		if(this.clickInBoundingBox(x, y)){
-			if(this._locked)
+			if(this._locked){
 				setCursor(CURSOR_NOT_ALLOWED);
-			else
+			}
+			else{
 				setCursor(CURSOR_POINTER);
+			}
 			return true;
 		}
 
@@ -40,14 +42,15 @@ class Rect extends Entity {
 		this.moveType = -1;
 		if(Input.isKeyDown(KEY_L_CTRL)){
 			this.checkConnectors(vec);
-			if(this._selectedConnector)
+			if(this._selectedConnector){
 				return true;
+			}
 		}
 		
 		Entity.setMoveType(this, vec);
 
 		return this.moveType >= 0;
-	};
+	}
 
 	_checkRadius(){
 		var minRadius = Math.min(this.size.x, this.size.y) >> 1;

@@ -14,7 +14,7 @@ class TextField extends Entity{
 		this._fontOffset 	= DEFAULT_TEXT_OFFSET;
 		this._link			= false;
 		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1))
-	};
+	}
 
 	get moveType(){return this._moveType;}
 	get text(){return this._text;}
@@ -49,67 +49,83 @@ class TextField extends Entity{
 		ctx.fillStyle = this._textColor;
 		ctx.font = this._fontSize + "pt " + DEFAULT_FONT;
 		
-		if(this._horizontalTextAlign == FONT_HALIGN_LEFT)
+		if(this._horizontalTextAlign == FONT_HALIGN_LEFT){
 			pos.x += this._fontOffset;
-		else if(this._horizontalTextAlign == FONT_HALIGN_CENTER)
+		}
+		else if(this._horizontalTextAlign == FONT_HALIGN_CENTER){
 			pos.x += this.size.x >> 1;
-		else if(this._horizontalTextAlign == FONT_HALIGN_RIGHT)
+		}
+		else if(this._horizontalTextAlign == FONT_HALIGN_RIGHT){
 			pos.x += this.size.x - this._fontOffset;
+		}
 
-		if(this._verticalTextAlign == FONT_VALIGN_MIDDLE)
+		if(this._verticalTextAlign == FONT_VALIGN_MIDDLE){
 			pos.y += this.size.y >> 1;
-		else if(this._verticalTextAlign == FONT_VALIGN_BOTT)
+		}
+		else if(this._verticalTextAlign == FONT_VALIGN_BOTT){
 			pos.y += this.size.y - this._fontOffset;
+		}
 
 		ctx.fillText(this._text, pos.x, pos.y);
 
 		drawBorder(ctx, this);
 		Entity.drawConnectors(this, ctx);
-	};
+	}
 
 	clickIn(x, y){
-		if(!this.clickInBoundingBox(x, y))
+		if(!this.clickInBoundingBox(x, y)){
 			return false;
+		}
 
 		var pos = this.position,
 			vec = new GVector2f(x, y);
 
 
 		this.checkConnectors(vec);
-		if(this._selectedConnector)
+		if(this._selectedConnector){
 			return true;
+		}
 
-		if(vec.dist(pos.x + (this.size.x >> 1), pos.y) < SELECTOR_SIZE)
+		if(vec.dist(pos.x + (this.size.x >> 1), pos.y) < SELECTOR_SIZE){
 			this._moveType = 0;
-		else if(vec.dist(pos.x + this.size.x, pos.y + (this.size.y >> 1)) < SELECTOR_SIZE)
+		}
+		else if(vec.dist(pos.x + this.size.x, pos.y + (this.size.y >> 1)) < SELECTOR_SIZE){
 			this._moveType = 1;
-		else if(vec.dist(pos.x +(this.size.x >> 1), pos.y + this.size.y) < SELECTOR_SIZE)
+		}
+		else if(vec.dist(pos.x +(this.size.x >> 1), pos.y + this.size.y) < SELECTOR_SIZE){
 			this._moveType = 2;
-		else if(vec.dist(pos.x, pos.y + (this.size.y >> 1)) < SELECTOR_SIZE)
+		}
+		else if(vec.dist(pos.x, pos.y + (this.size.y >> 1)) < SELECTOR_SIZE){
 			this._moveType = 3;
-		else if(vec.dist(pos.x + this.size.x, pos.y + this.size.y) < SELECTOR_SIZE)
+		}
+		else if(vec.dist(pos.x + this.size.x, pos.y + this.size.y) < SELECTOR_SIZE){
 			this._moveType = 5;
-		else if(x > this.position.x && y > this.position.y && x < this.position.x + this.size.x && y < this.position.y + this.size.y)
+		}
+		else if(x > this.position.x && y > this.position.y && x < this.position.x + this.size.x && y < this.position.y + this.size.y){
 			this._moveType = 4;
+		}
 		return this._moveType >= 0;
-	};
+	}
 
 	doubleClickIn(x, y){
-		if(!this.clickInBoundingBox(x, y))
+		if(!this.clickInBoundingBox(x, y)){
 			return false;
+		}
 
 		getText(this._text, new GVector2f(x, y), this._size.getClone().sub(4), function(val){
-			if(val.length == 0)
+			if(val.length == 0){
 				Scene.remove(this);
+			}
 			this._text = val;
 			this._size.x = calcTextWidth(val) + (DEFAULT_TEXT_OFFSET << 1);
 
-			if(Task && this.taskResult)
+			if(Task && this.taskResult){
 				this._hightlight = Task.checkResult(this) ? HIGHTLIGHT_CORRECT : HIGHTLIGHT_WRONG;
+			}
 		}, this);
 
 		return true;
-	};
+	}
 
 	set text(val){
 		this._text = val;

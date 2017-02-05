@@ -275,6 +275,9 @@ class MenuManager{
 		switch(key){
 			case "tools":
 				this._toolActive = "tools";
+				if(Creator.operation === OPERATION_DRAW_PATH){
+					Logger.notif("pre výber nástrojov podržne stlačené tlačidlo myši na možnosti TOOLS")
+				}
 				break;
 			case "color":
 				pickUpColor(color => Creator.setOpt(ATTRIBUTE_FILL_COLOR, color));
@@ -316,21 +319,19 @@ class MenuManager{
 				Paints.redo();
 				break;
 			case "saveImg":
-				//saveCanvasAsFile();
 				showSavingOptions();
 				break;
 			case "watch":
 				showWatcherOptions();
-				//window.open(Sharer.watcherUrl, '_blank');
 				break;
 			case "saveTask":
 				saveSceneAsTask();
 				break;
 			case "stopShare":
-				Sharer.stopShare();
+				//Sharer.stopShare();
+				Project.connection.disconnect();
 				break;
 			case "saveXML":
-				//saveSceneAsFile();
 				showXmlSavingOptions();
 				break;
 			case "loadXML":

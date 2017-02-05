@@ -25,23 +25,54 @@ class Entity{
 
 		Entity.changeAttr(this, data);
 
-		if(isUndefined(this._connectors))	//presunute nižšie lebo chcem priradiť iba ak neexsituju
+		if(isUndefined(this._connectors)){	//presunute nižšie lebo chcem priradiť iba ak neexsituju
 			this._connectors 	= [new GVector2f(0.5, 0), new GVector2f(0.5, 1), new GVector2f(0, 0.5), new GVector2f(1, 0.5)];
+		}
 
-		if(isUndefined(this._id))	//presunute pod priradenie atributov lebo chcem priradiť ID iba ak nieje ešte
+		if(isUndefined(this._id)){	//presunute pod priradenie atributov lebo chcem priradiť ID iba ak nieje ešte
 			this._id			= Project.generateId();//Entity.getId();
+		}
 
-		if(isUndefined(this._borderWidth))
+		if(isUndefined(this._borderWidth)){
 			this._borderWidth	= Creator.borderWidth;
+		}
 
-		if(isUndefined(this._radius))
+		if(isUndefined(this._radius)){
 			this._radius 		= Creator.radius;
+		}
 
-		if(isUndefined(this._fillColor))
+		if(isUndefined(this._fillColor)){
 			this._fillColor 	= Creator.color;
+		}
 
-		if(isUndefined(this._borderColor))
+		if(isUndefined(this._borderColor)){
 			this._borderColor 	= Creator.borderColor;
+		}
+	}
+
+	highlight(){
+		var counter = 0,
+			speed = HIGHLIGHT_SPEED,
+			movement = 1,
+			interval = setInterval(() => {
+				this._position.sub(speed);
+				this._size.add(speed * 2);
+				counter += movement;
+				if(counter === HIGHLIGHT_LIMIT){
+					speed *= -1;
+					movement *= -1;
+				}
+				else if(counter === 0){
+					if(--HIGHLIGHT_COUNT > 0){
+						speed *= -1;
+						movement *= -1;
+					}
+					else{
+						clearInterval(interval);
+					}
+				}
+				draw();
+			}, 1000 / FPS);
 	}
 
 	isIn(x, y, radius = 0){
@@ -59,8 +90,9 @@ class Entity{
 	}
 
 	removeParent(){
-		if(this._parent)
+		if(this._parent){
 			this._parent.removeChildren(this);
+		}
 
 		return this;
 	}
@@ -81,9 +113,7 @@ class Entity{
 	}
 
 	eachChildren(func){
-		each(this._childrens, (e) => {
-			func(e);
-		});
+		each(this._childrens, e => func(e));
 	}
 
 	/**
@@ -92,8 +122,9 @@ class Entity{
 	 * @returns {Number}
 	 */
 	static getId(){
-		if(isUndefined(Entity._actId))
+		if(isUndefined(Entity._actId)){
 			Entity._actId = 0;
+		}
 		return Entity._actId++;
 	}
 
@@ -117,7 +148,7 @@ class Entity{
 	clickInBoundingBox(x, y, obj = this){
 		return x + SELECTOR_SIZE > obj._position.x && x - SELECTOR_SIZE < obj._position.x + obj._size.x &&
 			   y + SELECTOR_SIZE > obj._position.y && y - SELECTOR_SIZE < obj._position.y + obj._size.y;
-	};
+	}
 
 
 	/**
@@ -131,16 +162,18 @@ class Entity{
 		//if(this.locked)
 		//	return false;
 
-		if (!this.clickInBoundingBox(x, y))
+		if (!this.clickInBoundingBox(x, y)){
 			return false;
+		}
 		return this._clickIn(x, y);
-	};
+	}
 
-	_clickIn(x, y){return false;};
+	_clickIn(x, y){return false;}
 
 	hover(x, y){
-		if(!this.clickInBoundingBox(x, y))
+		if(!this.clickInBoundingBox(x, y)){
 			return false;
+		}
 		return this._hover(x, y);
 	}
 
@@ -174,7 +207,7 @@ class Entity{
 	/**
 	 * Vyčistí objekt (vykonáva sa tesne pred zmazaním)
 	 */
-	cleanUp(){};
+	cleanUp(){}
 
 
 	_draw(){}
@@ -184,21 +217,24 @@ class Entity{
 	 */
 	draw(ctx = context){
 		//skontroluje či sa túto snímku už nevykresloval
-		if(this._drawCounter === Project.drawCounter)
+		if(this._drawCounter === Project.drawCounter){
 			return;
+		}
 		this._drawCounter = Project.drawCounter;
 
 		//ak je neviditelný nevykreslí sa
-		if (!this.visible)
+		if (!this.visible){
 			return;
+		}
 
 
 		this._draw(ctx);
 
 
-		for(var e in this._childrens)
+		for(var e in this._childrens){
 			this._childrens[e].draw(ctx);
-	};
+		}
+	}
 
 
 	/**
@@ -210,10 +246,12 @@ class Entity{
 	 * @returns {*}
 	 */
 	static setAttr(obj, attr, val){
-		if(isUndefined(Entity["attr"]) || isDefined(Entity["attr"]["Entity"][attr]) || isDefined(Entity["attr"][obj.name][attr]))
+		if(isUndefined(Entity.attr) || isDefined(Entity.attr.Entity[attr]) || isDefined(Entity.attr[obj.name][attr])){
 			obj["_" + attr] = val;
-		else
+		}
+		else{
 			Logger.error("k objektu " + obj.name + " sa snaží priradiť neplatný atribút: " + attr);
+		}
 
 		Events.objectChange(obj, attr, val);
 		return obj;
@@ -229,10 +267,12 @@ class Entity{
 	 * @returns {*}
 	 */
 	static changeAttr(obj, data, val){
-		if(isObject(data))
+		if(isObject(data)){
 			each(data, (e, i) => Entity.setAttr(obj, i, e));
-		else 
+		}
+		else{
 			Entity.setAttr(obj, data, val);
+		}
 		return obj;
 	}
 
@@ -247,7 +287,7 @@ class Entity{
 	static findMinAndMax(points, position, size){
 		position.set(points[0]);
 		size.set(points[0]);
-		points.forEach(function(e, i){
+		each(points, function(e, i){
 			if(i){
 				position.x = Math.min(points[i].x, position.x);
 				position.y = Math.min(points[i].y, position.y);
@@ -272,8 +312,9 @@ class Entity{
 		this._selectedConnector = false;
 		//this._connectors.forEach(function(e){
 		each(this._connectors, (e, i) => {
-			if(this._selectedConnector)
+			if(this._selectedConnector){
 				return;
+			}
 			var d = e.getClone().mul(this.size);
 			if (vec.dist(this.position.x + d.x, this.position.y + d.y) < SELECTOR_SIZE){
 				this._selectedConnector = i;
@@ -281,10 +322,6 @@ class Entity{
 				//	Creator.createObject(this);
 			}
 		});
-	}
-
-	get selectedConnector(){
-		return this._selectedConnector;
 	}
 
 	getConnectorPosition(i){
@@ -307,7 +344,7 @@ class Entity{
 		}
 
 		obj._connectors.forEach(e => drawConnector(e, obj, ctx));
-	};
+	}
 
 
 	/**
@@ -338,18 +375,24 @@ class Entity{
 	 * @param vec
 	 */
 	static setMoveType(obj, vec){
-		if (vec.dist(obj.position.x + (obj.size.x >> 1), obj.position.y) < SELECTOR_SIZE)
+		if (vec.dist(obj.position.x + (obj.size.x >> 1), obj.position.y) < SELECTOR_SIZE){
 			obj.moveType = 0;
-		else if (vec.dist(obj.position.x + obj.size.x, obj.position.y + (obj.size.y >> 1)) < SELECTOR_SIZE)
+		}
+		else if (vec.dist(obj.position.x + obj.size.x, obj.position.y + (obj.size.y >> 1)) < SELECTOR_SIZE){
 			obj.moveType = 1;
-		else if (vec.dist(obj.position.x + (obj.size.x >> 1), obj.position.y + obj.size.y) < SELECTOR_SIZE)
+		}
+		else if (vec.dist(obj.position.x + (obj.size.x >> 1), obj.position.y + obj.size.y) < SELECTOR_SIZE){
 			obj.moveType = 2;
-		else if (vec.dist(obj.position.x, obj.position.y + (obj.size.y >> 1)) < SELECTOR_SIZE)
+		}
+		else if (vec.dist(obj.position.x, obj.position.y + (obj.size.y >> 1)) < SELECTOR_SIZE){
 			obj.moveType = 3;
-		else if (vec.dist(obj.position.x + obj.size.x, obj.position.y + obj.size.y) < SELECTOR_SIZE)
+		}
+		else if (vec.dist(obj.position.x + obj.size.x, obj.position.y + obj.size.y) < SELECTOR_SIZE){
 			obj.moveType = 5;
-		else if (vec.x > obj.position.x && vec.y > obj.position.y && vec.x < obj.position.x + obj.size.x && vec.y < obj.position.y + obj.size.y)
+		}
+		else if (vec.x > obj.position.x && vec.y > obj.position.y && vec.x < obj.position.x + obj.size.x && vec.y < obj.position.y + obj.size.y){
 			obj.moveType = 4;
+		}
 	}
 
 	/**
@@ -379,7 +422,7 @@ class Entity{
 				Logger.error("snažíš sa vložiť objekt s neznámym menom: " + obj._name);
 				return null;
 		}
-	};
+	}
 
 	/**
 	 * Vytvorým nový objekt
@@ -390,8 +433,9 @@ class Entity{
 	 */
 	static create(obj, generateId = true){
 		//ak niekto pošle JSON ako konštruktor
-		if(isString(obj))
+		if(isString(obj)){
 			obj = JSON.parse(obj);
+		}
 
 		//vytvorím novú inštanciue
 		var result = Entity.createInstance(obj);
@@ -399,16 +443,21 @@ class Entity{
 		if(result){
 			//nakopírujem atributy
 			each(obj, function(e, i){
-				if(e && isDefined(e["_x"]) && typeof isDefined(e["_y"]))
+				if(e && isDefined(e["_x"]) && typeof isDefined(e["_y"])){
 					result[i] = new GVector2f(e._x, e._y);
-				else if(i == "data")
+				}
+				else if(i == "data"){
 					result[i] = e.map(ee => ee.map(eee => eee));
-				else if(i == "points")
+				}
+				else if(i == "points"){
 					result[i] = e.map(ee => new GVector2f(ee._x, ee._y));
-				else if(i == "_id" && generateId)
+				}
+				else if(i == "_id" && generateId){
 					result[i] = Project.generateId();//Entity.getId();
-				else
+				}
+				else{
 					result[i] = e;
+				}
 			});
 			Logger.notif("objekt bol úspešne vytvorený");
 			Logger.log("Vytvoril sa objekt " + (result.name || "Neznámy"), LOGGER_OBJECT_CREATED);
@@ -475,7 +524,7 @@ class Entity{
 	//set id(val){this._id = val;}
 	set layer(val){this._layer = val;}
 	set locked(val){this._locked = val;}
-	set minSize(val){this._minSize = val};
+	set minSize(val){this._minSize = val;}
 	set selected(val){this._selected = val;}
 	//set fillColor(val){this._fillColor = val;}
 	//set borderWidth(val){this._borderWidth = val;}

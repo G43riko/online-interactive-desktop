@@ -7,12 +7,24 @@ class ContentManager{
 		this._contentHTML  = null;
 		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
-	setContentImage(src = false){
-		if(this._contentImage === null)
-			this._contentImage = document.getElementById("contentImage");
 
-		if(src)
+	onResize(){
+		if(this._contentImage === null){
+			return;
+		}
+		this._contentImage.width = window.innerWidth;
+		this._contentImage.height = window.innerHeight;
+	}
+
+	setContentImage(src = false){
+		if(this._contentImage === null){
+			this._contentImage = document.getElementById("contentImage");
+			this.onResize();
+		}
+
+		if(src){
 			this._contentImage.src = src;
+		}
 		else{
 			this._contentImage.src = "#";
 			loadImage(img => this._contentImage.src = img.src);
@@ -22,16 +34,19 @@ class ContentManager{
 	}
 
 	setContentHTML(){
-		if(this._contentHTML === null)
+		if(this._contentHTML === null){
 			this._contentHTML = document.getElementById("contentHTML");
+		}
 		this._contentHTML.classList.remove("hide");
 		loadFile(html => this._contentHTML.innerHTML = html);
 	}
 
 	hideContent(){
-		if(this._contentImage !== null)
+		if(this._contentImage !== null){
 			this._contentImage.classList.add("hide");
-		if(this._contentHTML !== null)
+		}
+		if(this._contentHTML !== null){
 			this._contentHTML.classList.add("hide");
+		}
 	}
 }

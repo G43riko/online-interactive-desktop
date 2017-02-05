@@ -3,6 +3,7 @@
 */
 class SceneManager{
 	constructor(){
+		this._clickViewers = [];
 		this._layers = {};
 		this._secondCanvas = null;
 		this._layersCount = 0;
@@ -10,7 +11,53 @@ class SceneManager{
 		this._objectManager = new ObjectsManager();
 
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
-	};
+	}
+
+	isEmpty(){
+		for(var i in this._layers){
+			if(this._layers.hasOwnProperty(i) && !this._layers[i].isEmpty()){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	mouseUp(x, y){
+		var counter = 0;
+		var viewer = new Arc(new GVector2f(x, y), new GVector2f());
+		Entity.changeAttr(viewer, {
+			"fill" : false,
+			"borderColor" : CLICK_COLOR
+		});
+		this._clickViewers.push(viewer);
+		var interval = setInterval(() => {
+			viewer.position.sub(CLICK_SPEED);
+			viewer.size.add(CLICK_SPEED * 2);
+			draw();
+			if(++counter == CLICK_LIMIT){
+				clearInterval(interval);
+				this._clickViewers.splice(this._clickViewers.indexOf(viewer), 1);
+			}
+		}, 1000 / FPS);
+	}
+	mouseDown(x, y){
+		var counter = 0;
+		var viewer = new Arc(new GVector2f(x, y).sub(CLICK_SPEED*CLICK_LIMIT), new GVector2f(CLICK_SPEED * 2 * CLICK_LIMIT));
+		Entity.changeAttr(viewer, {
+			"fill" : false,
+			"borderColor" : CLICK_COLOR
+		});
+		this._clickViewers.push(viewer);
+		var interval = setInterval(() => {
+			viewer.position.add(CLICK_SPEED);
+			viewer.size.sub(CLICK_SPEED * 2);
+			draw();
+			if(++counter == CLICK_LIMIT){
+				clearInterval(interval);
+				this._clickViewers.splice(this._clickViewers.indexOf(viewer), 1);
+			}
+		}, 1000 / FPS);
+	}
 
 	initSecondCanvas(){
 		this._secondCanvas = new CanvasHandler();
@@ -21,7 +68,7 @@ class SceneManager{
 
 	forEach(func){
 		each(this._layers, e => e.visible && e.forEach(func));
-	};
+	}
 
 	cleanUp(){
 		each(this._layers, e => {
@@ -32,7 +79,7 @@ class SceneManager{
 
 		Events.sceneCleanUp();
 		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
-	};
+	}
 
 	onScreenResize(){
 		each(this._layers, e => e.paint.onScreenResize())
@@ -57,7 +104,7 @@ class SceneManager{
 
 		Events.layerCreate(title, layerType);
 		return this._layers[title];
-	};
+	}
 
 	getLayer(layer){
 		return this._layers[layer];
@@ -90,7 +137,7 @@ class SceneManager{
 			Layers.deleteLayer(title);
 
 		Events.layerDelete(title);
-	};
+	}
 
 	changeLayer(object, newLayer){
 		var layer = Project.scene.getLayer(newLayer);
@@ -193,14 +240,17 @@ class SceneManager{
 
 	draw(){
 		each(this._layers, e => e.draw());
-	};
+		for(var i=0 ; i<this._clickViewers.length ; i++){
+			this._clickViewers[i].draw();
+		}
+	}
 
 
 	remove(obj, layer = obj.layer, resend = true){
 		this._layers[layer].remove(obj);
 		Events.objectDeleted(resend, obj);
 
-	};
+	}
 
 
 	toString(){
@@ -208,7 +258,7 @@ class SceneManager{
 	}
 
 	fromObject(content){
-		each(content, e => Creator.create(e));
+		each(content, Creator.create);
 	}
 
 	fromObjectToSingleLayer(layer, content){
@@ -226,8 +276,10 @@ class SceneManager{
 				result.push(ee)
 		}));*/
 		each(this._layers, e => e.forEach(function(ee){//pre každu vrstvu prejde všetkými objektami
-			if(ee.name != "LayerViewer")
+			if(ee.name != "LayerViewer"){
 				result.push(ee)
+				console.log("pridava sa: ", e, ee);
+			}
 		}));
 		return result;
 	}

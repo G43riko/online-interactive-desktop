@@ -2,6 +2,88 @@
 	compatible:	strictMode, Array.isArray 14.9.2016
 */
 
+function testCompatibility(){
+	var ca = document.createElement("canvas");
+	var co = ca.getContext("2d");
+
+	var isUndefined = function(object, key){
+		if(typeof object[key] === "undefined"){
+			alert("objekt " + object + " neobsahuje atribut " + key);
+		}
+	};
+	isUndefined(co, "canvas");
+	isUndefined(co, "currentTransform");//
+	isUndefined(co, "direction");//
+	isUndefined(co, "fillStyle");
+	isUndefined(co, "filter");//
+	isUndefined(co, "font");
+	isUndefined(co, "globalAlpha");
+	isUndefined(co, "globalCompositeOperation");
+	isUndefined(co, "imageSmoothingEnabled");//
+	isUndefined(co, "imageSmoothingQuality");//
+	isUndefined(co, "lineCap");
+	isUndefined(co, "lineDashOffset");//
+	isUndefined(co, "lineJoin");
+	isUndefined(co, "lineWidth");
+	isUndefined(co, "miterLimit");
+	isUndefined(co, "shadowBlur");
+	isUndefined(co, "shadowColor");
+	isUndefined(co, "shadowOffsetX");
+	isUndefined(co, "shadowOffsetY");
+	isUndefined(co, "strokeStyle");
+	isUndefined(co, "textAlign");
+	isUndefined(co, "textBaseline");
+
+	isUndefined(co, "addHitRegion")//
+	isUndefined(co, "arc")
+	isUndefined(co, "arcTo")
+	isUndefined(co, "asyncDrawXULElement")//
+	isUndefined(co, "beginPath")
+	isUndefined(co, "bezierCurveTo")
+	isUndefined(co, "clearHitRegions")//
+	isUndefined(co, "clearRect")
+	isUndefined(co, "clip")
+	isUndefined(co, "closePath")
+	isUndefined(co, "createImageData")
+	isUndefined(co, "createLinearGradient")
+	isUndefined(co, "createPattern")
+	isUndefined(co, "createRadialGradient")
+	isUndefined(co, "drawFocusIfNeeded")//
+	isUndefined(co, "drawImage")
+	isUndefined(co, "drawWidgetAsOnScreen")//
+	isUndefined(co, "drawWindow")//
+	isUndefined(co, "ellipse")//
+	isUndefined(co, "fill")
+	isUndefined(co, "fillRect")
+	isUndefined(co, "fillText")
+	isUndefined(co, "getImageData")
+	isUndefined(co, "getLineDash")//
+	isUndefined(co, "isPointInPath")
+	isUndefined(co, "isPointInStroke")//
+	isUndefined(co, "lineTo")
+	isUndefined(co, "measureText")
+	isUndefined(co, "moveTo")
+	isUndefined(co, "putImageData")
+	isUndefined(co, "quadraticCurveTo")
+	isUndefined(co, "rect")
+	isUndefined(co, "removeHitRegion")//
+	isUndefined(co, "resetTransform")//
+	isUndefined(co, "restore")
+	isUndefined(co, "rotate")
+	isUndefined(co, "save")
+	isUndefined(co, "scale")
+	isUndefined(co, "scrollPathIntoView")//
+	isUndefined(co, "setLineDash")//
+	isUndefined(co, "setTransform")
+	isUndefined(co, "stroke")
+	isUndefined(co, "strokeRect")
+	isUndefined(co, "strokeText")
+	isUndefined(co, "transform")
+	isUndefined(co, "translate")
+	
+	isUndefined(window, "performance");
+}
+
 class Animation{
 	static init(loop){
 		Animation._running = false;
@@ -496,6 +578,22 @@ function setConstants(data){
 /**************************************************************************************
 POLYFILLS
 **************************************************************************************/
+
+/*****************
+MOJE
+*****************/
+if(!String.prototype.startsWith){
+	String.prototype.startsWith = function(char){
+		var s = String(this);
+		if(s.length === 0){
+			return false;
+		}
+		return s.charAt(0) === char;
+	}
+}
+/*****************
+DEFAULTNE
+*****************/
 
 // Production steps of ECMA-262, Edition 5, 15.4.4.18
 // Reference: http://es5.github.io/#x15.4.4.18

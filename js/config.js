@@ -271,6 +271,24 @@ if(false){
 	const ACTION_KEY_UP				= 2322;
 	const ACTION_PAINT_ADD_PATH		= 2323;
 	const ACTION_PAINT_REMOVE_PATH	= 2324;
+	
+	const LOGGER_MENU_CLICK			= 2600;
+	const LOGGER_CREATOR_CHANGE		= 2601;
+	const LOGGER_CONTEXT_CLICK		= 2602;
+	const LOGGER_OBJECT_CREATED		= 2604;
+	const LOGGER_OBJECT_ADDED		= 2605;
+	const LOGGER_OBJECT_CLEANED		= 2609;
+	const LOGGER_COMPONENT_CREATE	= 2606;
+	const LOGGER_PAINT_HISTORY		= 2607;
+	const LOGGER_PAINT_ACTION		= 2608;
+	const LOGGER_MOUSE_EVENT		= 2610;
+	const LOGGER_KEY_EVENT			= 2611;
+	const LOGGER_DRAW				= 2612;		
+	const LOGGER_CHANGE_OPTION		= 2613;	
+	const LOGGER_LAYER_CHANGE		= 2603;
+	const LOGGER_LAYER_CLEANED		= 2614;
+	const LOGGER_LAYER_RENAMED		= 2615;
+	const LOGGER_LAYER_RASTERED		= 2616;
 }
 
 const CUT_OFF_AFTER_DISTANCE	= 100;
@@ -296,23 +314,7 @@ const COMPONENT_SAVE	= "i";
 const COMPONENT_LAYERS	= "j";
 const COMPONENT_TASK	= "k";
 
-const LOGGER_MENU_CLICK			= 2600;
-const LOGGER_CREATOR_CHANGE		= 2601;
-const LOGGER_CONTEXT_CLICK		= 2602;
-const LOGGER_OBJECT_CREATED		= 2604;
-const LOGGER_OBJECT_ADDED		= 2605;
-const LOGGER_OBJECT_CLEANED		= 2609;
-const LOGGER_COMPONENT_CREATE	= 2606;
-const LOGGER_PAINT_HISTORY		= 2607;
-const LOGGER_PAINT_ACTION		= 2608;
-const LOGGER_MOUSE_EVENT		= 2610;
-const LOGGER_KEY_EVENT			= 2611;
-const LOGGER_DRAW				= 2612;		
-const LOGGER_CHANGE_OPTION		= 2613;	
-const LOGGER_LAYER_CHANGE		= 2603;
-const LOGGER_LAYER_CLEANED		= 2614;
-const LOGGER_LAYER_RENAMED		= 2615;
-const LOGGER_LAYER_RASTERED		= 2616;
+
 
 
 const MSG_DIVIDER = "########";
@@ -329,7 +331,8 @@ const MSG_UNKNOW_ACTION					= "neznáma akcia: " + MSG_DIVIDER;
 const MSG_RECIEVED_UNKNOWN_ACTION		= "bola prijatá neznáma akcia: " + MSG_DIVIDER;
 const MSG_TRY_DRAW_EMPTY_POLYGON		= "chce sa vykresliť Polygon bez pointov";
 const MSG_TRY_DRAW_EMPTY_LINE			= "chce sa vykresliť Line bez pointov";
-const MSG_TRY_DRAW_ONE_POINT_LINE		= "chce sa vykresliť Line bez pointov";
+const MSG_TRY_DRAW_ONE_POINT_LINE		= "chce sa vykresliť Line z jedným bodom";
+const MSG_LOAD_OLD_PROJECT				= "Našiel sa rozpracovaný projekt, prajete si ho obnoviť???";
 const MSG_TRY_DRAW_WITHOUT_POSITION		= "chce sa vykresliť " + MSG_DIVIDER + " bez pozície";
 const MSG_TRY_DRAW_WITHOUT_SIZE			= "chce sa vykresliť " + MSG_DIVIDER + " bez veľkosti";
 const MSG_TRY_DRAW_WITH_NEG_POSITION	= "chce sa vykresliť " + MSG_DIVIDER + " zo zápornou velkosťou";
