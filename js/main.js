@@ -223,6 +223,7 @@ ajax(FOLDER_JSON + "/forms.json", data => {
 	Project.options.init();
 }, "json");
 
+/*
 $.ajax({
 	dataType: "json",
 	url: "/js/json/config_user.json",
@@ -232,6 +233,7 @@ $.ajax({
 		setVisibilityData(data.visibilityOptions);
 	}
 });
+*/
 
 var loading = function(){
 	/////DOLEZITE!!!
@@ -280,7 +282,7 @@ var loading = function(){
 	draw();
 };
 
-$(loading);
+//$(loading);
 
 function realDraw(){
 	if((typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected) || !Project.context || !isObject(Project.context)){

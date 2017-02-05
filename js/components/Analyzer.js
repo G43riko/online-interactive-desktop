@@ -1,5 +1,6 @@
 /**
  * Created by gabriel on 30.12.2016.
+ * JShint 4.2.2017
  */
 
 class Analyzer{
@@ -12,11 +13,11 @@ class Analyzer{
 		return this._browserData;
 	}
 	get isMobile(){
-		return this._browserData["mobile"] !== 0;
+		return this._browserData.mobile !== 0;
 	}
 
 	sendData(){
-		this._sendAnonymousData(this._browserData)
+		this._sendAnonymousData(this._browserData);
 	}
 
 	_sendAnonymousData(data = {}){
@@ -27,8 +28,8 @@ class Analyzer{
 		if(navigator.geolocation){
 			navigator.geolocation.watchPosition(position => {
 					navigator.geolocation.getCurrentPosition(a => {
-						data["accuracy"] = a.coords && a.coords.accuracy  || "unknown";
-						data["position"]   = {
+						data.accuracy = a.coords && a.coords.accuracy  || "unknown";
+						data.position = {
 							lat : a.coords.latitude,
 							lon : a.coords.longitude
 						};
@@ -36,8 +37,9 @@ class Analyzer{
 					});
 				},
 				function (error) {
-					if (error.code == error.PERMISSION_DENIED)
+					if (error.code == error.PERMISSION_DENIED){
 						sendData(data);
+					}
 				});
 			return;
 		}
@@ -46,15 +48,15 @@ class Analyzer{
 	}
 
 	_analyzeWindow(data){
-		data["userAgent"]	= navigator.userAgent;
-		data["language"]	= navigator.language;
-		data["platform"]	= navigator.platform;
-		data["vendor"]		= navigator.vendor;
-		data["innerHeight"]	= window.innerHeight;
-		data["innerWidth"]	= window.innerWidth;
-		data["availHeight"]	= screen.availHeight;
-		data["availWidth"]	= screen.availWidth;
-		data["connectedAt"]	= getFormattedDate();
+		data.userAgent		= navigator.userAgent;
+		data.language		= navigator.language;
+		data.platform		= navigator.platform;
+		data.vendor		= navigator.vendor;
+		data.innerHeight	= window.innerHeight;
+		data.innerWidth	= window.innerWidth;
+		data.availHeight	= screen.availHeight;
+		data.availWidth	= screen.availWidth;
+		data.connectedAt	= getFormattedDate();
 		return data;
 	}
 
@@ -86,6 +88,6 @@ class Analyzer{
 			mobile: /IEMobile|Windows Phone|Lumia/i.test(e) ? 'w' : /iPhone|iP[oa]d/.test(e) ? 'i' : /Android/.test(e) ? 'a' : /BlackBerry|PlayBook|BB10/.test(e) ? 'b' : /Mobile Safari/.test(e) ? 's' : /webOS|Mobile|Tablet|Opera Mini|\bCrMo\/|Opera Mobi/i.test(e) ? 1 : 0,
 			tablet: /Tablet|iPad/i.test(e),
 			touch: 'ontouchstart' in document.documentElement
-		}
+		};
 	}
 }

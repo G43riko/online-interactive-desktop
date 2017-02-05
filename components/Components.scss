@@ -1,6 +1,5 @@
 //OPTIONS
 
-
 //ORIGINAL
 $bgColor: #1abc9c;
 $bgHoverColor: #2fcaac;
@@ -27,17 +26,25 @@ $backgroundColorDisabled : #E6EBE0;
 $borderColor : #F4F1BB;
 $borderHoverColor: darken($borderColor, 20%);
 */
+
+$minScreenWidth: 850px;
+$svgScreenWidth: 1200px;
 	
 $bgGradient: linear-gradient($bgHoverColor, $bgColor);
 $menuOffset: 10px;
 $menuWidth: 50px;
-$menuHeight: 50px;	
+$menuHeight: 50px;
+$menuHeight: max($menuHeight, 20px);
+
+$layersViewerWidth: 100px;
+$layersViewerWidth: max(178px, $layersViewerWidth);
 
 //GLOBAL
 *, *::before, *::after {
 	box-sizing: border-box;
 	padding: 0;
 	margin: 0;
+	outline: 1px solid black;
 }
 
 .hidden{
@@ -145,7 +152,7 @@ $menuHeight: 50px;
 	top: 10px;
 	bottom: 20px;
 	right: 10px;
-	width: 210px;
+	width: $layersViewerWidth;
 	color: $borderColor;
 	background-color: $bgColor;
 	border: 2px solid $borderColor;
@@ -196,7 +203,7 @@ $menuHeight: 50px;
 
 			.tmpLayerInput{
 				position: relative;
-				width: 120px;
+				width: $layersViewerWidth - 90px;
 				height: 26px;
 				background-color: $bgColor;
 				border: 2px solid $borderColor;
@@ -217,13 +224,17 @@ $menuHeight: 50px;
 				color:$borderHoverColor;
 			}
 
+			.visible:hover{
+				border: 2px solid $borderHoverColor;
+			}
+
 			.title{
 				position: relative;
 				display: inline-block;
 				margin-left: 10px;
 				line-height: 40px;
 				font-size: 25px;
-				max-width: 130px;
+				max-width: $layersViewerWidth - 80px;
 	    		overflow:hidden; 
 				white-space:nowrap; 
 				text-overflow: ellipsis;
@@ -278,7 +289,8 @@ $menuHeight: 50px;
 			width: 54px;
 			height: 30px;
 			margin-top: 10px;
-			margin-left: 10px;
+			margin-left: ($layersViewerWidth - (54px * 3)) / 4;
+			//margin-left: 10px;
 			cursor: pointer;
 			font-size:50px;
 			font-weight: bold;	

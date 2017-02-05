@@ -8,7 +8,9 @@
 		<!--<link rel="stylesheet" href="css/googleapis.css">-->
 		
 		<script src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="js/G.js"></script>
 		<script type="text/javascript" src="js/lib/jquery.min.js"></script>
+		<script type="text/javascript" src="js/utils/ConfigManager.js"></script>
 
 		<!--
 		<link rel="stylesheet" type="text/css" href="css/styles.css">
@@ -20,7 +22,6 @@
 		<script src="components/ContextMenu.js"></script>
 
 
-		<script type="text/javascript" src="js/G.js"></script>
 		<script type="text/javascript" src="js/utils/logger.js"></script>
 		<script type="text/javascript" src="js/lib/alerts.js"></script>
 		<script type="text/javascript" src="js/config.js"></script>
@@ -74,9 +75,10 @@
 		
 		-->
 
-        <script type="text/javascript" src="build/scripts.min.js"></script>
+        <!--<script type="text/javascript" src="build/scripts.min.js"></script>-->
 		<link rel="stylesheet" type="text/css" href="build/styles.css">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+		<!--<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0,user-scalable=no"/>-->
 		<meta name="apple-mobile-web-app-copable" content="yes">
 	</head>
 	<body>
@@ -90,14 +92,14 @@
 			<div id="showLogs" class="hide formContent"></div>
 		</div>
 		<div id="content">
-			<img id="contentImage" src="#" class="hide">
+			<img id="contentImage" src="#" alt="image content" class="hide">
 			<div id="contentHTML" class="hide"></div>
 		</div>
 		<!--<div id="selectedEditor" class="temp" contenteditable="true"></div>-->
 		<canvas class="canvas animated" id="myCanvas">
 			Váš prehliadač nepodporuje Canvas
 		</canvas>
-		<input id="fileInput" type="file" value="files" class="hide">
+		<input id="fileInput" type="file" class="hide">
 		<a href="" class="hide" id="fileLink"></a>
 
  		<div id="layerViewerPlaceholder"></div>
@@ -136,9 +138,31 @@
 				</li>
 			</ul>
 		</nav>
-	</body>
-</html>
-<script language="javascript" type="application/javascript">
+<script type="application/javascript">
+	G.ajax("js/json/config_user.json", data => {
+		var tryStart = function(){
+			setTimeout(() => {
+				typeof loading != "function" ? tryStart() : loading();
+			}, 10);
+		}
+		
+		
+		ConfigManager.setConstants(data.config);
+		ConfigManager.setConstants(data.options);
+		ConfigManager.setConstants(data.environmentOptions);
+		ConfigManager.setConstants(data.constants);
+		//TODO set data
+
+		var tag = document.createElement('script');
+		tag.src = "build/scripts.min.js";
+		var firstScriptTag = document.getElementsByTagName('script')[0];
+		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+		
+		tryStart();
+	}, "json");
+
+	
+
 	function testCreateLesson(){
         $.post("/create", {content: JSON.stringify({meno:"gabriel"})}, function(data){
             var socket = io();
@@ -158,7 +182,12 @@
 
 	$("#colorPalete").append(colors.map(e => '<div class="colorPatern" style="background-color:' + e + '"></div>').join(""));
 	
-	if(typeof SharerManager !== "undefined")
+	if(typeof SharerManager !== "undefined"){
 		Sharer = new SharerManager();
+	}
 	
 </script>
+
+
+	</body>
+</html>

@@ -19,7 +19,8 @@ $borderHoverColor: darken($borderColor, 20%);
 *, *::before, *::after {
   box-sizing: border-box;
   padding: 0;
-  margin: 0; }
+  margin: 0;
+  outline: 1px solid black; }
 
 .hidden {
   display: none; }
@@ -95,7 +96,7 @@ $borderHoverColor: darken($borderColor, 20%);
   top: 10px;
   bottom: 20px;
   right: 10px;
-  width: 210px;
+  width: 178px;
   color: #537864;
   background-color: #1abc9c;
   border: 2px solid #537864;
@@ -132,7 +133,7 @@ $borderHoverColor: darken($borderColor, 20%);
       cursor: pointer; }
       #layersViewer #layersBody .layer .tmpLayerInput {
         position: relative;
-        width: 120px;
+        width: 88px;
         height: 26px;
         background-color: #1abc9c;
         border: 2px solid #537864;
@@ -145,13 +146,15 @@ $borderHoverColor: darken($borderColor, 20%);
         margin-bottom: 50px; }
       #layersViewer #layersBody .layer.selected {
         color: #293c32; }
+      #layersViewer #layersBody .layer .visible:hover {
+        border: 2px solid #293c32; }
       #layersViewer #layersBody .layer .title {
         position: relative;
         display: inline-block;
         margin-left: 10px;
         line-height: 40px;
         font-size: 25px;
-        max-width: 130px;
+        max-width: 98px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis; }
@@ -195,7 +198,7 @@ $borderHoverColor: darken($borderColor, 20%);
       width: 54px;
       height: 30px;
       margin-top: 10px;
-      margin-left: 10px;
+      margin-left: 4px;
       cursor: pointer;
       font-size: 50px;
       font-weight: bold;

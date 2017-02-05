@@ -1,14 +1,24 @@
-{
-	"project" :{
-		"author" : "DefaultUserName",
-		"layer_title" : "default"
-	},
-	"fps" : 60,
-	"limits" : {
-		"maximum" : {
-			"objects" : 100,
-			"paths" : 200,
-			"layers" : 10
+{	
+	"config" : {
+		"project" :{
+			"author" : "DefaultUserName",
+			"layer_title" : "default"
+		},
+		"fps" : 60,
+		"folder" : {
+			"json" : "/js/json",
+			"image" : "/img"
+		},
+		"limit" : {
+			"maximum" : {
+				"objects" : 100,
+				"paths" : 200,
+				"layers" : 10
+			}
+		},
+		"touch" : {
+			"duration" : 500,
+			"variation" : 5
 		}
 	},
 	"visibilityOptions" : {
@@ -18,8 +28,8 @@
 	},
 	"environmentOptions" : {
 		"default" : {
-			"fill_color" : "#ffffff",
 			"font" : {
+				"family" : "Comic Sans MS",
 				"color" : "#000000",
 				"size" : 22,
 				"offset" : 5,
@@ -44,13 +54,18 @@
 				"type" : "line",
 				"color" : "#000000"
 			},
-			"fill_color" :  "#000000",
+			"fill_color" : "#000000",
 			"radius" : 5
+		},
+		"selector" : {
+			"size" : 10,
+			"color" : "orange",
+			"border_color" : "<%= default.border.color %>"
 		},
 		"layers" : {
 			"border" : {
-				"color": "#000000",
-				"width": 2
+				"color": "<%= default.border.color %>",
+				"width": "<%= default.border.width %>"
 			},
 			"panel" : {
 				"width" : 180,
@@ -65,13 +80,13 @@
 		},
 		"menu" : {
 			"border" : {
-				"color": "#000000",
-				"width": 2
+				"color": "<%= default.border.color %>",
+				"width": "<%= default.border.width %>"
 			},
-			"offset" : 20,
+			"offset" : 10,
 			"radius" : 10,
 			"font" : {
-				"color" : "#000000"
+				"color" : "<%= default.font.color %>"
 			},
 			"width" : 50,
 			"height" : 50,
@@ -81,12 +96,12 @@
 		},
 		"context_menu" : {
 			"border" : {
-				"color": "#000000",
-				"width": 2
+				"color": "<%= default.border.color %>",
+				"width": "<%= default.border.width %>"
 			},
 			"line_height" : 40,
 			"font" : {
-				"color" : "#000000"
+				"color" : "<%= default.font.color %>"
 			},
 			"offset" : 10,
 			"width" : 240,
@@ -96,8 +111,8 @@
 		},
 		"table" : {
 			"border" : {
-				"color": "#000000",
-				"width": 2
+				"color": "<%= default.border.color %>",
+				"width": "<%= default.border.width %>"
 			},
 			"header_fill_color" : "#53cfff",
 			"body_fill_color" : "#5bf2ff",
@@ -109,7 +124,7 @@
 			}
 		},
 		"timeLine" : {
-			"fill_color" : "<timeLine>	</timeLine>avender",
+			"fill_color" : "avender",
 			"height" : 60,
 			"slider" : {
 				"height" : 5,
@@ -130,5 +145,226 @@
 			"dist" : 10,
 			"nth_bold" : 5
 		}
+	},
+	"options" : {
+		"option" : {
+			"change_cursor" : true,
+			"moving_silhouette" : false,
+			"show_shadows" : true,
+			"canvas_blur" : true,
+			"show" : {
+				"layers_viewer" : true,
+				"grid" : true
+			}
+		}
+	},
+	"constants" : {
+		"key" : {
+			"a" : 65,
+			"delete" : 46,
+			"enter" : 13,
+			"escape" : 27,
+			"l_alt"   : 18,
+			"l_ctrl"     : 17,
+			"shift" : 16,
+			"y" : 89,
+			"z" : 90,
+			"num_1" : 49,
+			"num_2" : 50,
+			"num_3" : 51,
+			"num_4" : 52,
+			"num_5" : 53,
+			"num_6" : 54,
+			"num_7" : 55,
+			"num_8" : 56,
+			"num_9" : 57
+		},
+		"font" : {
+			"halign" : {
+				"left" : "left",
+				"center" : "center",
+				"right" : "right"
+			},
+			"valign" : {
+				"middle" : "middle",
+				"top" : "top",
+				"alpha" : "aplhabetic",
+				"hang" : "hanging",
+				"ideo" : "ideographics", 
+				"bott" : "bottom"
+			}
+		},
+		"join" : {
+			"linear" : 2000,
+			"bazer" : 2001,
+			"sequencal" : 2002
+		},
+		"line" : {
+			"cap" : {
+				"butt" : "butt",
+				"round" : "round",
+				"square" : "square"
+			},
+			"join" : {
+				"miter" : "miter",
+				"round" : "round",
+				"bevel" : "bevel"
+			},
+			"type" : {
+				"linear" : 2000,
+				"bazier" : 2001,
+				"sequencal" : 2002
+			},
+			"style" : {
+				"normal" : 2100,
+				"stripped" : 2101,
+				"filled" : 2102
+			},
+			"end" : {
+				"none" : 2210,
+				"arrow" : {
+					"classic" : 2211,
+					"closed" : 2212,
+					"filled" : 2213
+				},
+				"diamond" : {
+					"classic" : 2214,
+					"filled" : 2215
+				}
+			}
+		},
+		"operation" : {
+			"draw" : {
+				"rect" : 1000,
+				"arc" : 1001,
+				"path" : 1002,
+				"line" : 1003,
+				"join" : 1004
+			},
+			"rubber" : 1005,
+			"area" : 1006
+		},
+		"action" : {
+			"object" : {
+				"move" : 2310,
+				"create" : 2311,
+				"change" : 2312,
+				"delete" : 2313
+			},
+			"paint" : {
+				"clean" : 2314,
+				"add_point" : 2315,
+				"break_line" : 2316,
+				"change_brush" : 2317,
+				"path" : {
+					"add" : 2323,
+					"remove" : 2324
+				}
+			},
+			"layer" : {
+				"create" : 2318,
+				"delete" : 2319,
+				"clean" : 2320,
+				"visible" : 2321,
+				"rename" : 2322
+			},
+			"mouse" : {
+				"move" : 2318,
+				"down" : 2319,
+				"up" : 2320
+			},
+			"key" : {
+				"down" : 2321,
+				"up" : 2322
+			}
+		},
+		"paint_action" : {
+			"brush" : 2400,
+			"line" : 2401
+		},
+		"keyword" : {
+			"object" : "object",
+			"string" : "string",
+			"number" : "number",
+			"boolean" : "boolean",
+			"function" : "function",
+			"undefined" : "undefined",
+			"transparent" : "transparent"
+		},
+		"PI2" : 6.283185307179586,
+		"format" : {
+			"image" : {
+				"jpg" : "image/jpeg",
+				"png" : "image/png",
+				"gif" : "image/gif"
+			},
+			"file_xml" : "text/xml"
+		},
+		"attribute" : {
+			"fill_color" : "fillColor",
+			"border" : {
+				"color" : "borderColor",
+				"width" : "borderWidth"
+			},
+			"line_width" : "lineWidth",
+			"font" : {
+				"size" : "fontSize",
+				"color" : "fontColor"
+			},
+			"line" : {
+				"type" : "lineType",
+				"style" : "lineStyle"
+			},
+			"brush" : {
+				"size" : "brushSize",
+				"type" : "brushType",
+				"color" : "brushColor"
+			},
+			"radius" : "radius"
+		},
+		"input_type" : {
+			"checkbox" : "checkbox",
+			"radio" : "radio"
+		},
+		"checkbox_color" : {
+			"true" : "green",
+			"false" : "red"
+		},
+		"hightlight" : {
+			"correct" : 2700,
+			"wrong" : 2701
+		},
+		"layer" : {
+			"user" : 2710,
+			"gui" : 2711,
+			"task" : 2712
+		},
+		"status" : {
+			"connected" : 2720,
+			"disconnected" : 2721
+		},
+		"object" : {
+			"arc" : "Arc",
+			"arrow" : "Arrow",
+			"class" : "Class",
+			"image" : "Image",
+			"join" : "Join",
+			"line" : "Line",
+			"paint" : "Paint",
+			"polygon" : "Polygon",
+			"rect" : "Rect",
+			"table" : "Table",
+			"input" : "Input",
+			"text" : "Text",
+			"graph" : "Graph",
+			"rubber" : "Rubber",
+			"area" : "Area"
+		},
+		"cursor" : {
+			"pointer" : "pointer",
+			"default" : "default",
+			"not_allowed" : "not-allowed"
+		}
+
 	}
 }

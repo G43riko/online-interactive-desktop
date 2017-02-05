@@ -9,7 +9,7 @@ class CreatorViewer extends Entity{
 		this._context 		= this._canvas.getContext('2d');
 		
 		Entity.changeAttr(this,{
-			fillColor: MENU_BACKGROUND_COLOR,
+			fillColor: MENU_FILL_COLOR,
 			borderColor: MENU_BORDER_COLOR,
 			borderWidth: MENU_BORDER_WIDTH,
 			radius: MENU_RADIUS
@@ -199,7 +199,7 @@ class CreatorViewer extends Entity{
 				});
 				break;
 			case ATTRIBUTE_FONT_SIZE :
-				fillText("Abc", posX + (width >> 1), posY + (height >> 1), value, MENU_BACKGROUND_COLOR, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("Abc", posX + (width >> 1), posY + (height >> 1), value, MENU_FILL_COLOR, 0, FONT_ALIGN_CENTER, this._context);
 				break;
 			default :
 				fillText(key, posX + (width >> 1), posY + (height >> 1), 7, MENU_FONT_COLOR, 0, FONT_ALIGN_CENTER, this._context);

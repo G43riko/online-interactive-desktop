@@ -151,6 +151,14 @@ function each(obj, func, thisArg = false){
 	}
 }
 
+function loadPage(url){
+	var tag = document.createElement('script');
+
+	tag.src = url;
+	var firstScriptTag = document.getElementsByTagName('script')[0];
+	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+}
+
 function eachFiltered(obj, func1, func2, thisArg = false){
 	each(obj, (e, i, arr) => func1(e, i, arr) && func2(e, i, arr), thisArg);
 }
@@ -331,7 +339,7 @@ function drawBorder(ctx, o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 	doRect({
 		position: o.position,
 		size: o.size,
-		borderWidth: DEFAULT_STROKE_WIDTH << 1,
+		borderWidth: DEFAULT_BORDER_WIDTH << 1,
 		lineDash:  [15, 5],
 		ctx: ctx
 	});
@@ -405,7 +413,7 @@ function drawSelectArc(ctx, x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE <
 		width: size,
 		height: size,
 		fillColor: color,
-		borderWidth: DEFAULT_STROKE_WIDTH << 1,
+		borderWidth: DEFAULT_BORDER_WIDTH << 1,
 		lineDash:  dots ? [15, 5] : [],
 		borderColor: SELECTOR_BORDER_COLOR,
 		ctx: ctx
@@ -456,7 +464,7 @@ function setConstants(data){
 	var setConstant = (key, val) => {
 		key = key.toUpperCase();
 		constants[key] = val;
-		Object.defineProperty (window, key, { value : val, writable: false });
+		Object.defineProperty(window, key, { value : val, writable: false });
 	};
 	each(data, (e, i) => {
 		if(typeof e === "object"){

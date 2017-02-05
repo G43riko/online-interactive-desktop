@@ -317,7 +317,7 @@ class Line extends Entity{
 		*/
 
 
-		context.lineWidth = DEFAULT_STROKE_WIDTH << 1;
+		context.lineWidth = DEFAULT_BORDER_WIDTH << 1;
 		if(this.selected){
 			drawBorder(ctx, this, {});
 			drawSelectArc(ctx, this._points[0].x, this._points[0].y);

@@ -5,6 +5,21 @@ module.exports = function(grunt){
 	require('load-grunt-tasks')(grunt);
 	require('time-grunt')(grunt);
 
+	var files = {
+		js : {
+			source : [],
+			final : 'build/scripts.min.js'
+		},
+		css : {
+			source : ["css/Components.css","css/Styles.css"],
+			final : 'build/styles.css'
+		},
+		sass : {
+			source : ["components/Components.scss", "css/Styles.scss"],
+			final : ['css/Components.css', "css/Styles.scss"]
+		}
+	}
+
 	var message = grunt.option("message") || "Drobné úpravy a fixy"
 
 	grunt.initConfig({
@@ -13,7 +28,7 @@ module.exports = function(grunt){
 				src: [
 					"components/LayersViewer.js",
 					"components/ContextMenu.js",
-					"js/G.js",
+					//"js/G.js",
 					"js/utils/logger.js",
 					"js/lib/alerts.js",
 					"js/config.js",
@@ -65,14 +80,11 @@ module.exports = function(grunt){
 					"js/components/taskManager.js",
 					"js/components/formManager.js"
 				],
-				dest: "build/scripts.min.js"
+				dest: files.js.final
 			},
 			css : {
-				src: [
-					"css/Components.css",
-					"css/Styles.css"
-				],
-				dest: "build/styles.css"
+				src: files.css.source,
+				dest: files.css.final
 			}
 		},
 		watch: {
@@ -80,11 +92,14 @@ module.exports = function(grunt){
 					files : ["js/**/*.js"],
 					tasks : ["concat:js"]
 				},
-				
 				sass : {
 					files : ["components/Components.scss", "css/**/*.scss"],
 					tasks : ["sass"]//netreba volať concat lebo sa zavola watch kvoli zmene css suboru
-				}
+				},
+				css : {
+					files : ['css/Styles.css', 'css/Components.css'],
+					tasks : ["concat:css"]
+				},
 				//TODO server files
 				/*
 				server : {
@@ -111,14 +126,14 @@ module.exports = function(grunt){
 			},
 			dist: {
 				files: {
-					'build/scripts.min.js': 'build/scripts.min.js'
+					'build/scripts.min.js': files.js.final
 				}
 			}
 		},
 		uglify: {
 			my_target: {
 				files: {
-					'build/scripts.min.js': ['build/scripts.min.js']
+					'build/scripts.min.js': [files.js.final]
 				}
 			}
 		},
@@ -134,13 +149,34 @@ module.exports = function(grunt){
 		    },
 		    deploy : {
 		    	command : [
+		    		//msg => 'echo ' + msg
 		    		"git add --all",
 		    		"git commit -m \"" + message + "\"",
+		    		"git push"
 		    	].join(";"),
 		    	options : {
 
 		    	}
 		    }
+		},
+		jshint: {
+			options: {
+				curly: true, //aj 1 riadok musí byť ozatvorkovany
+				//eqeqeq: true, //2 = vs 3 =
+				eqnull: true, 
+				browser: true,
+				esversion: 6, //ES6
+				sub: true, // obj["aa"] vs obj.aa
+				maxparams: 5, //maximum parametrov vo funkcii
+				maxstatements : 15, //maximum statementov vo funkcii
+				globals: {
+					jQuery: true
+				},
+			},
+			//uses_defaults: ['components/LayersViewer.js']
+			uses_defaults: ['js/utils/ConfigManager.js']
+			//uses_defaults: '<%= concat.js.src %>'
+			
 		}
 	});
 
@@ -150,9 +186,15 @@ module.exports = function(grunt){
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-sass');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-shell-spawn');
+	grunt.registerTask('deploy', ["shell:deploy"]);
 	grunt.registerTask('default', ["sass", "concat", "watch"]);
 	grunt.registerTask('build', ["sass","concat", "babel", "uglify"]);
 	grunt.registerTask('runAndWork', ["shell:restartServer", "default", "shell:restartServer:kill"]);
-	
+	grunt.registerTask('args',function(){
+		console.log(arguments.length);
+		console.log(arguments[0])
+		console.log(arguments[1])
+	})
 }

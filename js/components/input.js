@@ -17,9 +17,15 @@ class InputManager{
 	get mousePos(){return this._mousePos;}
 
 	_onResize(){
-		Project.canvasManager.onResize();
+		var MIN_WIDTH = 480;
 		//initCanvasSize();
-
+		if(window.innerWidth < MIN_WIDTH){
+			Logger.error("Minimálna šírka obrazovky je " + MIN_WIDTH + "px");
+			return;
+		}
+		
+		
+		Project.canvasManager.onResize();
 		Scene.onScreenResize();
 
 		if(isDefined(timeLine))
@@ -134,13 +140,13 @@ class InputManager{
 	_keyDown(val){
 		this._keys[val] = true;
 		Events.keyDown(val);
-		Listeners.keyDown(val, this.isKeyDown(L_CTRL_KEY));
+		Listeners.keyDown(val, this.isKeyDown(KEY_L_CTRL));
 	};
 
 	_keyUp(val){
 		this._keys[val] = false;
 		Events.keyUp(val);
-		Listeners.keyUp(val, this.isKeyDown(L_CTRL_KEY));
+		Listeners.keyUp(val, this.isKeyDown(KEY_L_CTRL));
 
 		if(!this._hist[val])
 			this._hist[val] = 0;

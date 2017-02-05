@@ -1,4 +1,4 @@
-/*
+	/*
  * G(selector) - vyhladá elementy podla selectora a vráti G object
  * G(nazov, {attr:{}, "obsah elementu", style:{}}) - vytvorý nový G object
  * G(nazov, {attr:{}, element, style:{}}) - vytvorý nový G object

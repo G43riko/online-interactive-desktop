@@ -8,7 +8,7 @@ class ContextMenuManager{
 		this._parent 			= parent;
 		this._key 				= key;
 		this._textColor 		= CONTEXT_MENU_FONT_COLOR;
-		this._fillColor			= CONTEXT_FILL_COLOR;
+		this._fillColor			= CONTEXT_MENU_FILL_COLOR;
 		this._selectedObject 	= parent ? parent._selectedObject : selectedObjects.movedObject;
 		this._titles 			= titles;
 
@@ -42,7 +42,7 @@ class ContextMenuManager{
 				this._addFields("clearWorkspace");
 			}
 		}
-		context.font = (30 - CONTEXT_MENU_OFFSET) + "pt " + DEFAULT_FONT;
+		context.font = (30 - CONTEXT_MENU_OFFSET) + "pt " + DEFAULT_FONT_FAMILY;
 
 		var hasExtension = false;
 
@@ -160,7 +160,7 @@ class ContextMenuManager{
 					radius: {tr: firstRadius, tl: firstRadius, br: lastRadius, bl: lastRadius},
 					borderColor: this.borderColor,
 					borderWidth: this.borderWidth,
-					fillColor: e["disabled"] ? CONTEXT_DISABLED_FILL_COLOR : CONTEXT_SELECTED_FILL_COLOR,
+					fillColor: e["disabled"] ? CONTEXT_MENU_DISABLED_FILL_COLOR : CONTEXT_MENU_SELECTED_FILL_COLOR,
 					draw: true
 				});
 			}

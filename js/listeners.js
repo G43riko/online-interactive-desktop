@@ -75,7 +75,7 @@ class ListenersManager{
 		if(!this._clickedOnObject && button == LEFT_BUTTON && !actContextMenu){
 			Scene.forEach((o) => {
 				if(o.visible && !o.layer.userLayer && o.clickIn(position.x, position.y, button)){
-					if(Creator.operation === OPERATION_DRAW_LINE && Input.isKeyDown(L_CTRL_KEY) && o.selectedConnector){
+					if(Creator.operation === OPERATION_DRAW_LINE && Input.isKeyDown(KEY_L_CTRL) && o.selectedConnector){
 						Creator.createObject(position, o);
 						this._movedObject = Creator;
 					}
@@ -108,7 +108,7 @@ class ListenersManager{
 	}
 
 	keyDown(key, isCtrlDown){
-		if(DELETE_KEY === key){
+		if(KEY_DELETE === key){
 			if(area.isReady){
 				area.removeSelected(isCtrlDown);//ak je aj ALT dole tak revertne mazanie
 			}
@@ -119,13 +119,13 @@ class ListenersManager{
 	keyUp(key, isCtrlDown){
 		if(isCtrlDown){
 			switch(key){
-				case Z_KEY:
+				case KEY_Z:
 					Paints.undo();
 					break;
-				case Y_KEY:
+				case KEY_Y:
 					Paints.redo();
 					break;
-				case A_KEY:
+				case KEY_A:
 					selectedObjects.selectAll();
 					draw();
 					break;
@@ -133,11 +133,11 @@ class ListenersManager{
 		}
 		else{
 			switch(key){
-				case DELETE_KEY:
+				case KEY_DELETE:
 					selectedObjects.deleteAll();
 					draw();
 					break;
-				case ESCAPE_KEY:
+				case KEY_ESCAPE:
 					closeDialog();
 					break;
 				case KEY_NUM_1:
@@ -310,7 +310,7 @@ class ListenersManager{
 					return;
 				}
 				else{
-					Input.isKeyDown(L_CTRL_KEY) ? selectedObjects.add(o) : selectedObjects.clearAndAdd(o);
+					Input.isKeyDown(KEY_L_CTRL) ? selectedObjects.add(o) : selectedObjects.clearAndAdd(o);
 				}
 				result = true;
 			}

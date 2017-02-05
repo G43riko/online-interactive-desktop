@@ -264,7 +264,7 @@ function doLine(obj){
     _process(res)
 }
 
-function drawQuadraticCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderColor = DEFAUL_STROKE_COLOR, ctx = context){
+function drawQuadraticCurve(points, borderWidth = DEFAULT_BORDER_WIDTH, borderColor = DEFAUL_BORDER_COLOR, ctx = context){
     if(points.length < 2)
         return;
 
@@ -277,7 +277,7 @@ function drawQuadraticCurve(points, borderWidth = DEFAULT_STROKE_WIDTH, borderCo
 }
 
 function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COLOR, offset = 0, align = FONT_ALIGN_NORMAL, ctx = context){
-    ctx.font = size + "pt " + DEFAULT_FONT;
+    ctx.font = size + "pt " + DEFAULT_FONT_FAMILY;
     ctx.fillStyle = color;
 
     if(align == FONT_ALIGN_NORMAL){
@@ -368,10 +368,10 @@ function calcTextWidth(value, font = false){
 
 function _initDef(obj){
     var def = {
-        borderWidth : DEFAULT_STROKE_WIDTH,
-        borderColor : DEFAUL_STROKE_COLOR,
+        borderWidth : DEFAULT_BORDER_WIDTH,
+        borderColor : DEFAULT_BORDER_WIDTH,
         ctx : context,
-        fillColor : DEFAULT_BACKGROUND_COLOR,
+        fillColor : DEFAULT_FILL_COLOR,
         radius : {tl: 0, tr: 0, br: 0, bl: 0},
         shadow: false,
         lineCap: LINE_CAP_BUTT,

@@ -38,7 +38,7 @@ class Rect extends Entity {
 	_clickIn(x, y){
 		var vec = new GVector2f(x, y);
 		this.moveType = -1;
-		if(Input.isKeyDown(L_CTRL_KEY)){
+		if(Input.isKeyDown(KEY_L_CTRL)){
 			this.checkConnectors(vec);
 			if(this._selectedConnector)
 				return true;

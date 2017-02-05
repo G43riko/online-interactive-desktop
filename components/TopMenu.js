@@ -64,7 +64,7 @@ class TopMenu{
 					href: "javascript: void(0)",
 					class: "itemLink",
 					onclick: allData !== null ? "TopMenu.clickOnLi(this);" : ""
-				}, i)
+				}, e.label || i)
 			});
 			if(allData && allData.hasOwnProperty(i)){
 				li.append(this.createMainMenu(allData[i]));
@@ -193,21 +193,25 @@ var dataNew = {
 			"items" : [
 				{
 					"key" : "loadLocalImage",
+					"label" : "locImg",
 					"visible" : true,
 					"disabled" : false
 				},
 				{
 					"key" : "loadLocalHTML",
+					"label" : "locHtml",
 					"visible" : true,
 					"disabled" : false
 				},
 				{
 					"key" : "loadExternalImage",
+					"label" : "extImg",
 					"visible" : true,
 					"disabled" : false
 				},
 				{
 					"key" : "loadExternalHTML",
+					"label" : "extHtml",
 					"visible" : true,
 					"disabled" : false
 				}

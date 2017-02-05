@@ -103,13 +103,13 @@ $bgGradient: linear-gradient($bgHoverColor, $bgColor);
 			//top:7px;
 			top:-2px;
 			left:5px;
-
 			&.false{
 				background-color: #A30000;
+				border: blue;
 			}
 
 			&:hover{
-				border: 2px solid $borderHoverColor;
+				border: 2px solid red/*$borderHoverColor*/;
 			}
 		}
 

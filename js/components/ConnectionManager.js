@@ -25,7 +25,7 @@ class ConnectionManager{
 	constructor(){
 		this._user_id = false;
 		this._socket = false;
-		this._user_name = DEFAULT_USER_NAME;
+		this._user_name = PROJECT_AUTHOR;
         this._connectedUsers = {};
 		this.paint = {
 			addPoint 	: (pos, layer)	=> this._paintAction(ACTION_PAINT_ADD_POINT, pos, layer),

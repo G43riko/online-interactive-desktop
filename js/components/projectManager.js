@@ -1,5 +1,6 @@
 /*
 	compatible:	Date.now, geolocation, JSON parsing 14.9.2016
+	JShint 4.2.2017
 */
 class ProjectManager{
 	constructor(author, title = "OIP Project"){

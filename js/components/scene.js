@@ -26,7 +26,7 @@ class SceneManager{
 	cleanUp(){
 		each(this._layers, e => {
 			e.cleanUp();
-			if(e.title !== DEFAULT_LAYER_TITLE)
+			if(e.title !== PROJECT_LAYER_TITLE)
 				this.deleteLayer(e.title);
 		});
 
@@ -38,13 +38,13 @@ class SceneManager{
 		each(this._layers, e => e.paint.onScreenResize())
 	}
 
-	createLayer(title = DEFAULT_LAYER_TITLE, layerType = ""){
+	createLayer(title = PROJECT_LAYER_TITLE, layerType = ""){
 		if(this._layers.hasOwnProperty(title)){
 			Logger.error(getMessage(MSG_RECREATE_LAYER, title));
 			return null;
 		}
-		if(this.layersNumber == LIMIT_LAYERS_COUNT){
-			Logger.error(getMessage(MSG_MAXIMUM_LAYER, LIMIT_LAYERS_COUNT));
+		if(this.layersNumber == LIMIT_MAXIMUM_LAYERS){
+			Logger.error(getMessage(MSG_MAXIMUM_LAYER, LIMIT_MAXIMUM_LAYERS));
 			return null;
 		}
 		this._layers[title] = new Layer(title, layerType);

@@ -11,8 +11,8 @@ class MenuManager{
 		this._toolActive 				= false;
 		this._fontColor 				= MENU_FONT_COLOR;
 		//this._backgroundColor 		= "rgb(153, 217, 234)";
-		this._backgroundColor 			= MENU_BACKGROUND_COLOR;
-		this._disabledBackgroundColor 	= MENU_DISABLED_BG_COLOR;
+		this._backgroundColor 			= MENU_FILL_COLOR;
+		this._disabledBackgroundColor 	= MENU_DISABLED_FILL_COLOR;
 		this._position 					= position.add(MENU_OFFSET);
 		this._offset 					= MENU_OFFSET;
 		this._size 						= size;
@@ -468,7 +468,7 @@ class MenuManager{
 		Logger.log("prekresluje sa " + this.constructor.name, LOGGER_DRAW);
 	}
 
-	_drawIcon(type, x, y, offset = 5, width = this._size.x, height = this._size.y, strokeColor = DEFAUL_STROKE_COLOR, strokeWidth = DEFAULT_STROKE_WIDTH){
+	_drawIcon(type, x, y, offset = 5, width = this._size.x, height = this._size.y, strokeColor = DEFAUL_STROKE_COLOR, strokeWidth = DEFAULT_BORDER_WIDTH){
 		var img;
 		switch(type.key){
 			case "arc":
