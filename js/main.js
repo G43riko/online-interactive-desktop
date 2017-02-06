@@ -5,7 +5,7 @@
 var initTime 		= Date.now(),
 	movedObject 	= false,
 	Logger 			= new LogManager(),//samostatne lebo loguje aj Projekt preto nie v ňom
-	Project			= new ProjectManager("Gabriel Csollei"),
+	Project			= new ProjectManager(PROJECT_AUTHOR),
 	Scene 			= Project.scene,
 	Creator 		= Project.creator,
 	Input 			= Project.input,
@@ -23,13 +23,16 @@ var initTime 		= Date.now(),
 	Gui 			= Project.gui,
 	Options 		= Project.options,
 	drawEvent 		= new EventTimer(realDraw, 1000 / FPS),
+	pdrawEvent 		= new EventTimer(realPDraw, 1000 / FPS),
 	area 			= null,
 	Panel			= null,
 	Forms		 	= null,
 	Connection		= Project.connection,
 	draw 			= () => drawEvent.callIfCan(),
+	pdraw 			= () => pdrawEvent.callIfCan(),
+
 	//TODO Layers presunuť do noveho objektu na spravu GUI
-	components, drawMousePos, Layers, canvas, context, chatViewer, timeLine;
+	components, drawMousePos, Layers, canvas, context, pcanvas,pcontext, chatViewer, timeLine;
 
 function setUpComponents(){
 	components =  {
@@ -246,6 +249,8 @@ var loading = function(){
 
 		canvas = Project.canvas;
 		context = Project.context;
+		pcanvas = Project.canvasManager.pCanvas.canvas;
+		pcontext = Project.canvasManager.pCanvas.context;
 		
 		//if(typeof ConnectionManager === "function")
 		//	Connection = new ConnectionManager();
@@ -256,7 +261,7 @@ var loading = function(){
 				Project.topMenu.init(data);
 			}
 			catch(e){
-				alert("nepodarila sa inicializacia menu: " + e);
+				Logger.exception(getMessage(MSG_INIT_MENU_ERROR), e);
 			}
 			$.getJSON(FOLDER_JSON + "/creator.json", data2 => {
 				try{
@@ -265,7 +270,7 @@ var loading = function(){
 					draw();
 				}
 				catch(e){
-					alert("nepodarila sa inicializacia creatora: " + e);
+					Logger.exception(getMessage(MSG_INIT_CREATOR_ERROR), e);
 				}
 			});
 		});
@@ -303,11 +308,15 @@ var loading = function(){
 
 	}
 	catch(e){
-		alert("nepodaril sa loading lebo " + e);
+		Logger.exception(getMessage(MSG_LOADING_ERROR), e);
 	}
 };
 
 //$(loading);
+function realPDraw(){
+	Project.canvasManager.pCanvas.clearCanvas();
+	Project.scene.pdraw();
+}
 
 function realDraw(){
 	if((typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected) || !Project.context || !isObject(Project.context)){

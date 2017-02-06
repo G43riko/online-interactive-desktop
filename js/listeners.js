@@ -93,6 +93,11 @@ class ListenersManager{
 		draw();
 	}
 
+	mouseLeave(position){
+		this.mouseUp(position);
+		draw();
+	}
+
 	hashChange(){
 		setUpComponents();
 

@@ -38,7 +38,7 @@ class WatcherManager{
 		this._socket.emit('createWatcher', {userId: data["userId"], shareId: data["id"]});
 
 		this._socket.on('chatMessage', data => Panel.recieveMessage(data["text"], data["sender"]));
-		this._socket.on('notification', data => Logger.notif("prijatá správa: " + data["msg"]));
+		this._socket.on('notification', data => Logger.write("prijatá správa: " + data["msg"]));
 		this._socket.on('auth', (data) => inst._authProcess(data));
 		this._socket.on('endShare', () => console.log("sharer je offline"));
 		this._socket.on("changeCreator", data => Creator.setOpt(data.key, data.val));
@@ -71,7 +71,7 @@ class WatcherManager{
 			text += "Prajete si skusiť zadať heslo znovu?\n";
 			text += "Počet zostávajúcich pokusov: " + diff;
 			if(!diff || !confirm(text)){
-				Logger.notif("nepodarilo sa pripojiť k zdielaniu");
+				Logger.write("nepodarilo sa pripojiť k zdielaniu");
 				return false;
 			}
 		}
@@ -87,7 +87,7 @@ class WatcherManager{
 		console.log("content: ", data);
 		WatcherManager.processContent(data);
 		this._connected = true;
-		Logger.notif("Všetky dáta boly úspešne načítané");
+		Logger.write("Všetky dáta boly úspešne načítané");
 		draw();
 	}
 

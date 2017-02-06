@@ -26,7 +26,7 @@ class Layer{
 		this._forRemove = [];
 	}
 	
-	get locked(){return this._locked || this._layerType !== ""}
+	get locked(){return this._locked /*&& this._layerType === ""*/;}
 	get taskLayer(){return this._layerType === LAYER_TASK;}
 	get guiLayer(){return this._layerType === LAYER_GUI;}
 	get userLayer(){return this._layerType === LAYER_USER;}
@@ -59,7 +59,7 @@ class Layer{
 	set objects(val){this._objects = val;}
 	set title(val){this._title = val;}
 	set locked(val){
-		locked = val === true ? true : false;
+		this._locked = val === true ? true : false;
 	}
 
 	cleanUp(){

@@ -10,7 +10,7 @@
 .alert-info {
   color: #31708f;
   background-color: #d9edf7;
-  border: 2px solid #bce8f1; }
+  border: 2px solid #BCE8F1; }
 
 .alert-warning {
   color: #8a6d3b;
@@ -35,6 +35,9 @@
   font-size: 15px;
   line-height: 1.5;
   z-index: 100; }
+  .alert:hover {
+    cursor: pointer;
+    opacity: .7; }
   .alert a {
     float: right;
     text-decoration: none;
@@ -364,7 +367,13 @@ form {
   padding: 0; }
 
 body {
-  overflow: hidden; }
+  overflow: hidden;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
 
 #modalWindow {
   margin: auto;
@@ -383,6 +392,9 @@ body {
   overflow-y: auto;
   padding: 6px;
   box-sizing: border-box; }
+
+#pointerCanvas {
+  pointer-events: none; }
 
 #content {
   position: absolute;

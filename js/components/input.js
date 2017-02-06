@@ -53,7 +53,6 @@ class InputManager{
 			localStorage.setItem(RESTORE_KEY, JSON.stringify(result));
 		}
 		window.orientationchange = this._onResize;
-
 		window.onbeforeunload= function(event){
 			event.returnValue = "Nazoaj chceš odísť s tejto stránky???!!!";
 		};
@@ -76,7 +75,10 @@ class InputManager{
 		this._initWindowListeners();
 
 		target.onclick = function(){draw();};
-
+		target.onmouseleave = e => {
+			this._allButtonsUp();
+			Listeners.mouseLeave(new GVector2f(e.offsetX, e.offsetY));
+		}
 		target.onmousepress = function(e){
 			return Listeners.mousePress(e.position.getClone(), e.button);
 		};
@@ -207,6 +209,13 @@ class InputManager{
 			}
 		}
 	}
+
+	_allButtonsUp(){
+		for(var i in this._buttons){
+			this._buttons[i] = false;
+		}
+	}
+
 
 	_buttonDown(val){
 		this._buttons[val.button] = true;

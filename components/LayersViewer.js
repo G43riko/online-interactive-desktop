@@ -67,21 +67,41 @@ class LayersViewer{
 		var input = G(element);
 		var oldName = input.parent().attr("oldName");
 		var newName = input.first().value;
-		if(G.isDefined(LayersViewer.instance._layers[newName])){
-			alert("vrstva " + newName + " už existuje");
-		}
-
 		element.onblur = element.onkeydown = null;
 
+		//aj je nový názov prázdny tak vložíme pôvodný názov
+		if(newName.length === 0){
+			Logger.error("Názov nemôže byť prázdny");
+			input.parent().text(oldName);
+			return;
+		}
 
-		if(typeof scene !== "undefined" && Scene.createLayer){
+		//ak vrstva už existuje tak uporoníme používatela
+		if(G.isDefined(LayersViewer.instance._layers[newName])){
+			Logger.error("vrstva " + newName + " už existuje")
+			input.parent().text(oldName);
+			return;
+		}
+
+		input.parent().text(newName);
+
+		//ak sa názov nezmenil nič nepremenujeme
+		if(oldName === newName){
+			return;
+		}
+		
+
+		if(typeof Scene !== "undefined" && Scene.renameLayer){
 			Scene.renameLayer(oldName, newName);
 		}
+		else{
+			alert("Scene nieje definovaná");
+		}
+
 		LayersViewer.instance._layers[newName] = LayersViewer.instance._layers[oldName];
 		LayersViewer.instance._layers[newName].title = newName;
 		delete LayersViewer.instance._layers[oldName];
 
-		input.parent().text(newName);
 	}
 
 	static changeName(element){
@@ -148,7 +168,11 @@ class LayersViewer{
 		G.each(data.items, (e) => {
 			var element = G.createElement("li", {onclick: "LayersViewer.clickOnContext(this, \"" + e.attr + "\")"}, G.createElement("a", {}, e.label));
 			if(e.type === "boolean"){
-				element.append(G.createElement("div", {class: "visible true", attr: e.attr}));
+				var classa = "visible";
+				if(LayersViewer.instance.activeLayer[e.attr] === false){
+					classa += " false";
+				}
+				element.append(G.createElement("div", {class: classa, attr: e.attr}));
 			}
 			items.push(element);
 		});
@@ -227,17 +251,6 @@ class LayersViewer{
 			]
 		});
 	}
-	/*
-	createLayer(title){
-		if(typeof title !== "string" || title.length === 0){
-			title = this._defaultName + this._counter;
-		}
-		this._counter++;
-		this._existingLayers++;
-		this._layersDiv[title] = this._createLayerDiv(title);
-		this._layersBody.append(this._layersDiv[title]);
-	}
-	*/
 	createLayer(layer){
 		this._counter++;
 		this._existingLayers++;

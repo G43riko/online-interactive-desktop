@@ -16,10 +16,8 @@ class CanvasManager{
         this._canvases = {};
         this._canvases[MAIN_CANVAS] = new CanvasHandler("myCanvas", sizeX, sizeY);
         this._canvasCounter = 1;
-    }
 
-    initPointerCanvas(){
-        this._pointerCanvas = new CanvasHandler(this._sizeX, this._sizeY);
+        this._canvases[POINTER_CANVAS] = new CanvasHandler("pointerCanvas", sizeX, sizeY);
         this._canvasCounter++;
     }
 

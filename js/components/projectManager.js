@@ -3,7 +3,7 @@
 	JShint 4.2.2017
 */
 class ProjectManager{
-	constructor(author, title = "OIP Project"){
+	constructor(author, title = PROJECT_NAME){
 		this._createdAt = Date.now();
 		this._title = title;
 		this._autor = author;
@@ -15,7 +15,7 @@ class ProjectManager{
 		this._canvasManager = null;
 		this._drawCounter = 0;
 		this._connection = null;
-		this._analyzer = new Analyzer("http://192.168.0.123:3000/anonymousData");
+		this._analyzer = new Analyzer(URL_ANONYM_DATA);
 
 		try{
 			if(typeof ConnectionManager === "function"){
@@ -23,7 +23,7 @@ class ProjectManager{
 			}
 		}
 		catch(e){
-			alert("Nastala chyba pri vytváraní pripojenia " + e);
+			Logger.exception("Nastala chyba pri vytváraní pripojenia", e);
 		}
 
 		//PAINT_MANAGER

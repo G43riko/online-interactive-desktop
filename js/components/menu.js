@@ -276,7 +276,7 @@ class MenuManager{
 			case "tools":
 				this._toolActive = "tools";
 				if(Creator.operation === OPERATION_DRAW_PATH){
-					Logger.notif("pre výber nástrojov podržne stlačené tlačidlo myši na možnosti TOOLS")
+					Logger.write("pre výber nástrojov podržne stlačené tlačidlo myši na možnosti TOOLS")
 				}
 				break;
 			case "color":

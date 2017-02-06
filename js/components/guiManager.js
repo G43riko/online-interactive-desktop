@@ -19,39 +19,6 @@ var showXmlSavingOptions	= () => {
 	showPanel("saveXmlForm");
 };
 
-/*
-function showOptions(){
-	G("#optionsForm").show();
-	G("#modalWindow").show();
-	G("canvas").addClass("blur");
-}
-
-function showXmlSavingOptions(){
-	G("#idProjectTitle").val(Project.title);
-	G("#saveXmlForm").show();
-	G("#modalWindow").show();
-	G("canvas").addClass("blur");
-}
-
-function showColors(){
-	G("#colorPalete").show();
-	G("#modalWindow").show();
-	G("canvas").addClass("blur");
-}
-
-function showSharingOptions(){
-	G("#shareForm").show();
-	G("#modalWindow").show();
-	G("canvas").addClass("blur");
-}
-
-function showWatcherOptions(){
-	G("#watchForm").show();
-	G("#modalWindow").show();
-	G("canvas").addClass("blur");
-}
-*/
-
 function showSavingOptions(){
 	G("#idImageWidth").val(canvas.width);
 	G("#idImageHeight").val(canvas.height);
@@ -136,8 +103,9 @@ function serializeShareData(){
 			closeDialog();
 			Project.connection.connect(result);
 		}
-		else
-			Alert.danger(response.msg);
+		else{
+			Logger.error(response.msg)
+		}
 	}, "JSON");
 
 	//Sharer.startShare(result);
@@ -201,8 +169,9 @@ function processWatchData(data){
 			}
 			Project.connection.connect(data);
 		}
-		else
-			Alert.danger(response.msg);
+		else{
+			Logger.error(Alert.danger(response.msg));
+		}
 	}, "JSON");
 }
 

@@ -1,8 +1,12 @@
 {	
 	"config" : {
+		"url" : {
+			"anonym_data" : "http://192.168.0.123:3000/anonymousData"
+		},
 		"project" :{
 			"author" : "DefaultUserName",
-			"layer_title" : "default"
+			"layer_title" : "default",
+			"name" : "OIP Project"
 		},
 		"connection" : {
 			"loop_time" : 1000,
@@ -74,7 +78,7 @@
 				"type" : "line",
 				"color" : "#000000"
 			},
-			"fill_color" : "#000000",
+			"fill_color" : "#FFFFFF",
 			"radius" : 5
 		},
 		"selector" : {

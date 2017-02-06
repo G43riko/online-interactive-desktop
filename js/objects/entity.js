@@ -217,10 +217,12 @@ class Entity{
 	 */
 	draw(ctx = context){
 		//skontroluje či sa túto snímku už nevykresloval
-		if(this._drawCounter === Project.drawCounter){
-			return;
+		if(context === ctx){//ale iba ak sa kreslí na hlavný canvas(nie pcanvas)
+			if(this._drawCounter === Project.drawCounter){
+				return;
+			}
+			this._drawCounter = Project.drawCounter;
 		}
-		this._drawCounter = Project.drawCounter;
 
 		//ak je neviditelný nevykreslí sa
 		if (!this.visible){
@@ -459,7 +461,7 @@ class Entity{
 					result[i] = e;
 				}
 			});
-			Logger.notif("objekt bol úspešne vytvorený");
+			Logger.write("objekt bol úspešne vytvorený");
 			Logger.log("Vytvoril sa objekt " + (result.name || "Neznámy"), LOGGER_OBJECT_CREATED);
 		}
 		return result;

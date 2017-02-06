@@ -10,7 +10,7 @@
 .alert-info{
 	color: #31708f;
 	background-color: #d9edf7;
-	border: 2px solid #bce8f1;
+	border: 2px solid #BCE8F1;
 }
 .alert-warning{
 	color: #8a6d3b;
@@ -36,6 +36,11 @@
 	font-size: 15px;
 	line-height: 1.5;
 	z-index: 100;
+	
+	&:hover{
+		cursor: pointer;
+		opacity: .7;
+	}
 
 	a{
 		float: right;

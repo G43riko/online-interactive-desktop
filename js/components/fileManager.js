@@ -117,20 +117,21 @@ function saveSceneAsTask(fileName = "default_task"){
 
 	if(Scene.getTaskObject(result)){
 		var data = {
-			scene: result["content"],
-			results:  result["results"],
+			scene: result.content,
+			results:  result.results,
 			title: fileName,
 			type: 2501
 		};
 		saveFile(fileName, JSON.stringify(data));
 	}
-	else
-		Alert.warning(result.error);
+	else{
+		Logger.error("Chyba pri ukladaní súboru: ", result.error);
+	}
 }
 
 function loadTask(scene, results, title){
 	if(Task)
-		return Logger.error("načítava sa task ked už jeden existuje");
+		return Logger.error(getMessage(MSG_TASK_EXIST));
 
 	var layer = Scene.createLayer(title, "task");
 	each(scene, e => {
@@ -138,7 +139,7 @@ function loadTask(scene, results, title){
 		Creator.create(e);
 	});
 	Task = new TaskManager(results, title, layer);
-	Logger.notif("Task " + title + " bol úspešne vytvorený");
+	Logger.write(getMessage(MSG_TASK_CREATED, title));
 }
 
 function loadSceneFromFile(){

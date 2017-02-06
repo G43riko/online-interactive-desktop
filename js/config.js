@@ -338,6 +338,11 @@ const MSG_TRY_DRAW_WITHOUT_SIZE			= "chce sa vykresliť " + MSG_DIVIDER + " bez 
 const MSG_TRY_DRAW_WITH_NEG_POSITION	= "chce sa vykresliť " + MSG_DIVIDER + " zo zápornou velkosťou";
 const MSG_RECREATE_LAYER 				= "ide sa vytvoriť vrstva ktorá už existuje: " + MSG_DIVIDER
 const MSG_MAXIMUM_LAYER					= "bolo vytvorené maximálne množstvo vrstiev(" + MSG_DIVIDER + ")";
+const MSG_INIT_MENU_ERROR				= "nepodarila sa inicializacia Top menu";
+const MSG_INIT_CREATOR_ERROR			= "nepodarila sa inicializacia Creatora";
+const MSG_LOADING_ERROR					= "nepodaril sa loading";
+const MSG_TASK_EXIST					= "Načítava sa Task keď už jeden existuje";
+const MSG_TASK_CREATED 					= "Task " + MSG_DIVIDER + " bol úspešne vytvorený"
 
 function getMessage(text){
 	if(!arguments.length)

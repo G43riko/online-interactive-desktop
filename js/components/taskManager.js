@@ -19,7 +19,7 @@ class TaskManager{
 		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
 	onSuccess(){
-		Logger.notif("Všetko je vyriešené správne");
+		Logger.write("Všetko je vyriešené správne");
 	}
 	_getMissingResultsCount(){
 		var missing = 0;

@@ -110,7 +110,7 @@ class ConnectionManager{
 
 		this._socket.on("reconnect", function(){
 			inst.resetLives();
-			Logger.notif(getMessage(MSG_CONN_RECONNECT));
+			Logger.write(getMessage(MSG_CONN_RECONNECT));
 		});
 
 
@@ -131,7 +131,7 @@ class ConnectionManager{
 
 
 			//upraví menu a dá vedieť používatelovi
-			Logger.notif(getMessage(MSG_CONN_CONFIRM));
+			Logger.write(getMessage(MSG_CONN_CONFIRM));
 			if(isFunction(Menu.disabled)) {
 				Menu.disabled("sharing", "watch");
 				Menu.disabled("sharing", "stopShare");
@@ -151,7 +151,7 @@ class ConnectionManager{
 		});
 
 		this._socket.on("notifLog", function(response){
-			Logger.notif(response.msg);
+			Logger.write(response.msg);
 		});
 
 		this._socket.emit("initConnection", data);
@@ -170,7 +170,7 @@ class ConnectionManager{
 		this._socket	= false;
 		this._sharing	= false;
 		this._watching	= false;
-		Logger.notif(getMessage(MSG_CONN_DISCONNECT));
+		Logger.write(getMessage(MSG_CONN_DISCONNECT));
 		Panel.stopShare();
 	}
 
@@ -442,7 +442,7 @@ class ConnectionManager{
 
 class Handler{
     static processUserDisconnect(inst, data){
-        Logger.notif("používatel " + data[CONN_KEY_USER_NAME] + "[ " + data[CONN_KEY_USER_ID] + "] sa odpojil");
+        Logger.write("používatel " + data[CONN_KEY_USER_NAME] + "[ " + data[CONN_KEY_USER_ID] + "] sa odpojil");
         var user = inst._connectedUsers[data[CONN_KEY_USER_ID]];
         if(user){
             user.status = STATUS_DISCONNECTED;
@@ -460,8 +460,8 @@ class Handler{
             //Scene.createLayer(data[CONN_KEY_USER_NAME]);
 			//inst._sendMessage("requireAllData", {target: inst._user_id, from: data[CONN_KEY_USER_ID]});
         }
-        //Logger.notif("používatel" + data[CONN_KEY_USER_NAME] + "[" + data[CONN_KEY_USER_ID] + "] sa pripojil");
-		Logger.notif(getMessage(MSG_USER_CONNECT, data[CONN_KEY_USER_NAME], data[CONN_KEY_USER_ID]));
+        //Logger.write("používatel" + data[CONN_KEY_USER_NAME] + "[" + data[CONN_KEY_USER_ID] + "] sa pripojil");
+		Logger.write(getMessage(MSG_USER_CONNECT, data[CONN_KEY_USER_NAME], data[CONN_KEY_USER_ID]));
 
         //draw();
     }

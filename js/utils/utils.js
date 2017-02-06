@@ -377,7 +377,7 @@ function getText(text, position, size, func, thisArg){
 		x.remove();
 		draw();
 	}).keyup(function(e){
-		if(e.keyCode == ENTER_KEY){
+		if(e.keyCode == KEY_ENTER){
 			x.onblur = false;
 			func.call(T, x.val());
 			x.remove();

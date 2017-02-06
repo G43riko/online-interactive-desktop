@@ -60,7 +60,7 @@ class SharerManager{
 		this._sendMessage('startShare', data);
 
 		this._socket.on('notification', function(data){
-			Logger.notif("prijatá správa: " + data["msg"]);
+			Logger.write("prijatá správa: " + data["msg"]);
 			console.log(data["msg"]);
 		});
 
@@ -78,7 +78,7 @@ class SharerManager{
 			span.appendChild(a);
 			span.appendChild(document.createTextNode(" s ID " + data["id"]));
 
-			Logger.notif(span);
+			Logger.write(span);
 			Menu.disabled("sharing", "watch");
 			Menu.disabled("sharing", "stopShare");
 			Menu.disabled("sharing", "shareOptions");
@@ -102,7 +102,7 @@ class SharerManager{
 			console.log("recData.nickName: " + recData.nickName);
 			Panel.addWatcher(recData.nickName);
 			inst._actualWatchers.push(recData.nickName);
-			Logger.notif("prijatá správa: Nový watcher " + recData.nickName + " sa úspešne pripojil");
+			Logger.write("prijatá správa: Nový watcher " + recData.nickName + " sa úspešne pripojil");
 			inst._sendMessage('sendAllData', data);
 		});
 	}
@@ -131,9 +131,9 @@ class SharerManager{
 		area.select();
 		try{
 			document.execCommand('copy');
-			Logger.notif("Adresa zdielania bola úspečne skopírovaná do schránky");
+			Logger.write("Adresa zdielania bola úspečne skopírovaná do schránky");
 		}catch(e){
-			Logger.notif("Nepodarilo sa skopírovať adresu zdielania");
+			Logger.write("Nepodarilo sa skopírovať adresu zdielania");
 		}
 		document.body.removeChild(area);
 	}

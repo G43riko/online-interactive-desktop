@@ -1,6 +1,6 @@
 /*
 	compatible:	forEach, JSON parsing 14.9.2016
-*/
+*/	
 class SceneManager{
 	constructor(){
 		this._clickViewers = [];
@@ -33,11 +33,12 @@ class SceneManager{
 		var interval = setInterval(() => {
 			viewer.position.sub(CLICK_SPEED);
 			viewer.size.add(CLICK_SPEED * 2);
-			draw();
 			if(++counter == CLICK_LIMIT){
-				clearInterval(interval);
 				this._clickViewers.splice(this._clickViewers.indexOf(viewer), 1);
+				clearInterval(interval);
+				pdraw();
 			}
+			pdraw();
 		}, 1000 / FPS);
 	}
 	mouseDown(x, y){
@@ -51,11 +52,12 @@ class SceneManager{
 		var interval = setInterval(() => {
 			viewer.position.add(CLICK_SPEED);
 			viewer.size.sub(CLICK_SPEED * 2);
-			draw();
 			if(++counter == CLICK_LIMIT){
-				clearInterval(interval);
 				this._clickViewers.splice(this._clickViewers.indexOf(viewer), 1);
+				clearInterval(interval);
+				pdraw();
 			}
+			pdraw();
 		}, 1000 / FPS);
 	}
 
@@ -124,7 +126,7 @@ class SceneManager{
 			Logger.error("ide sa vymazať vrstva ktorá už neexistuje: " + title);
 
 		if(this._layers[title].guiLayer){
-			Logger.notif("nemože sa zmazať gui vrstva");
+			Logger.write("nemože sa zmazať gui vrstva");
 			return false;
 		}
 
@@ -238,11 +240,19 @@ class SceneManager{
 		return this._layers[layer].getObject(id);
 	}
 
+	pdraw(){
+		for(var i=0 ; i<this._clickViewers.length ; i++){
+			this._clickViewers[i].draw(pcontext);
+		}
+	}
+
 	draw(){
 		each(this._layers, e => e.draw());
+		/*
 		for(var i=0 ; i<this._clickViewers.length ; i++){
 			this._clickViewers[i].draw();
 		}
+		*/
 	}
 
 
