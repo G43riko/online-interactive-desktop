@@ -6,24 +6,26 @@
 - Create objects(rectangle, ellipse, line, polygon, table)
 - Edit created objects
 - Support layers
-- Create 
+- Shared drawing
+- Drawing analytics
 
 ##Development
 OIP uses varius tools for development
-- JQuery
-- NodeJS 
-- SocketIO
-- Grunt
- - concat
- - watch
- - sass
- - babel
- - uglify
- - shell
+- [JQuery](https://jquery.com/)
+- [NodeJS](https://nodejs.org/)
+- [SocketIO](http://socket.io/)
+- [Grunt](http://gruntjs.com/)
+ - [concat](https://www.npmjs.com/package/grunt-contrib-concat)
+ - [watch](https://www.npmjs.com/package/grunt-contrib-watch)
+ - [sass](https://www.npmjs.com/package/grunt-sass)
+ - [babel](https://www.npmjs.com/package/grunt-babel)
+ - [jshint](https://www.npmjs.com/package/grunt-contrib-jshint)
+ - [uglify](https://www.npmjs.com/package/grunt-contrib-uglify)
+ - [shell](https://www.npmjs.com/package/grunt-shell)
  
 ##Requirements
-- Redis database
-- NodeJS
+- [Redis](https://redis.io/)
+- [NodeJS](https://nodejs.org/)
 
 ##Configuration
 __server__
