@@ -15,10 +15,10 @@ class Layer{
 		this._canvas	= null;
 		this._forRemove = [];
 		this._layerType = layerType;
-	};
+	}
 
 	setForRemove(el){
-		this._forRemove.push(el);
+		this._forRemove[this._forRemove.length] = el;
 	}
 
 	removeElements(){
@@ -37,10 +37,11 @@ class Layer{
 	get raster(){return this._raster;}
 	get title(){return this._title;}
 	get paint(){
-		if(isNull(this._paint))
+		if(isNull(this._paint)){
 			this._paint = new Paint();
+		}
 		return this._paint;
-	};
+	}
 
 	isEmpty(){
 		if(this._paint && !this._paint.isEmpty()){
@@ -64,10 +65,10 @@ class Layer{
 
 	cleanUp(){
 		this.forEach(e => callIfFunc(e.cleanUp));
-		this._objects = [];
+		this._objects = {};
 		Paints.cleanUp(this._title);
 		Events.layerCleanUp(this._title);
-	};
+	}
 
 	rename(title){
 		Events.layerRename(this._title, title);
@@ -86,24 +87,26 @@ class Layer{
 	}
 
 	draw(ctx = context){
-		if(!this.visible)
+		if(!this.visible){
 			return;
+		}
 
 		this.forEach(e => e.visible && e.draw(ctx));
 
-		if(this._drawPaint)
+		if(this._drawPaint){
 			this.paint.draw(ctx);
-	};
+		}
+	}
 
 	add(element){
 		this._objects[element.id] = element;
-	};
+	}
 
 	remove(element){
 		delete this._objects[element.id];
-	};
+	}
 
 	forEach(func){
-		each(this._objects, e => func(e));
-	};
+		each(this._objects, func);
+	}
 }

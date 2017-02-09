@@ -1,7 +1,8 @@
 {	
 	"config" : {
 		"url" : {
-			"anonym_data" : "http://192.168.0.123:3000/anonymousData"
+			"anonym_data" : "http://192.168.0.123:3000/anonymousData",
+			"chat" : "http://localhost:3000"
 		},
 		"project" :{
 			"author" : "DefaultUserName",
@@ -178,7 +179,9 @@
 			"canvas_blur" : true,
 			"show" : {
 				"layers_viewer" : true,
-				"grid" : true
+				"grid" : true,
+				"keys" : false,
+				"clicks" : false
 			}
 		}
 	},
@@ -218,11 +221,18 @@
 			"layer_rastered" : 2616
 		},
 		"key" : {
+			"arrow" : {
+				"up" : 38,
+				"left" : 37, 
+				"down" : 40,
+				"right" : 39
+			},
 			"a" : 65,
 			"delete" : 46,
 			"enter" : 13,
 			"escape" : 27,
 			"l_alt"   : 18,
+			"tabulator" : 9,
 			"l_ctrl"     : 17,
 			"shift" : 16,
 			"y" : 89,

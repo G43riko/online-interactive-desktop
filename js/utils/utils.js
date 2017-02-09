@@ -2,7 +2,7 @@
 	compatible:	strictMode, Array.isArray 14.9.2016
 */
 
-function testCompatibility(){
+glob.testCompatibility = function(){
 	var ca = document.createElement("canvas");
 	var co = ca.getContext("2d");
 
@@ -134,7 +134,7 @@ function isIn(obj, data){
 	return false;
 }
 
-function roughSizeOfObject(object) {
+glob.roughSizeOfObject = function(object) {
 	var objectList = [];
 	var stack = [object];
 	var bytes = 0;
@@ -185,7 +185,7 @@ var isUndefined 	= e => typeof e === KEYWORD_UNDEFINED,
 	round 			= (num, val = DEFAULT_ROUND_VAL) => val === 1 ? num : Math.floor(num / val) * val;
 
 
-function toHHMMSS(time, decimals = 0) {
+glob.toHHMMSS = function(time, decimals = 0) {
     var sec_num = parseInt(time, 10) / 1000;
     var hours   = Math.floor(sec_num / 3600);
     var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
@@ -233,7 +233,7 @@ function each(obj, func, thisArg = false){
 	}
 }
 
-function loadPage(url){
+glob.loadPage = function(url){
 	var tag = document.createElement('script');
 
 	tag.src = url;
@@ -241,7 +241,7 @@ function loadPage(url){
 	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
 
-function eachFiltered(obj, func1, func2, thisArg = false){
+glob.eachFiltered = function(obj, func1, func2, thisArg = false){
 	each(obj, (e, i, arr) => func1(e, i, arr) && func2(e, i, arr), thisArg);
 }
 
@@ -392,13 +392,13 @@ function getFormattedDate(ms = Date.now()) {
 	return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + " " + date.getMilliseconds();
 }
 
-function setCookie(cname, cvalue, exdays) {
+glob.setCookie = function(cname, cvalue, exdays) {
 	var d = new Date();
 	d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
 	document.cookie = cname + "=" + cvalue + ";expires="+ d.toUTCString();
 }
 
-function getCookie(cname) {
+glob.getCookie = function(cname) {
 	var name = cname + "=",
 		ca = document.cookie.split(';'),
 		i, c;
@@ -444,7 +444,7 @@ function drawBorder(ctx, o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 	}
 }
 
-function rectRectCollision(minA, sizeA, minB, sizeB){
+glob.rectRectCollision = function(minA, sizeA, minB, sizeB){
 	var ax = minA.x;
 	var ay = minA.y;
 	var bx = minB.x;
@@ -502,7 +502,31 @@ function drawSelectArc(ctx, x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE <
 	});
 }
 
-function getMousePos(canvasDom, mouseEvent) {
+glob.showObject = function(obj){
+	if(!isObject(obj)){
+		console.log("parameter nieje objekt");
+		return;
+	}
+	var type;
+	for(var i in obj){
+		if(obj.hasOwnProperty(i)){
+			var postfix = ""
+			type = typeof obj[i];
+			type = type === "object" && isArray(obj[i]) ? "array" : type;
+
+			if(type === "array"){
+				postfix = " -> " + obj[i].length;
+			}
+			else if(type === "string" || type === "number" || type === "boolean"){
+				postfix = " -> " + obj[i];
+			}
+			console.log(i + ": [" + type + "]" + postfix);
+		}
+	}
+
+}
+
+glob.getMousePos = function(canvasDom, mouseEvent) {
 	var rect = canvasDom.getBoundingClientRect();
 	return {
 		x: mouseEvent["touches"][0].clientX - rect.left,
@@ -540,7 +564,7 @@ class EventTimer{
 	}
 }
 
-
+/*
 function setConstants(data){
 	var constants = {};
 	var setConstant = (key, val) => {
@@ -574,6 +598,7 @@ function setConstants(data){
 	});
 	return constants;
 }
+*/
 
 /**************************************************************************************
 POLYFILLS

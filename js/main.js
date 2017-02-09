@@ -2,8 +2,9 @@
 	compatible:	indexOf, canvas, canvasText, JSON parsing 14.9.2016
 */
 
-var initTime 		= Date.now(),
-	movedObject 	= false,
+glob.initTime	= Date.now();
+
+var movedObject 	= false,
 	Logger 			= new LogManager(),//samostatne lebo loguje aj Projekt preto nie v ňom
 	Project			= new ProjectManager(PROJECT_AUTHOR),
 	Scene 			= Project.scene,
@@ -12,29 +13,31 @@ var initTime 		= Date.now(),
 	selectedObjects = Project.scene.objectManager,
 	Menu 			= Project.topMenu,
 	actContextMenu 	= false,//TODO presunuť do noveho objektu na spravu GUI
-	Listeners		= new ListenersManager(),
-	//EventHistory 	= new EventSaver(),
-	Content			= new ContentManager(),//TODO presunúť do nejakého CONTENTU
-	Files			= new FileManager(),//TODO presunúť do nejakého CONTENTU
 	Paints			= new PaintManager(),
 	Task 			= null,//TODO presunúť do nejakého CONTENTU
 	Events 			= typeof EventManager !== KEYWORD_UNDEFINED ? new EventManager() : null,
 	SelectedText	= null,
-	Gui 			= Project.gui,
 	Options 		= Project.options,
 	drawEvent 		= new EventTimer(realDraw, 1000 / FPS),
 	pdrawEvent 		= new EventTimer(realPDraw, 1000 / FPS),
 	area 			= null,
 	Panel			= null,
-	Forms		 	= null,
 	Connection		= Project.connection,
 	draw 			= () => drawEvent.callIfCan(),
 	pdraw 			= () => pdrawEvent.callIfCan(),
+	//pcanvas, pcontext, drawMousePos, chatViewer,
+	components, Layers, canvas, context, timeLine;
 
+
+	//Gui 			= Project.gui,
+	//Forms		 	= null,
+	//Listeners		= Project.listeners,
+	//EventHistory 	= new EventSaver(),
+	//Content			= new ContentManager(),//TODO presunúť do nejakého CONTENTU
+	//Files			= new FileManager(),//TODO presunúť do nejakého CONTENTU
 	//TODO Layers presunuť do noveho objektu na spravu GUI
-	components, drawMousePos, Layers, canvas, context, pcanvas,pcontext, chatViewer, timeLine;
 
-function setUpComponents(){
+glob.setUpComponents = function(){
 	components =  {
 		draw : window.location.hash.indexOf(COMPONENT_DRAW) >= 0 || typeof Watcher !== "undefined",
 		share : window.location.hash.indexOf(COMPONENT_SHARE) >= 0 || typeof Watcher !== "undefined",
@@ -48,7 +51,7 @@ function setUpComponents(){
 		layers : window.location.hash.indexOf(COMPONENT_LAYERS) >= 0 || typeof Watcher !== "undefined",
 		task : window.location.hash.indexOf(COMPONENT_TASK) >= 0 || typeof Watcher !== "undefined"
 	};
-}
+};
 
 var Components = {
 	draw	: () => isDefined(components) && isDefined(components.draw) && components.draw === true,
@@ -144,7 +147,7 @@ ajax(FOLDER_JSON + "/context.json", data => ContextMenuManager.items = data, "js
 $.getJSON(FOLDER_JSON + "/attributes.json", data => Entity.attr = data);
 
 
-function init(){
+glob.init = function(){
 	Project.scene.addToScene(new Rect(new GVector2f(800, 50), new GVector2f(100, 100), "#ff0000"));
 
 	Project.scene.addToScene(new Line([new GVector2f(10, 400), new GVector2f(300, 450)], 5, "#66CCCC"));
@@ -199,16 +202,17 @@ function init(){
 		}
 	};
 	Project.scene.addToScene(new Class(new GVector2f(500, 150), new GVector2f(250, 250), "Rectange", attrs, methods));
-
 	draw();
-}
+};
 
+/*
 function setVisibilityData(data){
 	Project.topMenu.visible = data.showTopMenu;
 }
+*/
 
 ajax(FOLDER_JSON + "/forms.json", data => {
-	Forms = new FormManager(data);
+	Project.setForm(data);
 	var formList = {
 		shareForm 	: "sharingForm",
 		optionsForm : "optionsForm",
@@ -219,7 +223,7 @@ ajax(FOLDER_JSON + "/forms.json", data => {
 	each(formList, function(e, i){
 		var form = document.getElementById(i);
 		if(form){
-			form.appendChild(Forms.createForm(e));
+			form.appendChild(Project.form.createForm(e));
 		}
 	});
 
@@ -238,11 +242,11 @@ $.ajax({
 });
 */
 
-var loading = function(){
+glob.loading = function(){
 	//	testCompatibility();
 	try{
 		/////DOLEZITE!!!
-		Listeners.hashChange();
+		Project.listeners.hashChange();
 		area = new Area();
 		Project.initCanvas();
 
@@ -274,7 +278,8 @@ var loading = function(){
 				}
 			});
 		});
-		Panel = new PanelManager();
+
+		//PanelManager = new PanelManager();
 
 		Project.scene.createLayer();
 		//Project.scene.createLayer("rightMenu", "gui");
@@ -283,17 +288,16 @@ var loading = function(){
 		Project.context.shadowColor = DEFAULT_SHADOW_COLOR;
 		Project.input.initListeners(Project.canvas);
 
-		if(typeof Sharer !== "undefined"){
-			chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
-		}
+		//if(typeof Sharer !== "undefined"){
+		//	chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
+		//}
 
-		Layers = new LayersViewer(G.byId("layerViewerPlaceholder"));
+		Layers = new LayersViewer({element: G.byId("layerViewerPlaceholder"), visible: Components.layers()});
 		//Project.scene.addToScene(Layers, "rightMenu");
 		var xOffset = Project.topMenu.position.x + (Project.topMenu.size.x + MENU_OFFSET) * Project.topMenu.visibleElements - MENU_OFFSET;
 		Creator.view = new CreatorViewer(new GVector2f(Project.topMenu.visible ? xOffset : MENU_OFFSET, Project.topMenu.position.y - MENU_OFFSET));
 
-		console.log("stranka sa nacítala za: ", (Date.now() - initTime) + " ms");
-		console.log("to by malo byť: " + Date.now() + " ms");
+		console.log("stranka sa nacítala za: ", (Date.now() - glob.initTime) + " ms");
 			
 		draw();
 
@@ -308,6 +312,7 @@ var loading = function(){
 
 	}
 	catch(e){
+		console.log(e);
 		Logger.exception(getMessage(MSG_LOADING_ERROR), e);
 	}
 };
@@ -315,7 +320,10 @@ var loading = function(){
 //$(loading);
 function realPDraw(){
 	Project.canvasManager.pCanvas.clearCanvas();
-	Project.scene.pdraw();
+	if(Project.connection){
+		Project.connection.pdraw(pcontext);
+	}
+	Project.scene.pdraw(pcontext);
 }
 
 function realDraw(){
@@ -323,10 +331,9 @@ function realDraw(){
 		return;
 	}
 	Project.increaseDrawCounter();
-	drawMousePos = new Date().getMilliseconds();
 	CanvasHandler.clearCanvas(Project.context);
 	if(Project.options.grid){
-		drawGrid();
+		glob.drawGrid();
 	}
 
 	if(Creator.operation == OPERATION_AREA && area){
@@ -344,7 +351,9 @@ function realDraw(){
 		timeLine.draw();
 	}
 
+	/*
 	Project.context.font = "30px " + DEFAULT_FONT_FAMILY;
 	Project.context.fillStyle = "red";
 	Project.context.fillText("draw(ms): " + (new Date().getMilliseconds() - drawMousePos), window.innerWidth - 100, 15);
+	*/
 }

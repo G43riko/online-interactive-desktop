@@ -28,7 +28,7 @@ class CreatorViewer extends Entity{
 		var posY 	= 0;
 		each(Creator.items, function(e, i, arr){
 			posY = 0;
-			arr[i]["offset"] = counter;
+			arr[i].offset = counter;
 
 			doRect({
 				//bgColor: e.image,
@@ -43,9 +43,9 @@ class CreatorViewer extends Entity{
 				ctx: this._context
 			});
 
-			if(isDefined(e["values"])){
-				//e["values"].forEach(function(ee, ii){
-				each(e["values"], function(ee, ii){
+			if(isDefined(e.values)){
+				//e.values.forEach(function(ee, ii){
+				each(e.values, function(ee, ii){
 					if(posY > 0){
 						doRect({
 							//bgColor: e.image,
@@ -61,22 +61,22 @@ class CreatorViewer extends Entity{
 						});
 					}
 					if(ee == Creator[i]){
-						arr[i]["selectedIndex"] = ii;
+						arr[i].selectedIndex = ii;
 					}
 
 					this._drawIcon(i, ee, counter, posY);
 					posY += MENU_HEIGHT;
 				}, this);
 			}
-			else if(e["type"] === "bool"){
-				arr[i]["selectedIndex"] = 0;
-				this._drawIcon(i, e["value"], counter, posY);
+			else if(e.type === "bool"){
+				arr[i].selectedIndex = 0;
+				this._drawIcon(i, e.value, counter, posY);
 			}
 			else if(i == ATTRIBUTE_FONT_COLOR){
 				fillText("Abc", counter + (MENU_WIDTH >> 1), posY + (MENU_HEIGHT >> 1), DEFAULT_FONT_SIZE, Creator.fontColor, 0, FONT_ALIGN_CENTER, this._context);
 			}
 			else{
-				arr[i]["selectedIndex"] = 0;
+				arr[i].selectedIndex = 0;
 				this._drawIcon(i, Creator[i], counter, posY);
 			}
 			counter += MENU_WIDTH;
@@ -96,7 +96,7 @@ class CreatorViewer extends Entity{
 				borderWidth: MENU_BORDER_WIDTH << 2,
 				borderColor: CHECKBOX_COLOR_TRUE,
 				ctx: this._context
-			})
+			});
 		}
 		else{
 			doLine({
@@ -107,7 +107,7 @@ class CreatorViewer extends Entity{
 				borderWidth: MENU_BORDER_WIDTH << 2,
 				borderColor: CHECKBOX_COLOR_FALSE,
 				ctx: this._context
-			})
+			});
 		}
 	}
 
@@ -148,20 +148,22 @@ class CreatorViewer extends Entity{
 				});
 				break;
 			case ATTRIBUTE_BRUSH_TYPE:
-				if(value === "line")
+				if(value === "line"){
 					doArc({
 						position: [posX + (offset << 1), posY + (offset << 1)],
 						size: [width - (offset << 2), height - (offset << 2)],
 						fillColor: MENU_BORDER_COLOR,
 						ctx: this._context
 					});
-				else
+				}
+				else{
 					doRect({
 						position: [posX, posY ],
 						size: [width, height],
 						bgImage: Paints.getBrush(value),
 						ctx: this._context
 					});
+				}
 				break;
 			case ATTRIBUTE_BRUSH_COLOR :
 				doArc({
@@ -207,8 +209,9 @@ class CreatorViewer extends Entity{
 	}
 
 	_clickOn(x, y){
-		if(y < this.position.y || x < this.position.x || x > this.position.x + this.size.x)
+		if(y < this.position.y || x < this.position.x || x > this.position.x + this.size.x){
 			return false;
+		}
 		var counter =  this.position.x + MENU_OFFSET,
 			click 	= null,
 			num;
@@ -217,21 +220,21 @@ class CreatorViewer extends Entity{
 				if(y < this.position.y + MENU_OFFSET + MENU_HEIGHT){
 					click = e;
 				}
-				else if(e["itemsSelected"]){
+				else if(e.itemsSelected){
 					num = this.position.y + MENU_OFFSET;
-					if(isDefined(e["item"]["values"])){
-						each(e["item"]["values"], function(ee, ii){
+					if(isDefined(e.item.values)){
+						each(e.item.values, function(ee, ii){
 							num += MENU_HEIGHT + MENU_OFFSET;
 							if(!click && y > num && y < num + MENU_HEIGHT){
 								click = e;
-								e["item"]["selectedIndex"] = ii;
+								e.item.selectedIndex = ii;
 							}
 						});
 					}
 				}
 			}
-			else if(e["itemsSelected"]){
-				arr[i]["itemsSelected"] = false;
+			else if(e.itemsSelected){
+				arr[i].itemsSelected = false;
 			}
 
 			counter += MENU_OFFSET + MENU_WIDTH;
@@ -248,20 +251,20 @@ class CreatorViewer extends Entity{
 		if(!doAct && e){
 			return true;
 		}
-		if(isDefined(e["item"]["values"])){
-			Creator.setOpt(e["key"], e["item"]["values"][e["item"]["selectedIndex"]]);
-			e["itemsSelected"] = !e["itemsSelected"];
+		if(isDefined(e.item.values)){
+			Creator.setOpt(e.key, e.item.values[e.item.selectedIndex]);
+			e.itemsSelected = !e.itemsSelected;
 		}
-		else if(e["item"]["type"] == "color"){
-			pickUpColor(color => Creator.setOpt(e["key"], color));
+		else if(e.item.type == "color"){
+			pickUpColor(color => Creator.setOpt(e.key, color));
 		}
-		else if(e["item"]["type"] == "bool"){
-			e["item"]["value"] = !e["item"]["value"];
-			if(e["key"] === "controll"){
-				Creator._controllPress = e["item"]["value"];
+		else if(e.item.type == "bool"){
+			e.item.value = !e.item.value;
+			if(e.key === "controll"){
+				Creator._controllPress = e.item.value;
 			}
-			if(e["key"] === "allLayers"){
-				Creator._allLayers = e["item"]["value"];
+			if(e.key === "allLayers"){
+				Creator._allLayers = e.item.value;
 			}
 			inst.init();
 			draw();
@@ -292,15 +295,14 @@ class CreatorViewer extends Entity{
 	changeOperation(){
 		this._items = [];
 		each(Creator.items, function(e, i){
-			if(!CreatorViewer.allowedOption(Creator.operation, e["allowedFor"])){
+			if(!CreatorViewer.allowedOption(Creator.operation, e.allowedFor)){
 				return;
 			}
-
-			this._items.push({
+			this._items[this._items.length] = {
 				item: e,
 				key: i,
 				itemsSelected: false
-			});
+			};
 
 		}, this);
 	}
@@ -311,8 +313,8 @@ class CreatorViewer extends Entity{
 		each(this._items, function(e){
 			doRect({
 				bgImage: {
-					x: e["item"]["offset"],
-					y: e["item"]["selectedIndex"] * MENU_HEIGHT,
+					x: e.item.offset,
+					y: e.item.selectedIndex * MENU_HEIGHT,
 					w: MENU_WIDTH,
 					h: MENU_HEIGHT,
 					img: this._canvas
@@ -326,16 +328,16 @@ class CreatorViewer extends Entity{
 				borderWidth: this._borderWidth
 			});
 
-			fillText(e["key"], this.position.x + counter + (MENU_WIDTH >> 1), this.position.y + MENU_OFFSET + (MENU_HEIGHT >> 1), 7, MENU_FONT_COLOR, 0, FONT_ALIGN_CENTER);
+			fillText(e.key, this.position.x + counter + (MENU_WIDTH >> 1), this.position.y + MENU_OFFSET + (MENU_HEIGHT >> 1), 7, MENU_FONT_COLOR, 0, FONT_ALIGN_CENTER);
 
-			if(e["itemsSelected"] && isDefined(e["item"]["values"])){
+			if(e.itemsSelected && isDefined(e.item.values)){
 				var num = this.position.y + MENU_OFFSET;
-				//e["item"]["values"].forEach(function(ee, ii){
-				each(e["item"]["values"], function(ee, ii){
+				//e.item.values.forEach(function(ee, ii){
+				each(e.item.values, function(ee, ii){
 					num += MENU_OFFSET + MENU_WIDTH;
 					doRect({
 						bgImage: {
-							x: e["item"]["offset"],
+							x: e.item.offset,
 							y: ii * MENU_HEIGHT,
 							w: MENU_WIDTH,
 							h: MENU_HEIGHT,

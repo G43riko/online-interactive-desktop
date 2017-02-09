@@ -19,10 +19,10 @@ class InputManager{
 	_onResize(){
 		//initCanvasSize();
 		if(window.innerWidth < LIMIT_MIN_SCREEN_WIDTH){
-			Logger.error("Minimálna šírka obrazovky je " + LIMIT_MIN_SCREEN_WIDTH + "px");
+			Logger.error(getMessage(MSG_MIN_SCREEN_WIDTH, LIMIT_MIN_SCREEN_WIDTH));
 			return;
 		}
-		Content.onResize();
+		Project.content.onResize();
 		
 		Project.canvasManager.onResize();
 		Scene.onScreenResize();
@@ -51,21 +51,22 @@ class InputManager{
 				paint: Paints.toObject()
 			};
 			localStorage.setItem(RESTORE_KEY, JSON.stringify(result));
-		}
+		};
 		window.orientationchange = this._onResize;
 		window.onbeforeunload= function(event){
-			event.returnValue = "Nazoaj chceš odísť s tejto stránky???!!!";
+			event.returnValue = getMessage(MSG_BEFORE_ONLOAD_TEXT);
 		};
-		window.onhashchange = Listeners.hashChange;
+		window.onhashchange = Project.listeners.hashChange;
 		
 		window.onkeydown = e => {
 			this._keyDown(e.keyCode);
 
-			if(!e.target.onkeyup)
+			if(!e.target.onkeyup){
 				e.target.onkeyup = e => {
 					this._keyUp(e.keyCode);
 					e.target.onkeyup = false;
-				}
+				};
+			}
 		};
 
 		//window.addEventListener('orientationchange', initCanvasSize, false)
@@ -77,19 +78,19 @@ class InputManager{
 		target.onclick = function(){draw();};
 		target.onmouseleave = e => {
 			this._allButtonsUp();
-			Listeners.mouseLeave(new GVector2f(e.offsetX, e.offsetY));
-		}
+			Project.listeners.mouseLeave(new GVector2f(e.offsetX, e.offsetY));
+		};
 		target.onmousepress = function(e){
-			return Listeners.mousePress(e.position.getClone(), e.button);
+			return Project.listeners.mousePress(e.position.getClone(), e.button);
 		};
 
 		target.ondblclick = function(e){
-			Listeners.mouseDoubleClick(new GVector2f(e.offsetX, e.offsetY), e.button);
+			Project.listeners.mouseDoubleClick(new GVector2f(e.offsetX, e.offsetY), e.button);
 		};
 
 		target.onmousedown = e => {
 			this._buttonDown(e);
-			Listeners.mouseDown(new GVector2f(e.offsetX, e.offsetY), e.button);
+			Project.listeners.mouseDown(new GVector2f(e.offsetX, e.offsetY), e.button);
 
 			e.target.onmouseup = ee => {
 
@@ -103,12 +104,12 @@ class InputManager{
 				}
 				ee.target.onmouseup = false;
 
-				Listeners.mouseUp(new GVector2f(ee.offsetX, ee.offsetY), ee.button);
+				Project.listeners.mouseUp(new GVector2f(ee.offsetX, ee.offsetY), ee.button);
 			};
 			e.target.onmousemove = ee => {
 				this._mouseMove(ee);
-				Listeners.mouseMove(new GVector2f(ee.offsetX, ee.offsetY), ee["movementX"], ee["movementY"]);
-			}
+				Project.listeners.mouseMove(new GVector2f(ee.offsetX, ee.offsetY), ee["movementX"], ee["movementY"]);
+			};
 		};
 
 		$(target).bind('contextmenu', () => false);
@@ -116,19 +117,19 @@ class InputManager{
 
 		target.addEventListener("touchstart", e => {
 			e.preventDefault();
-			this._lastTouch = getMousePos(target, e);
+			this._lastTouch = glob.getMousePos(target, e);
 			Input._buttonDown({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
 
-			Listeners.mouseDown(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
+			Project.listeners.mouseDown(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
 			
 			e.target.addEventListener("touchmove", ee => {
 				ee.preventDefault();
 				Input._mouseMove({offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
-				var mov = getMousePos(target, ee);
+				var mov = glob.getMousePos(target, ee);
 				mov.x -=  this._lastTouch.x;
 				mov.y -=  this._lastTouch.y;
-				this._lastTouch = getMousePos(target, ee);
-				Listeners.mouseMove(new GVector2f(this._lastTouch.x, this._lastTouch.y), mov.x, mov.y);
+				this._lastTouch = glob.getMousePos(target, ee);
+				Project.listeners.mouseMove(new GVector2f(this._lastTouch.x, this._lastTouch.y), mov.x, mov.y);
 				draw();
 			}, false);
 
@@ -139,7 +140,7 @@ class InputManager{
 					return false;
 				}
 				Input._buttonUp({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
-				Listeners.mouseUp(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
+				Project.listeners.mouseUp(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
 				draw();
 			}, false);
 
@@ -149,7 +150,7 @@ class InputManager{
 					return false;
 				}
 				Input._buttonUp({button: LEFT_BUTTON, offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
-				Listeners.mouseUp(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
+				Project.listeners.mouseUp(new GVector2f(this._lastTouch.x, this._lastTouch.y), LEFT_BUTTON);
 				draw();
 			}, false);
 		}, false);
@@ -158,13 +159,13 @@ class InputManager{
 	_keyDown(val){
 		this._keys[val] = true;
 		Events.keyDown(val);
-		Listeners.keyDown(val, this.isKeyDown(KEY_L_CTRL));
+		Project.listeners.keyDown(val, this.isKeyDown(KEY_L_CTRL));
 	}
 
 	_keyUp(val){
 		this._keys[val] = false;
 		Events.keyUp(val);
-		Listeners.keyUp(val, this.isKeyDown(KEY_L_CTRL));
+		Project.listeners.keyUp(val, this.isKeyDown(KEY_L_CTRL));
 
 		if(!this._hist[val]){
 			this._hist[val] = 0;
@@ -221,11 +222,10 @@ class InputManager{
 		this._buttons[val.button] = true;
 		Events.mouseDown(val.button, val.offsetX, val.offsetY);
 
-		var t = this;
 		if (this._timer){
 			this._clearTimer();
 		}
-		this._timer = setTimeout(function(){t._checkPress(val.button)}, TOUCH_DURATION);
+		this._timer = setTimeout(() => this._checkPress(val.button), TOUCH_DURATION);
 		this._pressPosition.set(val.offsetX, val.offsetY);
 	}
 

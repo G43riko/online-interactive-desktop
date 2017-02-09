@@ -3,8 +3,9 @@
 */
 function pickUpColor(func, thisArg){
 	var T;
-	if (arguments.length > 1)
+	if (arguments.length > 1){
 		T = thisArg;
+	}
 	$("#colorPalete").delegate(".colorPatern", "click", function(){
 		$("#colorPalete .selected").removeClass("selected");
 		func.call(T, $(this).addClass("selected").css("backgroundColor"));
@@ -25,7 +26,7 @@ function shadeColor1(color, percent) {  // deprecated. See below.
 							  (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
 }
 
-function hexToRGBA(color) {
+glob.hexToRGBA = function(color) {
 	var num = parseInt(color.slice(1), 16);
 	return [num >> 16, num >> 8 & 0x00FF, num & 0x0000FF];
-}
+};

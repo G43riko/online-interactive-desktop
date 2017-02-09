@@ -18,7 +18,7 @@ class Entity{
 		this._minSize 			= false;
 		this._selectedConnector = false;
 
-		this._layer				= "default";
+		this._layer				= PROJECT_LAYER_TITLE;
 
 		this._parent			= null;
 		this._childrens			= [];
@@ -252,7 +252,7 @@ class Entity{
 			obj["_" + attr] = val;
 		}
 		else{
-			Logger.error("k objektu " + obj.name + " sa snaží priradiť neplatný atribút: " + attr);
+			Logger.error(getMessage(MSG_WRONG_ATTRIBUTE, obj.name, attr));
 		}
 
 		Events.objectChange(obj, attr, val);
@@ -415,13 +415,13 @@ class Entity{
 			case OBJECT_TEXT :
 				return new TextField("");
 			case OBJECT_POLYGON :
-				return new Polygon([0,0,0]);
+				return new Polygon([0, 0, 0]);
 			case OBJECT_LINE :
-				return new Line([0,0,0]);
+				return new Line([0, 0, 0]);
 			case OBJECT_CLASS :
 				return new Class();
 			default :
-				Logger.error("snažíš sa vložiť objekt s neznámym menom: " + obj._name);
+				Logger.error(getMessage(MSG_UNKNOWN_OBJECT_NAME, obj._name));
 				return null;
 		}
 	}
@@ -461,7 +461,7 @@ class Entity{
 					result[i] = e;
 				}
 			});
-			Logger.write("objekt bol úspešne vytvorený");
+			Logger.write(MSG_OBJECT_SUCCESSFULLY_CREATED, result.name || "Neznámy");
 			Logger.log("Vytvoril sa objekt " + (result.name || "Neznámy"), LOGGER_OBJECT_CREATED);
 		}
 		return result;

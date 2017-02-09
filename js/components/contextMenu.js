@@ -54,20 +54,20 @@ class ContextMenuManager{
 					arr[i]["value"] = this._selectedObject["_" + this._key] == e["name"];
 				}
 
-				if(e["type"] == INPUT_TYPE_CHECKBOX){
+				if(e.type == INPUT_TYPE_CHECKBOX){
 					hasExtension = true;
-					if(e["key"] == "locked")
-						arr[i]["value"] = selectedObjects.movedObject.locked;
-					else if(e["key"] == "visible")
-						arr[i]["value"] = selectedObjects.movedObject.visible;
-					else if(e["key"] == "showPaint")
-						arr[i]["value"] = selectedObjects.movedObject.showPaint;
-					else if(e["key"] == "taskResult")
-						arr[i]["value"] = selectedObjects.movedObject.taskResult;
+					if(e.key == "locked")
+						arr[i].value = selectedObjects.movedObject.locked;
+					else if(e.key == "visible")
+						arr[i].value = selectedObjects.movedObject.visible;
+					else if(e.key == "showPaint")
+						arr[i].value = selectedObjects.movedObject.showPaint;
+					else if(e.key == "taskResult")
+						arr[i].value = selectedObjects.movedObject.taskResult;
 				}
 			}, this);
 		}
-		this._menuWidth = getMaxWidth(this._titles.map(e => e["label"])) + (CONTEXT_MENU_OFFSET << 1);
+		this._menuWidth = glob.getMaxWidth(this._titles.map(e => e.label)) + (CONTEXT_MENU_OFFSET << 1);
 
 		if(hasExtension)
 			this._menuWidth += 30;
@@ -84,7 +84,7 @@ class ContextMenuManager{
 		var res = ContextMenuManager.items[args[0]];
 
 		if(args[1])
-			res["fields"][args[1]].disabled = val;
+			res.fields[args[1]].disabled = val;
 		else
 			res.disabled = val;
 	}
@@ -93,7 +93,7 @@ class ContextMenuManager{
 		var res = ContextMenuManager.items[args[0]];
 
 		if(args[1])
-			res["fields"][args[1]].visible = val;
+			res.fields[args[1]].visible = val;
 		else
 			res.visible = val;
 	}
@@ -104,9 +104,9 @@ class ContextMenuManager{
 		//objectToArray(arguments).forEach(function(e){
 		each(objectToArray(arguments), e => {
 			res = ContextMenuManager.items[e];
-			if(res && res["visible"]){
-				res["key"] = e;
-				this._titles.push(res);
+			if(res && res.visible){
+				res.key = e;
+				this._titles[this._titles.length] = res;
 			}
 		}, this);
 	};
@@ -149,7 +149,7 @@ class ContextMenuManager{
 				doLine({points: [pX, posY, pX + menuWidth, posY], draw: true});
 
 			//STARA SA O ROZBALANE ALEBO DISABLOVANE POZADIE
-			if(e["disabled"] || this._subMenu && e["key"] == this._subMenu._key){
+			if(e.disabled || this._subMenu && e.key == this._subMenu._key){
 				var firstRadius = this._titles[0] === e ? MENU_RADIUS : 0;
 				var lastRadius = getLastElement(this._titles) === e ? MENU_RADIUS : 0;
 
@@ -160,15 +160,15 @@ class ContextMenuManager{
 					radius: {tr: firstRadius, tl: firstRadius, br: lastRadius, bl: lastRadius},
 					borderColor: this.borderColor,
 					borderWidth: this.borderWidth,
-					fillColor: e["disabled"] ? CONTEXT_MENU_DISABLED_FILL_COLOR : CONTEXT_MENU_SELECTED_FILL_COLOR,
+					fillColor: e.disabled ? CONTEXT_MENU_DISABLED_FILL_COLOR : CONTEXT_MENU_SELECTED_FILL_COLOR,
 					draw: true
 				});
 			}
 
-			fillText(e["label"], pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor, [CONTEXT_MENU_OFFSET, 0]);
+			fillText(e.label, pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor, [CONTEXT_MENU_OFFSET, 0]);
 
 
-			if(e["type"] == INPUT_TYPE_CHECKBOX)
+			if(e.type == INPUT_TYPE_CHECKBOX)
 				doRect({
 					x: pX + menuWidth - offset - checkSize,
 					y: posY + offset,
@@ -176,24 +176,24 @@ class ContextMenuManager{
 					radius: 5,
 					borderColor: this.borderColor,
 					borderWidth: this.borderWidth,
-					fillColor: e["value"] ? CHECKBOX_COLOR_TRUE : CHECKBOX_COLOR_FALSE,
+					fillColor: e.value ? CHECKBOX_COLOR_TRUE : CHECKBOX_COLOR_FALSE,
 					draw: true
 				});
-			else if(e["type"] == INPUT_TYPE_RADIO)
+			else if(e.type == INPUT_TYPE_RADIO)
 				doArc({
 					x: pX + menuWidth - offset - checkSize,
 					y: posY + offset,
 					size: checkSize,
 					borderColor: DEFAULT_FONT_COLOR,
 					fillColor: DEFAULT_FONT_COLOR,
-					draw: !e["value"],
-					fill: e["value"]
+					draw: !e.value,
+					fill: e.value
 				});
-			else if(e["type"] == "widthValue")
+			else if(e.type == "widthValue")
 				doLine({
 					points: [pX + menuWidth - (checkSize << 2), posY + (CONTEXT_MENU_LINE_HEIGHT >> 1),
 							 pX + menuWidth - offset, posY + (CONTEXT_MENU_LINE_HEIGHT >> 1)],
-					borderWidth: e["name"]
+					borderWidth: e.name
 				});
 		}, this);
 	
@@ -226,7 +226,7 @@ class ContextMenuManager{
 				break;
 			case "locked":
 				this._selectedObject.locked = !this._selectedObject.locked;
-				ContextMenuManager.items["locked"].value = this._selectedObject.locked;
+				ContextMenuManager.items.locked.value = this._selectedObject.locked;
 				actContextMenu = false;
 				break;
 			case "clearWorkspace":
@@ -361,17 +361,17 @@ class ContextMenuManager{
 			var pos = this._position.getClone().add(this._menuWidth, i * CONTEXT_MENU_LINE_HEIGHT);
 			if(pos.x + this._menuWidth > canvas.width)
 				pos.x -= this._menuWidth << 1;
-			if(this._titles[i]["key"] === "changeLayer"){
-				this._titles[i]["fields"] = [];
+			if(this._titles[i].key === "changeLayer"){
+				this._titles[i].fields = [];
 				each(Scene.layers, e => {
-					this._titles[i]["fields"].push({
+					this._titles[i].fields.push({
 						group : "layerValue",
 						name : e.title,
 						label : e.title
 					});
 				})
 			}
-			this._subMenu = new ContextMenuManager(pos, objectToArray(this._titles[i]["fields"]), this, this._titles[i]["key"]);
+			this._subMenu = new ContextMenuManager(pos, objectToArray(this._titles[i].fields), this, this._titles[i]["key"]);
 		}
 		else
 			this._subMenu = false;

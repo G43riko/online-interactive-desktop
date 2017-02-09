@@ -28,20 +28,19 @@ module.exports = function(grunt){
 				src: [
 					"components/LayersViewer.js",
 					"components/ContextMenu.js",
-					//"js/G.js",
 					"js/utils/logger.js",
 					"js/lib/alerts.js",
 					"js/config.js",
 					"js/components/Analyzer.js",
 					"js/components/creator.js",
 					"js/components/guiManager.js",
-					"js/components/panelManager.js",
+					//"js/components/panelManager.js",
 					"js/components/colorManager.js",
 					"js/utils/GVector2f.js",
 					"js/utils/utils.js",
 					"js/components/menu.js",
-					"js/components/slider.js",
-					"js/components/chatViewer.js",
+					//"js/components/slider.js",
+					//"js/components/chatViewer.js",
 					"js/components/contextMenu.js",
 					"js/components/fileManager.js",
 					"js/components/optionManager.js",
@@ -53,7 +52,7 @@ module.exports = function(grunt){
 					"js/components/layer.js",
 					"js/components/scene.js",
 					"js/components/eventManager.js",
-					"js/components/timeLine.js",
+					//"js/components/timeLine.js",
 					"js/components/ConnectionManager.js",
 					"js/components/projectManager.js",
 					"js/components/paintManager.js",
@@ -174,7 +173,7 @@ module.exports = function(grunt){
 				},
 			},
 			//uses_defaults: ['components/LayersViewer.js']
-			uses_defaults: ['js/main.js']
+			uses_defaults: ['js/listeners.js']
 			//uses_defaults: '<%= concat.js.src %>'
 			
 		}

@@ -9,6 +9,9 @@
     }
 }
 
+$bgColor: #1abc9c;
+$borderColor : #537864;
+ 
 *{
 	margin: 0;
 	padding: 0;
@@ -22,7 +25,27 @@ body{
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
 
+
+#keysViewerHolder{
+	position: fixed;
+	right: 0;
+	bottom: 0;
+
+	div {
+		background-color: $bgColor;
+		box-shadow: 3px 3px white;
+		margin: 10px;
+		border-radius: 5px;
+		border: 2px solid $borderColor;
+		text-align: center;
+		width: 80px;
+		height: 60px;
+		font-size: 27px;
+		line-height: 60px;
+		position: relative;
+	}
 }
 
 #modalWindow{

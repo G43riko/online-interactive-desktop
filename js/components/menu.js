@@ -304,10 +304,10 @@ class MenuManager{
 				showSharingOptions();
 				break;
 			case "loadLocalImage":
-				Content.setContentImage();
+				Project.content.setContentImage();
 				break;
 			case "loadLocalHTML":
-				Content.setContentHTML();
+				Project.content.setContentHTML();
 				break;
 			case "undo":
 				Paints.undo();

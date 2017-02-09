@@ -4,7 +4,7 @@ class Polygon extends Entity{
 		this.points 		= points;
 		this.movingPoint	= -1;
 		if(points.length < 3){
-			Logger.warn("vytvoril sa polygon ktory mal menej ako 3 body a tak sa maže");
+			Logger.warn(getMessage(MSG_POLYGON_WITH_TOO_LESS_POINTS));
 			Scene.remove(this);
 		}
 

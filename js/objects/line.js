@@ -26,7 +26,7 @@ class Line extends Entity{
 		this._text_B = "koniec 90%";
 
 		if(points.length < 2){
-			Logger.warn("vytvoril sa line ktory mal menej ako 2 body a tak sa maže");
+			Logger.warn(getMessage(MSG_LINE_WITH_TOO_LESS_POINTS));
 			Scene.remove(this);
 		}
 		Entity.findMinAndMax(this._points, this.position, this.size);

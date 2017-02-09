@@ -29,7 +29,7 @@ class SceneManager{
 			"fill" : false,
 			"borderColor" : CLICK_COLOR
 		});
-		this._clickViewers.push(viewer);
+		this._clickViewers[this._clickViewers.length] = viewer;
 		var interval = setInterval(() => {
 			viewer.position.sub(CLICK_SPEED);
 			viewer.size.add(CLICK_SPEED * 2);
@@ -48,7 +48,7 @@ class SceneManager{
 			"fill" : false,
 			"borderColor" : CLICK_COLOR
 		});
-		this._clickViewers.push(viewer);
+		this._clickViewers[this._clickViewers.length] = viewer;
 		var interval = setInterval(() => {
 			viewer.position.add(CLICK_SPEED);
 			viewer.size.sub(CLICK_SPEED * 2);
@@ -75,8 +75,9 @@ class SceneManager{
 	cleanUp(){
 		each(this._layers, e => {
 			e.cleanUp();
-			if(e.title !== PROJECT_LAYER_TITLE)
+			if(e.title !== PROJECT_LAYER_TITLE){
 				this.deleteLayer(e.title);
+			}
 		});
 
 		Events.sceneCleanUp();
@@ -84,7 +85,7 @@ class SceneManager{
 	}
 
 	onScreenResize(){
-		each(this._layers, e => e.paint.onScreenResize())
+		each(this._layers, e => e.paint.onScreenResize());
 	}
 
 	createLayer(title = PROJECT_LAYER_TITLE, layerType = ""){
@@ -122,11 +123,12 @@ class SceneManager{
 	}
 
 	deleteLayer(title){
-		if(!this._layers.hasOwnProperty(title))
-			Logger.error("ide sa vymazať vrstva ktorá už neexistuje: " + title);
+		if(!this._layers.hasOwnProperty(title)){
+			Logger.error(getMessage(MSG_TRY_DELETE_ABSENT_LAYER, title));
+		}
 
 		if(this._layers[title].guiLayer){
-			Logger.write("nemože sa zmazať gui vrstva");
+			Logger.write(getMessage(MSG_TRY_DELETE_GUI_LAYER));
 			return false;
 		}
 
@@ -135,8 +137,9 @@ class SceneManager{
 
 		this._layersCount--;
 
-		if(isDefined(Layers))
+		if(isDefined(Layers)){
 			Layers.deleteLayer(title);
+		}
 
 		Events.layerDelete(title);
 	}
@@ -154,27 +157,30 @@ class SceneManager{
 	getTaskObject(data){
 		//var findAssignment = false;
 
-		data["error"] = data["error"] === "" ? data["error"] : "";
-		data["results"] = isEmptyObject(data["results"]) ? data["results"] : {};
-		data["content"] = isEmptyArray(data["content"]) ? data["content"] : [];
+		data.error = data.error === "" ? data.error : "";
+		data.results = isEmptyObject(data.results) ? data.results : {};
+		data.content = isEmptyArray(data.content) ? data.content : [];
 
 		each(this.layers, function(e, i){
 			if(e.visible){
 				e.forEach(function(e){
-					if(e === Layers)
+					if(e === Layers){
 						return;
+					}
 					if(e.visible){
 						if(e.name === OBJECT_TEXT){
-							if(e.text === "")
+							if(e.text === ""){
 								return;
+							}
 							if(e.taskResult){
-								data["results"][e.id] = e.text;
+								data.results[e.id] = e.text;
 								e.text = "";
-								for(var i in data["results"][e.id])
+								for(var i in data.results[e.id]){
 									e.text += " ";
+								}
 							}
 						}
-						data["content"].push(e);
+						data.content[data.content.length] = e;
 					}
 				});
 			}
@@ -195,27 +201,29 @@ class SceneManager{
 					//vymaže obsah
 				
 				//pridá to scene
-		if(isEmptyObject(data["results"])){
-			data["error"] += "nieje zadaný žiadny text pre výsledok"
+		if(isEmptyObject(data.results)){
+			data.error += getMessage(MSG_MISSING_RESULT_TEXT);
 		}
 
-		return data["error"] === "" && findAssignment;
+		return data.error === "" && findAssignment;
 	}
 
 	addToScene(object, layer = Layers.activeLayerName, resend = true){
-		if(!this._layers.hasOwnProperty(layer))
-			Logger.error("ide sa načítať neexistujúca vrstva: " + layer);
+		if(!this._layers.hasOwnProperty(layer)){
+			Logger.error(getMessage(MSG_ADD_OBJECT_TO_ABSENT_LAYER, layer));
+		}
 
 		object.layer = layer;
 		this._layers[layer].add(object);
 
 		Events.objectAdded(resend, object);
 
-		if(!resend)
+		if(!resend){
 			object.selected = false;
+		}
 
 		draw();
-	};
+	}
 
 	findObjectsForRemove(x, y, radius){
 		//TODO bud aktualna ale všetky vrstvy, podla Creator.allLayers
@@ -228,7 +236,7 @@ class SceneManager{
 				}
 			});
 			layer.removeElements();
-		})
+		});
 	}
 
 	get layers(){return this._layers;}
@@ -240,9 +248,9 @@ class SceneManager{
 		return this._layers[layer].getObject(id);
 	}
 
-	pdraw(){
+	pdraw(ctx){
 		for(var i=0 ; i<this._clickViewers.length ; i++){
-			this._clickViewers[i].draw(pcontext);
+			this._clickViewers[i].draw(ctx);
 		}
 	}
 
@@ -287,7 +295,7 @@ class SceneManager{
 		}));*/
 		each(this._layers, e => e.forEach(function(ee){//pre každu vrstvu prejde všetkými objektami
 			if(ee.name != "LayerViewer"){
-				result.push(ee)
+				result[result.length] = ee;
 				console.log("pridava sa: ", e, ee);
 			}
 		}));

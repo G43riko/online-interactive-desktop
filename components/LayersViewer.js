@@ -3,13 +3,24 @@
 	JShint 4.2.2017
 */
 class LayersViewer{
-	constructor(element, defaultName = "Layer_"){
+	constructor(arg){
 		if(G.isDefined(LayersViewer.instance)){
 			alert("Nieje možné vytvoriť viac ako jednu inštanciu LayersViewera!!!!");
 			return;
 		}
 		LayersViewer.instance = this;
-		this._defaultName = defaultName;
+		if(typeof arg !== "object"){
+			alert("Argument musí byť objekt");
+			return;
+		}
+
+		if(typeof arg.element === "undefined"){
+			alert("arg.element musí byť definovaný");
+			return;
+		}
+
+		var element = arg.element;
+		this._defaultName = arg.defaultLayertName || "Layer_";
 		this._counter = 0;
 		this._layers = {};
 		this._activeLayer = "";
@@ -18,10 +29,15 @@ class LayersViewer{
 		this._layersViewer = this._createDiv();
 		element.appendChild(this._layersViewer.first());
 
+		this.visible = arg.visible !== false || false;
 
 		if(typeof Scene !== "undefined" && G.isObject(Scene) && G.isDefined(Scene._layers)){
 			each(Scene._layers, e => this.createLayer(e), this);
 		}
+	}
+
+	set visible(val){
+		val ? this._layersViewer.show() : this._layersViewer.hide();
 	}
 
 	hover(x, y){return false;}

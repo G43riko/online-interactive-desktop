@@ -51,31 +51,35 @@ class OptionsManager{
 	}
 
 	init(){
-		each(this._options, (e, i) => this._processAndSetValueIfExistById(e["id"], i, e["attr"], e["val"]));
+		each(this._options, (e, i) => this._processAndSetValueIfExistById(e.id, i, e.attr, e.val));
 	}
 
-	get grid(){return this._options["grid"]["val"];}
-	get shadows(){return this._options["shadows"]["val"];}
-	get snapping(){return this._options["snapping"]["val"];}
-	get canvasBlur(){return this._options["canvasBlur"]["val"];}
-	get changeCursor(){return this._options["changeCursor"]["val"];}
-	get showLayersViewer(){return this._options["showLayersViewer"]["val"];}
-	get movingSilhouette(){return this._options["movingSilhouette"]["val"];}
+	get showKeys(){return OPTION_SHOW_KEYS;}
+	get showClicks(){return OPTION_SHOW_CLICKS;}
+	get grid(){return this._options.grid.val;}
+	get shadows(){return this._options.shadows.val;}
+	get snapping(){return this._options.snapping.val;}
+	get canvasBlur(){return this._options.canvasBlur.val;}
+	get changeCursor(){return this._options.changeCursor.val;}
+	get showLayersViewer(){return this._options.showLayersViewer.val;}
+	get movingSilhouette(){return this._options.movingSilhouette.val;}
 
 
 	setOpt(key, val, setElement = true){
 		var obj = this._options[key];
 		if(setElement){
-			var e = document.getElementById(obj["id"]);
-			if(e)
-				e[obj["attr"]] = val
+			var e = document.getElementById(obj.id);
+			if(e){
+				e[obj.attr] = val;
+			}
 		}
 
-		if(key === "showLayersViewer")
+		if(key === "showLayersViewer"){
 			Entity.setAttr(Layers, "visible", val);
+		}
 		
-		Logger.log("nastavila sa možnosť " + key + " na hodnotu " + val, LOGGER_CHANGE_OPTION);
-		obj["val"] = val;
+		Logger.log(getMessage(MSG_OPTION_CHANGE, key, val), LOGGER_CHANGE_OPTION);
+		obj.val = val;
 		draw();
 	}
 }

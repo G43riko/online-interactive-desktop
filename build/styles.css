@@ -676,6 +676,23 @@ body {
   -ms-user-select: none;
   user-select: none; }
 
+#keysViewerHolder {
+  position: fixed;
+  right: 0;
+  bottom: 0; }
+  #keysViewerHolder div {
+    background-color: #1abc9c;
+    box-shadow: 3px 3px white;
+    margin: 10px;
+    border-radius: 5px;
+    border: 2px solid #537864;
+    text-align: center;
+    width: 80px;
+    height: 60px;
+    font-size: 27px;
+    line-height: 60px;
+    position: relative; }
+
 #modalWindow {
   margin: auto;
   position: absolute;

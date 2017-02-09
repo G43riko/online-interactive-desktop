@@ -9,6 +9,15 @@ locked
 size
 name
 
+//TODO
+//add to clob
+	colorManager.js
+	fileManager.js
+	formManager.js
+	guiManager.js
+//magic constatns 
+	layerViewer.js
+
 //ENTITY
 
 clickInBoundingBox(x, y)

@@ -12,6 +12,9 @@ class ProjectManager{
 		this._options = new OptionsManager();
 		this._input = new InputManager();
 		this._gui = new GuiManager();
+		this._files = new FileManager();
+		this._content = new ContentManager();
+		this._listeners = new ListenersManager();
 		this._canvasManager = null;
 		this._drawCounter = 0;
 		this._connection = null;
@@ -35,8 +38,8 @@ class ProjectManager{
 
 		this._analyzer.sendData();
 
-		if(getCookie("send_data") === ""){
-	        setCookie("send_data", 1);
+		if(glob.getCookie("send_data") === ""){
+	        glob.setCookie("send_data", 1);
 	    }
 	}
 
@@ -44,11 +47,19 @@ class ProjectManager{
 		this._canvasManager = new CanvasManager(window.innerWidth, window.innerHeight);
 	}
 
+	setForm(data){
+		this._form = new FormManager(data);
+	}
+
 	generateId(){
 		var s = "000000000" + (this._idCounter++);
 		return (this._connection ? this._connection.userId : "") + s.substr(s.length - 6);
 	}
 
+	get listeners(){return this._listeners;}
+	get form(){return this._form;}
+	get panel(){return null;}
+	get files(){return this._files;}
 	get input(){return this._input;}
 	get canvasManager(){return this._canvasManager;}
 	get canvas(){return this._canvasManager && this._canvasManager.canvas.canvas;}
@@ -56,6 +67,7 @@ class ProjectManager{
 	get drawCounter(){return this._drawCounter;}
 	get creator(){return this._scene.creator;}
 	get scene(){return this._scene;}
+	get content(){return this._content;}
 	get gui(){return this._gui;}
 	get topMenu(){return this._gui.menu;}
 	get options(){return this._options;}
@@ -66,7 +78,7 @@ class ProjectManager{
 		this._drawCounter++;
 	}
 
-	set autor(val){this._autor = val;};
+	set autor(val){this._autor = val;}
 
 	get isMobile(){return this._analyzer.isMobile;}
 

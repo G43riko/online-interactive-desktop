@@ -70,7 +70,7 @@ class EventManager{
 	}
 	layerRename(oldTitle, newTitle){//Layer.rename
 		if(Project.connection){
-			Project.connection.layer.rename(oldTitle, newTitle)
+			Project.connection.layer.rename(oldTitle, newTitle);
 		}
 		Logger.log("Bola premenovaná vrstva: " + oldTitle + " na " + newTitle, LOGGER_LAYER_RENAMED);
 	}

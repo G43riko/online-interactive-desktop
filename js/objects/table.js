@@ -71,10 +71,12 @@ class Table extends Entity{
 	removeRow(y){
 		var row = parseInt((y - this._position.y) / this._lineHeight);
 
-		if(row > 0)
+		if(row > 0){
 			this.data.splice(row, 1);
-		else
-			Logger.error("nemožeš vymazať hlavičku tabulky");
+		}
+		else{
+			Logger.error(getMessage(MSG_TRY_REMOVE_TABLE_HEAD));
+		}
 		this._size.y = this.data.length * this._lineHeight;
 		this._calcMaxTextWidth();
 

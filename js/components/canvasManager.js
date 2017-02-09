@@ -1,8 +1,5 @@
 /**
  * Created by gabriel on 27.12.2016.
- //TODO treba oifovat:
-    ellipse
-
  */
 
 const MAIN_CANVAS = "mainCanvas";
@@ -11,6 +8,7 @@ const CANVAS_PREFIX = "canvas";
 
 class CanvasManager{
     constructor(sizeX, sizeY){
+
         this._sizeX = sizeX;
         this._sizeY = sizeY;
         this._canvases = {};
@@ -48,13 +46,14 @@ class CanvasManager{
     }
 
     removeCanvas(title){
-        if(this._canvases[title])
+        if(this._canvases[title]){
             delete this._canvases[title];
+        }
     }
 }
 
 
-function drawGrid(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD, c = GRID_COLOR){
+glob.drawGrid = function(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD, c = GRID_COLOR){
     var pointsNormal = [],
         pointsBold = [],
         boldCounter = 0,
@@ -62,18 +61,22 @@ function drawGrid(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD,
 
     //vertikálne čiary
     for(i=0 ; i<canvas.width ; i+=dist){
-        if(boldCounter++ % nthBold)
-            pointsNormal.push([i, 0, i, canvas.height]);
-        else
-            pointsBold.push([i, 0, i, canvas.height]);
+        if(boldCounter++ % nthBold){
+            pointsNormal[pointsNormal.length] = [i, 0, i, canvas.height];
+        }
+        else{
+            pointsBold[pointsBold.length] = [i, 0, i, canvas.height];
+        }
     }
     boldCounter = 0;
     //horizontálne čiary
     for(i=0 ; i<canvas.height ; i+=dist){
-        if(boldCounter++ % nthBold)
-            pointsNormal.push([0, i, canvas.width, i]);
-        else
-            pointsBold.push([0, i, canvas.width, i]);
+        if(boldCounter++ % nthBold){
+            pointsNormal[pointsNormal.length] = [0, i, canvas.width, i];
+        }
+        else{
+            pointsBold[pointsBold.length] = [0, i, canvas.width, i];
+        }
     }
 
     //vykreslenie normálnych čiar
@@ -89,14 +92,14 @@ function drawGrid(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD,
         borderWidth: width * 3,
         borderColor: c
     });
-}
-    
+};
 
 function doPolygon(obj){
-    if(isUndefined(obj.points))
+    if(isUndefined(obj.points)){
         Logger.error(getMessage(MSG_TRY_DRAW_EMPTY_POLYGON));
+    }
 
-    var res = $.extend(_initDef(obj), obj),
+    var res = $.extend(glob._initDef(obj), obj),
         offX = obj.offset ? obj.offset.x : 0,
         offY = obj.offset ? obj.offset.y : 0;
 
@@ -106,16 +109,17 @@ function doPolygon(obj){
     var drawLines = function(points){
         var size = points.length;
 
-        if(res.radius == 0 || isNaN(res.radius))
+        if(res.radius === 0 || isNaN(res.radius)){
             each(points, (e, i) => i ? res.ctx.lineTo(e.x + offX, e.y + offY) : res.ctx.moveTo(e.x + offX, e.y + offY));
-        else
+        }
+        else{
             each(points, (e, i) => {
                 var v1, l1,
                     v2 = e.getClone().sub(points[size - 1]),
                     l2 = v2.getLength();
                 v2.div(l2);
 
-                if (i == 0) {
+                if (i === 0) {
                     v1 = points[i + 1].getClone().sub(e);
                     l1 = v1.getLength();
 
@@ -148,20 +152,17 @@ function doPolygon(obj){
                     res.ctx.quadraticCurveTo(e.x + offX, e.y + offY, e.x + v1.x * l1 * res.radius + offX, e.y + v1.y * l1 * res.radius + offY);
                 }
             });
-        res.ctx.closePath();
+            res.ctx.closePath();
+        }
     };
     
-    if(isArray(res.points[0]))
-        each(res.points, drawLines);
-        //res.points.forEach(a => drawLines(a));
-    else
-        drawLines(res.points);
+    isArray(res.points[0]) ? each(res.points, drawLines) : drawLines(res.points);
 
     _process(res);
 }
 
 function doArc(obj){
-    var res = _remakePosAndSize(_checkPosAndSize(obj, "Arc"), obj);
+    var res = glob._remakePosAndSize(glob._checkPosAndSize(obj, "Arc"), obj);
 
     res.ctx.beginPath();
     if(typeof res.ctx.ellipse === "function"){
@@ -176,20 +177,22 @@ function doArc(obj){
 
 
 function doRect(obj){
-    var def = _checkPosAndSize(obj, OBJECT_RECT);
+    var def = glob._checkPosAndSize(obj, OBJECT_RECT);
 
     if(isDefined(obj[ATTRIBUTE_RADIUS])){
-        if(isNumber(obj[ATTRIBUTE_RADIUS]))
+        if(isNumber(obj[ATTRIBUTE_RADIUS])){
             obj[ATTRIBUTE_RADIUS] = {
                 tl: obj[ATTRIBUTE_RADIUS],
                 tr: obj[ATTRIBUTE_RADIUS],
                 br: obj[ATTRIBUTE_RADIUS],
                 bl: obj[ATTRIBUTE_RADIUS]};
-        else
+        }
+        else{
             each(def[ATTRIBUTE_RADIUS], (e, i) => obj[ATTRIBUTE_RADIUS][i] = obj[ATTRIBUTE_RADIUS][i] || def[ATTRIBUTE_RADIUS][i]);
+        }
     }
 
-    var res = _remakePosAndSize(def, obj);
+    var res = glob._remakePosAndSize(def, obj);
 
     res.ctx.beginPath();
     res.ctx.moveTo(res.x + res[ATTRIBUTE_RADIUS].tl, res.y);
@@ -207,13 +210,15 @@ function doRect(obj){
 }
 
 function doLine(obj){
-    if(isUndefined(obj.points))
+    if(isUndefined(obj.points)){
         Logger.error(getMessage(MSG_TRY_DRAW_EMPTY_LINE));
+    }
 
-    if(!isArray(obj.points[0]) && obj.points.length < 2)
+    if(!isArray(obj.points[0]) && obj.points.length < 2){
         Logger.error(getMessage(MSG_TRY_DRAW_ONE_POINT_LINE));
+    }
 
-    var res = $.extend(_initDef(obj), obj),
+    var res = $.extend(glob._initDef(obj), obj),
         offX = obj.offset ? obj.offset.x : 0,
         offY = obj.offset ? obj.offset.y : 0,
         v1, v2, l1, l2;
@@ -222,14 +227,14 @@ function doLine(obj){
 
     var drawLines = function(points){
         if(isNaN(points[0])){
-            if(res.radius == 0 || isNaN(res.radius))
-                //points.forEach((e, i) => i ? res.ctx.lineTo(e.x, e.y) : res.ctx.moveTo(e.x, e.y));
-                each(points, (e, i) => i ? res.ctx.lineTo(e.x + offX, e.y + offY) : res.ctx.moveTo(e.x + offX, e.y + offY))
-            else
-                //points.forEach(function(e, i){
+            if(res.radius === 0 || isNaN(res.radius)){
+                each(points, (e, i) => i ? res.ctx.lineTo(e.x + offX, e.y + offY) : res.ctx.moveTo(e.x + offX, e.y + offY));
+            }
+            else{
                 each(points, (e, i) => {
-                    if(i == 0)
+                    if(i === 0){
                         res.ctx.moveTo(e.x, e.y);
+                    }
                     else if(i + 1 < points.length){
                         v1 = points[i + 1].getClone().sub(e);
                         v2 = e.getClone().sub(points[i - 1]);
@@ -248,37 +253,33 @@ function doLine(obj){
                         res.ctx.lineTo(e.x - v2.x * l2 * res.radius + offX, e.y - v2.y * l2 * res.radius + offY);
                         res.ctx.quadraticCurveTo(e.x + offX, e.y + offY, e.x + v1.x * l1 * res.radius + offX, e.y + v1.y * l1 * res.radius + offY);
                     }
-                    else
+                    else{
                         res.ctx.lineTo(e.x + offX, e.y + offY);
+                    }
                 });
-
+            }
         }
         else{
             res.ctx.moveTo(points[0] + offX, points[1] + offY);
             res.ctx.lineTo(points[2] + offX, points[3] + offY);
         }
     };
+    isArray(res.points[0]) ? each(res.points, drawLines) : drawLines(res.points);
 
-    if(isArray(res.points[0]))
-        //res.points.forEach(a => drawLines(a));
-        each(res.points, drawLines);
-    else
-        drawLines(res.points);
-
-
-    res["fill"] = false;
-    _process(res)
+    res.fill = false;
+    _process(res);
 }
 
 function drawQuadraticCurve(points, borderWidth = DEFAULT_BORDER_WIDTH, borderColor = DEFAUL_BORDER_COLOR, ctx = context){
-    if(points.length < 2)
+    if(points.length < 2){
         return;
+    }
 
     ctx.lineWidth = borderWidth;
     ctx.strokeStyle = borderColor;
     ctx.beginPath();
-    //points.forEach((e, i) => i == 0 ? ctx.moveTo(e.x, e.y) : ctx.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y));
-    each(points, (e, i) => i == 0 ? ctx.moveTo(e.x, e.y) : ctx.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y));
+    //points.forEach((e, i) => i === 0 ? ctx.moveTo(e.x, e.y) : ctx.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y));
+    each(points, (e, i) => i === 0 ? ctx.moveTo(e.x, e.y) : ctx.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y));
     ctx.stroke();
 }
 
@@ -286,15 +287,17 @@ function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COL
     ctx.font = size + "pt " + DEFAULT_FONT_FAMILY;
     ctx.fillStyle = color;
 
-    if(align == FONT_ALIGN_NORMAL){
+    if(align === FONT_ALIGN_NORMAL){
         ctx.textAlign = FONT_HALIGN_LEFT;
         ctx.textBaseline = FONT_VALIGN_TOP;
-        if(isArray(offset))
+        if(isArray(offset)){
             ctx.fillText(text, x + offset[0], y + offset[1]);
-        else
+        }
+        else{
             ctx.fillText(text, x + offset, y + offset);
+        }
     }
-    else if(align == FONT_ALIGN_CENTER){
+    else if(align === FONT_ALIGN_CENTER){
         ctx.textAlign = FONT_HALIGN_CENTER;
         ctx.textBaseline = FONT_VALIGN_MIDDLE;
         ctx.fillText(text, x, y);
@@ -305,7 +308,7 @@ function fillText(text, x, y, size = DEFAULT_FONT_SIZE, color = DEFAULT_FONT_COL
  * UTILS
  */
 
-function getMaxWidth(val, max = 0){
+glob.getMaxWidth = function(val, max = 0){
     if(isArray(val)){
         each(val, e => {
             if(isArray(e)){
@@ -320,7 +323,7 @@ function getMaxWidth(val, max = 0){
         return calcTextWidth(val);
     }
     return max;
-}
+};
 
 function setShadow(variable){
     if(variable){
@@ -341,28 +344,17 @@ function setLineDash(variable){
     }
 }
 
-
+/*
 function canvasToImage(canvas) {
     return CanvasHandler.canvasToImage(canvas);
-    /*
-    var image = new Image();
-    image.src = canvas.toDataURL("image/png");
-    image.width = canvas.width;
-    image.height = canvas.height;
-    return image;
-    */
 }
+*/
 
+/*
 function imageToCanvas(image) {
     return CanvasHandler.imageToCanvas(image);
-    /*
-    var canvas = document.createElement("canvas");
-    canvas.width = image.width;
-    canvas.height = image.height;
-    canvas.getContext("2d").drawImage(image, 0, 0);
-    return canvas;
-    */
 }
+*/
 
 function calcTextWidth(value, font = false){
     return CanvasHandler.calcTextWidth(context, value, font);
@@ -372,7 +364,7 @@ function calcTextWidth(value, font = false){
  * PRIVATE
  */
 
-function _initDef(obj){
+glob._initDef = function(obj){
     var def = {
         borderWidth : DEFAULT_BORDER_WIDTH,
         borderColor : DEFAULT_BORDER_WIDTH,
@@ -389,81 +381,89 @@ function _initDef(obj){
         lineDash: [],
         bgImage: false
     };
-    def["draw"] = isDefined(obj.borderColor) || isDefined(obj.borderWidth);
-    def["fill"] = isDefined(obj.fillColor);
+    def.draw = isDefined(obj.borderColor) || isDefined(obj.borderWidth);
+    def.fill = isDefined(obj.fillColor);
 
     return def;
-}
+};
 
-function _checkPosAndSize(obj, name){
+glob._checkPosAndSize = function(obj, name){
 
-    if((isUndefined(obj["x"]) || isUndefined(obj["y"])) && isUndefined(obj["position"]))
+    if((isUndefined(obj.x) || isUndefined(obj.y)) && isUndefined(obj.position)){
         Logger.error(getMessage(MSG_TRY_DRAW_WITHOUT_POSITION, name));
+    }
 
-    if((isUndefined(obj["width"]) || isUndefined(obj["height"])) && isUndefined(obj["size"]))
+    if((isUndefined(obj.width) || isUndefined(obj.height)) && isUndefined(obj.size)){
         Logger.error(getMessage(MSG_TRY_DRAW_WITHOUT_SIZE, name));
+    }
 
-    if(obj["width"] <= 0 || obj["height"] <= 0)
+    if(obj.width <= 0 || obj.height <= 0){
         Logger.error(getMessage(MSG_TRY_DRAW_WITH_NEG_POSITION, name));
+    }
 
-    return _initDef(obj);
-}
+    return glob._initDef(obj);
+};
 
-function _remakePosAndSize(def, obj){
+glob._remakePosAndSize = function(def, obj){
     var res = $.extend(def, obj);
 
-    if(isDefined(res["size"])){
-        if(isNumber(res["size"])){
-            res["width"] = res["size"];
-            res["height"] = res["size"];
+    if(isDefined(res.size)){
+        if(isNumber(res.size)){
+            res.width = res.size;
+            res.height = res.size;
         }
-        else if(isArray(res["size"])){
-            res["width"] = res["size"][0];
-            res["height"] = res["size"][1];
+        else if(isArray(res.size)){
+            res.width = res.size[0];
+            res.height = res.size[1];
         }
         else{
-            res["width"] = res["size"].x;
-            res["height"] = res["size"].y;
+            res.width = res.size.x;
+            res.height = res.size.y;
         }
     }
 
-    if(isDefined(res["position"])){
-        if(isNumber(res["position"])){
-            res["x"] = res["position"];
-            res["y"] = res["position"];
+    if(isDefined(res.position)){
+        if(isNumber(res.position)){
+            res.x = res.position;
+            res.y = res.position;
         }
-        else if(isArray(res["position"])){
-            res["x"] = res["position"][0];
-            res["y"] = res["position"][1];
+        else if(isArray(res.position)){
+            res.x = res.position[0];
+            res.y = res.position[1];
         }
         else{
-            res["x"] = res["position"].x;
-            res["y"] = res["position"].y;
+            res.x = res.position.x;
+            res.y = res.position.y;
         }
     }
 
-    if(res["center"]){
-        res["x"] -= res["width"] >> 1;
-        res["y"] -= res["height"] >> 1;
+    if(res.center){
+        res.x -= res.width >> 1;
+        res.y -= res.height >> 1;
     }
     return res;
-}
+};
 
+/*
 function saveCanvasAsFile(){
     saveImage("canvas_screen_shot", canvas.toDataURL());
 }
+*/
 
 function _process(res){
-    if(res.shadow && Options.shadows)
+    if(res.shadow && Options.shadows){
         setShadow(res.shadow);
+    }
 
     if(res.bgImage){
         res.ctx.save();
         res.ctx.clip();
-        if(res.bgImage instanceof HTMLImageElement)
+        if(res.bgImage instanceof HTMLImageElement){
             res.ctx.drawImage(res.bgImage, res.x, res.y, res.width, res.height);
-        else
+        }
+        else{
             res.ctx.drawImage(res.bgImage.img, res.bgImage.x, res.bgImage.y, res.bgImage.w, res.bgImage.h, res.x, res.y, res.width, res.height);
+        }
         /*
         if(isObject(res.bgImage))
             res.ctx.drawImage(res.bgImage.img, res.bgImage.x, res.bgImage.y, res.bgImage.w, res.bgImage.h, res.x, res.y, res.width, res.height);
@@ -477,8 +477,9 @@ function _process(res){
         res.ctx.fill();
     }
 
-    if(res.shadow)
+    if(res.shadow){
         setShadow(false);
+    }
 
     res.ctx.lineCap = res.lineCap;
     res.ctx.lineJoin = res.joinType;

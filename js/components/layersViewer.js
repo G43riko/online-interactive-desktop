@@ -181,7 +181,7 @@ class LayersViewer extends Entity{
 				this._toggleMinimalize();
 				break;
 			default:
-				Logger.warn("neznáme tlačítko v layerManagerovy");
+				Logger.warn(getMessage(MSG_UNKNOWN_LAYES_BUTTON));
 		}
 	}
 

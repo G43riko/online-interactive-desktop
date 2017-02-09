@@ -9,7 +9,9 @@ class ListenersManager{
 		this._clickedOnObject = false;
 	}
 	mouseDown(position, button){
-		Project.scene.mouseDown(position.x, position.y);
+		if(Options.showClicks){
+			Project.scene.mouseDown(position.x, position.y);
+		}
 		this._clickedOnObject = false;
 
 		if($(canvas).hasClass("blur")){
@@ -94,22 +96,23 @@ class ListenersManager{
 	}
 
 	mouseLeave(position){
-		this.mouseUp(position);
+		this.mouseUp(position, false);
 		draw();
 	}
 
 	hashChange(){
-		setUpComponents();
+		glob.setUpComponents();
 
 		if(MenuManager.dataBackup){
 			Menu.init(JSON.parse(MenuManager.dataBackup));
 		}
 
 		if(Layers){
-			Entity.setAttr(Layers, "visible", Components.layers());
+			//Entity.setAttr(Layers, "visible", Components.layers());
+			Layers.visible = Components.layers();
 		}
 
-		Gui.showOptionsByComponents();
+		Project.gui.showOptionsByComponents();
 		draw();
 	}
 
@@ -118,6 +121,52 @@ class ListenersManager{
 			if(area.isReady){
 				area.removeSelected(isCtrlDown);//ak je aj ALT dole tak revertne mazanie
 			}
+		}
+		if(Options.showKeys){
+			var char = "";
+
+			switch(key){
+				case KEY_DELETE :
+					char = "DEL";
+					break;
+				case KEY_L_CTRL :
+					char = "CTRL";
+					break;
+				case KEY_L_ALT :
+					char = "ALT";
+					break;
+				case KEY_SHIFT :
+					char = "SHIFT";
+					break;
+				case KEY_ARROW_UP :
+					char = "▲";
+					break;
+				case KEY_ARROW_LEFT :
+					char = "◀";
+					break;
+				case KEY_ARROW_DOWN :
+					char = "▼";
+					break;
+				case KEY_ARROW_RIGHT :
+					char = "▶";
+					break;
+				case KEY_ENTER :
+					char = 	"⏎";
+					break;
+				case KEY_TABULATOR :
+					char = 	"TAB";
+					break;
+				case KEY_ESCAPE :
+					char = 	"ESC";
+					break;
+				default: 
+					char = String.fromCharCode(key);
+			}
+
+			var element = G.createElement("div", {}, char);
+
+			setTimeout(() => element.remove(), 2000);
+			G("#keysViewerHolder").append(element);
 		}
 		draw();
 	}
@@ -217,12 +266,14 @@ class ListenersManager{
 		return true;
 	}
 
-	mouseUp(position){
+	mouseUp(position, closeDialog = true){
 		var possibleChild = null;
 		if(selectedObjects.size() === 1){
 			possibleChild = selectedObjects.firstObject;
 		}
-		Scene.mouseUp(position.x, position.y);
+		if(Options.showClicks){
+			Project.scene.mouseUp(position.x, position.y);
+		}
 
 		this._movedObject = null;
 
@@ -291,7 +342,9 @@ class ListenersManager{
 			return;
 		}
 
-		closeDialog();
+		if(closeDialog){
+			closeDialog();
+		}
 
 		var clickOnParent = false;
 		var clickOnConnectorObject = null;

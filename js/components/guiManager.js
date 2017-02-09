@@ -50,22 +50,22 @@ function showSavingOptions(){
 function serializeSaveData(){
 	var getValueIfExist = (e, val = false) => e ? (e.type == "checkbox" ? e.checked : e.value) : val;
 	var result = [];
-	result["width"]			= getValueIfExist(G.byId("idImageWidth"), canvas.width);
-	result["height"]		= getValueIfExist(G.byId("idImageHeight"), canvas.height);
-	result["name"]			= getValueIfExist(G.byId("idImageName"));
-	result["background"]	= getValueIfExist(G.byId("idBackground"), KEYWORD_TRANSPARENT);
+	result.width		= getValueIfExist(G.byId("idImageWidth"), canvas.width);
+	result.height		= getValueIfExist(G.byId("idImageHeight"), canvas.height);
+	result.name			= getValueIfExist(G.byId("idImageName"));
+	result.background	= getValueIfExist(G.byId("idBackground"), KEYWORD_TRANSPARENT);
 
-	result["format"] = 	G.byId("idImageFormat");
-	result["format"] =	result["format"].options &&
-						result["format"].selectedIndex &&
-						result["format"].options[result["format"].selectedIndex] &&
-						result["format"].options[result["format"].selectedIndex].value;
+	result.format = 	G.byId("idImageFormat");
+	result.format =		result.format.options &&
+						result.format.selectedIndex &&
+						result.format.options[result.format.selectedIndex] &&
+						result.format.options[result.format.selectedIndex].value;
 
 	var layerCheckboxes = G.byClass("layerVisibility");
-	result["selectedLayers"] = [];
+	result.selectedLayers = [];
 	//musí byť tento for ináč to dá viackrát to isté
 	for(var i=0 ; i < layerCheckboxes.length ; i++){
-		layerCheckboxes[i].checked && result["selectedLayers"].push(layerCheckboxes[i].name);
+		layerCheckboxes[i].checked && result.selectedLayers.push(layerCheckboxes[i].name);
 	}
 
 	processImageData(result);
@@ -75,27 +75,27 @@ function serializeShareData(){
 	var getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
 	var result = {};
 	//NEW
-	result["user_name"]		= getValueIfExists(G.byId("idUserName"));
-	result["type"]			= getValueIfExists(G.byId("idType"));
-	result["limit"]			= getValueIfExists(G.byId("idMaxWatchers"));
+	result.user_name	= getValueIfExists(G.byId("idUserName"));
+	result.type			= getValueIfExists(G.byId("idType"));
+	result.limit		= getValueIfExists(G.byId("idMaxWatchers"));
 	//BOTH
-	result["password"]		= getValueIfExists(G.byId("idSharingPassword"));
+	result.password		= getValueIfExists(G.byId("idSharingPassword"));
 
-	result["shareMenu"]		= getValueIfExists(G.byId("idShareMenu"));
-	result["sharePaints"]	= getValueIfExists(G.byId("idSharePaints"));
-	result["shareObjects"]	= getValueIfExists(G.byId("idShareObjects"));
-	result["shareCreator"]	= getValueIfExists(G.byId("idShareCreator"));
-	result["shareLayers"]	= getValueIfExists(G.byId("idShareLayers"));
-	result["shareTitle"]	= getValueIfExists(G.byId("idShareTitle"));
+	result.shareMenu	= getValueIfExists(G.byId("idShareMenu"));
+	result.sharePaints	= getValueIfExists(G.byId("idSharePaints"));
+	result.shareObjects	= getValueIfExists(G.byId("idShareObjects"));
+	result.shareCreator	= getValueIfExists(G.byId("idShareCreator"));
+	result.shareLayers	= getValueIfExists(G.byId("idShareLayers"));
+	result.shareTitle	= getValueIfExists(G.byId("idShareTitle"));
 
 	
 	//OLD
 	/*
-	result["realTime"] = getValueIfExists(G.byId("idRealtimeSharing"));
-	result["maxWatchers"] = getValueIfExists(G.byId("idMaxWatchers"));
-	result["detailMovement"] = getValueIfExists(G.byId("idDetailMovement"));
+	result.realTime = getValueIfExists(G.byId("idRealtimeSharing"));
+	result.maxWatchers = getValueIfExists(G.byId("idMaxWatchers"));
+	result.detailMovement = getValueIfExists(G.byId("idDetailMovement"));
 
-	result["publicShare"] = getValueIfExists(G.byId("idPublicShare"));
+	result.publicShare = getValueIfExists(G.byId("idPublicShare"));
 	*/
 
 	$.post("/checkConnectionData", {content: JSON.stringify(result)}, function(response){
@@ -115,17 +115,17 @@ function serializeWatcherData(){
 	var getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
 	var result = {};
 	//NEW
-	result["user_name"]			= getValueIfExists(G.byId("idWatchUserName"));
-	result["less_id"]			= getValueIfExists(G.byId("idLessonId"));
+	result.user_name		= getValueIfExists(G.byId("idWatchUserName"));
+	result.less_id			= getValueIfExists(G.byId("idLessonId"));
 	//BOTH
-	result["password"]			= getValueIfExists(G.byId("idWatchSharingPassword"));
+	result.password			= getValueIfExists(G.byId("idWatchSharingPassword"));
 	//OLD
-	result["nickName"]			= getValueIfExists(G.byId("idNickName"));
-	result["password"]			= getValueIfExists(G.byId("idSharingPassword"));
-	result["timeLine"]			= getValueIfExists(G.byId("idShowTimeLine"));
-	result["changeResolution"]	= getValueIfExists(G.byId("idChangeResolution"));
-	result["showChat"]			= getValueIfExists(G.byId("idShowChat"));
-	result["shareId"]			= getValueIfExists(G.byId("idShareId"));
+	result.nickName			= getValueIfExists(G.byId("idNickName"));
+	result.password			= getValueIfExists(G.byId("idSharingPassword"));
+	result.timeLine			= getValueIfExists(G.byId("idShowTimeLine"));
+	result.changeResolution	= getValueIfExists(G.byId("idChangeResolution"));
+	result.showChat			= getValueIfExists(G.byId("idShowChat"));
+	result.shareId			= getValueIfExists(G.byId("idShareId"));
 
 	//result = processValues({}, "idNickName", "idSharingPassword", "idShowTimeLine", "idChangeResolution", "idShowChat", "idShareId")
 	processWatchData(result);
@@ -146,26 +146,26 @@ function serializeSaveXmlData(){
 
 function processWatchData(data){
 	var checkData = {
-		shareId: data["shareId"],
-		nickName: data["nickName"],
-		password: data["password"]
+		shareId: data.shareId,
+		nickName: data.nickName,
+		password: data.password
 	};
 	var form = G.createElement("form"), createInput = (name, value) => {
 			return createElement({name: "input", attr: {value: value, name: name}});
 	};
-	data["innerWidth"] = window.innerWidth;
-	data["innerHeight"] = window.innerHeight;
-	data["type"] = "watch";
+	data.innerWidth = window.innerWidth;
+	data.innerHeight = window.innerHeight;
+	data.type = "watch";
 	$.post("/checkConnectionData", {content: JSON.stringify(data)}, function(response){
-		if(response["result"] > 0){
+		if(response.result > 0){
 			closeDialog();
-			data["type"] = response["type"];
-			if(data["type"] === "exercise"){ //pri exercise chceme aby to čo sa má zdielať nastavoval zakladatel
-				data["sharePaints"]		= response["sharePaints"];
-				data["shareInput"]		= response["shareInput"];
-				data["shareCreator"]	= response["shareCreator"];
-				data["shareLayers"]		= response["shareLayers"];
-				data["shareObjects"]	= response["shareObjects"];
+			data.type = response.type;
+			if(data.type === "exercise"){ //pri exercise chceme aby to čo sa má zdielať nastavoval zakladatel
+				data.sharePaints	= response.sharePaints;
+				data.shareInput		= response.shareInput;
+				data.shareCreator	= response.shareCreator;
+				data.shareLayers	= response.shareLayers;
+				data.shareObjects	= response.shareObjects;
 			}
 			Project.connection.connect(data);
 		}
@@ -176,11 +176,11 @@ function processWatchData(data){
 }
 
 function processImageData(data){
-	data["name"]			= isString(data["name"])	|| "desktopScreen";
-	data["format"]			= isString(data["format"])	|| IMAGE_FORMAT_PNG;
-	data["width"]			= data["width"]				|| canvas.width;
-	data["height"]			= data["height"]			|| canvas.height;
-	data["selectedLayers"]	= data["selectedLayers"]	|| [];
+	data.name			= isString(data.name)	|| "desktopScreen";
+	data.format			= isString(data.format)	|| IMAGE_FORMAT_PNG;
+	data.width			= data.width			|| canvas.width;
+	data.height			= data.height			|| canvas.height;
+	data.selectedLayers	= data.selectedLayers	|| [];
 
 
 	/*
@@ -192,22 +192,22 @@ function processImageData(data){
 	/*
 	 * prekreslí pozadie ak je nastavene a nieje priesvitné
 	 */
-	if(isString(data["background"]) && data["background"] !== KEYWORD_TRANSPARENT){
+	if(isString(data.background) && data.background !== KEYWORD_TRANSPARENT){
 		doRect({
 			x: 0,
 			y: 0,
 			width: ca.width,
 			height: ca.height,
-			fillColor: data["background"],
+			fillColor: data.background,
 			ctx: resContext
 		});
 	}
 	/*
 	 * Vykreslí vrstvy určené na vykresleni
 	 */
-	for(var i in data["selectedLayers"]){
-		if(data["selectedLayers"].hasOwnProperty(i)){
-			Scene.getLayer(data["selectedLayers"][i]).draw(resContext);
+	for(var i in data.selectedLayers){
+		if(data.selectedLayers.hasOwnProperty(i)){
+			Scene.getLayer(data.selectedLayers[i]).draw(resContext);
 		}
 	}
 
@@ -224,7 +224,7 @@ function processImageData(data){
 	/*
 	 * uloženie súboru
 	 */
-	Files.saveImage(data["name"], resCanvas.toDataURL(data["format"]));
+	Project.files.saveImage(data.name, resCanvas.toDataURL(data.format));
 	closeDialog();
 }
 

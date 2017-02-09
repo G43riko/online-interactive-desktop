@@ -52,14 +52,15 @@ class FileManager{
 }
 
 function saveFile(name, text, type){
-	if(typeof type === "undefined")
+	if(typeof type === "undefined"){
 		type = "text/plain";
+	}
 	var file = new Blob([text], {type: type}),
 		a   = document.getElementById("fileLink");
 
 	a.href = URL.createObjectURL(file);
 	a.download = name;
-	a.click()
+	a.click();
 }
 
 function saveImage(name, image){
@@ -78,7 +79,7 @@ function loadImage(func){
 			image.src = reader.result;
 			func(image);
 		};
-		reader.readAsDataURL(e.target["files"][0]);
+		reader.readAsDataURL(e.target.files[0]);
 	};
 	el.click();
 }
@@ -94,14 +95,13 @@ function loadFile(func){
 	el.onchange = function(e){
 		var reader = new FileReader();
 		reader.onload = () => func(reader.result);
-		reader.readAsText(e.target["files"][0]);
+		reader.readAsText(e.target.files[0]);
 	};
 	el.click();
 }
 
 
-function saveSceneAsFile(data = {projectTitle: "scene_backup"}){
-	console.log(data);
+function saveSceneAsFile(params = {projectTitle: "scene_backup"}){
 	var data = {
 		scene: Scene.toObject(),
 		creator: Creator.toObject(),
@@ -109,7 +109,7 @@ function saveSceneAsFile(data = {projectTitle: "scene_backup"}){
 		type: 2500
 	};
 
-	saveFile(data.projectTitle, JSON.stringify(data));
+	saveFile(params.projectTitle, JSON.stringify(data));
 }
 
 function saveSceneAsTask(fileName = "default_task"){
@@ -125,13 +125,14 @@ function saveSceneAsTask(fileName = "default_task"){
 		saveFile(fileName, JSON.stringify(data));
 	}
 	else{
-		Logger.error("Chyba pri ukladaní súboru: ", result.error);
+		Logger.error(getMessage(MSG_FILE_SAVE_ERROR, result.error));
 	}
 }
 
 function loadTask(scene, results, title){
-	if(Task)
+	if(Task){
 		return Logger.error(getMessage(MSG_TASK_EXIST));
+	}
 
 	var layer = Scene.createLayer(title, "task");
 	each(scene, e => {
@@ -146,8 +147,9 @@ function loadSceneFromFile(){
 	loadFile(function(content){
 		//try{
 		var data = JSON.parse(content);
-		if(data["type"] && data["type"] === 2501)
-			loadTask(data["scene"], data["results"], data["title"]);
+		if(data.type && data.type === 2501){
+			loadTask(data.scene, data.results, data.title);
+		}
 		else{
 			Scene.fromObject(data.scene);
 			Creator.fromObject(data.creator);

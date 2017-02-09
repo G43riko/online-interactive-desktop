@@ -1,7 +1,7 @@
-var objects = [OBJECT_ARC, OBJECT_ARROW, OBJECT_CLASS, OBJECT_IMAGE, OBJECT_JOIN, OBJECT_LINE, OBJECT_PAINT, OBJECT_POLYGON, OBJECT_RECT, OBJECT_TABLE, OBJECT_INPUT, OBJECT_TEXT, OBJECT_GRAPH, OBJECT_RUBBER, OBJECT_AREA];
 
 class Api{
 	constructor(scene){
+		Api._objects = [OBJECT_ARC, OBJECT_ARROW, OBJECT_CLASS, OBJECT_IMAGE, OBJECT_JOIN, OBJECT_LINE, OBJECT_PAINT, OBJECT_POLYGON, OBJECT_RECT, OBJECT_TABLE, OBJECT_INPUT, OBJECT_TEXT, OBJECT_GRAPH, OBJECT_RUBBER, OBJECT_AREA];
 		this._scene = scene;
 	};
 
@@ -32,7 +32,7 @@ class Api{
 		if(isUndefined(params.type)){
 			return this.getError("parameter type musí byť zadaný");
 		}
-		if(!isIn(params.type, objects)){
+		if(!isIn(params.type, Api._objects)){
 			return this.getError(params.type + " je neznámy typ objektu");
 		}
 

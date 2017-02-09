@@ -17,8 +17,9 @@ class PaintManager{
 	}
 
 	static getId(){
-		if(!PaintManager._idCounter)
+		if(!PaintManager._idCounter){
 			PaintManager._idCounter = 1;
+		}
 
 		return PaintManager._idCounter++;
 	}
@@ -33,8 +34,9 @@ class PaintManager{
 	addPoint(position, activeLayerName = Layers.activeLayerName){
 		Events.paintAddPoint(position, activeLayerName);
 		var layer = Scene.getLayer(activeLayerName);
-		if(layer)
+		if(layer){
 			layer.paint.addPoint(position);
+		}
 	}
 
 	findPathsForRemove(position, radius, activeLayerName = Layers.activeLayerName){
@@ -66,18 +68,17 @@ class PaintManager{
 	fromObject(content){
 		each(content, (e, i) =>	{
 			var layer = Scene.getLayer(i);
-			if(!layer)
+			if(!layer){
 				layer = Scene.createLayer(i);
-			layer.paint.fromObject(e)
+			}
+			layer.paint.fromObject(e);
 		});
 	}
 
 
 	fromObjectToSingleLayer(title, content){
 		var layer = Scene.getLayer(title);
-		each(content, (e) =>	{
-			layer.paint.fromObject(e, true);
-		});
+		each(content, e => layer.paint.fromObject(e, true));
 	}
 
 	/**
@@ -107,7 +108,7 @@ class PaintManager{
 	 * @param activeLayerName - vrstva na ktorej sa má ťah prerušiť
 	 */
 	breakLine(activeLayerName = Layers.activeLayerName){
-		this._paintHistory.push(activeLayerName);
+		this._paintHistory[this._paintHistory.length] = activeLayerName;
 		this._undoHistory = [];
 		var newPath = Scene.getLayer(activeLayerName).paint.breakLine();
 		Events.paintBreakLine(activeLayerName);
@@ -126,8 +127,9 @@ class PaintManager{
 		img.src = FOLDER_IMAGE + "/" + title;
 		this._brushes[title] = img;
 
-		if(isNull(this._selectedImage))
+		if(isNull(this._selectedImage)){
 			this.selectedImage = title;
+		}
 
 		Logger.log("pridal sa nový štetec: " + title, LOGGER_PAINT_ACTION);
 	}
@@ -149,8 +151,9 @@ class PaintManager{
 		data = imgData.data;
 		color = col.replace("rgb(", "").replace("rgba(", "").replace(")", "").split(", ").map(a => parseInt(a));
 		for(i=3 ; i<data.length ; i+=4){
-			if(data[i] == 0)
+			if(data[i] === 0){
 				continue;
+			}
 			data[i - 3] = color[0];
 			data[i - 2] = color[1];
 			data[i - 1] = color[2];
@@ -179,22 +182,24 @@ class PaintManager{
 			Creator.setOpt("brushSize", brushSize);
 			Creator.setOpt("brushType", brushType);
 
-			for (var i = 0; i < dist; i++)
+			for (var i = 0; i < dist; i++){
 				ctx.drawImage(Paints.selectedBrush,
 					pointB.x + (Math.sin(angle) * i) - (brushSize >> 1),
 					pointB.y + (Math.cos(angle) * i) - (brushSize >> 1),
 					brushSize,
 					brushSize);
+			}
 		}
 	}
 
 	undo(){
-		if(this._paintHistory.length === 0)
+		if(this._paintHistory.length === 0){
 			return false;
+		}
 		var layer = this._paintHistory.pop();
 
 		Scene.getLayer(layer).paint.undo();
-		this._undoHistory.push(layer);
+		this._undoHistory[this._undoHistory.length] = layer;
 
 		Events.paintUndo(layer);
 		console.log(this._paintHistory.length, this._undoHistory.length);
@@ -203,12 +208,13 @@ class PaintManager{
 	}
 
 	redo(){
-		if(this._undoHistory.length === 0)
+		if(this._undoHistory.length === 0){
 			return false;
+		}
 
 		var layer = this._undoHistory.pop();
 		Scene.getLayer(layer).paint.redo();
-		this._paintHistory.push(layer);
+		this._paintHistory[this._paintHistory.length] = layer;
 
 		Events.paintRedo(layer);
 		this._setButtons();

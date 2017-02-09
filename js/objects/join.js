@@ -29,7 +29,7 @@ class Join extends Entity{
 
 	draw(ctx = context){
 		if(this._obj1.position == null){
-			Logger.warn("ide sa kresliť join ktorý nemá potrebné udaje");
+			Logger.warn(getMessage(MSG_TRY_DRAW_WRONG_JOIN));
 			Scene.remove(this);
 			return;
 		}

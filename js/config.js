@@ -289,6 +289,7 @@ if(false){
 	const LOGGER_LAYER_CLEANED		= 2614;
 	const LOGGER_LAYER_RENAMED		= 2615;
 	const LOGGER_LAYER_RASTERED		= 2616;
+	const LOGGER_STACK_RECIEVED		= 2617;
 }
 
 const CUT_OFF_AFTER_DISTANCE	= 100;
@@ -315,8 +316,6 @@ const COMPONENT_LAYERS	= "j";
 const COMPONENT_TASK	= "k";
 
 
-
-
 const MSG_DIVIDER = "########";
 
 const MSG_CONN_RECONNECT				= "Spojenie zo serverom bolo uspešne znovunadviazané";
@@ -336,21 +335,39 @@ const MSG_LOAD_OLD_PROJECT				= "Našiel sa rozpracovaný projekt, prajete si ho
 const MSG_TRY_DRAW_WITHOUT_POSITION		= "chce sa vykresliť " + MSG_DIVIDER + " bez pozície";
 const MSG_TRY_DRAW_WITHOUT_SIZE			= "chce sa vykresliť " + MSG_DIVIDER + " bez veľkosti";
 const MSG_TRY_DRAW_WITH_NEG_POSITION	= "chce sa vykresliť " + MSG_DIVIDER + " zo zápornou velkosťou";
-const MSG_RECREATE_LAYER 				= "ide sa vytvoriť vrstva ktorá už existuje: " + MSG_DIVIDER
+const MSG_RECREATE_LAYER 				= "ide sa vytvoriť vrstva ktorá už existuje: " + MSG_DIVIDER;
 const MSG_MAXIMUM_LAYER					= "bolo vytvorené maximálne množstvo vrstiev(" + MSG_DIVIDER + ")";
 const MSG_INIT_MENU_ERROR				= "nepodarila sa inicializacia Top menu";
 const MSG_INIT_CREATOR_ERROR			= "nepodarila sa inicializacia Creatora";
 const MSG_LOADING_ERROR					= "nepodaril sa loading";
 const MSG_TASK_EXIST					= "Načítava sa Task keď už jeden existuje";
-const MSG_TASK_CREATED 					= "Task " + MSG_DIVIDER + " bol úspešne vytvorený"
+const MSG_TASK_CREATED 					= "Task " + MSG_DIVIDER + " bol úspešne vytvorený";
+const MSG_WRONG_ATTRIBUTE				= "k objektu " + MSG_DIVIDER + " sa snaží priradiť neplatný atribút: " + MSG_DIVIDER;
+const MSG_UNKNOWN_OBJECT_NAME			= "snažíš sa vložiť objekt s neznámym menom: " + MSG_DIVIDER;
+const MSG_OBJECT_SUCCESSFULLY_CREATED	= "objekt " + MSG_DIVIDER + " bol úspešne vytvorený";
+const MSG_TRY_DRAW_WRONG_JOIN			= "ide sa kresliť join ktorý nemá potrebné udaje";
+const MSG_LINE_WITH_TOO_LESS_POINTS		= "vytvoril sa line ktory mal menej ako 2 body a tak sa maže";
+const MSG_POLYGON_WITH_TOO_LESS_POINTS	= "vytvoril sa polygon ktory mal menej ako 3 body a tak sa maže";
+const MSG_TRY_REMOVE_TABLE_HEAD			= "nemožeš vymazať hlavičku tabulky";
+const MSG_FILE_SAVE_ERROR				= "Chyba pri ukladaní súboru: " + MSG_DIVIDER;
+const MSG_MIN_SCREEN_WIDTH				= "Minimálna šírka obrazovky je " + MSG_DIVIDER + "px";
+const MSG_BEFORE_ONLOAD_TEXT			= "Nazoaj chceš odísť s tejto stránky???!!!";
+const MSG_UNKNOWN_LAYES_BUTTON 			= "neznáme tlačítko v layerManagerovy";
+const MSG_OPTION_CHANGE					= "nastavila sa možnosť " + MSG_DIVIDER + " na hodnotu " + MSG_DIVIDER;
+const MSG_TRY_DELETE_ABSENT_LAYER 		= "ide sa vymazať vrstva ktorá neexistuje: " + MSG_DIVIDER;
+const MSG_TRY_DELETE_GUI_LAYER			= "nemože sa zmazať gui vrstva";
+const MSG_ADD_OBJECT_TO_ABSENT_LAYER 	= "ide sa vložiť objekt do  neexistujúcej vrstvy: " + MSG_DIVIDER;
+const MSG_MISSING_RESULT_TEXT		 	= "nieje zadaný žiadny text pre výsledok";
 
 function getMessage(text){
-	if(!arguments.length)
+	if(!arguments.length){
 		return text;
+	}
 
 
-	for(var i=1 ; i<arguments.length ; i++)
+	for(var i=1 ; i<arguments.length ; i++){
 		text = text.replace(MSG_DIVIDER, arguments[i]);
+	}
 
 	return text;
 }
