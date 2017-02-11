@@ -24,21 +24,26 @@
 			<div id="saveForm" class="hide formContent"></div>
 			<div id="showLogs" class="hide formContent"></div>
 		</div>
+
 		<div id="content">
 			<img id="contentImage" src="#" alt="image content" class="hide">
 			<div id="contentHTML" class="hide"></div>
 		</div>
 		<!--<div id="selectedEditor" class="temp" contenteditable="true"></div>-->
-		<canvas class="canvas animated" id="myCanvas">
-			Váš prehliadač nepodporuje Canvas
-		</canvas>
-		<canvas class="canvas animated" id="pointerCanvas">
-            Váš prehliadač nepodporuje Canvas
-        </canvas>
-		<input id="fileInput" type="file" class="hide">
-		<a href="" class="hide" id="fileLink"></a>
-		<div id="keysViewerHolder"></div>
- 		<div id="layerViewerPlaceholder"></div>
+		<div id="canvases">
+			<canvas class="canvas animated" id="myCanvas">
+				Váš prehliadač nepodporuje Canvas
+			</canvas>
+			<canvas class="canvas animated" id="pointerCanvas">
+	            Váš prehliadač nepodporuje Canvas
+	        </canvas>
+        </div>
+        <div id="utils">
+			<input id="fileInput" type="file" class="hide">
+			<a href="" class="hide" id="fileLink"></a>
+			<div id="keysViewerHolder"></div>
+	 		<div id="layerViewerPlaceholder"></div>
+ 		</div>
  		<nav class="context-menu" id="context-menu">
 			<ul class="items">
 				<li class="item">
@@ -122,6 +127,7 @@
 				   "#4A96AD", "#F5F3EE", "#E44424", "#67BCDB", "#A2AB58", "#404040", "#6DBDD6",
 				   "#B71427", "#FFE658", "#585858", "#118C4E", "#C1E1A6", "#FF9009", "#DF3D82",
 				   "#F361C2", "#EBED5B", "#3C007B"].sort().reverse();
+
 
 	$("#colorPalete").append(glob.colors.map(e => '<div class="colorPatern" style="background-color:' + e + '"></div>').join(""));
 	

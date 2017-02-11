@@ -39,17 +39,17 @@ var movedObject 	= false,
 
 glob.setUpComponents = function(){
 	components =  {
-		draw : window.location.hash.indexOf(COMPONENT_DRAW) >= 0 || typeof Watcher !== "undefined",
-		share : window.location.hash.indexOf(COMPONENT_SHARE) >= 0 || typeof Watcher !== "undefined",
-		watch : window.location.hash.indexOf(COMPONENT_WATCH) >= 0 || typeof Watcher !== "undefined",
-		tools : window.location.hash.indexOf(COMPONENT_TOOLS) >= 0 || typeof Watcher !== "undefined",
-		save : window.location.hash.indexOf(COMPONENT_SAVE) >= 0 || typeof Watcher !== "undefined",
-		load : window.location.hash.indexOf(COMPONENT_LOAD) >= 0 || typeof Watcher !== "undefined",
-		screen : window.location.hash.indexOf(COMPONENT_SCREEN) >= 0 || typeof Watcher !== "undefined",
-		content : window.location.hash.indexOf(COMPONENT_CONTENT) >= 0 || typeof Watcher !== "undefined",
-		edit : window.location.hash.indexOf(COMPONENT_EDIT) >= 0 || typeof Watcher !== "undefined",
-		layers : window.location.hash.indexOf(COMPONENT_LAYERS) >= 0 || typeof Watcher !== "undefined",
-		task : window.location.hash.indexOf(COMPONENT_TASK) >= 0 || typeof Watcher !== "undefined"
+		draw : window.location.hash.indexOf(COMPONENT_DRAW) >= 0 || typeof Watcher !== KEYWORD_UNDEFINED,
+		share : window.location.hash.indexOf(COMPONENT_SHARE) >= 0 || typeof Watcher !== KEYWORD_UNDEFINED,
+		watch : window.location.hash.indexOf(COMPONENT_WATCH) >= 0 || typeof Watcher !== KEYWORD_UNDEFINED,
+		tools : window.location.hash.indexOf(COMPONENT_TOOLS) >= 0 || typeof Watcher !== KEYWORD_UNDEFINED,
+		save : window.location.hash.indexOf(COMPONENT_SAVE) >= 0 || typeof Watcher !== KEYWORD_UNDEFINED,
+		load : window.location.hash.indexOf(COMPONENT_LOAD) >= 0 || typeof Watcher !== KEYWORD_UNDEFINED,
+		screen : window.location.hash.indexOf(COMPONENT_SCREEN) >= 0 || typeof Watcher !== KEYWORD_UNDEFINED,
+		content : window.location.hash.indexOf(COMPONENT_CONTENT) >= 0 || typeof Watcher !== KEYWORD_UNDEFINED,
+		edit : window.location.hash.indexOf(COMPONENT_EDIT) >= 0 || typeof Watcher !== KEYWORD_UNDEFINED,
+		layers : window.location.hash.indexOf(COMPONENT_LAYERS) >= 0 || typeof Watcher !== KEYWORD_UNDEFINED,
+		task : window.location.hash.indexOf(COMPONENT_TASK) >= 0 || typeof Watcher !== KEYWORD_UNDEFINED
 	};
 };
 
@@ -68,11 +68,11 @@ var Components = {
 };
 
 function sendMessage(message){
-	if(typeof Watcher !== "undefined"){
+	if(typeof Watcher !== KEYWORD_UNDEFINED){
 		Watcher.sendMessage(message, Project.autor);
 	}
 
-	if(typeof Sharer !== "undefined" && Sharer.isSharing){
+	if(typeof Sharer !== KEYWORD_UNDEFINED && Sharer.isSharing){
 		Sharer.sendMessage(message, Project.autor);
 	}
 
@@ -157,25 +157,30 @@ glob.init = function(){
 	Project.scene.addToScene(new Rect(new GVector2f(800, 50), new GVector2f(100, 100), "#ff0000"));
 	Project.scene.addToScene(new Rect(new GVector2f(250, 250), new GVector2f(100, 100), "#00ff00"));
 
-	Project.scene.addToScene(new Polygon([new GVector2f(1200, 100), new GVector2f(1150, 150), new GVector2f(1250, 150)], "#ff69b4"));
-	Project.scene.addToScene(new Table(new GVector2f(800, 250), new GVector2f(200, 800), [["meno", "vek"], ["gabo", 21], ["maros", 35]]), "test2");
+	Project.scene.addToScene(new Polygon([new GVector2f(1200, 100), 
+										  new GVector2f(1150, 150), 
+										  new GVector2f(1250, 150)], "#ff69b4"));
+	Project.scene.addToScene(new Table(new GVector2f(800, 250), 
+									   new GVector2f(200, 800), 
+									   [["meno", "vek"], ["gabo", 21], ["maros", 35]]), "test2");
 
-	loadImage(e => Project.scene.addToScene(new ImageObject(new GVector2f(300, 400), new GVector2f(300, 400), e)));
+	loadImage(e => Project.scene.addToScene(new ImageObject(new GVector2f(300, 400), 
+															new GVector2f(300, 400), e)));
 
 
 
 	var methods = {
 		getArea: {
 			name: "getArea",
-			retType: "number",
+			retType: KEYWORD_NUMBER,
 			access: ACCESS_PUBLIC,
-			args: "void"
+			args: KEYWORD_VOID
 		},
 		getPosition:{
 			name: "getPosition",
 			retType: "GVector2f",
 			access: ACCESS_PROTECTED,
-			args: "void"
+			args: KEYWORD_VOID
 		}
 	};
 
@@ -183,25 +188,29 @@ glob.init = function(){
 		x : {
 			name: "x",
 			access: ACCESS_PROTECTED,
-			type: "number"
+			type: KEYWORD_NUMBER
 		},
 		y : {
 			name: "y",
 			access: ACCESS_PROTECTED,
-			type: "number"
+			type: KEYWORD_NUMBER
 		},
 		width : {
 			name: "width",
 			access: ACCESS_PROTECTED,
-			type: "number"
+			type: KEYWORD_NUMBER
 		},
 		height : {
 			name: "height",
 			access: ACCESS_PROTECTED,
-			type: "number"
+			type: KEYWORD_NUMBER
 		}
 	};
-	Project.scene.addToScene(new Class(new GVector2f(500, 150), new GVector2f(250, 250), "Rectange", attrs, methods));
+	Project.scene.addToScene(new Class(new GVector2f(500, 150), 
+									   new GVector2f(250, 250), 
+									   "Rectange", 
+									   attrs, 
+									   methods));
 	draw();
 };
 
@@ -288,7 +297,7 @@ glob.loading = function(){
 		Project.context.shadowColor = DEFAULT_SHADOW_COLOR;
 		Project.input.initListeners(Project.canvas);
 
-		//if(typeof Sharer !== "undefined"){
+		//if(typeof Sharer !== KEYWORD_UNDEFINED){
 		//	chatViewer = new ChatViewer(Project.title + "'s chat", Project.autor, sendMessage);
 		//}
 
@@ -301,7 +310,8 @@ glob.loading = function(){
 			
 		draw();
 
-		if(localStorage.hasOwnProperty(RESTORE_KEY)){
+
+		if(ASK_FOR_RESTORE_DATA && localStorage.hasOwnProperty(RESTORE_KEY)){
 			if(confirm(getMessage(MSG_LOAD_OLD_PROJECT))){
 				var data = JSON.parse(localStorage.getItem(RESTORE_KEY));
 				Scene.fromObject(data.scene);

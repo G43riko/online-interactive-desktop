@@ -2,13 +2,16 @@
  * Created by Gabriel on 29. 10. 2016.
  */
 
-
 class ConnectionManager{
 	constructor(){
-		this._user_id = false;
-		this._socket = false;
-		this._user_name = PROJECT_AUTHOR;
-		this._connectedUsers = {};
+		this._socket 			= false;
+		this._user_id 			= false;
+		this._user_name 		= PROJECT_AUTHOR;
+		this._connectedUsers 	= {};
+		this._sharing 			= false;
+		this._sender 			= new EventTimer(e => this._sendStack(), CONNECTION_LOOP_TIME);
+		this._buffer 			= [];
+
 		this.paint = {
 			addPoint 	: (pos, layer)	=> this._paintAction(ACTION_PAINT_ADD_POINT, pos, layer),
 			breakLine 	: (layer)		=> this._paintAction(ACTION_PAINT_BREAK_LINE, layer),
@@ -35,12 +38,9 @@ class ConnectionManager{
 			visible 	: (title, val) 	=> this._layerAction(ACTION_LAYER_VISIBLE, val),
 			rename 		: (title, val) 	=> this._layerAction(ACTION_LAYER_RENAME, val)
 		};
-		this._sharing = false;
-		this._sender = new EventTimer(e => this._sendStack(), CONNECTION_LOOP_TIME);
-		this._buffer = [];
-		var inst = this;
-		$.post("/create", {content: JSON.stringify({meno:PROJECT_AUTHOR})}, function(data){
-			inst._user_id = data.cookies[CONN_KEY_USER_ID];
+
+		$.post("/create", {content: JSON.stringify({meno:PROJECT_AUTHOR})}, data => {
+			this._user_id = data.cookies[CONN_KEY_USER_ID];
 		}, "json");
 
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
@@ -87,8 +87,8 @@ class ConnectionManager{
 		this._type = data[CONN_KEY_TYPE];
 		this._user_name = data[CONN_KEY_USER_NAME] || this._user_name;
 		data.resolution = window.innerWidth + "_" + window.innerHeight;
-		var inst = this;
-		inst.resetLives();
+		//var inst = this;
+		this.resetLives();
 
 		this._sharePaints		= data.sharePaints;
 		this._shareInput		= data.shareInput;
@@ -101,33 +101,33 @@ class ConnectionManager{
 			Logger.error(getMessage(MSG_CONN_FAILED));
 		});
 
-		this._socket.on("connect_error", function(){
-			inst._lives === CONNECTION_TRIES && Logger.error(getMessage(MSG_CONN_ERROR));
-			inst._lives--;
-			if(inst._lives === 0){
-				inst.disconnect();
+		this._socket.on("connect_error", () => {
+			this._lives === CONNECTION_TRIES && Logger.error(getMessage(MSG_CONN_ERROR));
+			this._lives--;
+			if(this._lives === 0){
+				this.disconnect();
 			}
 		});
 
-		this._socket.on("reconnect", function(){
-			inst.resetLives();
+		this._socket.on("reconnect", () => {
+			this.resetLives();
 			Logger.write(getMessage(MSG_CONN_RECONNECT));
 		});
 
 
-		this._socket.on('confirmConnection', function(response) {
-			inst._less_id = response[CONN_KEY_DATA][CONN_KEY_LESS_ID];
-			inst._connectTime = Date.now();
-			inst._messageTime = Date.now();
-			if(inst._type === CONN_KEY_WATCH || inst._type === CONN_KEY_TEACH){
-				if(inst._type === CONN_KEY_WATCH){
+		this._socket.on('confirmConnection', response => {
+			this._less_id = response[CONN_KEY_DATA][CONN_KEY_LESS_ID];
+			this._connectTime = Date.now();
+			this._messageTime = Date.now();
+			if(this._type === CONN_KEY_WATCH || this._type === CONN_KEY_TEACH){
+				if(this._type === CONN_KEY_WATCH){
 					Scene.initSecondCanvas();
 				}
-				//inst._sendMessage("requireAllData", {target: inst._user_id});
-				inst._watching = true;
+				//this._sendMessage("requireAllData", {target: this._user_id});
+				this._watching = true;
 			}
 			else{
-				inst._sharing = true;
+				this._sharing = true;
 			}
 
 
@@ -142,18 +142,11 @@ class ConnectionManager{
 			}
 		});
 
-		this._socket.on('receivedBuffer', function(response) {
+		this._socket.on('receivedBuffer', this._processStack);
 
-			inst._processStack(response);
-		});
+		this._socket.on('errorLog', response => Logger.error(response.msg));
 
-		this._socket.on('errorLog', function(response) {
-			Logger.error(response.msg);
-		});
-
-		this._socket.on("notifLog", function(response){
-			Logger.write(response.msg);
-		});
+		this._socket.on("notifLog", response => Logger.write(response.msg));
 
 		this._socket.emit("initConnection", data);
 	}
@@ -202,39 +195,37 @@ class ConnectionManager{
 	 
 	_processStack(data){
 		Logger.log("prijaty buffer po: " + (Date.now() - this._messageTime), LOGGER_STACK_RECIEVED);
-		console.log();
 		this._messageTime = Date.now();
-		var inst = this;
-	 	each(data.buffer, function(e){
+	 	each(data.buffer, e => {
 			//console.log("prijata akcia:" + e.action);
 			switch(e.action){
 				case "requireAllData" :
-					Handler.processRequireAllData(inst, e[CONN_KEY_DATA]);
+					Handler.processRequireAllData(this, e[CONN_KEY_DATA]);
 					break;
 				case "sendAllData" :
-					Handler.processSendAllData(inst, e[CONN_KEY_DATA]);
+					Handler.processSendAllData(this, e[CONN_KEY_DATA]);
 					break;
 				case "userDisconnect" :
-					Handler.processUserDisconnect(inst, e[CONN_KEY_DATA]);
+					Handler.processUserDisconnect(this, e[CONN_KEY_DATA]);
 					break;
 				case "userConnect" :
-					Handler.processUserConnect(inst, e[CONN_KEY_DATA]);
+					Handler.processUserConnect(this, e[CONN_KEY_DATA]);
 					break;
 				case "paintAction" :
-					Handler.processPaintAction(e[CONN_KEY_DATA], inst._type);
+					Handler.processPaintAction(e[CONN_KEY_DATA], this._type);
 					break;
 				case "layerAction" :
 					Handler.processLayerAction(e[CONN_KEY_DATA]);
 					break;
 				case "inputAction" :
-					inst._processInputAction(e[CONN_KEY_DATA]);
+					this._processInputAction(e[CONN_KEY_DATA]);
 					break;
 				case "creatorAction" :
 					Creator.setOpt(e[CONN_KEY_DATA].key, e[CONN_KEY_DATA][CONN_KEY_VALUE]);
 					draw();
 					break;
 				case "objectAction" :
-					Handler.processObjectAction(e[CONN_KEY_DATA], inst._type);
+					Handler.processObjectAction(e[CONN_KEY_DATA], this._type);
 					break;
 				default:
 					Logger.error(getMessage(MSG_UNKNOW_ACTION, e.action));
@@ -469,7 +460,8 @@ class ConnectionManager{
 
 class Handler{
 	static processUserDisconnect(inst, data){
-		Logger.write("používatel " + data[CONN_KEY_USER_NAME] + "[ " + data[CONN_KEY_USER_ID] + "] sa odpojil");
+		Logger.write(getMessage(MSG_USER_DISCONNECT, data[CONN_KEY_USER_NAME], data[CONN_KEY_USER_ID]));
+		
 		var user = inst._connectedUsers[data[CONN_KEY_USER_ID]];
 		if(user){
 			user.status = STATUS_DISCONNECTED;

@@ -34,55 +34,55 @@ glob.testCompatibility = function(){
 	isUndefined(co, "textAlign");
 	isUndefined(co, "textBaseline");
 
-	isUndefined(co, "addHitRegion")//
-	isUndefined(co, "arc")
-	isUndefined(co, "arcTo")
-	isUndefined(co, "asyncDrawXULElement")//
-	isUndefined(co, "beginPath")
-	isUndefined(co, "bezierCurveTo")
-	isUndefined(co, "clearHitRegions")//
-	isUndefined(co, "clearRect")
-	isUndefined(co, "clip")
-	isUndefined(co, "closePath")
-	isUndefined(co, "createImageData")
-	isUndefined(co, "createLinearGradient")
-	isUndefined(co, "createPattern")
-	isUndefined(co, "createRadialGradient")
-	isUndefined(co, "drawFocusIfNeeded")//
-	isUndefined(co, "drawImage")
-	isUndefined(co, "drawWidgetAsOnScreen")//
-	isUndefined(co, "drawWindow")//
-	isUndefined(co, "ellipse")//
-	isUndefined(co, "fill")
-	isUndefined(co, "fillRect")
-	isUndefined(co, "fillText")
-	isUndefined(co, "getImageData")
-	isUndefined(co, "getLineDash")//
-	isUndefined(co, "isPointInPath")
-	isUndefined(co, "isPointInStroke")//
-	isUndefined(co, "lineTo")
-	isUndefined(co, "measureText")
-	isUndefined(co, "moveTo")
-	isUndefined(co, "putImageData")
-	isUndefined(co, "quadraticCurveTo")
-	isUndefined(co, "rect")
-	isUndefined(co, "removeHitRegion")//
-	isUndefined(co, "resetTransform")//
-	isUndefined(co, "restore")
-	isUndefined(co, "rotate")
-	isUndefined(co, "save")
-	isUndefined(co, "scale")
-	isUndefined(co, "scrollPathIntoView")//
-	isUndefined(co, "setLineDash")//
-	isUndefined(co, "setTransform")
-	isUndefined(co, "stroke")
-	isUndefined(co, "strokeRect")
-	isUndefined(co, "strokeText")
-	isUndefined(co, "transform")
-	isUndefined(co, "translate")
+	isUndefined(co, "addHitRegion");//
+	isUndefined(co, "arc");
+	isUndefined(co, "arcTo");
+	isUndefined(co, "asyncDrawXULElement");//
+	isUndefined(co, "beginPath");
+	isUndefined(co, "bezierCurveTo");
+	isUndefined(co, "clearHitRegions");//
+	isUndefined(co, "clearRect");
+	isUndefined(co, "clip");
+	isUndefined(co, "closePath");
+	isUndefined(co, "createImageData");
+	isUndefined(co, "createLinearGradient");
+	isUndefined(co, "createPattern");
+	isUndefined(co, "createRadialGradient");
+	isUndefined(co, "drawFocusIfNeeded");//
+	isUndefined(co, "drawImage");
+	isUndefined(co, "drawWidgetAsOnScreen");//
+	isUndefined(co, "drawWindow");//
+	isUndefined(co, "ellipse");//
+	isUndefined(co, "fill");
+	isUndefined(co, "fillRect");
+	isUndefined(co, "fillText");
+	isUndefined(co, "getImageData");
+	isUndefined(co, "getLineDash");//
+	isUndefined(co, "isPointInPath");
+	isUndefined(co, "isPointInStroke");//
+	isUndefined(co, "lineTo");
+	isUndefined(co, "measureText");
+	isUndefined(co, "moveTo");
+	isUndefined(co, "putImageData");
+	isUndefined(co, "quadraticCurveTo");
+	isUndefined(co, "rect");
+	isUndefined(co, "removeHitRegion");//
+	isUndefined(co, "resetTransform");//
+	isUndefined(co, "restore");
+	isUndefined(co, "rotate");
+	isUndefined(co, "save");
+	isUndefined(co, "scale");
+	isUndefined(co, "scrollPathIntoView");//
+	isUndefined(co, "setLineDash");//
+	isUndefined(co, "setTransform");
+	isUndefined(co, "stroke");
+	isUndefined(co, "strokeRect");
+	isUndefined(co, "strokeText");
+	isUndefined(co, "transform");
+	isUndefined(co, "translate");
 	
 	isUndefined(window, "performance");
-}
+};
 
 class Animation{
 	static init(loop){
@@ -107,7 +107,7 @@ class Animation{
 		Animation._running = true;
 
 		var test = (time) => {
-			Animation._mainLoop(time)
+			Animation._mainLoop(time);
 		};
 		requestAnimationFrame(test);
 	}
@@ -160,7 +160,7 @@ glob.roughSizeOfObject = function(object) {
 		}
 	}
 	return bytes;
-}
+};
 
 var isUndefined 	= e => typeof e === KEYWORD_UNDEFINED,
 	isDefined 		= e => typeof e !== KEYWORD_UNDEFINED,
@@ -194,13 +194,13 @@ glob.toHHMMSS = function(time, decimals = 0) {
     if (hours   < 10){ hours   = "0" + hours;}
     if (minutes < 10){ minutes = "0" + minutes;}
     if (seconds < 10){
-    	seconds = "0" + seconds.toFixed(decimals)
+    	seconds = "0" + seconds.toFixed(decimals);
     }
     else {
     	seconds = seconds.toFixed(decimals);
     }
     return hours + ':' + minutes + ':' + seconds;
-}
+};
 
 function each(obj, func, thisArg = false){
 	var i;
@@ -226,8 +226,9 @@ function each(obj, func, thisArg = false){
 		}
 		else{
 			for(i in obj){
-				if(obj.hasOwnProperty(i))
+				if(obj.hasOwnProperty(i)){
 					func(obj[i], i, obj);
+				}
 			}
 		}
 	}
@@ -239,11 +240,11 @@ glob.loadPage = function(url){
 	tag.src = url;
 	var firstScriptTag = document.getElementsByTagName('script')[0];
 	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-}
+};
 
 glob.eachFiltered = function(obj, func1, func2, thisArg = false){
 	each(obj, (e, i, arr) => func1(e, i, arr) && func2(e, i, arr), thisArg);
-}
+};
 
 /*
 function extendObject(){
@@ -292,19 +293,22 @@ var Movement = {
 						break;
 					case 4:
 						o.position.add(x, y);
-						if(moveChildrens)
+						if(moveChildrens){
 							o.eachChildren(e => {
 								e.moveType = 4;
 								Movement.move(e, x, y, false);
 								e.moveType = -1;
 							});
+						}
 						break;
 					case 5:
-						if(!o.minSize || o.size.x + x >= o.minSize.x)
+						if(!o.minSize || o.size.x + x >= o.minSize.x){
 							o.size.x += x;
-						if(!o.minSize || o.size.y + y >= o.minSize.y)
+						}
+						if(!o.minSize || o.size.y + y >= o.minSize.y){
 							o.size.y += y;
-						break
+						}
+						break;
 				}
 			}
 		}
@@ -314,10 +318,10 @@ var Movement = {
 				o.points.forEach(a => a.add(x, y));
 			}
 			else if(isInt(o.movingPoint)){//ak sa kliklo na bod zlomu tak sa bodom hýbe
-				if(o.movingPoint == 0){
+				if(o.movingPoint === 0){
 					o.targetA = "";
 				}
-				else if(o.movingPoint == o.points.length - 1){
+				else if(o.movingPoint === o.points.length - 1){
 					o.targetB = "";
 				}
 				o.points[o.movingPoint].add(x, y);
@@ -396,7 +400,7 @@ glob.setCookie = function(cname, cvalue, exdays) {
 	var d = new Date();
 	d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
 	document.cookie = cname + "=" + cvalue + ";expires="+ d.toUTCString();
-}
+};
 
 glob.getCookie = function(cname) {
 	var name = cname + "=",
@@ -404,15 +408,15 @@ glob.getCookie = function(cname) {
 		i, c;
 	for(i = 0; i <ca.length; i++) {
 		c = ca[i];
-		while (c.charAt(0)==' '){
+		while (c.charAt(0) == ' '){
 			c = c.substring(1);
 		}
-		if (c.indexOf(name) == 0){
+		if (c.indexOf(name) === 0){
 			return c.substring(name.length,c.length);
 		}
 	}
 	return "";
-}
+};
 
 function drawBorder(ctx, o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 	if(!o.selected && o.name != "Paint"){
@@ -455,7 +459,7 @@ glob.rectRectCollision = function(minA, sizeA, minB, sizeB){
 	var bh = sizeB.y;
 
 	return (bx + bw > ax) && (by + bh > ay) && (bx < ax + aw) && (by < ay + ah);
-}
+};
 
 function objectToArray(obj){
 	var result = [];
@@ -510,7 +514,7 @@ glob.showObject = function(obj){
 	var type;
 	for(var i in obj){
 		if(obj.hasOwnProperty(i)){
-			var postfix = ""
+			var postfix = "";
 			type = typeof obj[i];
 			type = type === "object" && isArray(obj[i]) ? "array" : type;
 
@@ -523,8 +527,7 @@ glob.showObject = function(obj){
 			console.log(i + ": [" + type + "]" + postfix);
 		}
 	}
-
-}
+};
 
 glob.getMousePos = function(canvasDom, mouseEvent) {
 	var rect = canvasDom.getBoundingClientRect();
@@ -532,7 +535,7 @@ glob.getMousePos = function(canvasDom, mouseEvent) {
 		x: mouseEvent["touches"][0].clientX - rect.left,
 		y: mouseEvent["touches"][0].clientY - rect.top
 	};
-}
+};
 
 class EventTimer{
 	constructor(event, time){
@@ -614,7 +617,7 @@ if(!String.prototype.startsWith){
 			return false;
 		}
 		return s.charAt(0) === char;
-	}
+	};
 }
 /*****************
 DEFAULTNE
@@ -768,9 +771,7 @@ if (!Function.prototype.bind) {
         fToBind = this,
         fNOP    = function() {},
         fBound  = function() {
-          return fToBind.apply(this instanceof fNOP
-                 ? this
-                 : oThis,
+          return fToBind.apply(this instanceof fNOP ? this : oThis,
                  aArgs.concat(Array.prototype.slice.call(arguments)));
         };
 

@@ -4,29 +4,29 @@
 */
 class ProjectManager{
 	constructor(author, title = PROJECT_NAME){
-		this._createdAt = Date.now();
-		this._title = title;
-		this._autor = author;
-		this._idCounter = 0;
-		this._scene = new SceneManager();
-		this._options = new OptionsManager();
-		this._input = new InputManager();
-		this._gui = new GuiManager();
-		this._files = new FileManager();
-		this._content = new ContentManager();
-		this._listeners = new ListenersManager();
+		this._createdAt 	= Date.now();
+		this._title 		= title;
+		this._autor			= author;
+		this._scene 		= new SceneManager();
+		this._options 		= new OptionsManager();
+		this._input 		= new InputManager();
+		this._gui 			= new GuiManager();
+		this._files 		= new FileManager();
+		this._content 		= new ContentManager();
+		this._listeners 	= new ListenersManager();
+		this._analyzer 		= new Analyzer(URL_ANONYM_DATA);
 		this._canvasManager = null;
-		this._drawCounter = 0;
-		this._connection = null;
-		this._analyzer = new Analyzer(URL_ANONYM_DATA);
+		this._connection 	= null;
+		this._drawCounter 	= 0;
+		this._idCounter 	= 0;
 
 		try{
-			if(typeof ConnectionManager === "function"){
+			if(isFunction(ConnectionManager)){
 				this._connection = new ConnectionManager();
 			}
 		}
 		catch(e){
-			Logger.exception("Nastala chyba pri vytváraní pripojenia", e);
+			Logger.exception(getMessage(MSG_CREATE_PROJECT_ERROR), e);
 		}
 
 		//PAINT_MANAGER

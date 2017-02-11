@@ -5,8 +5,9 @@ class CanvasHandler{
 	constructor(arg1, arg2, arg3){
 		if(typeof arg1 === "string"){
 			this._canvas = document.getElementById(arg1);
-			if(arg2 && arg3)
+			if(arg2 && arg3){
 				CanvasHandler.setCanvasSize(this._canvas, arg2, arg3);
+			}
 		}
 		else if(arg1 instanceof HTMLImageElement){//ARGUMENT JE OBRAZOK
 			this._canvas = CanvasHandler.imageToCanvas(arg1);
@@ -82,8 +83,9 @@ class CanvasHandler{
 	}
 
 	static calcTextWidth(ctx, value, font = false){
-		if(font)
+		if(font){
 			ctx.font = font;
+		}
 		return ctx.measureText(value).width;
 	}
 

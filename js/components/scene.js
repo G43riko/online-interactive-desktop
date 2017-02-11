@@ -3,11 +3,11 @@
 */	
 class SceneManager{
 	constructor(){
-		this._clickViewers = [];
-		this._layers = {};
-		this._secondCanvas = null;
-		this._layersCount = 0;
-		this._creator = new objectCreator();
+		this._clickViewers 	= [];
+		this._layers 		= {};
+		this._secondCanvas 	= null;
+		this._layersCount 	= 0;
+		this._creator 		= new objectCreator();
 		this._objectManager = new ObjectsManager();
 
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
@@ -43,7 +43,8 @@ class SceneManager{
 	}
 	mouseDown(x, y){
 		var counter = 0;
-		var viewer = new Arc(new GVector2f(x, y).sub(CLICK_SPEED*CLICK_LIMIT), new GVector2f(CLICK_SPEED * 2 * CLICK_LIMIT));
+		var viewer = new Arc(new GVector2f(x, y).sub(CLICK_SPEED*CLICK_LIMIT), 
+							 new GVector2f(CLICK_SPEED * 2 * CLICK_LIMIT));
 		Entity.changeAttr(viewer, {
 			"fill" : false,
 			"borderColor" : CLICK_COLOR
@@ -288,15 +289,9 @@ class SceneManager{
 
 	toObject(){
 		var result = [];
-		/* TOTO nemože byť lebo to nieje pole ale môj objekt
-		each(this._layers, e => each(e, ee => {//pre každu vrstvu prejde všetkými objektami
-			if(ee.name != "LayerViewer")
-				result.push(ee)
-		}));*/
 		each(this._layers, e => e.forEach(function(ee){//pre každu vrstvu prejde všetkými objektami
 			if(ee.name != "LayerViewer"){
 				result[result.length] = ee;
-				console.log("pridava sa: ", e, ee);
 			}
 		}));
 		return result;

@@ -31,7 +31,7 @@
 		"allowedFor" : ["Paint"],
 		"label" : "Brush type",
 		"action" : "selectBrush" ,
-		"values": ["brush1.png", "brush2.png", "brush3.png", "line"],
+		"values": ["brush1.png", "brush2.png", "brush3.png", "line", "fur"],
 		"type" : "string"
 	},
 	"brushColor" : {

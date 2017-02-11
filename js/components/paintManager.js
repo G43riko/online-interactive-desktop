@@ -149,7 +149,11 @@ class PaintManager{
 		ctx.drawImage(this._selectedImage, 0, 0, size, size);
 		imgData = ctx.getImageData(0, 0, size, size);
 		data = imgData.data;
-		color = col.replace("rgb(", "").replace("rgba(", "").replace(")", "").split(", ").map(a => parseInt(a));
+		color = col.replace("rgb(", "")
+				   .replace("rgba(", "")
+				   .replace(")", "")
+				   .split(", ")
+				   .map(parseInt);
 		for(i=3 ; i<data.length ; i+=4){
 			if(data[i] === 0){
 				continue;
@@ -164,22 +168,32 @@ class PaintManager{
 		Events.paintBrushChange(size, col, this._selectedImageName);
 	}
 
-	drawLine(ctx, pointA, pointB, brushSize, brushColor, action, brushType){
-		if(action == PAINT_ACTION_LINE){
+	//drawLine(ctx, pointA, pointB, brushSize, brushColor, action, brushType){
+	drawLine(param){
+		var ctx 		= param.ctx || Project.context,
+			pointA 		= param.pointA,
+			pointB 		= param.pointB,
+			points 		= param.points,
+			action 		= param.action 		|| Paints.action,
+			brushSize 	= param.brushSize	|| Creator.brushSize,
+			brushType 	= param.brushType	|| Creator.brushType,
+			brushColor 	= param.brushColor	|| Creator.brushColor;
+
+		if(action === PAINT_ACTION_LINE){
 			ctx.lineCap 		= LINE_CAP_ROUND;
 			ctx.lineWidth 		= brushSize;
-			ctx.strokeStyle	= brushColor;
+			ctx.strokeStyle		= brushColor;
 			ctx.beginPath();
 			ctx.moveTo(pointA.x, pointA.y);
 			ctx.lineTo(pointB.x, pointB.y);
 			ctx.stroke();
 		}
-		else if(action == PAINT_ACTION_BRUSH){
+		else if(action === PAINT_ACTION_BRUSH){
 			var dist 	= pointA.dist(pointB),
 				angle 	= Math.atan2(pointA.x - pointB.x, pointA.y - pointB.y);
 
 			Creator.setOpt("brushColor", brushColor);
-			Creator.setOpt("brushSize", brushSize);
+			Creator.setOpt("brushSize",	brushSize);
 			Creator.setOpt("brushType", brushType);
 
 			for (var i = 0; i < dist; i++){
@@ -189,6 +203,49 @@ class PaintManager{
 					brushSize,
 					brushSize);
 			}
+		}
+		else if(action === PAINT_ACTION_FUR){
+			var offset = 6000;
+			ctx.strokeStyle = brushColor;
+			ctx.lineWidth 	= 1;
+			ctx.beginPath();
+
+			ctx.moveTo(pointB.x, pointB.y);
+			ctx.lineTo(pointA.x, pointA.y);
+
+			for (var i = 0; i < points.length; i++) {
+				var dx = points[i].x - pointB.x;
+				var dy = points[i].y - pointB.y;
+				var d = dx * dx + dy * dy;
+
+				if (d < offset && Math.random() > d / offset) {
+					ctx.moveTo(pointB.x + (dx * 0.5), pointB.y + (dy * 0.5));
+					ctx.lineTo(pointB.x - (dx * 0.5), pointB.y - (dy * 0.5));
+				}
+			}
+
+			ctx.stroke();
+		}
+		else if(action === PAINT_ACTION_NEIGHBOR){
+			var offset = 1000;
+			ctx.strokeStyle = brushColor;
+			ctx.lineWidth 	= 1;
+			ctx.beginPath();
+
+			ctx.moveTo(pointB.x, pointB.y);
+			ctx.lineTo(pointA.x, pointA.y);
+
+			for (var i = 0, len = points.length; i < len; i++) {
+				var dx = points[i].x - pointB.x;
+				var dy = points[i].y - pointB.y;
+				var d = dx * dx + dy * dy;
+
+				if (d < offset) {
+					ctx.moveTo( pointB.x + (dx * 0.2), pointB.y + (dy * 0.2));
+					ctx.lineTo( points[i].x - (dx * 0.2), points[i].y - (dy * 0.2));
+				}
+			}
+			ctx.stroke();
 		}
 	}
 

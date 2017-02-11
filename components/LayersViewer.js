@@ -19,17 +19,18 @@ class LayersViewer{
 			return;
 		}
 
-		var element = arg.element;
-		this._defaultName = arg.defaultLayertName || "Layer_";
-		this._counter = 0;
-		this._layers = {};
-		this._activeLayer = "";
-		this._existingLayers = 0;
-		this._selectedLayer = null;
-		this._layersViewer = this._createDiv();
-		element.appendChild(this._layersViewer.first());
+		var element 			= arg.element;
+		this._defaultName 		= arg.defaultLayertName || "Layer_";
+		this._counter 			= 0;
+		this._layers 			= {};
+		this._activeLayer 		= "";
+		this._existingLayers 	= 0;
+		this._selectedLayer 	= null;
+		this._layersViewer 		= this._createDiv();
+		this.visible 			= arg.visible !== false || false;
 
-		this.visible = arg.visible !== false || false;
+
+		element.appendChild(this._layersViewer.first());
 
 		if(typeof Scene !== "undefined" && G.isObject(Scene) && G.isDefined(Scene._layers)){
 			each(Scene._layers, e => this.createLayer(e), this);
@@ -80,9 +81,10 @@ class LayersViewer{
 
 
 	static setName(element){
-		var input = G(element);
+		var input 	= G(element);
 		var oldName = input.parent().attr("oldName");
 		var newName = input.first().value;
+		
 		element.onblur = element.onkeydown = null;
 
 		//aj je nový názov prázdny tak vložíme pôvodný názov

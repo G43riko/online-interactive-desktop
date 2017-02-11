@@ -75,7 +75,17 @@ class Paint extends Entity{
 
 			e.points.forEach(function(ee, ii, arr){
 				if(ii){
-					Paints.drawLine(this._canvas.context, ee, arr[ii - 1], e.size, e.color, e.action, e.type);
+					//Paints.drawLine(this._canvas.context, ee, arr[ii - 1], e.size, e.color, e.action, e.type);
+					Paints.drawLine({
+						ctx: this._canvas.context, 
+						pointA: ee,
+						pointB: arr[ii - 1], 
+						action: e.action,
+						points: arr, 
+						brushSize: e.size, 
+						brushType: e.type, 
+						brushColor: e.color
+					});
 				}
 			}, this);
 		}, this);
@@ -178,13 +188,19 @@ class Paint extends Entity{
 		}
 
 		if(arr.length){
-			Paints.drawLine(this._canvas.context, arr[arr.length - 1], point, Creator.brushSize, Creator.brushColor, Paints.action, Creator.brushType);
+			//Paints.drawLine(this._canvas.context, arr[arr.length - 1], point, Creator.brushSize, Creator.brushColor, Paints.action, Creator.brushType);
+			Paints.drawLine({
+				ctx: this._canvas.context, 
+				pointA: arr[arr.length - 1],
+				pointB: point,
+				points: arr
+			});
 		}
+		arr.push(point);
 		lastArr.min.x = Math.min(lastArr.min.x, point.x);
 		lastArr.min.y = Math.min(lastArr.min.y, point.y);
 		lastArr.max.x = Math.max(lastArr.max.x, point.x);
 		lastArr.max.y = Math.max(lastArr.max.y, point.y);
-		arr.push(point);
 	}
 
 	fromObject(content, concat = false){

@@ -23,9 +23,9 @@ class objectCreator{
 		this._view			= null;
 		this._lastOperation = this._operation;
 		this._visibleView	= true;
-		this._allowedItems 	= ["_fillColor", "_borderColor", "_borderWidth", "_operation", "_lineWidth", "_fontSize",
-							   "_fontColor", "_lineType", "_lineStyle", "_brushSize", "_brushType", "_brushColor",
-							   "_radius"];
+		this._allowedItems 	= ["_fillColor", "_borderColor", "_borderWidth", "_operation", 
+							   "_lineWidth", "_fontSize", "_fontColor", "_lineType", "_lineStyle", 
+							   "_brushSize", "_brushType", "_brushColor", "_radius"];
 		
 		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
 	}
@@ -94,7 +94,10 @@ class objectCreator{
 				this._object = new Arc(position, new GVector2f(), this._fillColor);
 				break;
 			case OPERATION_DRAW_LINE:
-				this._object = new Line([position, position.getClone()], this._lineWidth, this._fillColor, target);
+				this._object = new Line([position, position.getClone()], 
+										this._lineWidth, 
+										this._fillColor, 
+										target);
 				break;
 			case OPERATION_DRAW_JOIN:
 				this._object = new Join(position);
@@ -235,12 +238,15 @@ class objectCreator{
 
 
 		if(key === "_brushType"){
-			if(val !== "line"){
-				Paints.selectedImage = val;
-				Paints.action = PAINT_ACTION_BRUSH;
+			if(val === "line"){
+				Paints.action = PAINT_ACTION_LINE;
+			}
+			else if(val === "fur"){
+				Paints.action = PAINT_ACTION_FUR;
 			}
 			else{
-				Paints.action = PAINT_ACTION_LINE;
+				Paints.selectedImage = val;
+				Paints.action = PAINT_ACTION_BRUSH;
 			}
 		}
 

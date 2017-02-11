@@ -156,6 +156,27 @@ class CreatorViewer extends Entity{
 						ctx: this._context
 					});
 				}
+				else if(value === "fur"){
+					var points = [];
+					var centerX = posX + width / 2;
+					var centerY = posY + height / 2;
+					var sizeX = (width - offset * 2);
+					var sizeY = (height - offset * 2);
+					for(var i=0 ; i<100 ; i++){
+						var valX = sizeX * (Math.random() - 0.5);
+						var valY = sizeY * (Math.random() - 0.5);
+						points[points.length] = [centerX + valX, 
+												 centerY + valY, 
+												 centerX - valX, 
+												 centerY - valY];
+					}
+					doLine({
+						points: points,
+						borderWidth: 1,
+						borderColor: MENU_BORDER_COLOR,
+						ctx: this._context
+					});
+				}
 				else{
 					doRect({
 						position: [posX, posY ],

@@ -13,7 +13,7 @@ class LogManager {
 		this._data[LogManager.ERRORS]	= {};
 
 		this._show[LogManager.LOGS] = this._show[LogManager.WARNS] = this._show[LogManager.ERRORS] = true;
-	};
+	}
 
 	log(msg, type){
 		this._logs.push([Date.now(), msg, type]);
@@ -29,7 +29,7 @@ class LogManager {
 		if(this._show[LogManager.LOGS]){
 			console.log(msg);
 		}
-	};
+	}
 
 	error(msg, id){
 		Alert.danger(msg);
@@ -56,7 +56,7 @@ class LogManager {
 	showLogs(){
 		var div = G("#showLogs");
 		if(div.length() > 0){
-			div.empty().append(createTable(["Time", "Message", "Type"], this._logs));
+			div.empty().append(FormManager.createTable(["Time", "Message", "Type"], this._logs));
 			G("#showLogs").show();
     		G("#modalWindow").show();
 		}

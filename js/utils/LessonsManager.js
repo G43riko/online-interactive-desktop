@@ -30,12 +30,12 @@ var sendBuffers = function(){
 };
 
 module.exports.init = function(utils, time){
-	eventManager = new utils.EventTimer(function(){sendBuffers()}, time);
+	eventManager = new utils.EventTimer(sendBuffers, time);
 };
 
 module.exports.getMemberType = function(lesson_id){
 	var type = lessons[lesson_id]["type"];
-	return type === "share" ? "watch" : type === "teach" ? "exercise" : "unknown"
+	return type === "share" ? "watch" : type === "teach" ? "exercise" : "unknown";
 };
 
 module.exports.existLesson = function(lesson_id){
@@ -70,7 +70,7 @@ module.exports.startLesson = function(lesson_id, user_id, type, socket){
 		owner: user_id,
 		members: [],
 		type: type
-	}
+	};
 };
 
 module.exports.isMember = function(lesson_id, user_id){

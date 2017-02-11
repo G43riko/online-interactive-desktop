@@ -71,7 +71,7 @@ module.exports.getWatchOptions = function(watcher){
 		nickName: watcher["nickName"],
 		changeResolution: watcher["changeResolution"],
 		show: watcher["show"]
-	}
+	};
 };
 
 module.exports.getShareOptions = function(id){
@@ -84,7 +84,7 @@ module.exports.getShareOptions = function(id){
 			creator : connection["share"]["creator"],
 			objects : connection["share"]["objects"]
 		}
-	}
+	};
 };
 
 module.exports.startWatch = function (id, socket, data){
@@ -101,11 +101,14 @@ module.exports.disconnect = function(socket, isWatcher, isSharer){
 		if(connections.hasOwnProperty(i)){
 			if(connections[i].owner.id == socket.id){
 				//ODPOJIL SA SHARER
-				for(var j in connections[i].watchers)
-					if(connections[i].watchers.hasOwnProperty(j))
+				for(var j in connections[i].watchers){
+					if(connections[i].watchers.hasOwnProperty(j)){
 						connections[i].watchers[j].socket.emit("endShare", "endShare");
-				if(typeof isSharer === "function")
+					}	
+				}
+				if(typeof isSharer === "function"){
 					isSharer(socket, connections[i]);
+				}
 				console.log("SHARER s id " + socket.id + " sa odpojil");
 				break;
 			}
@@ -114,8 +117,9 @@ module.exports.disconnect = function(socket, isWatcher, isSharer){
 					//ODPOJIL SA WATCHER
 					delete connections[i].watchers[socket.id];
 					console.log("watcher s id " + socket.id + " sa odpojil");
-					if(typeof isWatcher === "function")
+					if(typeof isWatcher === "function"){
 						isWatcher(socket);
+					}
 					break;
 				}
 			}

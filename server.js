@@ -24,7 +24,7 @@ app.get('/app', function(req, res) {
 	serverLogs.increase("pageLoad");
 	var cookies = parseCookies(req);
 	/*
-	if(typeof cookies["user_id"] === "undefined"){
+	if(typeof cookies.user_id === "undefined"){
 		var id = getUserId();
 		res.cookie("user_id", id).cookie("last_load", Date.now());
 	}
@@ -127,10 +127,10 @@ function processRequireAllDataAction(data, user_id, less_id){
 
 	data["target"] = user_id;
 
-	if(lesson["type"] === "share"){
+	if(lesson.type === "share"){
 		lessonsManager.sendMessage(lesson["owner"], "requireAllData", data)
 	}
-	else if(lesson["type"] === "teach"){
+	else if(lesson.type === "teach"){
 		data["target"] = lesson["owner"];//vždy sa budu posielať udaje len zakladatelovi
 		if(lesson["owner"] == user_id){ //ak ten kto žiada je zakladatelom spojenia
 			//if(lessonsManager.isMember(less_id, data["from"]))
@@ -155,8 +155,9 @@ function processLayerAction(data, user_id, less_id){
 }
 
 function processObjectAction(data, user_id, less_id){
-	if(!lessonsManager.isSharing(less_id))
+	if(!lessonsManager.isSharing(less_id)){
 		return false;
+	}
 
 	var owner = lessonsManager.getOwner(less_id);
 
@@ -168,7 +169,7 @@ function processObjectAction(data, user_id, less_id){
 	}
 	/*
 	var lesson = lessonsManager.getLesson(less_id);
-	if(lesson["type"] === "share" && lesson["owner"] === user_id){
+	if(lesson.type === "share" && lesson["owner"] === user_id){
 		for(var i in lesson["members"])
 			if(lesson["members"].hasOwnProperty(i)){
 				lessonsManager.sendMessage(lesson["members"][i], "objectAction", data);
@@ -183,7 +184,7 @@ function processCreatorAction(data, user_id, less_id){
 	}
 	/*
 	var lesson = lessonsManager.getLesson(less_id);
-	if(lesson["type"] === "share" && lesson["owner"] === user_id){
+	if(lesson.type === "share" && lesson["owner"] === user_id){
 		for(var i in lesson["members"])
 			if(lesson["members"].hasOwnProperty(i)){
 				lessonsManager.sendMessage(lesson["members"][i], "creatorAction", data);
@@ -200,7 +201,7 @@ function processSendAllDataAction(data){
 
 	//TODO ak target === server tak uloží aktualny stav používatela do db
 
-	data["msg"]["shareOptions"] = {
+	data.msg["shareOptions"] = {
 		"share": {
 			"objects": true,
 			"paints": true,
@@ -210,19 +211,19 @@ function processSendAllDataAction(data){
 		}
 	};
 
-	data["msg"]["watchOptions"] = {
+	data.msg["watchOptions"] = {
 		"show" : {
 			"chat" : false,
 			"timeline" : false
 		}
 	};
 
-	lessonsManager.sendMessage(data["target"], "sendAllData", data["msg"]);
+	lessonsManager.sendMessage(data["target"], "sendAllData", data.msg);
 }
 
 function processInputAction(data, user_id, less_id, type){
 	var lesson = lessonsManager.getLesson(less_id);
-	if(lesson["type"] === "share" && lesson["owner"] === user_id){
+	if(lesson.type === "share" && lesson["owner"] === user_id){
 		for(var i in lesson["members"])
 			if(lesson["members"].hasOwnProperty(i)){
 				buffer.addMessage(lesson["members"][i], "inputAction", data);
@@ -231,8 +232,9 @@ function processInputAction(data, user_id, less_id, type){
 }
 
 function processPaintAction(data, user_id, less_id){
-	if(!lessonsManager.isSharing(less_id))//TOTO pravdepodobne zbytočné
+	if(!lessonsManager.isSharing(less_id)){//TOTO pravdepodobne zbytočné
 		return false;
+	}
 
 	var owner = lessonsManager.getOwner(less_id);
 
@@ -244,7 +246,7 @@ function processPaintAction(data, user_id, less_id){
 	}
 	/*
 	var lesson = lessonsManager.getLesson(less_id);
-	if(lesson["type"] === "share" && lesson["owner"] === user_id){
+	if(lesson.type === "share" && lesson["owner"] === user_id){
 		for(var i in lesson["members"])
 			if(lesson["members"].hasOwnProperty(i)){
 				lessonsManager.sendMessage(lesson["members"][i], "paintAction", data);
@@ -264,26 +266,28 @@ initConnection = function(data){
 	var cookies = parseCookies(this.handshake);
 
 
-	if(!data["less_id"] || typeof data["create_new"] === "undefined")
-		data["create_new"] = true;
+	if(!data.less_id || typeof data.create_new === "undefined"){
+		data.create_new = true;
+	}
 
-	if(cookies["user_id"])
-		data["user_id"] = cookies["user_id"];
+	if(cookies.user_id){
+		data.user_id = cookies.user_id;
+	}
 
 
 	var lesson_id = client.initConnection(data);
-	var user_id = data["user_id"];
+	var user_id = data.user_id;
 	var socket = this;
 
-	if(data["type"] == "teach" || data["type"] == "share"){//ak zakladá vyučovanie
-		console.log("vytvorilo sa vyucovanie s id: " + lesson_id + "[" + data["type"] + "]");
-		lessonsManager.startLesson(lesson_id, user_id, data["type"], this);
+	if(data.type == "teach" || data.type == "share"){//ak zakladá vyučovanie
+		console.log("vytvorilo sa vyucovanie s id: " + lesson_id + "[" + data.type + "]");
+		lessonsManager.startLesson(lesson_id, user_id, data.type, this);
 	}
-	else if(data["type"] === "exercise" || data["type"] === "watch"){//ak sa pripája k vyučovaniu
+	else if(data.type === "exercise" || data.type === "watch"){//ak sa pripája k vyučovaniu
 		console.log("k vyucovanie s lesson id " + lesson_id + " sa pripojil " + user_id);
 
 		lessonsManager.sendMessage(lessonsManager.getOwner(lesson_id), "userConnect",{
-			user_name : data["user_name"],
+			user_name : data.user_name,
 			user_id : user_id,
 		});
 		lessonsManager.addMember(lesson_id, user_id, this);
@@ -291,12 +295,12 @@ initConnection = function(data){
 
 	client.getAllLessonData(lesson_id, function(err, data){
 		var date = new Date();
-		data["less_id"] = lesson_id;
+		data.less_id = lesson_id;
 		date.setTime(date.getTime() + (24 * 60 * 60 * 1000)); // set 1 day value to expiry
 		var expires = "; expires=" + date.toGMTString();
-		if(data["type"] === "teach" || data["type"] === "watch" || data["type"] === "exercise"){
+		if(data.type === "teach" || data.type === "watch" || data.type === "exercise"){
 			console.log("žiada sa všetko pre usera " + user_id);
-			processRequireAllDataAction({}, user_id, data["less_id"])
+			processRequireAllDataAction({}, user_id, data.less_id)
 		}
 		socket.emit("confirmConnection", {err: err, result: 1, data: data, cookies: cookies});
 		socket.handshake.headers.cookie = "less_id=" + lesson_id + expires + "; path=/";
@@ -306,34 +310,35 @@ initConnection = function(data){
 sendBuffer = function(data){
 	serverLogs.messageRecieve("sendBuffer", data);
 	var i, message = null;
-	for(i in data["buffer"])
-		if(data["buffer"].hasOwnProperty(i)){
-			message = data["buffer"][i];
-			switch (message["action"]){
+	for(i in data.buffer){
+		if(data.buffer.hasOwnProperty(i)){
+			message = data.buffer[i];
+			switch (message.action){
 				case "inputAction" :
-					processInputAction(message["data"], data["user_id"], data["less_id"]);
+					processInputAction(message.data, data.user_id, data.less_id);
 					break;
 				case "requireAllData" :
-					processRequireAllDataAction(message["data"], data["user_id"], data["less_id"]);
+					processRequireAllDataAction(message.data, data.user_id, data.less_id);
 					break;
 				case "sendAllData" :
-					processSendAllDataAction(message["data"]);
+					processSendAllDataAction(message.data);
 					break;
 				case "paintAction" :
-					processPaintAction(message["data"], data["user_id"], data["less_id"]);
+					processPaintAction(message.data, data.user_id, data.less_id);
 					break;
 				case "creatorAction" :
-					processCreatorAction(message["data"], data["user_id"], data["less_id"]);
+					processCreatorAction(message.data, data.user_id, data.less_id);
 					break;
 				case "objectAction" :
-					processObjectAction(message["data"], data["user_id"], data["less_id"]);
+					processObjectAction(message.data, data.user_id, data.less_id);
 					break;
 				case "layerAction" :
-					processLayerAction(message["data"], data["user_id"], data["less_id"]);
+					processLayerAction(message.data, data.user_id, data.less_id);
 					break;
 
 			}
 		}
+	}
 	//writeToWatchers(connection.getWatchers(data.id), "processBuffer", data.msg);
 };
 
@@ -345,34 +350,34 @@ function checkConnectionRequest(data, res){
 				msg: "Dáta neprišli v požadovanom tvare"
 			}));
 		}
-		else if(!data["user_name"]){
+		else if(!data.user_name){
 			res.send(JSON.stringify({
 				result: -2,
 				msg: "Meno nieje zadané"
 			}));
 		}
-		else if(!data["type"]){
+		else if(!data.type){
 			res.send(JSON.stringify({
 				result: -3,
 				msg: "nie je zadaný typ"
 			}));
 		}
 		else{
-			if(data["type"] === "watch" || data["type"] === "exercise"){
-				if(!data["less_id"]){
+			if(data.type === "watch" || data.type === "exercise"){
+				if(!data.less_id){
 					res.send(JSON.stringify({
 						result: -4,
 						msg: "nie je zadané id vyučovania"
 					}));
 				}
-				else if(!lessonsManager.existLesson(data["less_id"])){
+				else if(!lessonsManager.existLesson(data.less_id)){
 					res.send(JSON.stringify({
 						result: -5,
-						msg: "vyučovanie s id " + data["less_id"] + " neexistuje"
+						msg: "vyučovanie s id " + data.less_id + " neexistuje"
 					}));
 				}
 				else {
-					var realType = lessonsManager.getMemberType(data["less_id"])
+					var realType = lessonsManager.getMemberType(data.less_id)
 					if(realType === "exercise"){//USPECH PRE EXERCISE
 						res.send(JSON.stringify({
 							result: 1,
@@ -436,23 +441,23 @@ function parseCookies (request) {
 
 function checkWatchRequest(data, res){
 	try{
-		if(!connection.existShare(data["shareId"])){
+		if(!connection.existShare(data.shareId)){
 			res.send(JSON.stringify({
 				result: -1,
 				msg: "Zle id zdielania"
 			}));
 		}
-		else if(!connection.checkPassword(data["shareId"], data["password"]))
+		else if(!connection.checkPassword(data.shareId, data.password))
 			res.send(JSON.stringify({
 				result: -2,
 				msg: "zlé heslo"
 			}));
-		else if(!data["nickName"])
+		else if(!data.nickName)
 			res.send(JSON.stringify({
 				result: -3,
 				msg: "Nickname nie je platné meno"
 			}));
-		else if(!connection.isNickNameAvailable(data["shareId"], data["nickName"]))
+		else if(!connection.isNickNameAvailable(data.shareId, data.nickName))
 			res.send(JSON.stringify({
 				result: -4,
 				msg: "Nickname je obsadený"
@@ -496,7 +501,7 @@ disconnect = function(){
  */
 broadcastMsg = function(data){
 	serverLogs.messageRecieve("broadcastMsg", data);
-	writeToWatchers(connection.getWatchers(data.id), "notification", {msg: data["msg"]});
+	writeToWatchers(connection.getWatchers(data.id), "notification", {msg: data.msg});
 };
 
 app.get('/watch', function(req, res){
@@ -520,18 +525,21 @@ app.post('/create', function(req, res){
 });
 
 createConnection = function(data, res, req){
-	if(typeof data !== "object")
+	if(typeof data !== "object"){
 		data = {};
+	}
 
-	data["action"] = "create";
+	data.action = "create";
 
 	var cookies = parseCookies(req);
 
-	if(!data["user_id"] && cookies["user_id"])
-		data["user_id"] = cookies["user_id"];
+	if(!data.user_id && cookies.user_id){
+		data.user_id = cookies.user_id;
+	}
 
-	if(cookies["last_load"])
-		data["last_load"] = cookies["last_load"];
+	if(cookies.last_load){
+		data.last_load = cookies.last_load;
+	}
 
 
 	var realId = client.createUser(data);
@@ -555,10 +563,11 @@ app.post('/update', function(req, res){
 });
 
 updateConnection = function(data, res, req){
-	if(typeof data !== "object")
+	if(typeof data !== "object"){
 		data = {};
+	}
 
-	data["action"] = "update";
+	data.action = "update";
 	/*
 	 * operations:
 	 * -saveScene - uloží scenu
@@ -566,8 +575,9 @@ updateConnection = function(data, res, req){
 	 */
 	var cookies = parseCookies(req);
 
-	if(cookies["user_id"])
-		data["user_id"] = cookies["user_id"];
+	if(cookies.user_id){
+		data.user_id = cookies.user_id;
+	}
 };
 
 
@@ -613,10 +623,12 @@ action = function(data){
 
 mouseData = function(data){
 	serverLogs.messageRecieve("mouseData", data);
-	if(connection.existShare(data.id))
+	if(connection.existShare(data.id)){
 		writeToWatchers(connection.getWatchers(data.id), "mouseData", data.msg);
-	else
+	}
+	else{
 		console.log("id " + data.id + " neexistuje v zozname ideciek");
+	}
 };
 
 changeCreator = function(data){
@@ -627,25 +639,30 @@ changeCreator = function(data){
 createWatcher = function(data){
 	connection.setUpWatcher(this, data["userId"]);
 	//TODO overiť či je shareId aj userId správne
-	var nickName = connection.getWatcher(data["shareId"], this).nickName;
-	connection.getOwner(data["shareId"]).emit("getAllData", {target: this.id, nickName: nickName});
+	var nickName = connection.getWatcher(data.shareId, this).nickName;
+	connection.getOwner(data.shareId).emit("getAllData", {target: this.id, nickName: nickName});
 };
 
 function writeToAllExcept(id, socket, type, msg){
 	var watchers = connection.getWatchers(id);
-	for(var i in watchers)
-		if(watchers.hasOwnProperty(i) && watchers[i].socket != socket)
+	for(var i in watchers){
+		if(watchers.hasOwnProperty(i) && watchers[i].socket != socket){
 			watchers[i].socket.emit(type, msg);
+		}
+	}
 
 	var owner = connection.getOwner(id);
-	if(owner != socket)
+	if(owner != socket){
 		owner.emit(type, msg)
+	}
 }
 
 function writeToWatchers(watchers, type, msg){
-	for(var i in watchers)
-		if(watchers.hasOwnProperty(i))
+	for(var i in watchers){
+		if(watchers.hasOwnProperty(i)){
 			watchers[i].socket.emit(type, msg);
+		}
+	}
 }
 
 function getUserId(){

@@ -1203,7 +1203,7 @@ G.prototype.class = function (name, force) {
 				return classes.contains(name);
 		}
 	}
-	return null;
+	return this;
 };
 
 /**

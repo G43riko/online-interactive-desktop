@@ -35,11 +35,11 @@ module.exports.Redis = function(red, config){
 };
 
 module.exports.Redis.prototype._createNewUser = function(data){
-	this._client.hmset('user_' + data["user_id"], {
+	this._client.hmset('user_' + data.user_id, {
 		create_date: Date.now(),
 		last_connection: Date.now(),
 		last_update: Date.now(),
-		last_load: data["last_load"] || Date.now(),
+		last_load: data.last_load || Date.now(),
 		connection_number: 0,
 		user_name: this._config.defaultUserName,
 		scene: "",
@@ -53,38 +53,38 @@ module.exports.Redis.prototype._createNewUser = function(data){
 };
 
 module.exports.Redis.prototype._updateUser = function(data){
-	this._client.hincrby('user_' + data["user_id"], "connection_number", 1);
+	this._client.hincrby('user_' + data.user_id, "connection_number", 1);
 
 	var changedData = {};
 
-	if(data["action"] === "create"){
-		changedData["last_connection"] = Date.now();
-		changedData["last_load"] = data["last_load"] || Date.now();
-		if(data["clear_scene"]){
-			changedData["scene"] = "";
+	if(data.action === "create"){
+		changedData.last_connection = Date.now();
+		changedData.last_load = data.last_load || Date.now();
+		if(data.clear_scene){
+			changedData.scene = "";
 		}
 	}
 
-	if(data["action"] === "update"){
-		changedData["last_update"] = Date.now();
+	if(data.action === "update"){
+		changedData.last_update = Date.now();
 	}
 
-	if(data["user_name"]){
-		changedData["user_name"] = data["user_name"];
+	if(data.user_name){
+		changedData.user_name = data.user_name;
 	}
 
-	this._client.hmset('user_' + data["user_id"], changedData);
+	this._client.hmset('user_' + data.user_id, changedData);
 };
 
 module.exports.Redis.prototype.createUser = function(data){
-	if(data["user_id"]) {
+	if(data.user_id) {
 		this._updateUser(data);
 	}
 	else{
-		data["user_id"] = this._getNewUserId();
+		data.user_id = this._getNewUserId();
 		this._createNewUser(data);
 	}
-	return data["user_id"];
+	return data.user_id;
 };
 
 module.exports.Redis.prototype.getAllUserData = function(id, func){
@@ -92,20 +92,20 @@ module.exports.Redis.prototype.getAllUserData = function(id, func){
 };
 
 module.exports.Redis.prototype._connectToLesson = function(data){
-	this._client.sadd(["less_mem_" + data["less_id"], data["user_id"]]);
+	this._client.sadd(["less_mem_" + data.less_id, data.user_id]);
 };
 
 module.exports.Redis.prototype._createNewLesson = function(data){
-	this._client.sadd(["less_mem_" + data["less_id"], data["user_id"]]);
+	this._client.sadd(["less_mem_" + data.less_id, data.user_id]);
 
-	this._client.hmset('less_' + data["less_id"], {
+	this._client.hmset('less_' + data.less_id, {
 		create_data: Date.now(),
-		owner: data["user_id"],
+		owner: data.user_id,
 		last_update: Date.now(),
-		type: data["type"],
-		password: data["password"] || "",
-		limit: data["limit"] || this._config.maximumUsers,
-		resolution: data["resolution"],
+		type: data.type,
+		password: data.password || "",
+		limit: data.limit || this._config.maximumUsers,
+		resolution: data.resolution,
 		scene: ""
 	});
 };
@@ -117,8 +117,8 @@ module.exports.Redis.prototype.getAllLessonData = function(id, func){
 module.exports.Redis.prototype._resetLesson = function(data){
 	var inst = this;
 	//vymaže a znovu vytvorí zoznam členov vyučovania
-	this._client.del("less_mem_" + data["less_id"], function(err, data){
-		inst._client.sadd(["less_mem_" + data["less_id"], data["user_id"]]);
+	this._client.del("less_mem_" + data.less_id, function(err, data){
+		inst._client.sadd(["less_mem_" + data.less_id, data.user_id]);
 	});
 
 	var changedData = {
@@ -126,22 +126,27 @@ module.exports.Redis.prototype._resetLesson = function(data){
 		last_update:  Date.now()
 	};
 
-	if(data["clear_scene"] !== false)
-		changedData["scene"] = "";
+	if(data.clear_scene !== false){
+		changedData.scene = "";
+	}
 
-	if(data["type"])
-		changedData["type"] = data["type"];
+	if(data.type){
+		changedData.type = data.type;
+	}
 
-	if(data["password"])
-		changedData["password"] = data["password"];
+	if(data.password){
+		changedData.password = data.password;
+	}
 
-	if(data["limit"])
-		changedData["limit"] = data["limit"];
+	if(data.limit){
+		changedData.limit = data.limit;
+	}
 
-	if(data["resolution"])
-		changedData["resolution"] = data["resolution"];
+	if(data.resolution){
+		changedData.resolution = data.resolution;
+	}
 
-	this._client.hmset('less_' + data["less_id"], changedData);
+	this._client.hmset('less_' + data.less_id, changedData);
 };
 
 module.exports.Redis.prototype.storeAnonymousData = function(data){
@@ -149,21 +154,21 @@ module.exports.Redis.prototype.storeAnonymousData = function(data){
 };
 
 module.exports.Redis.prototype.initConnection = function(data){
-	if(data["type"] === "exercise" || data["type"] === "watch"){
+	if(data.type === "exercise" || data.type === "watch"){
 		this._connectToLesson(data);
 	}
 	else{
-		if(data["create_new"]){
-			data["less_id"] = this._getNewLessonId();
+		if(data.create_new){
+			data.less_id = this._getNewLessonId();
 			this._createNewLesson(data);
-			console.log("vytvara sa nova lesson: " + data["less_id"]);
+			console.log("vytvara sa nova lesson: " + data.less_id);
 		}
 		else{
 			this._resetLesson(data);
-			console.log("lesson sa reštartuje: " + data["less_id"]);
+			console.log("lesson sa reštartuje: " + data.less_id);
 		}
 	}
-	return data["less_id"];
+	return data.less_id;
 };
 
 module.exports.Redis.prototype.reset = function(){

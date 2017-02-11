@@ -21,9 +21,9 @@ class Analyzer{
 	}
 
 	_sendAnonymousData(data = {}){
-		var sendData = c =>	$.post(this._url, {content: JSON.stringify(c)}).fail(()=>{
-			Logger.error(getMessage(MSG_ANNONYM_FAILED));
-		});
+		var sendData = c =>	$.post(this._url, {
+			content: JSON.stringify(c)
+		}).fail(() => Logger.error(getMessage(MSG_ANNONYM_FAILED)));
 
 		if(navigator.geolocation){
 			navigator.geolocation.watchPosition(position => {
@@ -51,11 +51,11 @@ class Analyzer{
 		data.userAgent		= navigator.userAgent;
 		data.language		= navigator.language;
 		data.platform		= navigator.platform;
-		data.vendor		= navigator.vendor;
+		data.vendor			= navigator.vendor;
 		data.innerHeight	= window.innerHeight;
-		data.innerWidth	= window.innerWidth;
+		data.innerWidth		= window.innerWidth;
 		data.availHeight	= screen.availHeight;
-		data.availWidth	= screen.availWidth;
+		data.availWidth		= screen.availWidth;
 		data.connectedAt	= getFormattedDate();
 		return data;
 	}

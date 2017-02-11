@@ -27,8 +27,9 @@ class TextArea extends Entity{
 
 	clickIn(x, y){
 		if(!this.clickInBoundingBox(x, y)){
-			if(this._selected)
+			if(this._selected){
 				this._blur();
+			}
 			return false;
 		}
 
@@ -47,38 +48,45 @@ class TextArea extends Entity{
 		area = document.createElement("div");
 		area.setAttribute("id", "selectedEditor");
 		area.setAttribute("contenteditable", "true");
-		area.style["top"] = this._position.y + "px";
-		area.style["left"] = this._position.x + "px";
-		area.style["width"] = this._size.x + "px";
-		area.style["height"] = this._size.y + "px";
-		area.style["backgroundColor"] = this._fillColor;
-		area.style["borderRadius"] = this._radius + "px";
-		area.style["padding"] = this._padding + "px";
-		area.style["color"] = this._textColor;
-		area.style["zIndex"] = 100000;
+		area.style.top = this._position.y + "px";
+		area.style.left = this._position.x + "px";
+		area.style.width = this._size.x + "px";
+		area.style.height = this._size.y + "px";
+		area.style.backgroundColor = this._fillColor;
+		area.style.borderRadius = this._radius + "px";
+		area.style.padding = this._padding + "px";
+		area.style.color = this._textColor;
+		area.style.zIndex = 100000;
 
-		area.style["font"] = this._fontSize + "pt " + DEFAULT_FONT;
+		area.style.font = this._fontSize + "pt " + DEFAULT_FONT;
 
 		document.body.insertBefore(area, document.getElementById("myCanvas"));
 
 		this.checkConnectors(vec);
-		if(this._selectedConnector)
+		if(this._selectedConnector){
 			return true;
+		}
 
-		if(vec.dist(pos.x + (this.size.x >> 1), pos.y) < SELECTOR_SIZE)
+		if(vec.dist(pos.x + (this.size.x >> 1), pos.y) < SELECTOR_SIZE){
 			this._moveType = 0;
-		else if(vec.dist(pos.x + this.size.x, pos.y + (this.size.y >> 1)) < SELECTOR_SIZE)
+		}
+		else if(vec.dist(pos.x + this.size.x, pos.y + (this.size.y >> 1)) < SELECTOR_SIZE){
 			this._moveType = 1;
-		else if(vec.dist(pos.x +(this.size.x >> 1), pos.y + this.size.y) < SELECTOR_SIZE)
+		}
+		else if(vec.dist(pos.x +(this.size.x >> 1), pos.y + this.size.y) < SELECTOR_SIZE){
 			this._moveType = 2;
-		else if(vec.dist(pos.x, pos.y + (this.size.y >> 1)) < SELECTOR_SIZE)
+		}
+		else if(vec.dist(pos.x, pos.y + (this.size.y >> 1)) < SELECTOR_SIZE){
 			this._moveType = 3;
-		else if(vec.dist(pos.x + this.size.x, pos.y + this.size.y) < SELECTOR_SIZE)
+		}
+		else if(vec.dist(pos.x + this.size.x, pos.y + this.size.y) < SELECTOR_SIZE){
 			this._moveType = 5;
-		else if(x > this.position.x && y > this.position.y && x < this.position.x + this.size.x && y < this.position.y + this.size.y)
+		}
+		else if(x > this.position.x && y > this.position.y && x < this.position.x + this.size.x && y < this.position.y + this.size.y){
 			this._moveType = 4;
+		}
 		return this._moveType >= 0;
-	};
+	}
 
 	draw(){
 		var pos = this.position.getClone();

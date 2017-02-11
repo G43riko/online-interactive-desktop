@@ -8,19 +8,20 @@ var GVector2fCounterClone = 0;
 class GVector2f{
 	constructor(){
 		GVector2fCounter++;
-		if(arguments.length == 0){
+		if(arguments.length === 0){
 			this._x = 0;
 			this._y = 0;
 		}
-		else if(arguments.length == 1){
+		else if(arguments.length === 1){
 			if(isNaN(arguments[0])){
 				this._x = arguments[0].x;
 				this._y = arguments[0].y;
 			}
-			else
+			else{
 				this._x = this._y = arguments[0];
+			}
 		}
-		else if(arguments.length == 2){
+		else if(arguments.length === 2){
 			this._x = arguments[0];
 			this._y = arguments[1];
 		}
@@ -47,11 +48,11 @@ class GVector2f{
 
 	getLength(){
 		return Math.sqrt(this._x * this._x + this._y * this._y);
-	};
+	}
 
 	normalize(){
 		return this.div(this.getLength());
-	};
+	}
 
 	_process(){
 		if(arguments[0].length == 1){
@@ -68,7 +69,7 @@ class GVector2f{
 			this._x = arguments[1](this._x, arguments[0][0]);
 			this._y = arguments[1](this._y, arguments[0][1]);
 		}
-		return this
+		return this;
 	}
 	round(){
 		this._x = Math.round(this._x);
@@ -95,14 +96,16 @@ class GVector2f{
 	set(){return this._process(arguments, (a, b) => b);}
 	
 	length(){
-		return Math.sqrt(this._x * this._x + this._y * this._y)
+		return Math.sqrt(this._x * this._x + this._y * this._y);
 	}
 
 	dist(){
-		if(arguments.length == 1)
+		if(arguments.length == 1){
 			return Math.sqrt(Math.pow(this._x - arguments[0].x, 2) + Math.pow(this._y - arguments[0].y, 2));
-		else if(arguments.length == 2)
+		}
+		else if(arguments.length == 2){
 			return Math.sqrt(Math.pow(this._x - arguments[0], 2) + Math.pow(this._y - arguments[1], 2));
+		}
 	}
 
 }

@@ -1201,7 +1201,7 @@ G.prototype.class = function(name, force){//testovane 28.1.2016
 				return classes.contains(name);
 		}
 	}
-	return null;
+	return this;
 };
 
 

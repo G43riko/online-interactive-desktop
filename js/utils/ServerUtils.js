@@ -9,8 +9,9 @@ module.exports.EventTimer = function(event, time){
 };
 
 module.exports.EventTimer.prototype._callEvent = function(inst){
-	if(!inst)
+	if(!inst){
 		inst = this;
+	}
 	inst._event();
 	if(inst._timeOut){
 		clearTimeout(inst._timeOut);
@@ -20,8 +21,9 @@ module.exports.EventTimer.prototype._callEvent = function(inst){
 };
 
 module.exports.EventTimer.prototype._setTimeOut = function(diff){
-	if(this._timeOut)
+	if(this._timeOut){
 		return;
+	}
 	this._timeOut = setTimeout(() => this._callEvent(this) , this._time - diff);
 };
 

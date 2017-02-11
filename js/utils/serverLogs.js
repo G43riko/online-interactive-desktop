@@ -31,12 +31,15 @@ processConnData = function(data){
 			time: (Date.now() - share.startTime) + "ms"
 		};
 	},  result = [];
-	if(!data)
+	if(!data){
 		return result;
+	}
 
-	for(var i in data)
-		if(data.hasOwnProperty(i))
+	for(var i in data){
+		if(data.hasOwnProperty(i)){
 			result.push(processOneConn(data[i]));
+		}
+	}
 
 	return result;
 };
@@ -50,14 +53,17 @@ updateOverviews = function(){
 		connections: processConnData(connections)
 	};
 
-	for(var i in overviewSockets)
-		if(overviewSockets.hasOwnProperty(i))
+	for(var i in overviewSockets){
+		if(overviewSockets.hasOwnProperty(i)){
 			overviewSockets[i].emit("dataRecieve", obj);
+		}
+	}
 };
 
 module.exports.init = function(conns){
-	if(!connections)
+	if(!connections){
 		connections = conns;
+	}
 
 	updateOverviews();
 };

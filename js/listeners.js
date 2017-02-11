@@ -268,6 +268,10 @@ class ListenersManager{
 
 	mouseUp(position, closeDialog = true){
 		var possibleChild = null;
+		var result = false;
+		var clickOnParent = false;
+		var clickOnConnectorObject = null;
+		
 		if(selectedObjects.size() === 1){
 			possibleChild = selectedObjects.firstObject;
 		}
@@ -277,7 +281,6 @@ class ListenersManager{
 
 		this._movedObject = null;
 
-		var result = false;
 
 		/*
 		 * AK JE VYBRANY NASTROJ RUBBER TAK SA VYMAŽÚ OBJEKTY KTORÉ BOLY VYGUMOVANÉ
@@ -346,8 +349,6 @@ class ListenersManager{
 			closeDialog();
 		}
 
-		var clickOnParent = false;
-		var clickOnConnectorObject = null;
 		Scene.forEach(o => {
 			if(!result && o.clickIn(position.x, position.y)) {
 				if(possibleChild){
@@ -442,7 +443,13 @@ class ListenersManager{
 		 * AK JE VYBRANY NASTROJ RUBBER A JE STLAČENE TLAČITKO MYŠI TAK SA PRIDA NOVY BOD
 		 */
 		if(Creator.operation === OPERATION_RUBBER && Input.isButtonDown(LEFT_BUTTON)) {
-			Paints.drawLine(context, position, {x: position.x - movX, y: position.y - movY}, Creator.brushSize, "grey", PAINT_ACTION_LINE);
+			//Paints.drawLine(context, position, {x: position.x - movX, y: position.y - movY}, Creator.brushSize, "grey", PAINT_ACTION_LINE);
+			Paints.drawLine({
+				pointA: position,
+				pointB: {x: position.x - movX, y: position.y - movY}, 
+				action: PAINT_ACTION_LINE, 
+				brushColor: RUBBER_COLOR
+			});			
 			Paints.findPathsForRemove(position, 1);
 			Project.scene.findObjectsForRemove(position.x, position.y, 1);
 			this._clickedOnObject = true;//TODO overiť

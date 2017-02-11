@@ -215,7 +215,7 @@ function processImageData(data){
 	/*
 	 * malý canvas kde sa prekreslí velký canvas
 	 */
-	 var resCanvas = G("canvas", {attr: {width: data.width, height: data.height}}).first();
+	var resCanvas = G.createElement("canvas", {width: data.width, height: data.height});
 
 	resContext = resCanvas.getContext("2d");
 	resContext.drawImage(ca, 0, 0, resCanvas.width, resCanvas.height);

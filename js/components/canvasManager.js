@@ -99,7 +99,7 @@ function doPolygon(obj){
         Logger.error(getMessage(MSG_TRY_DRAW_EMPTY_POLYGON));
     }
 
-    var res = $.extend(glob._initDef(obj), obj),
+    var res = G.extend(glob._initDef(obj), obj),
         offX = obj.offset ? obj.offset.x : 0,
         offY = obj.offset ? obj.offset.y : 0;
 
@@ -110,7 +110,14 @@ function doPolygon(obj){
         var size = points.length;
 
         if(res.radius === 0 || isNaN(res.radius)){
-            each(points, (e, i) => i ? res.ctx.lineTo(e.x + offX, e.y + offY) : res.ctx.moveTo(e.x + offX, e.y + offY));
+            each(points, (e, i) => {
+                if(i){
+                    res.ctx.lineTo(e.x + offX, e.y + offY);
+                }
+                else{
+                    res.ctx.moveTo(e.x + offX, e.y + offY);
+                }
+            });
         }
         else{
             each(points, (e, i) => {
@@ -133,8 +140,12 @@ function doPolygon(obj){
                         l1 = l2 = 1;
                         res.radius = parseInt(res.radius);
                     }
-                    res.ctx.moveTo(points[size - 1].x + v2.x * l2 * res.radius + offX, points[size - 1].y + v2.y * l2 * res.radius + offY);
-                    res.ctx.quadraticCurveTo(e.x + offX, e.y + offY, e.x + v1.x * l1 * res.radius + offX, e.y + v1.y * l1 * res.radius + offY);
+                    res.ctx.moveTo(points[size - 1].x + v2.x * l2 * res.radius + offX, 
+                                   points[size - 1].y + v2.y * l2 * res.radius + offY);
+                    res.ctx.quadraticCurveTo(e.x + offX, 
+                                             e.y + offY, 
+                                             e.x + v1.x * l1 * res.radius + offX, 
+                                             e.y + v1.y * l1 * res.radius + offY);
                 }
                 else{
                     v1 = points[(i + 1) % size].getClone().sub(e);
@@ -148,8 +159,12 @@ function doPolygon(obj){
                         res.radius.replace("px", "");
                         l1 = l2 = 1;
                     }
-                    res.ctx.lineTo(e.x - v2.x * l2 * res.radius + offX, e.y - v2.y * l2 * res.radius + offY);
-                    res.ctx.quadraticCurveTo(e.x + offX, e.y + offY, e.x + v1.x * l1 * res.radius + offX, e.y + v1.y * l1 * res.radius + offY);
+                    res.ctx.lineTo(e.x - v2.x * l2 * res.radius + offX, 
+                                   e.y - v2.y * l2 * res.radius + offY);
+                    res.ctx.quadraticCurveTo(e.x + offX, 
+                                             e.y + offY, 
+                                             e.x + v1.x * l1 * res.radius + offX, 
+                                             e.y + v1.y * l1 * res.radius + offY);
                 }
             });
             res.ctx.closePath();
@@ -166,10 +181,19 @@ function doArc(obj){
 
     res.ctx.beginPath();
     if(typeof res.ctx.ellipse === "function"){
-        res.ctx.ellipse(res.x + (res.width >> 1), res.y + (res.height >> 1), res.width >> 1, res.height >> 1, 0, 0, PI2);
+        res.ctx.ellipse(res.x + (res.width >> 1), 
+                        res.y + (res.height >> 1), 
+                        res.width >> 1, 
+                        res.height >> 1, 
+                        0, 
+                        0, 
+                        PI2);
     }
     else{
-        res.ctx.rect(res.x + (res.width >> 1), res.y + (res.height >> 1), res.width >> 1, res.height >> 1);
+        res.ctx.rect(res.x + (res.width >> 1), 
+                     res.y + (res.height >> 1), 
+                     res.width >> 1, 
+                     res.height >> 1);
     }
 
     _process(res);
@@ -195,15 +219,32 @@ function doRect(obj){
     var res = glob._remakePosAndSize(def, obj);
 
     res.ctx.beginPath();
-    res.ctx.moveTo(res.x + res[ATTRIBUTE_RADIUS].tl, res.y);
-    res.ctx.lineTo(res.x + res.width - res[ATTRIBUTE_RADIUS].tr, res.y);
-    res.ctx.quadraticCurveTo(res.x + res.width, res.y, res.x + res.width, res.y + res[ATTRIBUTE_RADIUS].tr);
-    res.ctx.lineTo(res.x + res.width, res.y + res.height - res[ATTRIBUTE_RADIUS].br);
-    res.ctx.quadraticCurveTo(res.x + res.width, res.y + res.height, res.x + res.width - res[ATTRIBUTE_RADIUS].br, res.y + res.height);
-    res.ctx.lineTo(res.x + res[ATTRIBUTE_RADIUS].bl, res.y + res.height);
-    res.ctx.quadraticCurveTo(res.x, res.y + res.height, res.x, res.y + res.height - res[ATTRIBUTE_RADIUS].bl);
-    res.ctx.lineTo(res.x, res.y + res[ATTRIBUTE_RADIUS].tl);
-    res.ctx.quadraticCurveTo(res.x, res.y, res.x + res[ATTRIBUTE_RADIUS].tl, res.y);
+    res.ctx.moveTo(res.x + res[ATTRIBUTE_RADIUS].tl, 
+                   res.y);
+    res.ctx.lineTo(res.x + res.width - res[ATTRIBUTE_RADIUS].tr, 
+                   res.y);
+    res.ctx.quadraticCurveTo(res.x + res.width, 
+                             res.y, 
+                             res.x + res.width, 
+                             res.y + res[ATTRIBUTE_RADIUS].tr);
+    res.ctx.lineTo(res.x + res.width, 
+                   res.y + res.height - res[ATTRIBUTE_RADIUS].br);
+    res.ctx.quadraticCurveTo(res.x + res.width, 
+                             res.y + res.height, 
+                             res.x + res.width - res[ATTRIBUTE_RADIUS].br, 
+                             res.y + res.height);
+    res.ctx.lineTo(res.x + res[ATTRIBUTE_RADIUS].bl, 
+                   res.y + res.height);
+    res.ctx.quadraticCurveTo(res.x, 
+                             res.y + res.height, 
+                             res.x, 
+                             res.y + res.height - res[ATTRIBUTE_RADIUS].bl);
+    res.ctx.lineTo(res.x, 
+                   res.y + res[ATTRIBUTE_RADIUS].tl);
+    res.ctx.quadraticCurveTo(res.x, 
+                             res.y, 
+                             res.x + res[ATTRIBUTE_RADIUS].tl, 
+                             res.y);
     res.ctx.closePath();
 
     _process(res);
@@ -218,7 +259,7 @@ function doLine(obj){
         Logger.error(getMessage(MSG_TRY_DRAW_ONE_POINT_LINE));
     }
 
-    var res = $.extend(glob._initDef(obj), obj),
+    var res = G.extend(glob._initDef(obj), obj),
         offX = obj.offset ? obj.offset.x : 0,
         offY = obj.offset ? obj.offset.y : 0,
         v1, v2, l1, l2;
@@ -228,7 +269,14 @@ function doLine(obj){
     var drawLines = function(points){
         if(isNaN(points[0])){
             if(res.radius === 0 || isNaN(res.radius)){
-                each(points, (e, i) => i ? res.ctx.lineTo(e.x + offX, e.y + offY) : res.ctx.moveTo(e.x + offX, e.y + offY));
+                each(points, (e, i) => {
+                    if(i > 0){
+                        res.ctx.lineTo(e.x + offX, e.y + offY);
+                    }
+                    else{
+                        res.ctx.moveTo(e.x + offX, e.y + offY);
+                    }
+                });
             }
             else{
                 each(points, (e, i) => {
@@ -250,8 +298,12 @@ function doLine(obj){
                             res.radius.replace("px", "");
                             l1 = l2 = 1;
                         }
-                        res.ctx.lineTo(e.x - v2.x * l2 * res.radius + offX, e.y - v2.y * l2 * res.radius + offY);
-                        res.ctx.quadraticCurveTo(e.x + offX, e.y + offY, e.x + v1.x * l1 * res.radius + offX, e.y + v1.y * l1 * res.radius + offY);
+                        res.ctx.lineTo(e.x - v2.x * l2 * res.radius + offX, 
+                                       e.y - v2.y * l2 * res.radius + offY);
+                        res.ctx.quadraticCurveTo(e.x + offX, 
+                                                 e.y + offY, 
+                                                 e.x + v1.x * l1 * res.radius + offX, 
+                                                 e.y + v1.y * l1 * res.radius + offY);
                     }
                     else{
                         res.ctx.lineTo(e.x + offX, e.y + offY);
@@ -279,7 +331,14 @@ function drawQuadraticCurve(points, borderWidth = DEFAULT_BORDER_WIDTH, borderCo
     ctx.strokeStyle = borderColor;
     ctx.beginPath();
     //points.forEach((e, i) => i === 0 ? ctx.moveTo(e.x, e.y) : ctx.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y));
-    each(points, (e, i) => i === 0 ? ctx.moveTo(e.x, e.y) : ctx.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y));
+    each(points, (e, i) => {
+        if(i === 0){
+            ctx.moveTo(e.x, e.y);
+        }
+        else{
+            ctx.quadraticCurveTo(e[0].x, e[0].y, e[1].x, e[1].y);
+        }
+    });
     ctx.stroke();
 }
 
@@ -327,7 +386,11 @@ glob.getMaxWidth = function(val, max = 0){
 
 function setShadow(variable){
     if(variable){
-        CanvasHandler.setShadow(context, DEFAULT_SHADOW_OFFSET, DEFAULT_SHADOW_OFFSET, "black", DEFAULT_SHADOW_BLUR);
+        CanvasHandler.setShadow(context, 
+                                DEFAULT_SHADOW_OFFSET, 
+                                DEFAULT_SHADOW_OFFSET, 
+                                "black", 
+                                DEFAULT_SHADOW_BLUR);
     }
     else{
         CanvasHandler.setShadow(context, 0, 0, "black", 0);
@@ -405,7 +468,7 @@ glob._checkPosAndSize = function(obj, name){
 };
 
 glob._remakePosAndSize = function(def, obj){
-    var res = $.extend(def, obj);
+    var res = G.extend(def, obj);
 
     if(isDefined(res.size)){
         if(isNumber(res.size)){
@@ -462,7 +525,15 @@ function _process(res){
             res.ctx.drawImage(res.bgImage, res.x, res.y, res.width, res.height);
         }
         else{
-            res.ctx.drawImage(res.bgImage.img, res.bgImage.x, res.bgImage.y, res.bgImage.w, res.bgImage.h, res.x, res.y, res.width, res.height);
+            res.ctx.drawImage(res.bgImage.img, 
+                              res.bgImage.x, 
+                              res.bgImage.y, 
+                              res.bgImage.w, 
+                              res.bgImage.h, 
+                              res.x, 
+                              res.y, 
+                              res.width, 
+                              res.height);
         }
         /*
         if(isObject(res.bgImage))

@@ -23,7 +23,7 @@ var ConfigManager = function () {
 			    actualKey,
 			    patt = new RegExp("^<%= .* %>$");
 
-			for (var i in data) {
+			for (i in data) {
 				if (data.hasOwnProperty(i)) {
 					actualKey = key ? key + "_" : "";
 					if (i.charAt(0) === "!") {
@@ -44,7 +44,7 @@ var ConfigManager = function () {
 			}
 			if (key === "") {
 				//ak je prvá iterácia tak opraví všetky templaty
-				for (var i in this._templates) {
+				for (i in this._templates) {
 					if (this._templates.hasOwnProperty(i)) {
 						var value = this._templates[i];
 						value = value.substring(4, value.length - 3);
