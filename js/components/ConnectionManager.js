@@ -43,7 +43,7 @@ class ConnectionManager{
 			this._user_id = data.cookies[CONN_KEY_USER_ID];
 		}, "json");
 
-		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	/*********************
@@ -190,6 +190,9 @@ class ConnectionManager{
 	 _processInputAction(data){
 	 	if(data.type === ACTION_MOUSE_MOVE){
 	 		this._mousePosition = data.position;
+	 	}
+	 	else if(data.type === ACTION_KEY_DOWN){
+	 		glob.showKey(data.key);
 	 	}
 	 }
 	 
@@ -645,7 +648,7 @@ class Handler{
 		draw();
 	}
 }
-
+/*
 glob.testExercise = function(lessId, name){
 	Project.connection.startExercise({
 		user_name : name,
@@ -676,3 +679,4 @@ glob.testShare = function (name = "SharerName", watchers = 100){
 		shareLayers: true,
 		maxWatchers: watchers});
 };
+*/

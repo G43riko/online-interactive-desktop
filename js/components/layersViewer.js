@@ -34,7 +34,7 @@ class LayersViewer extends Entity{
 		this._layersCount 		= 0;
 
 		each(Scene._layers, e => this.createLayer(e), this);
-		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	_toggleMinimalize(){

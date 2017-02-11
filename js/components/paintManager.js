@@ -13,7 +13,7 @@ class PaintManager{
 
 		//this.paintEvents = [];
 		//this.history = [];
-		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	static getId(){
@@ -57,6 +57,7 @@ class PaintManager{
 	cleanUp(activeLayerName = Layers.activeLayerName){
 		Events.paintCleanUp(activeLayerName);
 		Scene.getLayer(activeLayerName).paint.cleanUp();
+		Logger.log(getMessage(MSG_OBJECT_CLEANED, this.constructor.name), LOGGER_OBJECT_CLEANED);
 	}
 
 
@@ -205,7 +206,8 @@ class PaintManager{
 			}
 		}
 		else if(action === PAINT_ACTION_FUR){
-			var offset = 6000;
+			var limit = 2000,
+				offset = 0.5;
 			ctx.strokeStyle = brushColor;
 			ctx.lineWidth 	= 1;
 			ctx.beginPath();
@@ -218,16 +220,17 @@ class PaintManager{
 				var dy = points[i].y - pointB.y;
 				var d = dx * dx + dy * dy;
 
-				if (d < offset && Math.random() > d / offset) {
-					ctx.moveTo(pointB.x + (dx * 0.5), pointB.y + (dy * 0.5));
-					ctx.lineTo(pointB.x - (dx * 0.5), pointB.y - (dy * 0.5));
+				if (d < limit && Math.random() > d / limit) {
+					ctx.moveTo(pointB.x + (dx * offset), pointB.y + (dy * offset));
+					ctx.lineTo(pointB.x - (dx * offset), pointB.y - (dy * offset));
 				}
 			}
 
 			ctx.stroke();
 		}
 		else if(action === PAINT_ACTION_NEIGHBOR){
-			var offset = 1000;
+			var limit = 1000,
+				offset = 0.2;
 			ctx.strokeStyle = brushColor;
 			ctx.lineWidth 	= 1;
 			ctx.beginPath();
@@ -240,9 +243,9 @@ class PaintManager{
 				var dy = points[i].y - pointB.y;
 				var d = dx * dx + dy * dy;
 
-				if (d < offset) {
-					ctx.moveTo( pointB.x + (dx * 0.2), pointB.y + (dy * 0.2));
-					ctx.lineTo( points[i].x - (dx * 0.2), points[i].y - (dy * 0.2));
+				if (d < limit) {
+					ctx.moveTo( pointB.x + (dx * offset), pointB.y + (dy * offset));
+					ctx.lineTo( points[i].x - (dx * offset), points[i].y - (dy * offset));
 				}
 			}
 			ctx.stroke();
@@ -287,7 +290,6 @@ class PaintManager{
 
 	get selectedImage(){return this._selectedImage;}
 	get selectedBrush(){return this._selectedBrush;}
-
 	get action(){return this._action;}
 
 

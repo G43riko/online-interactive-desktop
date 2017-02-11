@@ -2,9 +2,9 @@
  * Created by gabriel on 27.12.2016.
  */
 
-const MAIN_CANVAS = "mainCanvas";
-const POINTER_CANVAS = "pointerCanvas";
-const CANVAS_PREFIX = "canvas";
+const POINTER_CANVAS    = "pointerCanvas";
+const CANVAS_PREFIX     = "canvas";
+const MAIN_CANVAS       = "mainCanvas";
 
 class CanvasManager{
     constructor(sizeX, sizeY){
@@ -17,6 +17,8 @@ class CanvasManager{
 
         this._canvases[POINTER_CANVAS] = new CanvasHandler("pointerCanvas", sizeX, sizeY);
         this._canvasCounter++;
+        
+        Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
     }
 
     onResize(){
@@ -321,8 +323,11 @@ function doLine(obj){
     res.fill = false;
     _process(res);
 }
-
-function drawQuadraticCurve(points, borderWidth = DEFAULT_BORDER_WIDTH, borderColor = DEFAUL_BORDER_COLOR, ctx = context){
+function drawQuadraticCurve(param){
+    var points = param.points,
+        borderWidth = param.borderWidth || DEFAULT_BORDER_WIDTH,
+        borderColor = param.borderColor || DEFAUL_BORDER_COLOR,
+        ctx = param.ctx || Project.context;
     if(points.length < 2){
         return;
     }
@@ -507,12 +512,6 @@ glob._remakePosAndSize = function(def, obj){
     return res;
 };
 
-/*
-function saveCanvasAsFile(){
-    saveImage("canvas_screen_shot", canvas.toDataURL());
-}
-*/
-
 function _process(res){
     if(res.shadow && Options.shadows){
         setShadow(res.shadow);
@@ -535,12 +534,6 @@ function _process(res){
                               res.width, 
                               res.height);
         }
-        /*
-        if(isObject(res.bgImage))
-            res.ctx.drawImage(res.bgImage.img, res.bgImage.x, res.bgImage.y, res.bgImage.w, res.bgImage.h, res.x, res.y, res.width, res.height);
-        else
-            res.ctx.drawImage(res.bgImage, res.x, res.y, res.width, res.height);
-        */
         res.ctx.restore();
     }
     else if (res.fill){

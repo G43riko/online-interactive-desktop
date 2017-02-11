@@ -10,7 +10,7 @@ class SceneManager{
 		this._creator 		= new objectCreator();
 		this._objectManager = new ObjectsManager();
 
-		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	isEmpty(){
@@ -82,7 +82,8 @@ class SceneManager{
 		});
 
 		Events.sceneCleanUp();
-		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
+		Logger.log(getMessage(MSG_OBJECT_CLEANED, this.constructor.name), LOGGER_OBJECT_CLEANED);
+		
 	}
 
 	onScreenResize(){

@@ -5,7 +5,7 @@ class ContentManager{
 	constructor(){
 		this._contentImage = null;
 		this._contentHTML  = null;
-		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	onResize(){

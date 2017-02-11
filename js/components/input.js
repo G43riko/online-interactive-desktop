@@ -4,14 +4,14 @@
 
 class InputManager{
 	constructor(){
-		this._keys = [];
-		this._timer = false;
-		this._buttons = [];
+		this._hist			= {};
+		this._keys			= [];
+		this._timer			= false;
+		this._buttons		= [];
+		this._mousePos		= new GVector2f();
+		this._lastTouch		= false;
 		this._pressPosition = new GVector2f();
-		this._mousePos = new GVector2f();
-		this._lastTouch = false;
-		this._hist = {};
-		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	get mousePos(){return this._mousePos;}
@@ -118,7 +118,7 @@ class InputManager{
 			};
 		};
 
-		$(target).bind('contextmenu', () => false);
+		target.oncontextmenu = () => false;
 
 
 		target.addEventListener("touchstart", e => {

@@ -43,6 +43,16 @@
 			<a href="" class="hide" id="fileLink"></a>
 			<div id="keysViewerHolder"></div>
 	 		<div id="layerViewerPlaceholder"></div>
+	 		<div id="reportHolder" class="minified">
+	 			<div id="reportWrapper">
+					<input type="text" placeholder="Nickname" class="nickname">
+	 				<textarea class="content" placeholder="Message"  name="reportMessage" cols="30" rows="10"></textarea>
+	 				<input type="button" value="Send" onclick="glob.sendMessage()" class="sendReport">
+	 			</div>
+	 			<div id="reportButton" onclick="this.parentElement.classList.toggle('minified')">
+	 				<span>Report</span>
+	 			</div>
+	 		</div>
  		</div>
  		<nav class="context-menu" id="context-menu">
 			<ul class="items">
@@ -100,7 +110,16 @@
 				tag.src = "build/scripts.min.js";
 				var firstScriptTag = document.getElementsByTagName('script')[0];
 				firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-				tryStart();			}
+				tryStart();
+				glob.sendMessage = function(){
+					//alert("jupiiii");
+					glob.closeReport();
+					Alert.success("Ďakujeme za report. Vaša správa bude čoskoro spracovaná");
+				}
+				glob.closeReport = function(){
+					G("#reportHolder").addClass("minified");
+				}
+			}
 			catch(e){
 				alert("chyba pri spracovaní configu: " + e);
 			}

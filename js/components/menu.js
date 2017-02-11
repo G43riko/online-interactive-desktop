@@ -24,7 +24,7 @@ class MenuManager{
 		this._visible 					= true;
 		this._visibleSubMenu 			= false;
 		this._subMenus					= {};
-		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	};
 
 	get position(){return this._position;}
@@ -638,14 +638,35 @@ class MenuManager{
 				this._context.drawImage(img, 0, 0, img.width, img.height, x , y, width, height);
 				break;
 			case "draw":
-				drawQuadraticCurve([new GVector2f(x + offset, y + offset),
-					[new GVector2f(x + offset, y +  height - (offset << 1)), new GVector2f(x + width - (offset << 1), y + (height >> 1))],
-					[new GVector2f(x + offset, y + offset), new GVector2f(x + offset, y +  height - (offset << 1))],
-					[new GVector2f(x + width - (offset << 1), y + (height >> 1)), new GVector2f(x + width - (offset << 1), y + offset)],
-					[new GVector2f(x + offset, y +  height - (offset << 1)), new GVector2f(x + offset, y + offset)]], strokeWidth, strokeColor, this._context);
+				drawQuadraticCurve({
+					points : [
+						new GVector2f(x + offset, y + offset),[
+							new GVector2f(x + offset, y +  height - (offset << 1)), 
+							new GVector2f(x + width - (offset << 1), y + (height >> 1))
+						],[
+							new GVector2f(x + offset, y + offset), 
+							new GVector2f(x + offset, y +  height - (offset << 1))
+						],[
+							new GVector2f(x + width - (offset << 1), y + (height >> 1)), 
+							new GVector2f(x + width - (offset << 1), y + offset)
+						],[
+							new GVector2f(x + offset, y +  height - (offset << 1)), 
+							new GVector2f(x + offset, y + offset)
+					]],
+					borderWidth : strokeWidth,
+					borderColor : strokeColor,
+					ctx : this._context
+				});
 				break;
 			case "join":
-				fillText("JOIN", x + (width >> 1), y + (height >> 1), height >> 2, strokeColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("JOIN", 
+						 x + (width >> 1), 
+						 y + (height >> 1), 
+						 height >> 2, 
+						 strokeColor, 
+						 0, 
+						 FONT_ALIGN_CENTER, 
+						 this._context);
 				break;
 		}
 	}

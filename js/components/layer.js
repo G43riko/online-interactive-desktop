@@ -68,6 +68,7 @@ class Layer{
 		this._objects = {};
 		Paints.cleanUp(this._title);
 		Events.layerCleanUp(this._title);
+		Logger.log(getMessage(MSG_OBJECT_CLEANED, this.constructor.name), LOGGER_OBJECT_CLEANED);
 	}
 
 	rename(title){

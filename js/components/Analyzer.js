@@ -7,6 +7,8 @@ class Analyzer{
 	constructor(url){
 		this._url = url;
 		this._browserData = this._analyzeWindow(this._analyzeBrowser());
+		
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	get browserData(){

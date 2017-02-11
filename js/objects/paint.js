@@ -221,7 +221,7 @@ class Paint extends Entity{
 		this._points[this._actColor] = [[]];
 		this._count = 0;
 		this._canvas.context.clearRect(0, 0, canvas.width, canvas.height);
-		Logger.log("Bol vyčistený objekt " + this.constructor.name, LOGGER_OBJECT_CLEANED);
+		Logger.log(getMessage(MSG_OBJECT_CLEANED, this.constructor.name), LOGGER_OBJECT_CLEANED);
 	}
 
 	static roundPath(path, maxDist){

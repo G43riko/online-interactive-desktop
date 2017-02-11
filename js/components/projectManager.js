@@ -34,7 +34,7 @@ class ProjectManager{
 		//TYPE 
 		//ALLOWED_COMPONENTS
 		
-		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 
 		this._analyzer.sendData();
 
@@ -56,34 +56,31 @@ class ProjectManager{
 		return (this._connection ? this._connection.userId : "") + s.substr(s.length - 6);
 	}
 
-	get listeners(){return this._listeners;}
-	get form(){return this._form;}
-	get panel(){return null;}
-	get files(){return this._files;}
-	get input(){return this._input;}
-	get canvasManager(){return this._canvasManager;}
+	get autor(){return this._autor;}
 	get canvas(){return this._canvasManager && this._canvasManager.canvas.canvas;}
-	get context(){return this._canvasManager && this._canvasManager.canvas.context;}
-	get drawCounter(){return this._drawCounter;}
-	get creator(){return this._scene.creator;}
-	get scene(){return this._scene;}
-	get content(){return this._content;}
-	get gui(){return this._gui;}
-	get topMenu(){return this._gui.menu;}
-	get options(){return this._options;}
+	get canvasManager(){return this._canvasManager;}
 	get connection(){return this._connection;}
+	get content(){return this._content;}
+	get context(){return this._canvasManager && this._canvasManager.canvas.context;}
+	get creator(){return this._scene.creator;}
+	get drawCounter(){return this._drawCounter;}
+	get files(){return this._files;}
+	get form(){return this._form;}
+	get gui(){return this._gui;}
+	get input(){return this._input;}
+	get isMobile(){return this._analyzer.isMobile;}
+	get listeners(){return this._listeners;}
+	get options(){return this._options;}
+	get panel(){return null;}
 	get runOnMobile(){return this._browserData.mobile > 0;}
+	get scene(){return this._scene;}
+	get time(){return Date.now() - this._createdAt; }
+	get title(){return this._title;}
+	get topMenu(){return this._gui.menu;}
 
 	increaseDrawCounter(){
 		this._drawCounter++;
 	}
 
 	set autor(val){this._autor = val;}
-
-	get isMobile(){return this._analyzer.isMobile;}
-
-	get title(){return this._title;}
-	get autor(){return this._autor;}
-
-	get time(){return Date.now() - this._createdAt; }
 }

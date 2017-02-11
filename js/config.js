@@ -360,6 +360,8 @@ const MSG_ADD_OBJECT_TO_ABSENT_LAYER 	= "Ide sa vložiť objekt do  neexistujúc
 const MSG_MISSING_RESULT_TEXT		 	= "Nieje zadaný žiadny text pre výsledok";
 const MSG_USER_DISCONNECT				= "Používatel " + MSG_DIVIDER + "[ " + MSG_DIVIDER + "] sa odpojil";
 const MSG_CREATE_PROJECT_ERROR			= "Nastala chyba pri vytváraní projectu";
+const MSG_OBJECT_CREATED 				= "Bol vytvorený objekt " + MSG_DIVIDER;
+const MSG_OBJECT_CLEANED 				= "Bol vyčistený objekt " + MSG_DIVIDER;
 
 function getMessage(text){
 	if(!arguments.length){

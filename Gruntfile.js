@@ -173,8 +173,8 @@ module.exports = function(grunt){
 				},
 			},
 			//uses_defaults: ['components/LayersViewer.js']
-			//uses_defaults: ['js/lib/alerts.js']
-			uses_defaults: '<%= concat.js.src %>'
+			uses_defaults: ['js/G.js']
+			//uses_defaults: '<%= concat.js.src %>'
 			
 		}
 	});

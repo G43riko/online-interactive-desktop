@@ -14,9 +14,11 @@ class CreatorViewer extends Entity{
 			borderWidth: MENU_BORDER_WIDTH,
 			radius: MENU_RADIUS
 		});
-		Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 	init(){
+		var counter = 0,
+			posY 	= 0;
 		this.size.x = (MENU_WIDTH + MENU_OFFSET) * getLength(Creator.items) + MENU_OFFSET;
 		this.size.y = MENU_HEIGHT + (MENU_OFFSET << 1);
 
@@ -24,8 +26,6 @@ class CreatorViewer extends Entity{
 		this._canvas.height	= MENU_HEIGHT << 4;
 		this._context 		= this._canvas.getContext('2d');
 
-		var counter = 0;
-		var posY 	= 0;
 		each(Creator.items, function(e, i, arr){
 			posY = 0;
 			arr[i].offset = counter;
@@ -73,7 +73,14 @@ class CreatorViewer extends Entity{
 				this._drawIcon(i, e.value, counter, posY);
 			}
 			else if(i == ATTRIBUTE_FONT_COLOR){
-				fillText("Abc", counter + (MENU_WIDTH >> 1), posY + (MENU_HEIGHT >> 1), DEFAULT_FONT_SIZE, Creator.fontColor, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("Abc", 
+						 counter + (MENU_WIDTH >> 1), 
+						 posY + (MENU_HEIGHT >> 1), 
+						 DEFAULT_FONT_SIZE, 
+						 Creator.fontColor, 
+						 0, 
+						 FONT_ALIGN_CENTER, 
+						 this._context);
 			}
 			else{
 				arr[i].selectedIndex = 0;
@@ -121,7 +128,10 @@ class CreatorViewer extends Entity{
 				break;
 			case ATTRIBUTE_LINE_WIDTH :
 				doLine({
-					points: [posX + offset, posY + (height >> 1), posX + width - offset, posY + (height >> 1)],
+					points: [posX + offset, 
+							 posY + (height >> 1), 
+							 posX + width - offset, 
+							 posY + (height >> 1)],
 					borderWidth: value,
 					borderColor: MENU_BORDER_COLOR,
 					ctx: this._context
@@ -222,10 +232,24 @@ class CreatorViewer extends Entity{
 				});
 				break;
 			case ATTRIBUTE_FONT_SIZE :
-				fillText("Abc", posX + (width >> 1), posY + (height >> 1), value, MENU_FILL_COLOR, 0, FONT_ALIGN_CENTER, this._context);
+				fillText("Abc", 
+						 posX + (width >> 1), 
+						 posY + (height >> 1), 
+						 value, 
+						 MENU_FILL_COLOR, 
+						 0, 
+						 FONT_ALIGN_CENTER, 
+						 this._context);
 				break;
 			default :
-				fillText(key, posX + (width >> 1), posY + (height >> 1), 7, MENU_FONT_COLOR, 0, FONT_ALIGN_CENTER, this._context);
+				fillText(key, 
+						 posX + (width >> 1), 
+						 posY + (height >> 1), 
+						 7, 
+						 MENU_FONT_COLOR, 
+						 0, 
+						 FONT_ALIGN_CENTER, 
+						 this._context);
 		}
 	}
 
@@ -349,7 +373,13 @@ class CreatorViewer extends Entity{
 				borderWidth: this._borderWidth
 			});
 
-			fillText(e.key, this.position.x + counter + (MENU_WIDTH >> 1), this.position.y + MENU_OFFSET + (MENU_HEIGHT >> 1), 7, MENU_FONT_COLOR, 0, FONT_ALIGN_CENTER);
+			fillText(e.key, 
+					 this.position.x + counter + (MENU_WIDTH >> 1), 
+					 this.position.y + MENU_OFFSET + (MENU_HEIGHT >> 1), 
+					 7, 
+					 MENU_FONT_COLOR, 
+					 0, 
+					 FONT_ALIGN_CENTER);
 
 			if(e.itemsSelected && isDefined(e.item.values)){
 				var num = this.position.y + MENU_OFFSET;

@@ -40,7 +40,7 @@ class OptionsManager{
 				val: OPTION_CANVAS_BLUR
 			}
 		};
-		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 	_processAndSetValueIfExistById(id, val, attr, value){
 		var e = document.getElementById(id);

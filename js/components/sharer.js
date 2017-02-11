@@ -14,7 +14,7 @@ class SharerManager{
 		};
 		this._sender = new EventTimer(e => this._sendStack(), 1000 / 60);
 		this._buffer = [];
-		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	get isSharing(){return this._sharing;}

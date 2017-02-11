@@ -19,8 +19,7 @@ $borderHoverColor: darken($borderColor, 20%);
 *, *::before, *::after {
   box-sizing: border-box;
   padding: 0;
-  margin: 0;
-  outline: 1px solid black; }
+  margin: 0; }
 
 .hidden {
   display: none; }
@@ -675,6 +674,52 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none; }
+
+#reportHolder {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  transition: all 1s; }
+  #reportHolder.minified {
+    left: -300px; }
+  #reportHolder > div {
+    border-radius: 0 5px;
+    position: absolute;
+    border: 2px solid #537864;
+    background-color: #1abc9c;
+    display: inline-block; }
+  #reportHolder #reportButton {
+    width: 100px;
+    height: 40px;
+    bottom: 0px;
+    left: 298px;
+    cursor: pointer; }
+    #reportHolder #reportButton span {
+      font-size: 28px;
+      position: absolute;
+      line-height: 40px;
+      width: 100%;
+      height: 100%;
+      text-align: center; }
+  #reportHolder #reportWrapper {
+    padding: 0px 5px;
+    z-index: 10;
+    width: 300px;
+    height: 400px;
+    left: 0;
+    bottom: 0; }
+    #reportHolder #reportWrapper .nickname {
+      padding: 9px !important; }
+    #reportHolder #reportWrapper textarea {
+      font-family: Georgia,"Times New Roman",Times,serif;
+      padding: 9px !important;
+      overflow-y: scroll;
+      font-size: 10px;
+      padding: 4px;
+      width: 100%;
+      font-size: 22px; }
+    #reportHolder #reportWrapper .sendReport:hover {
+      background-color: darknes(#1abc9c, 20%); }
 
 #keysViewerHolder {
   position: fixed;

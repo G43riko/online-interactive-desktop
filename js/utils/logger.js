@@ -16,7 +16,14 @@ class LogManager {
 	}
 
 	log(msg, type){
-		this._logs.push([Date.now(), msg, type]);
+		var source = "unknown";
+		try {
+			throw new Error();
+		}
+		catch (e) { 
+			source = e.stack.split("\n")[2].trim();
+		}
+		this._logs.push([Date.now(), msg, type, source]);
 	}
 
 	exception(msg, error){
@@ -56,7 +63,7 @@ class LogManager {
 	showLogs(){
 		var div = G("#showLogs");
 		if(div.length() > 0){
-			div.empty().append(FormManager.createTable(["Time", "Message", "Type"], this._logs));
+			div.empty().append(FormManager.createTable(["Time", "Message", "Type", "Source"], this._logs));
 			G("#showLogs").show();
     		G("#modalWindow").show();
 		}

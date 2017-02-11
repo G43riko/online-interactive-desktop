@@ -4,6 +4,7 @@
 class EventManager{
 	constructor(){
 		this._history = [];
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	paintAddPoint(position, activeLayerName){//PaintManager.addPoint

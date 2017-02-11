@@ -254,6 +254,7 @@ class GuiManager{
 	constructor(){
 		this._topMenu = new MenuManager();
 		this._actContextMenu = null;
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	get menu(){

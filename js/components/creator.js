@@ -27,7 +27,7 @@ class objectCreator{
 							   "_lineWidth", "_fontSize", "_fontColor", "_lineType", "_lineStyle", 
 							   "_brushSize", "_brushType", "_brushColor", "_radius"];
 		
-		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	onMouseMove(pos, movX, movY){

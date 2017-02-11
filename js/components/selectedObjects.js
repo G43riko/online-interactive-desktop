@@ -5,7 +5,7 @@ class ObjectsManager{
 	constructor(){
 		this._movedObject = false;
 		this._objects = [];
-		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	get firstObject(){

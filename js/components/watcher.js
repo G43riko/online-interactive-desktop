@@ -49,7 +49,7 @@ class WatcherManager{
 		this._socket.on("processBuffer", data => inst._processBuffer(data));
 		this._socket.on("endShare", data => inst._endShare(data));
 
-		Logger && Logger.log("Bol vytvorený objekt " + this.constructor.name, LOGGER_COMPONENT_CREATE);
+		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
 	_processBuffer(data){
