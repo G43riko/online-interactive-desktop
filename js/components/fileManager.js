@@ -102,20 +102,22 @@ function loadFile(func){
 
 
 function saveSceneAsFile(params = {projectTitle: "scene_backup"}){
+	/*
 	var data = {
-		scene: Scene.toObject(),
-		creator: Creator.toObject(),
+		scene: Project.scene.toObject(),
+		creator: Project.creator.toObject(),
 		paints: Paints.toObject(),
 		type: 2500
 	};
+	*/
 
-	saveFile(params.projectTitle, JSON.stringify(data));
+	saveFile(params.projectTitle, JSON.stringify(Project.toObject()));
 }
 
 function saveSceneAsTask(fileName = "default_task"){
 	var result = {};
 
-	if(Scene.getTaskObject(result)){
+	if(Project.scene.getTaskObject(result)){
 		var data = {
 			scene: result.content,
 			results:  result.results,
@@ -137,7 +139,7 @@ function loadTask(scene, results, title){
 	var layer = Scene.createLayer(title, "task");
 	each(scene, e => {
 		e.layer = layer.title;
-		Creator.create(e);
+		Project.creator.create(e);
 	});
 	Task = new TaskManager(results, title, layer);
 	Logger.write(getMessage(MSG_TASK_CREATED, title));
@@ -151,9 +153,12 @@ function loadSceneFromFile(){
 			loadTask(data.scene, data.results, data.title);
 		}
 		else{
-			Scene.fromObject(data.scene);
-			Creator.fromObject(data.creator);
+			Project.fromObject(data);
+			/*
+			Project.scene.fromObject(data.scene);
+			Project.creator.fromObject(data.creator);
 			Paints.fromObject(data.paints);
+			*/
 		}
 		draw();
 		/*

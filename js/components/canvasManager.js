@@ -261,12 +261,11 @@ function doLine(obj){
         Logger.error(getMessage(MSG_TRY_DRAW_ONE_POINT_LINE));
     }
 
-    var res = G.extend(glob._initDef(obj), obj),
+    var res = $.extend(glob._initDef(obj), obj),//TODOD nefunguje G.extend
         offX = obj.offset ? obj.offset.x : 0,
         offY = obj.offset ? obj.offset.y : 0,
         v1, v2, l1, l2;
     res.ctx.beginPath();
-
 
     var drawLines = function(points){
         if(isNaN(points[0])){
@@ -435,7 +434,7 @@ function calcTextWidth(value, font = false){
 glob._initDef = function(obj){
     var def = {
         borderWidth : DEFAULT_BORDER_WIDTH,
-        borderColor : DEFAULT_BORDER_WIDTH,
+        borderColor : DEFAULT_BORDER_COLOR,
         ctx : context,
         fillColor : DEFAULT_FILL_COLOR,
         radius : {tl: 0, tr: 0, br: 0, bl: 0},
@@ -513,7 +512,7 @@ glob._remakePosAndSize = function(def, obj){
 };
 
 function _process(res){
-    if(res.shadow && Options.shadows){
+    if(res.shadow && Project.options.shadows){
         setShadow(res.shadow);
     }
 

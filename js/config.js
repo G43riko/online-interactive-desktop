@@ -362,6 +362,10 @@ const MSG_USER_DISCONNECT				= "Používatel " + MSG_DIVIDER + "[ " + MSG_DIVIDE
 const MSG_CREATE_PROJECT_ERROR			= "Nastala chyba pri vytváraní projectu";
 const MSG_OBJECT_CREATED 				= "Bol vytvorený objekt " + MSG_DIVIDER;
 const MSG_OBJECT_CLEANED 				= "Bol vyčistený objekt " + MSG_DIVIDER;
+const MSG_ERROR_DRAW					= "Nastala chyba pri kreslení";
+const MSG_ERROR_MOUSE_DOWN				= "Nastala chyba pri stlačení tlačítka myši";
+const MSG_ERROR_MOUSE_UP				= "Nastala chyba pri pustení tlačítka myši";
+const MSG_ERROR_MOUSE_MOVE				= "Nastala chyba pri pohybe myši";
 
 function getMessage(text){
 	if(!arguments.length){

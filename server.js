@@ -11,6 +11,19 @@ var express 		= require('express'),
 	RedisClient 	= require('./js/utils/RedisClient'),
 	client 			= new RedisClient.Redis(redis, config);
 
+var LogManager = function(){
+	this._messages = [];
+	this.log = function(msg){
+		console.log(msg);
+		this._messages[this._messages.length] = {
+			time: Date.now(),
+			msg: msg
+		}
+	}
+}
+
+var Logger = new LogManager();
+
 lessonsManager.init(utils, config.loopTime);
 
 connection.callLogInit(serverLogs.init);
@@ -52,11 +65,29 @@ app.post('/checkConnectionData', function(req, res){
 	})
 });
 
+app.post("/report", function(req){
+	Logger.log("bol prijatý report");
+	processPostData(req, function(data, req){
+		var data = JSON.parse(data.replace("content=", ""));
+		data.read = false;
+		data.recieved = Date.now();
+		client.saveReport(JSON.stringify(data));
+	});
+});
+
+app.post("/logError", function(req){
+	Logger.log("bol prijatý chybová správa");
+	processPostData(req, function(data, req){
+		client.saveError(data.replace("content=", ""));
+	});
+});
+
 app.post("/anonymousData", function (request) {
+	Logger.log("boli prijaté anonymné dáta");
 	processPostData(request, function(data, req){
 		data = JSON.parse(data.replace("content=", ""));
-		data["ipAddress"] = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		data["connectedAt"] = data["connectedAt"].replace("+", " ");
+		data.ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+		data.connectedAt = data.connectedAt.replace("+", " ");
 		client.storeAnonymousData(data);
 		serverLogs.addAnonymData(data);
 	});
@@ -120,6 +151,7 @@ function logNotif(msg, socket){
 
 function processRequireAllDataAction(data, user_id, less_id){
 	var lesson = lessonsManager.getLesson(less_id);
+	Logger.log("bola prijatá žiadosť o všetky dáta od " + user_id + " k cvičeniu " + less_id);
 
 	if(!data){//tu sa pridaju možnosti ked nechce všetko ale iba niečo
 		data = {};
@@ -149,12 +181,14 @@ function processRequireAllDataAction(data, user_id, less_id){
 }
 
 function processLayerAction(data, user_id, less_id){
+	Logger.log("bola prijatá layer akcia od " + user_id + " k cvičeniu " + less_id);
 	if(lessonsManager.isSharing(less_id) && lessonsManager.getOwner(less_id) === user_id) {
 		lessonsManager.sendMessageAllMembers(less_id, "layerAction", data);
 	}
 }
 
 function processObjectAction(data, user_id, less_id){
+	Logger.log("bola prijatá object akcia od " + user_id + " k cvičeniu " + less_id);
 	if(!lessonsManager.isSharing(less_id)){
 		return false;
 	}
@@ -179,6 +213,7 @@ function processObjectAction(data, user_id, less_id){
 }
 
 function processCreatorAction(data, user_id, less_id){
+	Logger.log("bola prijatá creator akcia od " + user_id + " k cvičeniu " + less_id);
 	if(lessonsManager.isSharing(less_id) && lessonsManager.getOwner(less_id) === user_id) {
 		lessonsManager.sendMessageAllMembers(less_id, "creatorAction", data);
 	}
@@ -217,11 +252,12 @@ function processSendAllDataAction(data){
 			"timeline" : false
 		}
 	};
-
+	Logger.log("bola prijatá odpoveď na žiadosť o všetky dáta pre " + data.target);
 	lessonsManager.sendMessage(data["target"], "sendAllData", data.msg);
 }
 
 function processInputAction(data, user_id, less_id, type){
+	Logger.log("bola prijatá input akcia od " + user_id + " k cvičeniu " + less_id);
 	var lesson = lessonsManager.getLesson(less_id);
 	if(lesson.type === "share" && lesson["owner"] === user_id){
 		for(var i in lesson["members"])
@@ -232,6 +268,7 @@ function processInputAction(data, user_id, less_id, type){
 }
 
 function processPaintAction(data, user_id, less_id){
+	Logger.log("bola prijatá paint akcia od " + user_id + " k cvičeniu " + less_id);
 	if(!lessonsManager.isSharing(less_id)){//TOTO pravdepodobne zbytočné
 		return false;
 	}
@@ -278,6 +315,8 @@ initConnection = function(data){
 	var lesson_id = client.initConnection(data);
 	var user_id = data.user_id;
 	var socket = this;
+
+	Logger.log("initConn from " + user_id + " k cvičeniu " + lesson_id + " typu " + data.type);
 
 	if(data.type == "teach" || data.type == "share"){//ak zakladá vyučovanie
 		console.log("vytvorilo sa vyucovanie s id: " + lesson_id + "[" + data.type + "]");

@@ -25,7 +25,7 @@ class InputManager{
 		Project.content.onResize();
 		
 		Project.canvasManager.onResize();
-		Scene.onScreenResize();
+		Project.scene.onScreenResize();
 
 		if(isDefined(timeLine)){
 			timeLine.onScreenResize();
@@ -42,16 +42,21 @@ class InputManager{
 		window.onresize = this._onResize;
 		if(STORE_DATA_ONUNLOAD){
 			window.onunload = function(event){
-				if(Scene.isEmpty()){
+				if(Project.scene.isEmpty()){
 					localStorage.removeItem(RESTORE_KEY);
 					return;
 				}
+
+				/*
 				var result = {
-					scene: Scene.toObject(),
-					creator: Creator.toObject(),
-					paint: Paints.toObject()
+					scene: Project.scene.toObject(),
+					creator: Project.creator.toObject(),
+					paint: Paints.toObject(),
+					options : Project.options.toObject(),
+					unloadTime: Date.now()
 				};
-				localStorage.setItem(RESTORE_KEY, JSON.stringify(result));
+				*/
+				localStorage.setItem(RESTORE_KEY, JSON.stringify(Project.toObject()));
 			};
 		}
 		window.orientationchange = this._onResize;
@@ -103,7 +108,7 @@ class InputManager{
 				}
 				this._buttonUp(ee);
 
-				if(!Options.changeCursor){
+				if(!Project.options.changeCursor){
 					ee.target.onmousemove = false;
 				}
 				ee.target.onmouseup = false;

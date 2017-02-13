@@ -27,7 +27,8 @@
 			"maximum" : {
 				"objects" : 100,
 				"paths" : 200,
-				"layers" : 10
+				"layers" : 10,
+				"local_data_time" : 3600000
 			},
 			"min" : {
 				"screen_width" : 480
@@ -230,7 +231,8 @@
 				"cleaned" : 2614,
 				"renamed" : 2615,
 				"rastered" : 2616
-			}
+			},
+			"stack_recieved" : 2617
 		},
 		"key" : {
 			"arrow" : {

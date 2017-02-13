@@ -64,6 +64,24 @@ class OptionsManager{
 	get showLayersViewer(){return this._options.showLayersViewer.val;}
 	get movingSilhouette(){return this._options.movingSilhouette.val;}
 
+	toObject(){
+		return {
+			showKeys : this.showKeys,
+			showClicks : this.showClicks,
+			grid : this.grid,
+			shadows : this.shadows,
+			snapping : this.snapping,
+			canvasBlur : this.canvasBlur,
+			changeCursor : this.changeCursor,
+			showLayersViewer : this.showLayersViewer,
+			movingSilhouette : this.movingSilhouette
+		}
+	}
+	fromObject(obj){
+		each(obj, (e, i) => {
+			this.setOpt(i, val);
+		})
+	}
 
 	setOpt(key, val, setElement = true){
 		var obj = this._options[key];

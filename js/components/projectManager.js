@@ -43,6 +43,38 @@ class ProjectManager{
 	    }
 	}
 
+	fromObject(obj){
+		obj.paint && Paints.fromObject(obj.paint);
+		obj.scene && this.scene.fromObject(obj.scene);
+		obj.creator && this.creator.fromObject(obj.creator);
+		obj.options && this.options.fromObject(obj.options);
+
+		this._title = obj.title;
+		this._autor = obj.autor;
+	}
+
+	toObject(param = {}){
+		var result = {
+			unloadTime: Date.now(),
+			title : this._title,
+			autor: this._autor
+		}
+		if(param.scene !== false){
+			result.scene = this.scene.toObject();
+		}
+		if(param.creator !== false){
+			result.creator = this.creator.toObject();
+		}
+		if(param.paint !== false){
+			result.paint = Paints.toObject();
+		}
+		if(param.options !== false){
+			result.options = this.options.toObject();
+		}
+
+		return result;
+	}
+
 	initCanvas(){
 		this._canvasManager = new CanvasManager(window.innerWidth, window.innerHeight);
 	}

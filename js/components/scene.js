@@ -229,7 +229,7 @@ class SceneManager{
 
 	findObjectsForRemove(x, y, radius){
 		//TODO bud aktualna ale všetky vrstvy, podla Creator.allLayers
-		each(Project.scene.layers, function(layer){
+		each(this.layers, function(layer){
 			layer.forEach(object => {
 				if(isFunction(object.isIn)){
 					if(object.isIn(x, y, radius)){

@@ -114,9 +114,19 @@
 				glob.sendMessage = function(){
 					//alert("jupiiii");
 					glob.closeReport();
-					Alert.success("Ďakujeme za report. Vaša správa bude čoskoro spracovaná");
 				}
 				glob.closeReport = function(){
+					var text = G("#reportWrapper .content").first().value;
+					if(text.length === 0){
+						Logger.warn("Nieje možné odoslať prázdnu správu");
+					}
+					else{
+						$.post("http://localhost:3000/report", JSON.stringify({
+							name: G("#reportWrapper .nickname").first().value || "Anonym", 
+							message: text
+						}));
+						Alert.success("Ďakujeme za report. Vaša správa bude čoskoro spracovaná");
+					}
 					G("#reportHolder").addClass("minified");
 				}
 			}

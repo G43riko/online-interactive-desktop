@@ -341,7 +341,7 @@ class Entity{
 	 */
 	static drawConnectors(obj, ctx){
 		if(Creator.operation != OPERATION_DRAW_JOIN &&
-			(Creator.operation != OPERATION_DRAW_LINE || !Input.isKeyDown(L_CTRL_KEY))){
+			(Creator.operation != OPERATION_DRAW_LINE || !Input.isKeyDown(KEY_L_CTRL))){
 			return;
 		}
 

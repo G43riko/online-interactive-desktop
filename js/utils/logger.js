@@ -27,7 +27,7 @@ class LogManager {
 	}
 
 	exception(msg, error){
-		this.error(msg + ": " + error);
+		this.error(msg + ": " + error.stack);
 	}
 
 	write(msg){
@@ -40,6 +40,10 @@ class LogManager {
 
 	error(msg, id){
 		Alert.danger(msg);
+		$.post("http://localhost:3000/logError", JSON.stringify({
+			msg: msg,
+			time: Date.now()
+		}));
 		this._data[LogManager.ERRORS][Date.now()] = msg;
 		if(this._show[LogManager.ERRORS]){
 			if(id){

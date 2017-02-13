@@ -267,7 +267,7 @@ glob.loading = function(){
 		
 		//if(typeof ConnectionManager === "function")
 		//	Connection = new ConnectionManager();
-		Project._connection = new ConnectionManager();
+		//Project._connection = new ConnectionManager();
 
 		$.getJSON(FOLDER_JSON + "/menu.json",function(data){
 			try{
@@ -312,11 +312,17 @@ glob.loading = function(){
 
 
 		if(ASK_FOR_RESTORE_DATA && localStorage.hasOwnProperty(RESTORE_KEY)){
-			if(confirm(getMessage(MSG_LOAD_OLD_PROJECT))){
-				var data = JSON.parse(localStorage.getItem(RESTORE_KEY));
-				Scene.fromObject(data.scene);
-				Creator.fromObject(data.creator);
-				Paints.fromObject(data.paint);
+			var data = JSON.parse(localStorage.getItem(RESTORE_KEY));
+			if(Date.now() - data.unloadTime < LIMIT_MAXIMUM_LOCAL_DATA_TIME){
+				if(confirm(getMessage(MSG_LOAD_OLD_PROJECT))){
+					Project.fromObject(data);
+					/*
+					Paints.fromObject(data.paint);
+					Project.scene.fromObject(data.scene);
+					Project.creator.fromObject(data.creator);
+					Project.options.fromObject(data.options);
+					*/
+				}
 			}
 		}
 
@@ -337,30 +343,34 @@ function realPDraw(){
 }
 
 function realDraw(){
-	if((typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected) || !Project.context || !isObject(Project.context)){
-		return;
-	}
-	Project.increaseDrawCounter();
-	CanvasHandler.clearCanvas(Project.context);
-	if(Project.options.grid){
-		glob.drawGrid();
-	}
+	try{
+		if((typeof Watcher !== KEYWORD_UNDEFINED && !Watcher.connected) || !Project.context || !isObject(Project.context)){
+			return;
+		}
+		Project.increaseDrawCounter();
+		CanvasHandler.clearCanvas(Project.context);
+		if(Project.options.grid){
+			glob.drawGrid();
+		}
 
-	if(Creator.operation == OPERATION_AREA && area){
-		area.draw();
-	}
+		if(Creator.operation == OPERATION_AREA && area){
+			area.draw();
+		}
 
-	Project.scene.draw();
-	Creator.draw();
-	Project.topMenu.draw();
-	if(actContextMenu){
-		actContextMenu.draw();
+		Project.scene.draw();
+		Creator.draw();
+		Project.topMenu.draw();
+		if(actContextMenu){
+			actContextMenu.draw();
+		}
+		Logger.log("kreslí sa všetko", LOGGER_DRAW);
+		if(typeof timeLine !== KEYWORD_UNDEFINED && timeLine){
+			timeLine.draw();
+		}
 	}
-	Logger.log("kreslí sa všetko", LOGGER_DRAW);
-	if(typeof timeLine !== KEYWORD_UNDEFINED && timeLine){
-		timeLine.draw();
+	catch(e){
+		Logger.exception(getMessage(MSG_ERROR_DRAW), e);
 	}
-
 	/*
 	Project.context.font = "30px " + DEFAULT_FONT_FAMILY;
 	Project.context.fillStyle = "red";

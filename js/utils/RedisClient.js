@@ -9,28 +9,27 @@ function pad(num, size) {
 module.exports.Redis = function(red, config){
 	this._config = config;
 	this._actualUserId = -1;
+	this._actualLessonId = -1;
 	this._actualConnectionId = -1;
-	var inst = this;
 	this._isConnected = false;
-	this._isSynchronized = -2;
+	this._isSynchronized = 0;
 	this._client = red.createClient(config.redis.port, config.redis.host);
 
-	this._client.on("connect", function(){
+	this._client.on("connect", () => {
 		console.log("pripojenie k redis DB bolo úspešné");
-		inst._isConnected = true;
-		inst._isSynchronized++;
+		this._isConnected = true;
+		this._isSynchronized++;
 	});
 
-	this._client.get('userIdSequencer', function(err, reply) {
-		inst._actualUserId = reply;
-		inst._isSynchronized++;
+	this._client.get('userIdSequencer', (err, reply) => {
+		this._actualUserId = reply;
+		this._isSynchronized++;
 		console.log("aktualneUserID je: ", reply);
 	});
 
-	this._client.get('connectionIdSequencer', function(err, reply) {
-		inst._actualConnectionId = reply;
-		inst._isSynchronized++;
-		console.log("aktualneConnectionID je: ", reply);
+	this._client.get('lessonIdSequencer', (err, reply) => {
+		this._actualLessonId = reply;
+		this._isSynchronized++;
 	});
 };
 
@@ -49,8 +48,16 @@ module.exports.Redis.prototype._createNewUser = function(data){
 		 resolutions
 		 */
 	});
-
 };
+
+
+module.exports.Redis.prototype.saveError = function(data){
+	this._client.sadd(["errors", data]);
+};
+module.exports.Redis.prototype.saveReport = function(data){
+	this._client.sadd(["reports", data]);
+};
+
 
 module.exports.Redis.prototype._updateUser = function(data){
 	this._client.hincrby('user_' + data.user_id, "connection_number", 1);
@@ -72,7 +79,6 @@ module.exports.Redis.prototype._updateUser = function(data){
 	if(data.user_name){
 		changedData.user_name = data.user_name;
 	}
-
 	this._client.hmset('user_' + data.user_id, changedData);
 };
 
@@ -104,7 +110,7 @@ module.exports.Redis.prototype._createNewLesson = function(data){
 		last_update: Date.now(),
 		type: data.type,
 		password: data.password || "",
-		limit: data.limit || this._config.maximumUsers,
+		limit: data.limit ? Math.min(data.limit, this._config.maximumUsers) : this._config.maximumUsers,
 		resolution: data.resolution,
 		scene: ""
 	});
@@ -145,7 +151,6 @@ module.exports.Redis.prototype._resetLesson = function(data){
 	if(data.resolution){
 		changedData.resolution = data.resolution;
 	}
-
 	this._client.hmset('less_' + data.less_id, changedData);
 };
 
@@ -172,13 +177,23 @@ module.exports.Redis.prototype.initConnection = function(data){
 };
 
 module.exports.Redis.prototype.reset = function(){
-	this._client.del("ides");
 	this._client.del("userIdSequencer");
+	this._client.del("lessonIdSequencer");
 	this._client.del("connectionIdSequencer");
-	this._client.sadd(["ides", 0]);
+	this._client.del("user_*");
+	this._client.del("less_mem_*");
+	this._client.del("less_*");
+	this._client.del("conn_*");
+	this._client.del("errors");
+	this._client.del("reports");
+	
+
 	this._client.set(["userIdSequencer", 0]);
+	this._client.set(["lessonIdSequencer", 0]);
 	this._client.set(["connectionIdSequencer", 0]);
 	this._actualUserId = 0;
+	this._actualLessonId = 0;
+	this._actualConnectionId = 0
 };
 
 module.exports.Redis.prototype._getNewUserId = function(){
@@ -187,6 +202,11 @@ module.exports.Redis.prototype._getNewUserId = function(){
 };
 
 module.exports.Redis.prototype._getNewLessonId = function(){
+	this._client.incr('lessonIdSequencer');
+	return pad(++this._actualLessonId, 4);
+};
+
+module.exports.Redis.prototype._getNewConnectionId = function(){
 	this._client.incr('connectionIdSequencer');
 	return pad(++this._actualConnectionId, 4);
 };

@@ -42,7 +42,7 @@ class ConnectionManager{
 		$.post("/create", {content: JSON.stringify({meno:PROJECT_AUTHOR})}, data => {
 			this._user_id = data.cookies[CONN_KEY_USER_ID];
 		}, "json");
-
+		console.error("query:", glob.queryString());
 		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
@@ -82,7 +82,8 @@ class ConnectionManager{
 	}
 
 	connect(data){
-		this._socket = io(URL_CHAT);
+		//this._socket = io(URL_CHAT);
+		this._socket = io();
 		this._startTime = Date.now();
 		this._type = data[CONN_KEY_TYPE];
 		this._user_name = data[CONN_KEY_USER_NAME] || this._user_name;
@@ -121,9 +122,9 @@ class ConnectionManager{
 			this._messageTime = Date.now();
 			if(this._type === CONN_KEY_WATCH || this._type === CONN_KEY_TEACH){
 				if(this._type === CONN_KEY_WATCH){
-					Scene.initSecondCanvas();
+					Project.scene.initSecondCanvas();
 				}
-				//this._sendMessage("requireAllData", {target: this._user_id});
+				this._sendMessage("requireAllData", {target: this._user_id});
 				this._watching = true;
 			}
 			else{
@@ -133,12 +134,12 @@ class ConnectionManager{
 
 			//upraví menu a dá vedieť používatelovi
 			Logger.write(getMessage(MSG_CONN_CONFIRM));
-			if(isFunction(Menu.disabled)) {
-				Menu.disabled("sharing", "watch");
-				Menu.disabled("sharing", "stopShare");
-				Menu.disabled("sharing", "shareOptions");
-				Menu.disabled("sharing", "copyUrl");
-				Menu.disabled("sharing", "startShare");
+			if(isFunction(Project.topMenu.disabled)) {
+				Project.topMenu.disabled("sharing", "watch");
+				Project.topMenu.disabled("sharing", "stopShare");
+				Project.topMenu.disabled("sharing", "shareOptions");
+				Project.topMenu.disabled("sharing", "copyUrl");
+				Project.topMenu.disabled("sharing", "startShare");
 			}
 		});
 
@@ -149,6 +150,10 @@ class ConnectionManager{
 		this._socket.on("notifLog", response => Logger.write(response.msg));
 
 		this._socket.emit("initConnection", data);
+	}
+
+	getAutoConnectLink(){
+		var result = URL_CHAT + "/app#abcdefghijk?less_id=" + this._less_id;
 	}
 
 	pdraw(ctx){
@@ -166,12 +171,12 @@ class ConnectionManager{
 	}
 
 	disconnect(){
-		if(isFunction(Menu.disabled)){
-			Menu.disabled("sharing", CONN_KEY_WATCH);
-			Menu.disabled("sharing", "stopShare");
-			Menu.disabled("sharing", "shareOptions");
-			Menu.disabled("sharing", "copyUrl");
-			Menu.disabled("sharing", "startShare");
+		if(isFunction(Project.topMenu.disabled)){
+			Project.topMenu.disabled("sharing", CONN_KEY_WATCH);
+			Project.topMenu.disabled("sharing", "stopShare");
+			Project.topMenu.disabled("sharing", "shareOptions");
+			Project.topMenu.disabled("sharing", "copyUrl");
+			Project.topMenu.disabled("sharing", "startShare");
 		}
 		this._socket.disconnect();
 		this._user_id	= false;
@@ -197,38 +202,39 @@ class ConnectionManager{
 	 }
 	 
 	_processStack(data){
-		Logger.log("prijaty buffer po: " + (Date.now() - this._messageTime), LOGGER_STACK_RECIEVED);
-		this._messageTime = Date.now();
+		var toto = Project.connection;
+		Logger.log("prijaty buffer po: " + (Date.now() - toto._messageTime), LOGGER_STACK_RECIEVED);
+		toto._messageTime = Date.now();
 	 	each(data.buffer, e => {
 			//console.log("prijata akcia:" + e.action);
 			switch(e.action){
 				case "requireAllData" :
-					Handler.processRequireAllData(this, e[CONN_KEY_DATA]);
+					Handler.processRequireAllData(toto, e[CONN_KEY_DATA]);
 					break;
 				case "sendAllData" :
-					Handler.processSendAllData(this, e[CONN_KEY_DATA]);
+					Handler.processSendAllData(toto, e[CONN_KEY_DATA]);
 					break;
 				case "userDisconnect" :
-					Handler.processUserDisconnect(this, e[CONN_KEY_DATA]);
+					Handler.processUserDisconnect(toto, e[CONN_KEY_DATA]);
 					break;
 				case "userConnect" :
-					Handler.processUserConnect(this, e[CONN_KEY_DATA]);
+					Handler.processUserConnect(toto, e[CONN_KEY_DATA]);
 					break;
 				case "paintAction" :
-					Handler.processPaintAction(e[CONN_KEY_DATA], this._type);
+					Handler.processPaintAction(e[CONN_KEY_DATA], toto._type);
 					break;
 				case "layerAction" :
 					Handler.processLayerAction(e[CONN_KEY_DATA]);
 					break;
 				case "inputAction" :
-					this._processInputAction(e[CONN_KEY_DATA]);
+					toto._processInputAction(e[CONN_KEY_DATA]);
 					break;
 				case "creatorAction" :
-					Creator.setOpt(e[CONN_KEY_DATA].key, e[CONN_KEY_DATA][CONN_KEY_VALUE]);
+					Project.creator.setOpt(e[CONN_KEY_DATA].key, e[CONN_KEY_DATA][CONN_KEY_VALUE]);
 					draw();
 					break;
 				case "objectAction" :
-					Handler.processObjectAction(e[CONN_KEY_DATA], this._type);
+					Handler.processObjectAction(e[CONN_KEY_DATA], toto._type);
 					break;
 				default:
 					Logger.error(getMessage(MSG_UNKNOW_ACTION, e.action));
@@ -264,7 +270,7 @@ class ConnectionManager{
 	 ********************/
 	/*
 	_draw(){
-		var canvas = Scene.getSecondCanvas();
+		var canvas = Project.scene.getSecondCanvas();
 		if(!canvas)
 			return;
 
@@ -344,21 +350,21 @@ class ConnectionManager{
 		switch(type){
 			case ACTION_OBJECT_MOVE:
 				data.oId	= object.id;
-				data.oL	= object.layer;
-				data.oX	= object.position.x;
-				data.oY	= object.position.y;
-				data.oW	= object.size.x;
-				data.oH	= object.size.y;
+				data.oL		= object.layer;
+				data.oX		= object.position.x;
+				data.oY		= object.position.y;
+				data.oW		= object.size.x;
+				data.oH		= object.size.y;
 				break;
 			case ACTION_OBJECT_CHANGE:
-				data.oId		= object.id;
+				data.oId	= object.id;
 				data.oL		= object.layer;
 				data.keys	= {};
 				each(keys, (e, i) => data.keys.i = object[i]);
 				break;
 			case ACTION_OBJECT_DELETE:
 				data.oId	= object.id;
-				data.oL	= object.layer;
+				data.oL		= object.layer;
 				break;
 			case ACTION_OBJECT_CREATE:
 				data.o = object;
@@ -479,7 +485,7 @@ class Handler{
 			connectTime : Date.now()
 		};
 		if(inst._type === CONN_KEY_TEACH){
-			//Scene.createLayer(data[CONN_KEY_USER_NAME]);
+			//Project.scene.createLayer(data[CONN_KEY_USER_NAME]);
 			//inst._sendMessage("requireAllData", {target: inst._user_id, from: data[CONN_KEY_USER_ID]});
 		}
 		//Logger.write("používatel" + data[CONN_KEY_USER_NAME] + ". +ata[CONN_KEY_USER_ID] + "] sa pripojil");
@@ -493,21 +499,23 @@ class Handler{
 		var result = {};
 		if(inst._type === CONN_KEY_SHARE){
 			result = {
-				msg: {
-					scene: Scene.toObject(),
-					creator: Creator.toObject(),
+				msg: Project.toObject({options: false}),
+				/*{
+					scene: Project.scene.toObject(),
+					creator: Project.creator.toObject(),
 					paint: Paints.toObject(),
 					user_name : inst._user_name
-				},
+				}*/
 				target: data[CONN_KEY_TARGET]
 			};
+			result.msg.user_name = inst._user_name;
 			//Project.panel.addWatcher(recData.nickName);
 			inst._sendMessage('sendAllData',result);
 		}
 		else if(inst._type === CONN_KEY_EXERCISE){
 			result = {
 				msg: {
-					scene: Scene.toObject(),
+					scene: Project.scene.toObject(),
 					paint: Paints.toObject(),
 					user_name : inst._user_name
 				},
@@ -524,10 +532,10 @@ class Handler{
 			var watchOptions = data.watchOptions;
 
 			if(shareOptions.share.objects){
-				Scene.fromObject(data.scene);
+				Project.scene.fromObject(data.scene);
 			}
 			if(shareOptions.share.creator){
-				Creator.fromObject(data.creator);
+				Project.creator.fromObject(data.creator);
 			}
 			if(shareOptions.share.paints){
 				Paints.fromObject(data.paint);
@@ -551,16 +559,16 @@ class Handler{
 			Project.autor = watchOptions.nickName;
 
 			//console.log("nastavuje sa", data);
-			Menu.visible = shareOptions.share.menu;
-			Creator.visibleView = shareOptions.share.menu;
-			Options.setOpt("showLayersViewer", shareOptions.share.layers);
+			Project.topMenu.visible = shareOptions.share.menu;
+			Project.creator.visibleView = shareOptions.share.menu;
+			Project.options.setOpt("showLayersViewer", shareOptions.share.layers);
 		}
 		else if(inst._type == CONN_KEY_TEACH){//volá sa pre každého pripojeného študenta
-			if(Scene.getLayer(data[CONN_KEY_USER_NAME])){
-				Scene.deleteLayer(data[CONN_KEY_USER_NAME]);
+			if(Project.scene.getLayer(data[CONN_KEY_USER_NAME])){
+				Project.scene.deleteLayer(data[CONN_KEY_USER_NAME]);
 			}
-			Scene.createLayer(data[CONN_KEY_USER_NAME], LAYER_USER);
-			Scene.fromObjectToSingleLayer(data[CONN_KEY_USER_NAME], data.scene);
+			Project.scene.createLayer(data[CONN_KEY_USER_NAME], LAYER_USER);
+			Project.scene.fromObjectToSingleLayer(data[CONN_KEY_USER_NAME], data.scene);
 			Paints.fromObjectToSingleLayer(data[CONN_KEY_USER_NAME], data.paint);
 			//TODO načíta všetky kresby
 		}
@@ -571,20 +579,20 @@ class Handler{
 		var obj, layer = type === "teach" ? data.user_name : data.oL;
 		switch(data.action){
 			case ACTION_OBJECT_MOVE:
-				obj = Scene.getObject(layer, data.oId);
+				obj = Project.scene.getObject(layer, data.oId);
 				obj.position.set(data.oX, data.oY);
 				obj.size.set(data.oW, data.oH);
 				break;
 			case ACTION_OBJECT_DELETE:
-				Scene.remove(Scene.getObject(layer, data.oId), data.oL, false);
+				Project.scene.remove(Project.scene.getObject(layer, data.oId), data.oL, false);
 				break;
 			case ACTION_OBJECT_CHANGE:
-				obj = Scene.getObject(layer, data.oId);
+				obj = Project.scene.getObject(layer, data.oId);
 				each(data.keys, (e, i) => obj[i] = e);
 				break;
 			case ACTION_OBJECT_CREATE:
 				data.o._layer = layer;
-				Creator.create(data.o);
+				Project.creator.create(data.o);
 				break;
 			default :
 				Logger.error(getMessage(MSG_RECIEVED_UNKNOWN_ACTION, data.action));

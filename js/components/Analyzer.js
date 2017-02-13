@@ -25,7 +25,7 @@ class Analyzer{
 	_sendAnonymousData(data = {}){
 		var sendData = c =>	$.post(this._url, {
 			content: JSON.stringify(c)
-		}).fail(() => Logger.error(getMessage(MSG_ANNONYM_FAILED)));
+		}).fail(() => Logger.warn(getMessage(MSG_ANNONYM_FAILED)));
 
 		if(navigator.geolocation){
 			navigator.geolocation.watchPosition(position => {

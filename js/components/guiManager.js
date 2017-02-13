@@ -159,7 +159,7 @@ function processWatchData(data){
 	$.post("/checkConnectionData", {content: JSON.stringify(data)}, function(response){
 		if(response.result > 0){
 			closeDialog();
-			data.type = response.type;
+			data.type = response.type || data.type;
 			if(data.type === "exercise"){ //pri exercise chceme aby to čo sa má zdielať nastavoval zakladatel
 				data.sharePaints	= response.sharePaints;
 				data.shareInput		= response.shareInput;

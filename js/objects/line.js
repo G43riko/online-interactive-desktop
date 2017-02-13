@@ -222,7 +222,6 @@ class Line extends Entity{
 		if(isNumber(this._radius) && this._radius > 1){
 			this._radius += "";
 		}
-
 		doLine({
 			shadow: this.moving && !this.locked,
 			lineCap: this._lineCap,

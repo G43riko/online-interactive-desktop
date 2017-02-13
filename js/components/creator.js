@@ -96,7 +96,7 @@ class objectCreator{
 			case OPERATION_DRAW_LINE:
 				this._object = new Line([position, position.getClone()], 
 										this._lineWidth, 
-										this._fillColor, 
+										this._borderColor, 
 										target);
 				break;
 			case OPERATION_DRAW_JOIN:
@@ -117,12 +117,12 @@ class objectCreator{
 		if(this._object.name === OBJECT_IMAGE){
 			loadImage(e => {
 				this._object.image = e;
-				Scene.addToScene(this._object);
+				Project.scene.addToScene(this._object);
 				this._object = false;
 			});
 		}
 		else{
-			Scene.addToScene(this._object);
+			Project.scene.addToScene(this._object);
 			this._object = false;
 		}
 	}
@@ -203,7 +203,7 @@ class objectCreator{
 		var result = Entity.create(obj, false);
 		if(result){
 			//console.log("pridava sa nový objekt do vrstvy ", result.layer, result, obj);
-			Scene.addToScene(result, result.layer, false);
+			Project.scene.addToScene(result, result.layer, false);
 			draw();
 		}
 		return result;

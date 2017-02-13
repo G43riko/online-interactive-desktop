@@ -43,10 +43,12 @@ class ObjectsManager{
 
 	deleteAll(){
 		each(this._objects, Scene.remove);
+		draw();
 	}
 
 	selectAll(){
-		Scene.forEach(this.add);
+		//Scene.forEach(this.add);
+		each(Project.scene.layers, layer => layer.forEach(object => this.add(object)));
 	}
 
 	add(o){

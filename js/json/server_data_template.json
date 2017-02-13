@@ -1,0 +1,49 @@
+{
+	"user_" : { //databázové údaje o používatelovi
+		"create_date" : "SYSDATE",
+		"last_connection" : "SYSDATE",
+		"last_update" : "SYSDATE",
+		"connection_number" : 0,
+		"user_name" : "defaultUserName"
+	},
+	"less_" : { //databázové údaje o zdielaní
+		"create_data" : "SYSDATE",
+		"owner" : "user_id",
+		"last_update" : "SYSDATE",
+		"type" : "TYP",
+		"limit" : 100
+		"password" : "PASS"
+	},
+	"conn_" : { //databázové údaje o pripojení
+		"connect_time" : "SYSDATE"
+		"resolution" : {"x": 800, "y" : 600},
+		"scene" : "SCENE",
+		"last_update" : "SYSDATE",
+		"user_id" : "NULL",
+		"less_id" : "NULL"
+	},
+	"startLesson" : { //dáta ktoré sa odošlu pri začiatku zdielanie
+		"conn_id" : "XXXX",
+		"less_id" : "XXXX",
+		"type" : "TYP PRIPOJENIA",
+		"limit" : 100, //limit kolko clientov je možné byť súčasne pripojených
+		"nick_name" : "defaultUserName",
+		"password" : "PASS",
+		"options" : {
+			"share" : {
+				"paints" : true,
+				"input" : true,
+				"creator" : true,
+				"layers" : true,
+				"objects" : true,
+			}
+		} 
+	},
+	"cookies" : {
+		"user_id" : "XXXX", //deprecated - toto zistí podla conn_id
+		"less_id" : "XXXX", //deprecated - toto zistí podla conn_id
+		"conn_id" : "XXXX",
+		"last_load" : "DATE",
+		"connection_time"
+	}
+}
