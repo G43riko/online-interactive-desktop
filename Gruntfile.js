@@ -7,25 +7,7 @@ module.exports = function(grunt){
 
 	var files = {
 		js : {
-			source : [],
-			final : 'build/scripts.min.js'
-		},
-		css : {
-			source : ["css/Components.css","css/Styles.css"],
-			final : 'build/styles.css'
-		},
-		sass : {
-			source : ["components/Components.scss", "css/Styles.scss"],
-			final : ['css/Components.css', "css/Styles.scss"]
-		}
-	}
-
-	var message = grunt.option("message") || "Drobné úpravy a fixy"
-
-	grunt.initConfig({
-		concat : {
-			js : {
-				src: [
+			source : [
 					"components/LayersViewer.js",
 					"components/ContextMenu.js",
 					"js/utils/logger.js",
@@ -79,6 +61,24 @@ module.exports = function(grunt){
 					"js/components/taskManager.js",
 					"js/components/formManager.js"
 				],
+			final : 'build/scripts.min.js'
+		},
+		css : {
+			source : ["css/Components.css","css/Styles.css"],
+			final : 'build/styles.css'
+		},
+		sass : {
+			source : ["components/Components.scss", "css/**/*.scss"],
+			final : ['css/Components.css', "css/Styles.scss"]
+		}
+	}
+
+	var message = grunt.option("message") || "Drobné úpravy a fixy"
+
+	grunt.initConfig({
+		concat : {
+			js : {
+				src: files.js.source,
 				dest: files.js.final
 			},
 			css : {
@@ -92,11 +92,11 @@ module.exports = function(grunt){
 					tasks : ["concat:js"]
 				},
 				sass : {
-					files : ["components/Components.scss", "css/**/*.scss"],
+					files : files.sass.sources,
 					tasks : ["sass"]//netreba volať concat lebo sa zavola watch kvoli zmene css suboru
 				},
 				css : {
-					files : ['css/Styles.css', 'css/Components.css'],
+					files : files.css.source,
 					tasks : ["concat:css"]
 				},
 				//TODO server files
@@ -161,7 +161,7 @@ module.exports = function(grunt){
 		jshint: {
 			options: {
 				curly: true, //aj 1 riadok musí byť ozatvorkovany
-				//eqeqeq: true, //2 = vs 3 =
+				eqeqeq: true, //2 = vs 3 =
 				eqnull: true, 
 				browser: true,
 				esversion: 6, //ES6

@@ -89,6 +89,11 @@
 			"radius" : 5
 		},
 		"rubber_color" : "gray",
+		"connector" : {
+			"color" : "brown",
+			"width" : 10,
+			"height" : 10
+		},
 		"selector" : {
 			"size" : 10,
 			"color" : "orange",

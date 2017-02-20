@@ -9,7 +9,8 @@ var express 		= require('express'),
 	serverLogs		= require('./js/utils/serverLogs'),
 	connection 		= require('./js/utils/connectionManager'),
 	RedisClient 	= require('./js/utils/RedisClient'),
-	client 			= new RedisClient.Redis(redis, config);
+	client 			= new RedisClient.Redis(redis, config),
+	glob			= {};
 
 var LogManager = function(){
 	this._messages = [];
@@ -23,7 +24,6 @@ var LogManager = function(){
 }
 
 var Logger = new LogManager();
-
 lessonsManager.init(utils, config.loopTime);
 
 connection.callLogInit(serverLogs.init);
@@ -64,12 +64,23 @@ app.post('/checkConnectionData', function(req, res){
 		checkConnectionRequest(JSON.parse(data.replace("content=", "")), res);
 	})
 });
+/*
+app.post('/getErrors', function(req, res){
+
+	client.getErrors(e => res.send(e));	
+});
+*/
+
+glob.getIp = function(request){
+	return request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+}
 
 app.post("/report", function(req){
 	Logger.log("bol prijatý report");
 	processPostData(req, function(data, req){
 		var data = JSON.parse(data.replace("content=", ""));
 		data.read = false;
+		data.ip = glob.getIp(req);
 		data.recieved = Date.now();
 		client.saveReport(JSON.stringify(data));
 	});
@@ -78,15 +89,17 @@ app.post("/report", function(req){
 app.post("/logError", function(req){
 	Logger.log("bol prijatý chybová správa");
 	processPostData(req, function(data, req){
-		client.saveError(data.replace("content=", ""));
+		client.saveError(data.replace("content=", ""), glob.getIp(req));
 	});
 });
+
+
 
 app.post("/anonymousData", function (request) {
 	Logger.log("boli prijaté anonymné dáta");
 	processPostData(request, function(data, req){
 		data = JSON.parse(data.replace("content=", ""));
-		data.ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+		data.ipAddress = glob.getIp(req);
 		data.connectedAt = data.connectedAt.replace("+", " ");
 		client.storeAnonymousData(data);
 		serverLogs.addAnonymData(data);
@@ -124,6 +137,8 @@ io.on('connection', function(socket){
 	FROM OVERVIEW
 	*******************/
 	socket.on("dataReqiere", dataReqiere);
+	socket.on("getErrors", getErrors);
+	socket.on("getReports", getReports);
 
 	/*******************
 	 FROM USER
@@ -292,7 +307,7 @@ function processPaintAction(data, user_id, less_id){
 	*/
 }
 
-var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect, action, mouseData, paintAction, chatMessage, dataReqiere, sendBuffer, createWatcher, initConnection;
+var startShare, startWatch, completeAuth, broadcastMsg, sendAllData, disconnect, action, mouseData, paintAction, chatMessage, dataReqiere, sendBuffer, createWatcher, initConnection, getErrors, getReports;
 
 initConnection = function(data){
 	/*****************
@@ -653,6 +668,14 @@ chatMessage = function(data){
 
 dataReqiere = function(data){
 	serverLogs.addOverviewSocket(this);
+};
+
+getErrors = function(data){
+	client.sendErrors(this);
+};
+
+getReports = function(data){
+	client.sendReports(this);
 };
 
 action = function(data){

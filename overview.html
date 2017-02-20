@@ -40,9 +40,9 @@
 	</style>
 </head>
 <body>
-	<table id="reportTable">
-	</table>
 	<table id="errorTable">
+	</table>
+	<table id="logTable">
 	</table>
 	<table id="logTable">
 	</table>
@@ -56,6 +56,13 @@
 		<table id="sharingTable">
 		</table>
 	</div>
+
+	<table id="reportTable" style="width:100%;">
+	</table>
+
+	<table id="errorsTable" style="width:100%;">
+	</table>
+
 
 	
 
@@ -226,34 +233,60 @@
 
 		function setLogData(data, struct){
 			var result = "<tr><th>Key</th><th>Value</th></tr>";
-			for(var i in struct)
+			for(var i in struct){
 				if(struct.hasOwnProperty(i)){
 					result += '<tr><td>' + struct[i].label + ': </td>';
 					result += '<td id="' + struct[i].key + '">' + data[struct[i].key] + '</td></tr>';
 				}
+			}	
 			logTable.innerHTML = result;
 		}
 
 		function getOrCreate(id){
 			var el = document.getElementById("msg_" + id);
-			if(!el)
+			if(!el){
 				logTable.innerHTML += '<tr><td>msg_' + id + ': </td><td id="msg_' + id + '"></td></tr>';
+			}
 			
 			return document.getElementById("msg_" + id);;
 		}
 
+		function setErrors(data){
+			var line, result = "<tr><th>Time</th><th>IP</th><th>MSG</th></tr>";
+			for(var i=0 ; i<data.length ; i++){
+				line = JSON.parse(data[i]);
+				line.msg = line.msg.replace(new RegExp(" at ", 'g'), "<br/>&nbsp;&nbsp;&nbsp;&nbsp\t\t at ");
+				result += "<tr><th>" + line.time + "</th><th>" + line.ip + "</th><th>" + line.msg + "</th></tr>";
+			}
+			document.getElementById("errorsTable").innerHTML = result;
+		};
+
+		function setReports(data){
+			var line, result = "<tr><th>Time</th><th>Name</th><th>IP</th><th>MSG</th></tr>";
+			for(var i=0 ; i<data.length ; i++){
+				line = JSON.parse(data[i]);
+				result += "<tr><th>" + line.time + "</th><th>" + line.name + "</th>";
+				result += "<th>" + line.ip + "</th><th>" + line.message + "</th></tr>";
+			}
+			document.getElementById("reportTable").innerHTML = result;
+		}
+
+
+
 		function setAnonymData(data, struct){
 			var string = "<tr>";
 
-			for(var i in struct)
-				if(struct.hasOwnProperty(i) && struct[i].visible)
+			for(var i in struct){
+				if(struct.hasOwnProperty(i) && struct[i].visible){
 					string += "<th>" + struct[i].label + "</th>";
+				}
+			}
 			string += "</tr>";
 
 			for(var i in data){
 				if(data.hasOwnProperty(i)){
 					string += "<tr>";
-					for(var j in struct)
+					for(var j in struct){
 						if(struct.hasOwnProperty(j) && struct[j].visible){
 							var d = data[i][struct[j].key];
 							if(d === 0 || d === false)
@@ -262,6 +295,7 @@
 								d = "Áno";
 							string += "<td>" + d + "</td>";
 						}
+					}
 					string += "</tr>";
 				}
 			}
@@ -272,18 +306,21 @@
 		function setSharingData(data, struct){
 			var string = "<tr>";
 
-			for(var i in struct)
-				if(struct.hasOwnProperty(i) && struct[i].visible)
+			for(var i in struct){
+				if(struct.hasOwnProperty(i) && struct[i].visible){
 					string += "<th>" + struct[i].label + "</th>";
+				}
+			}
 			string += "</tr>";
 
 			for(var i in data){
 				if(data.hasOwnProperty(i)){
 					string += "<tr>";
-					for(var j in struct)
+					for(var j in struct){
 						if(struct.hasOwnProperty(j) && struct[j].visible){
 							string += "<td>" + data[i][struct[j].key] + "</td>";
 						}
+					}
 					string += "</tr>";
 				}
 			}
@@ -293,15 +330,21 @@
 		socket.on("dataRecieve", function(msg){
 			console.log(msg);
 
-			for(var i in msg.messages)
-				if(msg.messages.hasOwnProperty(i))
+			for(var i in msg.messages){
+				if(msg.messages.hasOwnProperty(i)){
 					getOrCreate(i).innerHTML = msg.messages[i].count;
+				}
+			}
 
 			setLogData(msg.logs, obj);
 			setAnonymData(msg.anonym, obj2);
 			setSharingData(msg.connections, sharing);
-		})
+		});
+		socket.on("sendErrors", setErrors);
+		socket.on("sendReports", setReports);
 		socket.emit('dataReqiere', JSON.stringify({user:"user",passw: "user"}));
+		socket.emit('getErrors', JSON.stringify({user:"user",passw: "user"}));
+		socket.emit('getReports', JSON.stringify({user:"user",passw: "user"}));
 	</script>
 </body>
 </html>

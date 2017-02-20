@@ -50,14 +50,26 @@ module.exports.Redis.prototype._createNewUser = function(data){
 	});
 };
 
+module.exports.Redis.prototype.sendErrors = function(socket){
+	this._client.smembers('errors', function(err, reply) {
+		socket.emit("sendErrors", reply);
+	});
+};
 
-module.exports.Redis.prototype.saveError = function(data){
-	this._client.sadd(["errors", data]);
+module.exports.Redis.prototype.sendReports = function(socket){
+	this._client.smembers('reports', function(err, reply) {
+		socket.emit("sendReports", reply);
+	});
+};
+
+module.exports.Redis.prototype.saveError = function(data, ip){
+	var jsonData = JSON.parse(data);
+	jsonData.ip = ip;
+	this._client.sadd(["errors", JSON.stringify(jsonData)]);
 };
 module.exports.Redis.prototype.saveReport = function(data){
 	this._client.sadd(["reports", data]);
 };
-
 
 module.exports.Redis.prototype._updateUser = function(data){
 	this._client.hincrby('user_' + data.user_id, "connection_number", 1);

@@ -249,7 +249,7 @@ var isUndefined 	= e => typeof e === KEYWORD_UNDEFINED,
 	angleBetween 	= (a, b) => Math.atan2(b.y, b.x) - Math.atan2(a.y, a.x),
 	getClassOf 		= Function.prototype.call.bind(Object.prototype.toString),
 	nvl				= (obj1, obj2) => obj1 ? obj1 : obj2,
-	getLastElement	= (el) => isArray(el) && el.length ? el[el.length - 1] : false,
+	getLastElement	= el => isArray(el) && el.length ? el[el.length - 1] : false,
 	round 			= (num, val = DEFAULT_ROUND_VAL) => val === 1 ? num : Math.floor(num / val) * val;
 
 
@@ -313,16 +313,6 @@ glob.loadPage = function(url){
 glob.eachFiltered = function(obj, func1, func2, thisArg = false){
 	each(obj, (e, i, arr) => func1(e, i, arr) && func2(e, i, arr), thisArg);
 };
-
-/*
-function extendObject(){
-	for(var i=1; i<arguments.length; i++)
-		for(var key in arguments[i])
-			if(arguments[i].hasOwnProperty(key))
-				arguments[0][key] = arguments[i][key];
-	return arguments[0];
-}
-*/
 
 var Movement = {
 	move: function(o, x, y, moveChildrens = true){
@@ -531,7 +521,7 @@ glob.rectRectCollision = function(minA, sizeA, minB, sizeB){
 
 function objectToArray(obj){
 	var result = [];
-	each(obj, e => result.push(e));
+	each(obj, e => result[result.length] = e);
 	return result;
 }
 
@@ -551,15 +541,15 @@ function drawConnector(vec, obj, ctx){
 	doArc({
 		x: obj.position.x + vec.x,
 		y: obj.position.y + vec.y,
-		fillColor: "brown",
+		fillColor: CONNECTOR_COLOR,
 		center: true,
-		width: 10,
-		height: 10,
+		width: CONNECTOR_WIDTH,
+		height: CONNECTOR_HEIGHT,
 		ctx: ctx
 	});
 }
 
-function drawSelectArc(ctx, x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE << 1 	, dots = true){
+function drawSelectArc(ctx, x, y, color = SELECTOR_COLOR, size = SELECTOR_SIZE << 1, dots = true){
 	doArc({
 		x: x,
 		y: y,

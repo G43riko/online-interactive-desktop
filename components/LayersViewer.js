@@ -312,6 +312,7 @@ class LayersViewer{
 			for(var i in this._layers){
 				if(i !== title && this._layers.hasOwnProperty(i)){
 					this._layers[i].div.addClass("selected");
+					this.selectedLayer = this._layers[i].title;
 					break;
 				}
 			}

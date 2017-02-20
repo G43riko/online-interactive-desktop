@@ -42,7 +42,7 @@ class ConnectionManager{
 		$.post("/create", {content: JSON.stringify({meno:PROJECT_AUTHOR})}, data => {
 			this._user_id = data.cookies[CONN_KEY_USER_ID];
 		}, "json");
-		console.error("query:", glob.queryString());
+		//console.error("query:", glob.queryString());
 		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 

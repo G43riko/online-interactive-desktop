@@ -86,6 +86,7 @@ class Line extends Entity{
 
 		if(this._startText !== null){
 			var final = this._points[this._points.length - 1].getClone();
+			//var final = G.last(this._points).getClone();
 			var semiFinal = this._points[this._points.length - 2].getClone();
 			var vector = semiFinal.sub(final).normalize();
 			var angle = this._startText.angle;
@@ -190,6 +191,7 @@ class Line extends Entity{
 
 	updateCreatingPosition(pos){
 		this._points[this._points.length - 1].set(pos);
+		//G.last(this._points).set(pos);
 		Entity.findMinAndMax(this._points, this.position, this.size);
 	}
 
@@ -260,6 +262,7 @@ class Line extends Entity{
 
 		if(isObject(this._startText) && this._startText !== null){
 			var final = this._points[this._points.length - 1].getClone();
+			//var final = G.last(this._points).getClone();
 			var semiFinal = this._points[this._points.length - 2].getClone();
 			var vector = semiFinal.sub(final).normalize();
 			var angle = this._startText.angle;
