@@ -43,7 +43,7 @@ class OptionsManager{
 		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 	_processAndSetValueIfExistById(id, val, attr, value){
-		var e = document.getElementById(id);
+        let e = document.getElementById(id);
 		if(e){
 			e[attr] = value;
 			e.onchange = ee => this.setOpt(val, ee.target[attr], false);
@@ -84,9 +84,9 @@ class OptionsManager{
 	}
 
 	setOpt(key, val, setElement = true){
-		var obj = this._options[key];
+        let obj = this._options[key];
 		if(setElement){
-			var e = document.getElementById(obj.id);
+            let e = document.getElementById(obj.id);
 			if(e){
 				e[obj.attr] = val;
 			}

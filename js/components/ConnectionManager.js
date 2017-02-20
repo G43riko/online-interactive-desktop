@@ -153,7 +153,7 @@ class ConnectionManager{
 	}
 
 	getAutoConnectLink(){
-		var result = URL_CHAT + "/app#abcdefghijk?less_id=" + this._less_id;
+		let result = URL_CHAT + "/app#abcdefghijk?less_id=" + this._less_id;
 	}
 
 	pdraw(ctx){
@@ -202,7 +202,7 @@ class ConnectionManager{
 	 }
 	 
 	_processStack(data){
-		var toto = Project.connection;
+		let toto = Project.connection;
 		Logger.log("prijaty buffer po: " + (Date.now() - toto._messageTime), LOGGER_STACK_RECIEVED);
 		toto._messageTime = Date.now();
 	 	each(data.buffer, e => {
@@ -249,7 +249,7 @@ class ConnectionManager{
 		if(this._buffer.length === 0){
 			return false;
 		}
-		var result = {
+        let result = {
 			buffer: this._buffer, 
 			user_id: this._user_id
 		};
@@ -300,7 +300,7 @@ class ConnectionManager{
 			return;
 		}
 
-		var data = {
+        let data = {
 			key: key,
 			value: value
 		};
@@ -311,7 +311,7 @@ class ConnectionManager{
 		if(!this._socket || !this._shareLayers || this.watching){
 			return;
 		}
-		var data = {
+        let data = {
 			action: type
 		};
 
@@ -343,7 +343,7 @@ class ConnectionManager{
 		if(!this._socket || !this._shareObjects || this.watching){
 			return;
 		}
-		var data = {
+        let data = {
 			action: type,
 			user_name : this._user_name
 		};
@@ -387,7 +387,7 @@ class ConnectionManager{
 			return false;
 		}
 
-		var data = {
+        let data = {
 			type: type
 		};
 
@@ -421,7 +421,7 @@ class ConnectionManager{
 			return false;
 		}
 
-		var data = {
+        let data = {
 			action: type,
 			user_name : this._user_name
 		};
@@ -470,8 +470,8 @@ class ConnectionManager{
 class Handler{
 	static processUserDisconnect(inst, data){
 		Logger.write(getMessage(MSG_USER_DISCONNECT, data[CONN_KEY_USER_NAME], data[CONN_KEY_USER_ID]));
-		
-		var user = inst._connectedUsers[data[CONN_KEY_USER_ID]];
+
+        let user = inst._connectedUsers[data[CONN_KEY_USER_ID]];
 		if(user){
 			user.status = STATUS_DISCONNECTED;
 			lastConnectionTime = Date.now();
@@ -496,7 +496,7 @@ class Handler{
 
 	static processRequireAllData(inst, data){
 		//console.log("prijal som žiadosť o všetky udaje pre " + data[CONN_KEY_TARGET]);
-		var result = {};
+        let result = {};
 		if(inst._type === CONN_KEY_SHARE){
 			result = {
 				msg: Project.toObject({options: false}),
@@ -528,8 +528,8 @@ class Handler{
 	static processSendAllData(inst, data){
 		//console.log("prijal som všetky udaje ");
 		if(inst._type == CONN_KEY_WATCH){//chce udaje všetko dostupné o 1 používatelovi
-			var shareOptions = data.shareOptions;
-			var watchOptions = data.watchOptions;
+            let shareOptions = data.shareOptions;
+            let watchOptions = data.watchOptions;
 
 			if(shareOptions.share.objects){
 				Project.scene.fromObject(data.scene);
@@ -576,7 +576,7 @@ class Handler{
 	}
 
 	static processObjectAction(data, type){
-		var obj, layer = type === "teach" ? data.user_name : data.oL;
+        let obj, layer = type === "teach" ? data.user_name : data.oL;
 		switch(data.action){
 			case ACTION_OBJECT_MOVE:
 				obj = Project.scene.getObject(layer, data.oId);
@@ -601,7 +601,7 @@ class Handler{
 	}
 
 	static processLayerAction(data){
-		var layer = Project.scene.getLayer(data[CONN_KEY_TITLE]);
+        let layer = Project.scene.getLayer(data[CONN_KEY_TITLE]);
 		switch(data.action){
 			case ACTION_LAYER_CREATE :
 				if(!layer){
@@ -632,7 +632,7 @@ class Handler{
 	}
 
 	static processPaintAction(data, type){
-		var layer = data[CONN_KEY_LAYER];
+        let layer = data[CONN_KEY_LAYER];
 		if(type === CONN_KEY_TEACH){
 			layer = data[CONN_KEY_USER_NAME];
 		}

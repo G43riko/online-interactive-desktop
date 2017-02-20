@@ -9,8 +9,8 @@ const MAIN_CANVAS       = "mainCanvas";
 class CanvasManager{
     constructor(sizeX, sizeY){
 
-        this._sizeX = sizeX;
-        this._sizeY = sizeY;
+        //this._sizeX = sizeX;
+        //this._sizeY = sizeY;
         this._canvases = {};
         this._canvases[MAIN_CANVAS] = new CanvasHandler("myCanvas", sizeX, sizeY);
         this._canvasCounter = 1;
@@ -56,7 +56,7 @@ class CanvasManager{
 
 
 glob.drawGrid = function(width = GRID_WIDTH, dist = GRID_DIST, nthBold = GRID_NTH_BOLD, c = GRID_COLOR){
-    var pointsNormal = [],
+    let pointsNormal = [],
         pointsBold = [],
         boldCounter = 0,
         i;
@@ -101,15 +101,15 @@ function doPolygon(obj){
         Logger.error(getMessage(MSG_TRY_DRAW_EMPTY_POLYGON));
     }
 
-    var res = G.extend(glob._initDef(obj), obj),
+    let res = G.extend(glob._initDef(obj), obj),
         offX = obj.offset ? obj.offset.x : 0,
         offY = obj.offset ? obj.offset.y : 0;
 
 
     res.ctx.beginPath();
 
-    var drawLines = function(points){
-        var size = points.length;
+    let drawLines = function(points){
+        let size = points.length;
 
         if(res.radius === 0 || isNaN(res.radius)){
             each(points, (e, i) => {
@@ -123,7 +123,7 @@ function doPolygon(obj){
         }
         else{
             each(points, (e, i) => {
-                var v1, l1,
+                let v1, l1,
                     v2 = e.getClone().sub(points[size - 1]),
                     l2 = v2.getLength();
                 v2.div(l2);
@@ -179,7 +179,7 @@ function doPolygon(obj){
 }
 
 function doArc(obj){
-    var res = glob._remakePosAndSize(glob._checkPosAndSize(obj, "Arc"), obj);
+    let res = glob._remakePosAndSize(glob._checkPosAndSize(obj, "Arc"), obj);
 
     res.ctx.beginPath();
     if(typeof res.ctx.ellipse === "function"){
@@ -203,7 +203,7 @@ function doArc(obj){
 
 
 function doRect(obj){
-    var def = glob._checkPosAndSize(obj, OBJECT_RECT);
+    let def = glob._checkPosAndSize(obj, OBJECT_RECT);
 
     if(isDefined(obj[ATTRIBUTE_RADIUS])){
         if(isNumber(obj[ATTRIBUTE_RADIUS])){
@@ -218,7 +218,7 @@ function doRect(obj){
         }
     }
 
-    var res = glob._remakePosAndSize(def, obj);
+    let res = glob._remakePosAndSize(def, obj);
 
     res.ctx.beginPath();
     res.ctx.moveTo(res.x + res[ATTRIBUTE_RADIUS].tl, 
@@ -261,13 +261,13 @@ function doLine(obj){
         Logger.error(getMessage(MSG_TRY_DRAW_ONE_POINT_LINE));
     }
 
-    var res = $.extend(glob._initDef(obj), obj),//TODOD nefunguje G.extend
+    let res = $.extend(glob._initDef(obj), obj),//TODOD nefunguje G.extend
         offX = obj.offset ? obj.offset.x : 0,
         offY = obj.offset ? obj.offset.y : 0,
         v1, v2, l1, l2;
     res.ctx.beginPath();
 
-    var drawLines = function(points){
+    let drawLines = function(points){
         if(isNaN(points[0])){
             if(res.radius === 0 || isNaN(res.radius)){
                 each(points, (e, i) => {
@@ -323,7 +323,7 @@ function doLine(obj){
     _process(res);
 }
 function drawQuadraticCurve(param){
-    var points = param.points,
+    let points = param.points,
         borderWidth = param.borderWidth || DEFAULT_BORDER_WIDTH,
         borderColor = param.borderColor || DEFAUL_BORDER_COLOR,
         ctx = param.ctx || Project.context;
@@ -432,7 +432,7 @@ function calcTextWidth(value, font = false){
  */
 
 glob._initDef = function(obj){
-    var def = {
+    let def = {
         borderWidth : DEFAULT_BORDER_WIDTH,
         borderColor : DEFAULT_BORDER_COLOR,
         ctx : context,
@@ -472,7 +472,7 @@ glob._checkPosAndSize = function(obj, name){
 };
 
 glob._remakePosAndSize = function(def, obj){
-    var res = G.extend(def, obj);
+    let res = G.extend(def, obj);
 
     if(isDefined(res.size)){
         if(isNumber(res.size)){

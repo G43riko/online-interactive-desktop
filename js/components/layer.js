@@ -47,7 +47,7 @@ class Layer{
 		if(this._paint && !this._paint.isEmpty()){
 			return false;
 		}
-		for(var i in this._objects){
+		for(let i in this._objects){
 			if(this._objects.hasOwnProperty(i)){
 				return false;
 			}
@@ -60,7 +60,7 @@ class Layer{
 	set objects(val){this._objects = val;}
 	set title(val){this._title = val;}
 	set locked(val){
-		this._locked = val === true ? true : false;
+		this._locked = val === true;
 	}
 
 	cleanUp(){

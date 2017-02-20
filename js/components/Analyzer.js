@@ -6,7 +6,7 @@
 class Analyzer{
 	constructor(url){
 		this._url = url;
-		this._browserData = this._analyzeWindow(this._analyzeBrowser());
+		this._browserData = Analyzer._analyzeWindow(this._analyzeBrowser());
 		
 		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
@@ -23,7 +23,7 @@ class Analyzer{
 	}
 
 	_sendAnonymousData(data = {}){
-		var sendData = c =>	$.post(this._url, {
+		let sendData = c =>	$.post(this._url, {
 			content: JSON.stringify(c)
 		}).fail(() => Logger.warn(getMessage(MSG_ANNONYM_FAILED)));
 
@@ -49,7 +49,7 @@ class Analyzer{
 		sendData(data);
 	}
 
-	_analyzeWindow(data){
+	static _analyzeWindow(data){
 		data.userAgent		= navigator.userAgent;
 		data.language		= navigator.language;
 		data.platform		= navigator.platform;
@@ -83,7 +83,7 @@ class Analyzer{
 		 *		s = Undetected mobile device running Safari
 		 *		1 = Undetected mobile device
 		 */
-		var e = navigator.userAgent;
+		let e = navigator.userAgent;
 		return {
 			browser: /Edge\/\d+/.test(e) ? 'ed' : /MSIE 9/.test(e) ? 'ie9' : /MSIE 10/.test(e) ? 'ie10' : /MSIE 11/.test(e) ? 'ie11' : /MSIE\s\d/.test(e) ? 'ie?' : /rv\:11/.test(e) ? 'ie11' : /Firefox\W\d/.test(e) ? 'ff' : /Chrom(e|ium)\W\d|CriOS\W\d/.test(e) ? 'gc' : /\bSafari\W\d/.test(e) ? 'sa' : /\bOpera\W\d/.test(e) ? 'op' : /\bOPR\W\d/i.test(e) ? 'op' : typeof MSPointerEvent !== 'undefined' ? 'ie?' : '',
 			os: /Windows NT 10/.test(e) ? "win10" : /Windows NT 6\.0/.test(e) ? "winvista" : /Windows NT 6\.1/.test(e) ? "win7" : /Windows NT 6\.\d/.test(e) ? "win8" : /Windows NT 5\.1/.test(e) ? "winxp" : /Windows NT [1-5]\./.test(e) ? "winnt" : /Mac/.test(e) ? "mac" : /Linux/.test(e) ? "linux" : /X11/.test(e) ? "nix" : "",

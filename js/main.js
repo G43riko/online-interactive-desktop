@@ -4,7 +4,7 @@
 
 glob.initTime	= Date.now();
 
-var movedObject 	= false,
+let movedObject 	= false,
 	Logger 			= new LogManager(),//samostatne lebo loguje aj Projekt preto nie v ňom
 	Project			= new ProjectManager(PROJECT_AUTHOR),
 	Scene 			= Project.scene,
@@ -53,7 +53,7 @@ glob.setUpComponents = function(){
 	};
 };
 
-var Components = {
+let Components = {
 	draw	: () => isDefined(components) && isDefined(components.draw) && components.draw === true,
 	share	: () => isDefined(components) && isDefined(components.share) && components.share === true,
 	watch	: () => isDefined(components) && isDefined(components.watch) && components.watch === true,
@@ -94,8 +94,8 @@ function ajax(url, options, dataType){
 	options.method = options.method || "GET";
 	options.async = options.async || true;
 
-	var start = 0;
-	var xhttp = window.XMLHttpRequest ?  new XMLHttpRequest() :  new ActiveXObject("Microsoft.XMLHTTP");
+    let start = 0;
+    let xhttp = window.XMLHttpRequest ?  new XMLHttpRequest() :  new ActiveXObject("Microsoft.XMLHTTP");
 
 	if(isFunction(options.abort)){
 		xhttp.onabort = options.abort;
@@ -169,7 +169,7 @@ glob.init = function(){
 
 
 
-	var methods = {
+    let methods = {
 		getArea: {
 			name: "getArea",
 			retType: KEYWORD_NUMBER,
@@ -184,7 +184,7 @@ glob.init = function(){
 		}
 	};
 
-	var attrs = {
+    let attrs = {
 		x : {
 			name: "x",
 			access: ACCESS_PROTECTED,
@@ -222,7 +222,7 @@ function setVisibilityData(data){
 
 ajax(FOLDER_JSON + "/forms.json", data => {
 	Project.setForm(data);
-	var formList = {
+    let formList = {
 		shareForm 	: "sharingForm",
 		optionsForm : "optionsForm",
 		watchForm 	: "watchForm",
@@ -230,7 +230,7 @@ ajax(FOLDER_JSON + "/forms.json", data => {
 		saveForm 	: "saveImgForm"
 	};
 	each(formList, function(e, i){
-		var form = document.getElementById(i);
+        let form = document.getElementById(i);
 		if(form){
 			form.appendChild(Project.form.createForm(e));
 		}
@@ -303,7 +303,7 @@ glob.loading = function(){
 
 		Layers = new LayersViewer({element: G.byId("layerViewerPlaceholder"), visible: Components.layers()});
 		//Project.scene.addToScene(Layers, "rightMenu");
-		var xOffset = Project.topMenu.position.x + (Project.topMenu.size.x + MENU_OFFSET) * Project.topMenu.visibleElements - MENU_OFFSET;
+        let xOffset = Project.topMenu.position.x + (Project.topMenu.size.x + MENU_OFFSET) * Project.topMenu.visibleElements - MENU_OFFSET;
 		Creator.view = new CreatorViewer(new GVector2f(Project.topMenu.visible ? xOffset : MENU_OFFSET, Project.topMenu.position.y - MENU_OFFSET));
 
 		console.log("stranka sa nacítala za: ", (Date.now() - glob.initTime) + " ms");
@@ -312,7 +312,7 @@ glob.loading = function(){
 
 
 		if(ASK_FOR_RESTORE_DATA && localStorage.hasOwnProperty(RESTORE_KEY)){
-			var data = JSON.parse(localStorage.getItem(RESTORE_KEY));
+            let data = JSON.parse(localStorage.getItem(RESTORE_KEY));
 			if(Date.now() - data.unloadTime < LIMIT_MAXIMUM_LOCAL_DATA_TIME){
 				if(confirm(getMessage(MSG_LOAD_OLD_PROJECT))){
 					Project.fromObject(data);

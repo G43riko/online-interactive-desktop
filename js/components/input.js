@@ -136,7 +136,7 @@ class InputManager{
 			e.target.addEventListener("touchmove", ee => {
 				ee.preventDefault();
 				Input._mouseMove({offsetX: this._lastTouch.x, offsetY: this._lastTouch.y});
-				var mov = glob.getMousePos(target, ee);
+                let mov = glob.getMousePos(target, ee);
 				mov.x -=  this._lastTouch.x;
 				mov.y -=  this._lastTouch.y;
 				this._lastTouch = glob.getMousePos(target, ee);
@@ -232,7 +232,7 @@ class InputManager{
 	}
 
 	_allButtonsUp(){
-		for(var i in this._buttons){
+		for(let i in this._buttons){
 			this._buttons[i] = false;
 		}
 	}

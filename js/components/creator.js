@@ -79,12 +79,12 @@ class objectCreator{
 		}
 	}
 
-
-	/**
-	 * Vytvorí dočasný objekt ktorý sa má vytvoriť a uloží sa do Creatora
+    /**
+     * Vytvorí dočasný objekt ktorý sa má vytvoriť a uloží sa do Creatora
 	 *
-	 * @param position - pozícia kde sa má objaviť objekt
-	 */
+     * @param position - pozícia kde sa má objaviť objekt
+     * @param target
+     */
 	createObject(position, target = null){
 		switch(this._operation){
 			case OPERATION_DRAW_RECT:
@@ -173,7 +173,7 @@ class objectCreator{
 	 * Uloží Creator to jedného objektu
 	 */
 	toObject(){
-		var result = {};
+		let result = {};
 		each(this, (e, i) => result[i] = e);
 		return result;
 	}
@@ -200,7 +200,7 @@ class objectCreator{
 	 * @returns {obj} - vráci novo vytvorený objekt alebo NULL ak sa vytvorenie nepodarí
 	 */
 	create(obj){
-		var result = Entity.create(obj, false);
+		let result = Entity.create(obj, false);
 		if(result){
 			//console.log("pridava sa nový objekt do vrstvy ", result.layer, result, obj);
 			Project.scene.addToScene(result, result.layer, false);
@@ -232,7 +232,7 @@ class objectCreator{
 			return false;
 		}
 
-		var redrawPaint = isIn(key, "_brushColor", "_brushSize", "_brushType") && this[key] != val;
+		let redrawPaint = isIn(key, "_brushColor", "_brushSize", "_brushType") && this[key] != val;
 
 		this[key] = val;
 
@@ -280,6 +280,7 @@ class objectCreator{
 	 *
 	 * @param x
 	 * @param y
+	 * @param doAct = true
 	 * @returns {*} - vráti TRUE alebo FALSE
 	 */
 	clickIn(x, y, doAct = true){

@@ -90,15 +90,15 @@
 			</ul>
 		</nav>
 <script type="application/javascript">
-	var glob = {};
+	let glob = {};
 	try{
 		G.ajax("js/json/config_user.json", function(data){
 			try{
-				var tryStart = function(){
+                let tryStart = function(){
 					setTimeout(function(){
 						typeof glob !== "object" || typeof glob.loading !== "function" ? tryStart() : glob.loading();
 					}, 10);
-				}
+				};
 				
 				
 				ConfigManager.setConstants(data.config);
@@ -106,17 +106,17 @@
 				ConfigManager.setConstants(data.environmentOptions);
 				ConfigManager.setConstants(data.constants);
 
-				var tag = document.createElement('script');
+                let tag = document.createElement('script');
 				tag.src = "build/scripts.min.js";
-				var firstScriptTag = document.getElementsByTagName('script')[0];
+                let firstScriptTag = document.getElementsByTagName('script')[0];
 				firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 				tryStart();
 				glob.sendMessage = function(){
 					//alert("jupiiii");
 					glob.closeReport();
-				}
+				};
 				glob.closeReport = function(){
-					var text = G("#reportWrapper .content").first().value;
+                    let text = G("#reportWrapper .content").first().value;
 					if(text.length === 0){
 						Logger.warn("Nieje možné odoslať prázdnu správu");
 					}

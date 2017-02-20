@@ -14,7 +14,7 @@ class SceneManager{
 	}
 
 	isEmpty(){
-		for(var i in this._layers){
+		for(let i in this._layers){
 			if(this._layers.hasOwnProperty(i) && !this._layers[i].isEmpty()){
 				return false;
 			}
@@ -23,14 +23,14 @@ class SceneManager{
 	}
 
 	mouseUp(x, y){
-		var counter = 0;
-		var viewer = new Arc(new GVector2f(x, y), new GVector2f());
+        let counter = 0;
+        let viewer = new Arc(new GVector2f(x, y), new GVector2f());
 		Entity.changeAttr(viewer, {
 			"fill" : false,
 			"borderColor" : CLICK_COLOR
 		});
 		this._clickViewers[this._clickViewers.length] = viewer;
-		var interval = setInterval(() => {
+        let interval = setInterval(() => {
 			viewer.position.sub(CLICK_SPEED);
 			viewer.size.add(CLICK_SPEED * 2);
 			if(++counter == CLICK_LIMIT){
@@ -42,15 +42,15 @@ class SceneManager{
 		}, 1000 / FPS);
 	}
 	mouseDown(x, y){
-		var counter = 0;
-		var viewer = new Arc(new GVector2f(x, y).sub(CLICK_SPEED*CLICK_LIMIT), 
+        let counter = 0;
+        let viewer = new Arc(new GVector2f(x, y).sub(CLICK_SPEED*CLICK_LIMIT),
 							 new GVector2f(CLICK_SPEED * 2 * CLICK_LIMIT));
 		Entity.changeAttr(viewer, {
 			"fill" : false,
 			"borderColor" : CLICK_COLOR
 		});
 		this._clickViewers[this._clickViewers.length] = viewer;
-		var interval = setInterval(() => {
+        let interval = setInterval(() => {
 			viewer.position.add(CLICK_SPEED);
 			viewer.size.sub(CLICK_SPEED * 2);
 			if(++counter == CLICK_LIMIT){
@@ -147,9 +147,9 @@ class SceneManager{
 	}
 
 	changeLayer(object, newLayer){
-		var layer = Project.scene.getLayer(newLayer);
+        let layer = Project.scene.getLayer(newLayer);
 		if(layer){
-			var oldLayer = object.layer;
+            let oldLayer = object.layer;
 			layer.add(object);
 			Entity.changeAttr(object, "layer", newLayer);
 			Project.scene.getLayer(oldLayer).remove(object);
@@ -177,9 +177,12 @@ class SceneManager{
 							if(e.taskResult){
 								data.results[e.id] = e.text;
 								e.text = "";
-								for(var i in data.results[e.id]){
+								each(data.results[e.id], () => e.text += " ");
+								/*
+								for(let i in data.results[e.id]){
 									e.text += " ";
 								}
+								*/
 							}
 						}
 						data.content[data.content.length] = e;
@@ -189,7 +192,7 @@ class SceneManager{
 		});
 
 		//TODO treba nejako posielať zadanie
-		var findAssignment = true;
+		let findAssignment = true;
 
 		//preloopuje vrstvy
 			//preskočí neviditelne
@@ -251,9 +254,12 @@ class SceneManager{
 	}
 
 	pdraw(ctx){
+		each(this._clickViewers, e => e.draw(ctx));
+		/*
 		for(var i=0 ; i<this._clickViewers.length ; i++){
 			this._clickViewers[i].draw(ctx);
 		}
+		*/
 	}
 
 	draw(){
@@ -289,7 +295,7 @@ class SceneManager{
 	}
 
 	toObject(){
-		var result = [];
+		let result = [];
 		each(this._layers, e => e.forEach(function(ee){//pre každu vrstvu prejde všetkými objektami
 			if(ee.name != "LayerViewer"){
 				result[result.length] = ee;

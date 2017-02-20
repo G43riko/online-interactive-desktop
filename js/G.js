@@ -9,7 +9,7 @@
 var G = function(){
 	//ak sa nevolá ako konštruktor
 	if(!(this instanceof G)){
-		var inst = Object.create(G.prototype);
+		let inst = Object.create(G.prototype);
 		G.apply(inst, arguments);
 		return inst;
 	}
@@ -53,7 +53,7 @@ var G = function(){
 };
 
 
-var tests = function(G){
+let tests = function(G){
 	var body = new G(document.body);
 
 	body.append(G.createElement("div", {id: "idecko"}, "id"));

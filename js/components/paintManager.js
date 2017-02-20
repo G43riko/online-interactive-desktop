@@ -33,7 +33,7 @@ class PaintManager{
 	 */
 	addPoint(position, activeLayerName = Layers.activeLayerName){
 		Events.paintAddPoint(position, activeLayerName);
-		var layer = Scene.getLayer(activeLayerName);
+        let layer = Scene.getLayer(activeLayerName);
 		if(layer){
 			layer.paint.addPoint(position);
 		}
@@ -68,7 +68,7 @@ class PaintManager{
 	 */
 	fromObject(content){
 		each(content, (e, i) =>	{
-			var layer = Scene.getLayer(i);
+            let layer = Scene.getLayer(i);
 			if(!layer){
 				layer = Scene.createLayer(i);
 			}
@@ -78,7 +78,7 @@ class PaintManager{
 
 
 	fromObjectToSingleLayer(title, content){
-		var layer = Scene.getLayer(title);
+        let layer = Scene.getLayer(title);
 		each(content, e => layer.paint.fromObject(e, true));
 	}
 
@@ -88,7 +88,7 @@ class PaintManager{
 	 * @returns {{}} - objekt obsahujúci všetky malby
 	 */
 	toObject(){
-		var result = {};
+        let result = {};
 
 		each(Scene.layers, e => result[e.title] = e.paint.toObject());
 		return result;
@@ -111,7 +111,7 @@ class PaintManager{
 	breakLine(activeLayerName = Layers.activeLayerName){
 		this._paintHistory[this._paintHistory.length] = activeLayerName;
 		this._undoHistory = [];
-		var newPath = Scene.getLayer(activeLayerName).paint.breakLine();
+        let newPath = Scene.getLayer(activeLayerName).paint.breakLine();
 		Events.paintBreakLine(activeLayerName);
 		//Events.paintAddPath(activeLayerName, newPath);
 
@@ -124,7 +124,7 @@ class PaintManager{
 	 * @param title - názov súboru s štetcom
 	 */
 	addBrush(title){
-		var img = new Image();
+        let img = new Image();
 		img.src = FOLDER_IMAGE + "/" + title;
 		this._brushes[title] = img;
 
@@ -142,7 +142,7 @@ class PaintManager{
 	 * @param col - farba štetca
 	 */
 	rePaintImage(size, col){
-		var c = document.createElement('canvas'),
+        let c = document.createElement('canvas'),
 			ctx, imgData, data, color, i;
 		c.width = size;
 		c.height = size;
@@ -171,7 +171,7 @@ class PaintManager{
 
 	//drawLine(ctx, pointA, pointB, brushSize, brushColor, action, brushType){
 	drawLine(param){
-		var ctx 		= param.ctx || Project.context,
+        let ctx 		= param.ctx || Project.context,
 			pointA 		= param.pointA,
 			pointB 		= param.pointB,
 			points 		= param.points,
@@ -190,14 +190,14 @@ class PaintManager{
 			ctx.stroke();
 		}
 		else if(action === PAINT_ACTION_BRUSH){
-			var dist 	= pointA.dist(pointB),
+            let dist 	= pointA.dist(pointB),
 				angle 	= Math.atan2(pointA.x - pointB.x, pointA.y - pointB.y);
 
 			Creator.setOpt("brushColor", brushColor);
 			Creator.setOpt("brushSize",	brushSize);
 			Creator.setOpt("brushType", brushType);
 
-			for (var i = 0; i < dist; i++){
+			for (let i = 0; i < dist; i++){
 				ctx.drawImage(Paints.selectedBrush,
 					pointB.x + (Math.sin(angle) * i) - (brushSize >> 1),
 					pointB.y + (Math.cos(angle) * i) - (brushSize >> 1),
@@ -206,7 +206,7 @@ class PaintManager{
 			}
 		}
 		else if(action === PAINT_ACTION_FUR){
-			var limit = 2000,
+            let limit = 2000,
 				offset = 0.5;
 			ctx.strokeStyle = brushColor;
 			ctx.lineWidth 	= 1;
@@ -215,10 +215,10 @@ class PaintManager{
 			ctx.moveTo(pointB.x, pointB.y);
 			ctx.lineTo(pointA.x, pointA.y);
 
-			for (var i = 0; i < points.length; i++) {
-				var dx = points[i].x - pointB.x;
-				var dy = points[i].y - pointB.y;
-				var d = dx * dx + dy * dy;
+			for (let i = 0; i < points.length; i++) {
+                let dx = points[i].x - pointB.x;
+                let dy = points[i].y - pointB.y;
+                let d = dx * dx + dy * dy;
 
 				if (d < limit && Math.random() > d / limit) {
 					ctx.moveTo(pointB.x + (dx * offset), pointB.y + (dy * offset));
@@ -229,7 +229,7 @@ class PaintManager{
 			ctx.stroke();
 		}
 		else if(action === PAINT_ACTION_NEIGHBOR){
-			var limit = 1000,
+            let limit = 1000,
 				offset = 0.2;
 			ctx.strokeStyle = brushColor;
 			ctx.lineWidth 	= 1;
@@ -238,10 +238,10 @@ class PaintManager{
 			ctx.moveTo(pointB.x, pointB.y);
 			ctx.lineTo(pointA.x, pointA.y);
 
-			for (var i = 0, len = points.length; i < len; i++) {
-				var dx = points[i].x - pointB.x;
-				var dy = points[i].y - pointB.y;
-				var d = dx * dx + dy * dy;
+			for (let i = 0, len = points.length; i < len; i++) {
+                let dx = points[i].x - pointB.x;
+                let dy = points[i].y - pointB.y;
+                let d = dx * dx + dy * dy;
 
 				if (d < limit) {
 					ctx.moveTo( pointB.x + (dx * offset), pointB.y + (dy * offset));
@@ -256,7 +256,7 @@ class PaintManager{
 		if(this._paintHistory.length === 0){
 			return false;
 		}
-		var layer = this._paintHistory.pop();
+        let layer = this._paintHistory.pop();
 
 		Scene.getLayer(layer).paint.undo();
 		this._undoHistory[this._undoHistory.length] = layer;
@@ -272,7 +272,7 @@ class PaintManager{
 			return false;
 		}
 
-		var layer = this._undoHistory.pop();
+        let layer = this._undoHistory.pop();
 		Scene.getLayer(layer).paint.redo();
 		this._paintHistory[this._paintHistory.length] = layer;
 

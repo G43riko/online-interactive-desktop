@@ -48,7 +48,7 @@ class ListenersManager{
 			 * AK JE OZNAČENÝ TEXT TAK SA ULOŽÍ DO NEHO AKTUÁLNA HODNOTA INPUT A TEN SA SCHOVÁ
 			 */
 			if(SelectedText){
-				var textArea = new G("#selectedEditor");
+                let textArea = new G("#selectedEditor");
 				if(!textArea.isEmpty()){
 					console.log("res: " + parseInt(window.getComputedStyle(textArea).fontSize, 10));
 					SelectedText.text = textArea.text();
@@ -209,7 +209,7 @@ class ListenersManager{
 	}
 
 	mouseDoubleClick(position){
-		var result	= false,
+        let result	= false,
 			vec 	= new GVector2f(100, 40);
 
 		Scene.forEach(e => {
@@ -228,10 +228,10 @@ class ListenersManager{
 
 	mouseUp(position, closeDialog = true){
 		try{
-			var possibleChild = null;
-			var result = false;
-			var clickOnParent = false;
-			var clickOnConnectorObject = null;
+            let possibleChild = null;
+            let result = false;
+            let clickOnParent = false;
+            let clickOnConnectorObject = null;
 			
 			if(selectedObjects.size() === 1){
 				possibleChild = selectedObjects.firstObject;
@@ -377,7 +377,7 @@ class ListenersManager{
 			 */
 			if(Project.options.changeCursor && !Project.isMobile){//TODO overiť či naozaj na mobiloch nefunguje
 				//TODO timeline, layersViewer, creator, Line & polygon, selectors, connectors
-				var isHoverTrue = Menu.hover(position.x, position.y);
+                let isHoverTrue = Menu.hover(position.x, position.y);
 
 				/*
 				if(actContextMenu)
@@ -437,7 +437,7 @@ class ListenersManager{
 			 * AK JE VYBRANY NASTROJ DRAW A TLACITKO MYŠI JE STLAČENE TAK SA PRIDA NOVÝ BOD
 			 */
 			if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
-				var radius = 1;
+                let radius = 1;
 				Paints.addPoint(radius === 1 ? position : position.div(radius).round().mul(radius));
 				draw();
 				this._clickedOnObject = true;

@@ -19,7 +19,7 @@ class LayersViewer{
 			return;
 		}
 
-		var element 			= arg.element;
+        let element 			= arg.element;
 		this._defaultName 		= arg.defaultLayertName || "Layer_";
 		this._counter 			= 0;
 		this._layers 			= {};
@@ -81,9 +81,9 @@ class LayersViewer{
 
 
 	static setName(element){
-		var input 	= G(element);
-		var oldName = input.parent().attr("oldName");
-		var newName = input.first().value;
+        let input 	= G(element);
+        let oldName = input.parent().attr("oldName");
+        let newName = input.first().value;
 		
 		element.onblur = element.onkeydown = null;
 
@@ -123,10 +123,10 @@ class LayersViewer{
 	}
 
 	static changeName(element){
-		var textBox = G(element);
-		var text = textBox.text();
+        let textBox = G(element);
+        let text = textBox.text();
 		textBox.attr("oldName", text);
-		var input = G.createElement("input", {
+        let input = G.createElement("input", {
 			class: "tmpLayerInput",
 			type: "text",
 			onblur:"LayersViewer.setName(this)",
@@ -139,7 +139,7 @@ class LayersViewer{
 	}
 
 	static changeVisibility(element, e){
-		var layer = LayersViewer.instance._layers[G(element).parent().text()];
+        let layer = LayersViewer.instance._layers[G(element).parent().text()];
 		if(layer){
 			layer.div.find(".visible.true").toggleClass("false");
 			layer.layer.visible = !layer.layer.visible;
@@ -147,7 +147,7 @@ class LayersViewer{
 	}
 
 	static showOptions(element, e){
-		var data = {
+        let data = {
 			"items" : [
 				{
 					"key" : "lockLayer",
@@ -178,15 +178,15 @@ class LayersViewer{
 				}
 			]
 		};
-		var pos = G.position(element);
-		var size = G.size(element);
+        let pos = G.position(element);
+        let size = G.size(element);
 		G("#layerContextMenu").delete();
 
-		var items = [];
+        let items = [];
 		G.each(data.items, (e) => {
-			var element = G.createElement("li", {onclick: "LayersViewer.clickOnContext(this, \"" + e.attr + "\")"}, G.createElement("a", {}, e.label));
+            let element = G.createElement("li", {onclick: "LayersViewer.clickOnContext(this, \"" + e.attr + "\")"}, G.createElement("a", {}, e.label));
 			if(e.type === "boolean"){
-				var classa = "visible";
+                let classa = "visible";
 				if(LayersViewer.instance.activeLayer[e.attr] === false){
 					classa += " false";
 				}
@@ -203,8 +203,8 @@ class LayersViewer{
 	}
 
 	static clickOnContext(element, key){
-		var el = G(element);
-		var childrens = el.children(".visible");
+        let el = G(element);
+        let childrens = el.children(".visible");
 		if(!childrens.isEmpty()){
 			LayersViewer.instance.activeLayer[key] = !LayersViewer.instance.activeLayer[key];
 			childrens.class("/false");
@@ -237,7 +237,7 @@ class LayersViewer{
 	}
 
 	static makeSelected(element){
-		var layer = new G(element);
+        let layer = new G(element);
 		if(layer.hasClass("selected")){
 			return;
 		}
@@ -305,11 +305,11 @@ class LayersViewer{
 			title = this.activeLayerName;
 		}
 
-		var layer = this._layers[title].div;
+        let layer = this._layers[title].div;
 
 		//ak sa maže označená vrstva tak sa označí dalšia;
 		if(layer.hasClass("selected") && this._existingLayers > 1){
-			for(var i in this._layers){
+			for(let i in this._layers){
 				if(i !== title && this._layers.hasOwnProperty(i)){
 					this._layers[i].div.addClass("selected");
 					this.selectedLayer = this._layers[i].title;

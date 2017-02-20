@@ -54,11 +54,11 @@ class ProjectManager{
 	}
 
 	toObject(param = {}){
-		var result = {
+        let result = {
 			unloadTime: Date.now(),
 			title : this._title,
 			autor: this._autor
-		}
+		};
 		if(param.scene !== false){
 			result.scene = this.scene.toObject();
 		}
@@ -84,7 +84,7 @@ class ProjectManager{
 	}
 
 	generateId(){
-		var s = "000000000" + (this._idCounter++);
+        let s = "000000000" + (this._idCounter++);
 		return (this._connection ? this._connection.userId : "") + s.substr(s.length - 6);
 	}
 
