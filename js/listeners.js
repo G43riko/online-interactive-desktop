@@ -2,6 +2,7 @@
 	compatible:	forEach, getComputedStyle, JSON parsing 14.9.2016
 */
 
+
 class ListenersManager{
 	constructor(){
 		//console.log("strict: " + (function() { return !this; })());
@@ -32,7 +33,7 @@ class ListenersManager{
 			/*
 			 * SKONTROLUJE SA KLIKNUTIE NA AREU, BUĎ SA ZAČNE PRESÚVAŤ ALEBO VYTVÁRAŤ
 			 */
-			if(!this._clickedOnObject && !actContextMenu && Creator.operation == OPERATION_AREA && area){
+			if(!this._clickedOnObject && !actContextMenu && Creator.operation === OPERATION_AREA && area){
 				if(area.isReady && area.clickIn(position.x, position.y)){ //ak sa kliklo na už vytvorene tak sa bude posuvať
 					selectedObjects.movedObject = area;
 					area.moving = true;
@@ -76,7 +77,7 @@ class ListenersManager{
 			/*
 			 * SKONTROLUJÚ SA NA KLIKNUTIE VŠETKY OBJEKTY V SCÉNE 
 			 */
-			if(!this._clickedOnObject && button == LEFT_BUTTON && !actContextMenu){
+			if(!this._clickedOnObject && button === LEFT_BUTTON && !actContextMenu){
 				Scene.forEach((o) => {
 					if(o.visible && !o.layer.userLayer && o.clickIn(position.x, position.y, button)){
 						if(Creator.operation === OPERATION_DRAW_LINE && Input.isKeyDown(KEY_L_CTRL) && o.selectedConnector){
@@ -254,7 +255,7 @@ class ListenersManager{
 			/*
 			 * AK JE VYBRANY NASTROJ AREA TAK SA BUĎ DOKONČÍ VYTVARANIE ALEBO PRESUN
 			 */
-			if(Creator.operation == OPERATION_AREA && area){
+			if(Creator.operation === OPERATION_AREA && area){
 				if(area.isCreating){
 					area.endCreate(position);
 				}
@@ -280,7 +281,7 @@ class ListenersManager{
 			 * AK SA VYTVARAL OBJEKT TAK SA JEHO VYTVARANIE DOKONČÍ
 			 */
 			 
-			if(Creator.object && Creator.object.name != OBJECT_LINE){
+			if(Creator.object && Creator.object.name !== OBJECT_LINE){
 				Creator.finishCreating(position);
 				return false;
 			}
@@ -289,7 +290,7 @@ class ListenersManager{
 			/*
 			 * AK JE VYBRANY NASTROJ KRESBA TAK SA PRERUSI CIARA
 			 */
-			if(Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
+			if(Creator.operation === OPERATION_DRAW_PATH && Components.draw()){
 				Paints.addPoint(position);
 				Paints.breakLine();
 				//return false;
@@ -316,10 +317,12 @@ class ListenersManager{
 						if(possibleChild.parent === o){ //ak klikol na svojho rodiča tak sa nekontroluje priradenie dietata
 							clickOnParent = true;
 						}
+						/*
 						else if(possibleChild !== o){//TODO treba asi prerobiť na jedno dieťa;
 							//o.addChildren(possibleChild);
 							//clickOnParent = true;
 						}
+						*/
 					}
 					if(o.selectedConnector){
 						clickOnConnectorObject = o;
@@ -330,11 +333,16 @@ class ListenersManager{
 							Creator.object.targetB = o;
 						}
 						//Scene.addToScene(Creator.object);
-						result = true;
+						//result = true;
 						return;
 					}
 					else{
-						Input.isKeyDown(KEY_L_CTRL) ? selectedObjects.add(o) : selectedObjects.clearAndAdd(o);
+						if(Input.isKeyDown(KEY_L_CTRL)){
+							selectedObjects.add(o);
+                        }
+                        else{
+							selectedObjects.clearAndAdd(o);
+                        }
 					}
 					result = true;
 				}
@@ -400,7 +408,7 @@ class ListenersManager{
 			/*
 			 * AK JE VYBRANY NASTROJ AREA A AREA JE VYTVARANA TAK SA PRIDA BOD
 			 */
-			if(Creator.operation == OPERATION_AREA && area && area.isCreating){
+			if(Creator.operation === OPERATION_AREA && area && area.isCreating){
 				area.addPoint(position);
 				this._clickedOnObject = true;//TODO overiť
 				return false;
@@ -436,7 +444,7 @@ class ListenersManager{
 			/*
 			 * AK JE VYBRANY NASTROJ DRAW A TLACITKO MYŠI JE STLAČENE TAK SA PRIDA NOVÝ BOD
 			 */
-			if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation == OPERATION_DRAW_PATH && Components.draw()){
+			if(Input.isButtonDown(LEFT_BUTTON) && Creator.operation === OPERATION_DRAW_PATH && Components.draw()){
                 let radius = 1;
 				Paints.addPoint(radius === 1 ? position : position.div(radius).round().mul(radius));
 				draw();

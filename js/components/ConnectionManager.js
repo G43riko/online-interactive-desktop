@@ -103,7 +103,9 @@ class ConnectionManager{
 		});
 
 		this._socket.on("connect_error", () => {
-			this._lives === CONNECTION_TRIES && Logger.error(getMessage(MSG_CONN_ERROR));
+			if(this._lives === CONNECTION_TRIES){
+				Logger.error(getMessage(MSG_CONN_ERROR));
+            }
 			this._lives--;
 			if(this._lives === 0){
 				this.disconnect();
@@ -484,10 +486,12 @@ class Handler{
 			status : STATUS_CONNECTED,
 			connectTime : Date.now()
 		};
+		/*
 		if(inst._type === CONN_KEY_TEACH){
 			//Project.scene.createLayer(data[CONN_KEY_USER_NAME]);
 			//inst._sendMessage("requireAllData", {target: inst._user_id, from: data[CONN_KEY_USER_ID]});
 		}
+		*/
 		//Logger.write("používatel" + data[CONN_KEY_USER_NAME] + ". +ata[CONN_KEY_USER_ID] + "] sa pripojil");
 		Logger.write(getMessage(MSG_USER_CONNECT, data[CONN_KEY_USER_NAME], data[CONN_KEY_USER_ID]));
 
@@ -527,7 +531,7 @@ class Handler{
 
 	static processSendAllData(inst, data){
 		//console.log("prijal som všetky udaje ");
-		if(inst._type == CONN_KEY_WATCH){//chce udaje všetko dostupné o 1 používatelovi
+		if(inst._type === CONN_KEY_WATCH){//chce udaje všetko dostupné o 1 používatelovi
             let shareOptions = data.shareOptions;
             let watchOptions = data.watchOptions;
 
@@ -563,7 +567,7 @@ class Handler{
 			Project.creator.visibleView = shareOptions.share.menu;
 			Project.options.setOpt("showLayersViewer", shareOptions.share.layers);
 		}
-		else if(inst._type == CONN_KEY_TEACH){//volá sa pre každého pripojeného študenta
+		else if(inst._type === CONN_KEY_TEACH){//volá sa pre každého pripojeného študenta
 			if(Project.scene.getLayer(data[CONN_KEY_USER_NAME])){
 				Project.scene.deleteLayer(data[CONN_KEY_USER_NAME]);
 			}

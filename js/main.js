@@ -80,6 +80,7 @@ function sendMessage(message){
 	Panel.recieveMessage(message, Project.autor);
 }
 
+
 function ajax(url, options, dataType){
 	if(isFunction(options)){
 		options = {success: options};

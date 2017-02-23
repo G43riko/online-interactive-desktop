@@ -16,7 +16,7 @@ class LogManager {
 	}
 
 	log(msg, type){
-		var source = "unknown";
+		let source = "unknown";
 		try {
 			throw new Error();
 		}
@@ -65,7 +65,7 @@ class LogManager {
 
 
 	showLogs(){
-		var div = G("#showLogs");
+		let div = G("#showLogs");
 		if(div.length() > 0){
 			div.empty().append(FormManager.createTable(["Time", "Message", "Type", "Source"], this._logs));
 			G("#showLogs").show();
@@ -74,12 +74,13 @@ class LogManager {
 	}
 
 	get data(){
-		return this_data;
+		return this._data;
 	}
 }
 
 
-var getErrorMessage = function(id){
+let getErrorMessage = function(id){
+    "use strict";
 	switch(id){
 		case 0 :
 			return "Nezadaný parameter";
