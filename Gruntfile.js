@@ -92,7 +92,7 @@ module.exports = function(grunt){
 					tasks : ["concat:js"]
 				},
 				sass : {
-					files : files.sass.sources,
+					files : files.sass.source,
 					tasks : ["sass"]//netreba volať concat lebo sa zavola watch kvoli zmene css suboru
 				},
 				css : {

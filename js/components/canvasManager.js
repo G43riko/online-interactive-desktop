@@ -472,7 +472,7 @@ glob._checkPosAndSize = function(obj, name){
 };
 
 glob._remakePosAndSize = function(def, obj){
-    let res = G.extend(def, obj);
+    let res = $.extend(def, obj);
 
     if(isDefined(res.size)){
         if(isNumber(res.size)){
@@ -515,7 +515,6 @@ function _process(res){
     if(res.shadow && Project.options.shadows){
         setShadow(res.shadow);
     }
-
     if(res.bgImage){
         res.ctx.save();
         res.ctx.clip();
