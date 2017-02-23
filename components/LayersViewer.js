@@ -96,7 +96,7 @@ class LayersViewer{
 
 		//ak vrstva už existuje tak uporoníme používatela
 		if(G.isDefined(LayersViewer.instance._layers[newName])){
-			Logger.error("vrstva " + newName + " už existuje")
+			Logger.error("vrstva " + newName + " už existuje");
 			input.parent().text(oldName);
 			return;
 		}
@@ -301,7 +301,7 @@ class LayersViewer{
 	}
 
 	deleteLayer(title){
-		if(typeof title != "string" || title.length === 0){
+		if(typeof title !== "string" || title.length === 0){
 			title = this.activeLayerName;
 		}
 

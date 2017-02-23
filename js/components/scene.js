@@ -1,6 +1,7 @@
 /*
 	compatible:	forEach, JSON parsing 14.9.2016
-*/	
+*/
+console.log("creating");
 class SceneManager{
 	constructor(){
 		this._clickViewers 	= [];

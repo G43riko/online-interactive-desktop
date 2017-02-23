@@ -17,7 +17,7 @@ class CreatorViewer extends Entity{
 		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 	init(){
-		var counter = 0,
+		let counter = 0,
 			posY 	= 0;
 		this.size.x = (MENU_WIDTH + MENU_OFFSET) * getLength(Creator.items) + MENU_OFFSET;
 		this.size.y = MENU_HEIGHT + (MENU_OFFSET << 1);
@@ -93,7 +93,7 @@ class CreatorViewer extends Entity{
 	}
 
 	_drawBool(value, posX, posY, width, height, offset){
-		var center = posY + height >> 1;
+        let center = posY + height >> 1;
 
 		if(value){
 			doLine({
@@ -167,14 +167,14 @@ class CreatorViewer extends Entity{
 					});
 				}
 				else if(value === "fur"){
-					var points = [];
-					var centerX = posX + width / 2;
-					var centerY = posY + height / 2;
-					var sizeX = (width - offset * 2);
-					var sizeY = (height - offset * 2);
-					for(var i=0 ; i<100 ; i++){
-						var valX = sizeX * (Math.random() - 0.5);
-						var valY = sizeY * (Math.random() - 0.5);
+                    let points = [];
+                    let centerX = posX + width / 2;
+                    let centerY = posY + height / 2;
+                    let sizeX = (width - offset * 2);
+                    let sizeY = (height - offset * 2);
+					for(let i=0 ; i<100 ; i++){
+                        let valX = sizeX * (Math.random() - 0.5);
+                        let valY = sizeY * (Math.random() - 0.5);
 						points[points.length] = [centerX + valX, 
 												 centerY + valY, 
 												 centerX - valX, 
@@ -257,7 +257,7 @@ class CreatorViewer extends Entity{
 		if(y < this.position.y || x < this.position.x || x > this.position.x + this.size.x){
 			return false;
 		}
-		var counter =  this.position.x + MENU_OFFSET,
+        let counter =  this.position.x + MENU_OFFSET,
 			click 	= null,
 			num;
 		each(this._items, function(e, i, arr){
@@ -288,7 +288,7 @@ class CreatorViewer extends Entity{
 	}
 
 	clickIn(x, y, doAct = true){//TODO skúsiť prerobiť do čitatelnejšej formy
-		var inst = this,
+        let inst = this,
 			e = this._clickOn(x, y);
 		if(!e){
 			return false;
@@ -353,7 +353,7 @@ class CreatorViewer extends Entity{
 	}
 
 	draw(){
-		var counter = MENU_OFFSET;
+        let counter = MENU_OFFSET;
 		//this._items.forEach(function(e){
 		each(this._items, function(e){
 			doRect({
@@ -382,7 +382,7 @@ class CreatorViewer extends Entity{
 					 FONT_ALIGN_CENTER);
 
 			if(e.itemsSelected && isDefined(e.item.values)){
-				var num = this.position.y + MENU_OFFSET;
+                let num = this.position.y + MENU_OFFSET;
 				//e.item.values.forEach(function(ee, ii){
 				each(e.item.values, function(ee, ii){
 					num += MENU_OFFSET + MENU_WIDTH;

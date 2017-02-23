@@ -227,7 +227,7 @@ class ListenersManager{
 		return true;
 	}
 
-	mouseUp(position, closeDialog = true){
+	mouseUp(position, shoutCloseDialog = true){
 		try{
             let possibleChild = null;
             let result = false;
@@ -307,7 +307,7 @@ class ListenersManager{
 				return;
 			}
 
-			if(closeDialog){
+			if(shoutCloseDialog){
 				closeDialog();
 			}
 

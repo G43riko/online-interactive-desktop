@@ -192,8 +192,8 @@
 				"layers_viewer" : true,
 				"grid" : true,
 				"shadows" : true,
-				"keys" : false,
-				"clicks" : false
+				"keys" : true,
+				"clicks" : true
 			}
 		}
 	},

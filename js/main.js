@@ -263,8 +263,8 @@ glob.loading = function(){
 
 		canvas = Project.canvas;
 		context = Project.context;
-		pcanvas = Project.canvasManager.pCanvas.canvas;
-		pcontext = Project.canvasManager.pCanvas.context;
+		//pcanvas = Project.canvasManager.pCanvas.canvas;
+		//pcontext = Project.canvasManager.pCanvas.context;
 		
 		//if(typeof ConnectionManager === "function")
 		//	Connection = new ConnectionManager();
@@ -336,6 +336,7 @@ glob.loading = function(){
 
 //$(loading);
 function realPDraw(){
+	console.log("krelím");
 	Project.canvasManager.pCanvas.clearCanvas();
 	if(Project.connection){
 		Project.connection.pdraw(pcontext);
