@@ -12,6 +12,7 @@ module.exports = function(grunt){
 					"components/ContextMenu.js",
 					"js/utils/logger.js",
 					"js/lib/alerts.js",
+                	//"js/lib/gcolor.js",
 					"js/config.js",
 					"js/components/Analyzer.js",
 					"js/components/creator.js",

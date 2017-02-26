@@ -9,19 +9,26 @@ class Entity{
 		this._position 			= position;
 		this._size 				= size;
 		this._name 				= name;
-
+		this._selectors 		= {tc: 1, bc: 1, cl: 1, cr: 1, br: 1};
+		this._onchange			= null;
+		this._movementType		= MOVEMENT_RANDOM;
+		this._movementLimits	= {};
 		this._drawCounter		= -1;
-		this._selected 			= false;
-		this._visible 			= true;
-		this._moving 			= false;
-		this._locked			= false;
-		this._minSize 			= false;
-		this._selectedConnector = false;
+		this._drawFunctions		= {};
+		this._selected 			= false; //či je objekt označený
+		this._visible 			= true; //či je objekt viditelý
+		this._moving 			= false; //či sa objektom aktuálne hýbe
+		this._locked			= false; //či je objekt uzamnknutý
+		this._minSize 			= false; //minimálna velkosť objektu
+        this._mouseOver			= false; //či bola pri posldom teste myš na objekte
+        this._selectable		= true; //či môže byť označený(či sa zobrazí border)
+        this._onClick			= null; //funkcia čo sa má vykonať na kliknutie(keyUp)
+        this._layer				= PROJECT_LAYER_TITLE; //názov vrstvy v ktorej sa objekt nachádza
+        this._parent			= null; //rodičovský objekt
+        this._childrens			= []; //dcérske objekty
 
-		this._layer				= PROJECT_LAYER_TITLE;
+		this.unsetConnector();
 
-		this._parent			= null;
-		this._childrens			= [];
 
 		Entity.changeAttr(this, data);
 
@@ -50,8 +57,24 @@ class Entity{
 		}
 	}
 
+	change(){
+		if(isFunction(this._onchange)){
+            this._onchange(this);
+		}
+	}
+
+	setConnector(id){
+		if(this._connectors[id]){
+			this._selectedConnector = id;
+		}
+	}
+
+	unsetConnector(){
+		this._selectedConnector = false;
+	}
+
 	highlight(){
-		var counter = 0,
+        let counter = 0,
 			speed = HIGHLIGHT_SPEED,
 			movement = 1,
 			interval = setInterval(() => {
@@ -81,7 +104,7 @@ class Entity{
 	}
 
 	removeChildren(element){
-		var index = this._childrens.indexOf(element);
+        let index = this._childrens.indexOf(element);
 		if(index >= 0){
 			this._childrens.splice(index, 1);
 			element._parent = null;
@@ -97,15 +120,11 @@ class Entity{
 		return this;
 	}
 
-	get parent(){
-		return this._parent;
-	}
-
 	addChildren(element){
 		if(element._parent !== this && this._parent !== element){
-			var index = this._childrens.indexOf(element);
+            let index = this._childrens.indexOf(element);
 			if(index < 0){
-				this._childrens.push(element);
+                this._childrens[this._childrens.length] = element;
 				element._parent = this;
 			}
 		}
@@ -128,6 +147,11 @@ class Entity{
 		return Entity._actId++;
 	}
 
+    click(x, y){
+        if(isFunction(this._onClick)){
+            this._onClick(x, y);
+        }
+	}
 
 	/**
 	 * Pridá k objektu nový connector
@@ -153,6 +177,7 @@ class Entity{
 
 	/**
 	 * Zistí či bolo kliknuté na objekt a ak áno zavolá príslušnú funkciu
+	 *
 	 * @param x
 	 * @param y
 	 * @returns {boolean}
@@ -162,10 +187,13 @@ class Entity{
 		//if(this.locked)
 		//	return false;
 
+		//zistime či je vôbec nejaká šanca že sa kliklo na objekt
 		if (!this.clickInBoundingBox(x, y)){
 			return false;
 		}
-		return this._clickIn(x, y);
+
+		//zistíme že sa naozaj kliklo a výsledok vrátime
+		return  this._clickIn(x, y);
 	}
 
 	_clickIn(x, y){return false;}
@@ -229,15 +257,31 @@ class Entity{
 			return;
 		}
 
-
+		//nakreslím aktuálny objekt
 		this._draw(ctx);
 
+		//vykreslím všetky pomocné kresliace funkcie
+        for(let i in this._drawFunctions){
+        	if(this._drawFunctions.hasOwnProperty(i)){
+            	this._drawFunctions[i](ctx);
+            }
+		}
 
-		for(var e in this._childrens){
+		//vykreslím všetyk deti
+		for(let e in this._childrens){
 			this._childrens[e].draw(ctx);
 		}
 	}
 
+	addDrawFunction(key, value){
+		if(isFunction(value)){
+			this._drawFunctions[key] = value;
+		}
+	}
+
+	removeDrawFunction(key){
+		delete this._drawFunctions[key];
+	}
 
 	/**
 	 * Nastavý objektu atribút
@@ -245,6 +289,7 @@ class Entity{
 	 * @param obj
 	 * @param attr
 	 * @param val
+	 * @static
 	 * @returns {*}
 	 */
 	static setAttr(obj, attr, val){
@@ -263,9 +308,9 @@ class Entity{
 	/**
 	 * Zmení objektu atribút
 	 *
-	 * @param obj
-	 * @param data
-	 * @param val
+	 * @param obj - objekt ktorý sa bude meniť
+	 * @param {string|object} data - názov atribútu alebo objekt zo všetkýmy atribútmy
+	 * @param {string|number} val - hodnota atribútu ktorý sa nastavuje
 	 * @returns {*}
 	 */
 	static changeAttr(obj, data, val){
@@ -317,7 +362,7 @@ class Entity{
 			if(this._selectedConnector){
 				return;
 			}
-			var d = e.getClone().mul(this.size);
+            let d = e.getClone().mul(this.size);
 			if (vec.dist(this.position.x + d.x, this.position.y + d.y) < SELECTOR_SIZE){
 				this._selectedConnector = i;
 				//if(!Creator.object)
@@ -327,7 +372,7 @@ class Entity{
 	}
 
 	getConnectorPosition(i){
-		var conn = this._connectors[i];
+        let conn = this._connectors[i];
 		if(conn){
 			return this._position.getClone().add(this._size.getClone().mul(conn));
 		}
@@ -338,6 +383,7 @@ class Entity{
 	 * Vykreslí všetky connectory
 	 *
 	 * @param obj
+	 * @param ctx
 	 */
 	static drawConnectors(obj, ctx){
 		if(Creator.operation != OPERATION_DRAW_JOIN &&
@@ -357,18 +403,76 @@ class Entity{
 	 * @param fps
 	 */
 	static animateMove(obj, targetPos, fps = FPS){
-		var vec = targetPos.getClone().sub(obj.position).div(fps),
+        let vec = targetPos.getClone().sub(obj.position).div(fps),
 			counter = 0,
 			int = setInterval(function(){
-			obj.position.add(vec);
-			draw();
-			if(++counter == fps){
-				clearInterval(int);
-				obj.position.set(targetPos);
-			}
-		}, 1000 / fps);
+				obj.position.add(vec);
+				draw();
+				if(++counter === fps){
+					clearInterval(int);
+					obj.position.set(targetPos);
+				}
+			}, 1000 / fps);
 	}
 
+	static animate(obj, attributes, duration){
+		let frameTime = 1000 / FPS;
+		let frames = parseInt(duration / frameTime);
+		let counter = 0;
+		let offsetData = {};
+
+		if(attributes.position){
+            offsetData.position = attributes.position.getClone().sub(obj.position).div(frames);
+
+		}
+        if(attributes.size){
+            offsetData.size = attributes.size.getClone().sub(obj.size).div(frames);
+        }
+
+        if(attributes.borderWidth){
+            offsetData.borderWidth = (attributes.borderWidth - obj.borderWidth) / frames;
+        }
+
+        if(attributes.fillColor){
+            obj.fillColor_hsv = Color._RGB2HSV.apply(this, new Color(obj.fillColor).RGB);
+            let hsvEnd = Color._RGB2HSV.apply(this, new Color(attributes.fillColor).RGB);
+            offsetData.fillColor = [(hsvEnd[0] - obj.fillColor_hsv[0]) / frames,
+									(hsvEnd[1] - obj.fillColor_hsv[1]) / frames,
+									(hsvEnd[2] - obj.fillColor_hsv[2]) / frames];
+		}
+        if(attributes.borderColor){
+            obj.borderColor_hsv = Color._RGB2HSV.apply(this, new Color(obj.borderColor).RGB);
+            let hsvEnd = Color._RGB2HSV.apply(this, new Color(attributes.borderColor).RGB);
+            offsetData.borderColor = [(hsvEnd[0] - obj.borderColor_hsv[0]) / frames,
+							     	  (hsvEnd[1] - obj.borderColor_hsv[1]) / frames,
+									  (hsvEnd[2] - obj.borderColor_hsv[2]) / frames];
+        }
+
+		let interval = setInterval(function(){
+			draw();
+			each(offsetData, function(e, i){
+				if(e instanceof  GVector2f){
+					Entity.setAttr(obj, i, obj[i].add(e))
+                }
+                else if(isNumber(e)){
+                    Entity.setAttr(obj, i, obj[i] + e);
+				}
+				else if(isArray(e)){
+                	obj[i + "_hsv"][0] += e[0];
+                    obj[i + "_hsv"][1] += e[1];
+                    obj[i + "_hsv"][2] += e[2];
+
+					let color = Color._HSV2RGB(obj[i + "_hsv"][0],
+											   obj[i + "_hsv"][1] * 100,
+											   obj[i + "_hsv"][2] * 100);
+                    Entity.setAttr(obj, i, "rgb(" + parseInt(color[0]) + "," + parseInt(color[1]) + "," + parseInt(color[2]) + ")");
+				}
+			});
+			if(--frames === 0){
+				clearInterval(interval);
+			}
+		}, frameTime);
+	}
 
 	/**
 	 * Nastaví konkrétny typ pohybu
@@ -377,19 +481,19 @@ class Entity{
 	 * @param vec
 	 */
 	static setMoveType(obj, vec){
-		if (vec.dist(obj.position.x + (obj.size.x >> 1), obj.position.y) < SELECTOR_SIZE){
+		if (obj.selectors.tc && vec.dist(obj.position.x + (obj.size.x >> 1), obj.position.y) < SELECTOR_SIZE){
 			obj.moveType = 0;
 		}
-		else if (vec.dist(obj.position.x + obj.size.x, obj.position.y + (obj.size.y >> 1)) < SELECTOR_SIZE){
+		else if (obj.selectors.cr && vec.dist(obj.position.x + obj.size.x, obj.position.y + (obj.size.y >> 1)) < SELECTOR_SIZE){
 			obj.moveType = 1;
 		}
-		else if (vec.dist(obj.position.x + (obj.size.x >> 1), obj.position.y + obj.size.y) < SELECTOR_SIZE){
+		else if (obj.selectors.bc && vec.dist(obj.position.x + (obj.size.x >> 1), obj.position.y + obj.size.y) < SELECTOR_SIZE){
 			obj.moveType = 2;
 		}
-		else if (vec.dist(obj.position.x, obj.position.y + (obj.size.y >> 1)) < SELECTOR_SIZE){
+		else if (obj.selectors.cl && vec.dist(obj.position.x, obj.position.y + (obj.size.y >> 1)) < SELECTOR_SIZE){
 			obj.moveType = 3;
 		}
-		else if (vec.dist(obj.position.x + obj.size.x, obj.position.y + obj.size.y) < SELECTOR_SIZE){
+		else if (obj.selectors.br && vec.dist(obj.position.x + obj.size.x, obj.position.y + obj.size.y) < SELECTOR_SIZE){
 			obj.moveType = 5;
 		}
 		else if (vec.x > obj.position.x && vec.y > obj.position.y && vec.x < obj.position.x + obj.size.x && vec.y < obj.position.y + obj.size.y){
@@ -404,7 +508,7 @@ class Entity{
 	 * @returns {*}
 	 */
 	static createInstance(obj){
-		var type = isString(obj) ? obj : obj._name;
+        let type = isString(obj) ? obj : obj._name;
 		switch(type){
 			case OBJECT_RECT :
 				return new Rect();
@@ -440,7 +544,7 @@ class Entity{
 		}
 
 		//vytvorím novú inštanciue
-		var result = Entity.createInstance(obj);
+        let result = Entity.createInstance(obj);
 
 		if(result){
 			//nakopírujem atributy
@@ -507,16 +611,24 @@ class Entity{
 	get name(){return this._name;}
 	get size(){return this._size;}
 	get layer(){return this._layer;}
+    get parent(){return this._parent;}
 	get radius(){return this._radius;}
 	get locked(){return this._locked;}
 	get minSize(){return this._minSize;}
 	get visible(){return this._visible;}
+    get onchange(){return this._onchange;}
 	get selected(){return this._selected;}
 	get position(){return this._position;}
+    get selectors(){return this._selectors;}
 	get fillColor(){return this._fillColor;}
+	get mouseOver(){return this._mouseOver;}
+    get selectable(){return this._selectable;}
 	get borderWidth(){return this._borderWidth;}
 	get borderColor(){return this._borderColor;}
+    get movementType(){return this._movementType;}
+    get movementLimits(){return this._movementLimits;}
 	get selectedConnector(){return this._selectedConnector;}
+
 
 
 	/**
@@ -527,19 +639,37 @@ class Entity{
 	set layer(val){this._layer = val;}
 	set locked(val){this._locked = val;}
 	set minSize(val){this._minSize = val;}
-	set selected(val){this._selected = val;}
+    set selected(val){this._selected = val;}
+    set selectors(val){this._selectors = val;}
+    set onclick(value){this._onClick = value;}
+    set onchange(value){this._onchange = value;}
+    set selectable(value){this._selectable = value;}
+    set movementType(value){this._movementType = value;}
+    set movementLimits(value){this._movementLimits = value;}
+    set selectedConnector(val){this._selectedConnector = val;}
 	//set fillColor(val){this._fillColor = val;}
 	//set borderWidth(val){this._borderWidth = val;}
 	//set borderColor(val){this._borderColor = val;}
-	set selectedConnector(val){this._selectedConnector = val;}
 }
 
-function testAnimation(){
-	var obj = [];
-	for(var i=0 ; i<100 ; i++){
+function testMoveAnimation(){
+    let obj = [];
+	for(let i=0 ; i<100 ; i++){
 		obj.push(new Rect(new GVector2f(Math.random() * canvas.width, Math.random() * canvas.height), new GVector2f(50, 50) , "blue"));
 		Scene.addToScene(obj[obj.length - 1]);
 		Entity.animateMove(obj[obj.length - 1], new GVector2f(300, 300));
 	}
+}
 
+function testAnimation(){
+	let arc = new Arc(new GVector2f(150, 150), new GVector2f(150, 150));
+	Project.scene.addToScene(arc);
+
+	Entity.animate(arc, {
+		position: new GVector2f(800, 150),
+		size: new GVector2f(50, 50),
+		borderWidth: 5,
+		fillColor: "#bf42b3",
+		borderColor: "green"
+	}, 1000);
 }

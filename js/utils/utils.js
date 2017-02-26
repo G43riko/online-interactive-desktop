@@ -3,10 +3,10 @@
 */
 
 glob.testCompatibility = function(){
-	var ca = document.createElement("canvas");
-	var co = ca.getContext("2d");
+    let ca = document.createElement("canvas");
+    let co = ca.getContext("2d");
 
-	var isUndefined = function(object, key){
+    let isUndefined = function(object, key){
 		if(typeof object[key] === "undefined"){
 			alert("objekt " + object + " neobsahuje atribut " + key);
 		}
@@ -86,7 +86,7 @@ glob.testCompatibility = function(){
 
 glob.showKey = function(key){
 	if(Options.showKeys){
-		var char = "";
+        let char = "";
 
 		switch(key){
 			case KEY_DELETE :
@@ -126,11 +126,11 @@ glob.showKey = function(key){
 				char = String.fromCharCode(key);
 		}
 
-		var element = G.createElement("div", {}, char);
+        let element = G.createElement("div", {}, char);
 		setTimeout(() => element.remove(), 2000);
 		G("#keysViewerHolder").append(element);
 	}
-}
+};
 
 class Animation{
 	static init(loop){
@@ -154,7 +154,7 @@ class Animation{
 	static start(){
 		Animation._running = true;
 
-		var test = (time) => {
+		let test = (time) => {
 			Animation._mainLoop(time);
 		};
 		requestAnimationFrame(test);
@@ -162,28 +162,27 @@ class Animation{
 }
 
 glob.queryString = function(){
-	var query_string = {};
-	var query = window.location.search.substring(1);
-	var vars = query.split("&");
-	for (var i=0 ; i<vars.length ; i++) {
-		var pair = vars[i].split("=");
+    let query_string = {};
+    let query = window.location.search.substring(1);
+    let vars = query.split("&");
+	for (let i=0 ; i<vars.length ; i++) {
+        let pair = vars[i].split("=");
 		if(typeof query_string[pair[0]] === "undefined") {
 			query_string[pair[0]] = decodeURIComponent(pair[1]);
 		}
 		else if(typeof query_string[pair[0]] === "string") {
-			var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
-			query_string[pair[0]] = arr;
+			query_string[pair[0]] = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
 		}
 		else{
 			query_string[pair[0]].push(decodeURIComponent(pair[1]));
 		}
 	}
 	return query_string;
-}
+};
 
 function isIn(obj, data){
 	//return arguments.some((e, i) => i && e === obj);
-	var i;
+    let i;
 	if(isArray(data)){
 		for(i=0 ; i<data.length ; i++){
 			if(data[i] == obj){
@@ -202,13 +201,369 @@ function isIn(obj, data){
 	return false;
 }
 
+glob.lerp = function(obj1, obj2, ratio){
+	if(typeof obj1 === "number" && typeof obj2 === "number"){
+		return obj1 * ration + obj2 * (1 - ratio);
+	}
+    if(obj1 instanceof GVector2f && obj2 instanceof GVector2f){
+		return obj1.getClone().mul(ratio).add(obj2.getClone().mul(1 - ration));
+    }
+};
+
+class Color{
+    constructor(){
+        this._light = true;
+        Color._namedColors = {
+            'transparent':'rgba(0, 0, 0, 0)','aliceblue':'#F0F8FF','antiquewhite':'#FAEBD7','aqua':'#00FFFF','aquamarine':'#7FFFD4',
+            'azure':'#F0FFFF','beige':'#F5F5DC','bisque':'#FFE4C4','black':'#000000','blanchedalmond':'#FFEBCD','blue':'#0000FF','blueviolet':'#8A2BE2',
+            'brown':'#A52A2A','burlywood':'#DEB887','cadetblue':'#5F9EA0','chartreuse':'#7FFF00','chocolate':'#D2691E','coral':'#FF7F50',
+            'cornflowerblue':'#6495ED','cornsilk':'#FFF8DC','crimson':'#DC143C','cyan':'#00FFFF','darkblue':'#00008B','darkcyan':'#008B8B','darkgoldenrod':'#B8860B',
+            'darkgray':'#A9A9A9','darkgrey':'#A9A9A9','darkgreen':'#006400','darkkhaki':'#BDB76B','darkmagenta':'#8B008B','darkolivegreen':'#556B2F',
+            'darkorange':'#FF8C00','darkorchid':'#9932CC','darkred':'#8B0000','darksalmon':'#E9967A','darkseagreen':'#8FBC8F','darkslateblue':'#483D8B',
+            'darkslategray':'#2F4F4F','darkslategrey':'#2F4F4F','darkturquoise':'#00CED1','darkviolet':'#9400D3','deeppink':'#FF1493','deepskyblue':'#00BFFF',
+            'dimgray':'#696969','dimgrey':'#696969','dodgerblue':'#1E90FF','firebrick':'#B22222','floralwhite':'#FFFAF0','forestgreen':'#228B22',
+            'fuchsia':'#FF00FF','gainsboro':'#DCDCDC','ghostwhite':'#F8F8FF','gold':'#FFD700','goldenrod':'#DAA520','gray':'#808080','grey':'#808080',
+            'green':'#008000','greenyellow':'#ADFF2F','honeydew':'#F0FFF0','hotpink':'#FF69B4','indianred':'#CD5C5C','indigo':'#4B0082','ivory':'#FFFFF0',
+            'khaki':'#F0E68C','lavender':'#E6E6FA','lavenderblush':'#FFF0F5','lawngreen':'#7CFC00','lemonchiffon':'#FFFACD','lightblue':'#ADD8E6',
+            'lightcoral':'#F08080','lightcyan':'#E0FFFF','lightgoldenrodyellow':'#FAFAD2','lightgray':'#D3D3D3','lightgrey':'#D3D3D3','lightgreen':'#90EE90',
+            'lightpink':'#FFB6C1','lightsalmon':'#FFA07A','lightseagreen':'#20B2AA','lightskyblue':'#87CEFA','lightslategray':'#778899',
+            'lightslategrey':'#778899','lightsteelblue':'#B0C4DE','lightyellow':'#FFFFE0','lime':'#00FF00','limegreen':'#32CD32','linen':'#FAF0E6',
+            'magenta':'#FF00FF','maroon':'#800000','mediumaquamarine':'#66CDAA','mediumblue':'#0000CD','mediumorchid':'#BA55D3','mediumpurple':'#9370D8',
+            'mediumseagreen':'#3CB371','mediumslateblue':'#7B68EE','mediumspringgreen':'#00FA9A','mediumturquoise':'#48D1CC','mediumvioletred':'#C71585',
+            'midnightblue':'#191970','mintcream':'#F5FFFA','mistyrose':'#FFE4E1','moccasin':'#FFE4B5','navajowhite':'#FFDEAD','navy':'#000080','oldlace':'#FDF5E6',
+            'olive':'#808000','olivedrab':'#6B8E23','orange':'#FFA500','orangered':'#FF4500','orchid':'#DA70D6','palegoldenrod':'#EEE8AA',
+            'palegreen':'#98FB98','paleturquoise':'#AFEEEE','palevioletred':'#D87093','papayawhip':'#FFEFD5','peachpuff':'#FFDAB9','peru':'#CD853F',
+            'pink':'#FFC0CB','plum':'#DDA0DD','powderblue':'#B0E0E6','purple':'#800080','red':'#FF0000','rosybrown':'#BC8F8F','royalblue':'#4169E1',
+            'saddlebrown':'#8B4513','salmon':'#FA8072','sandybrown':'#F4A460','seagreen':'#2E8B57','seashell':'#FFF5EE','sienna':'#A0522D','silver':'#C0C0C0',
+            'skyblue':'#87CEEB','slateblue':'#6A5ACD','slategray':'#708090','slategrey':'#708090','snow':'#FFFAFA','springgreen':'#00FF7F',
+            'steelblue':'#4682B4','tan':'#D2B48C','teal':'#008080','thistle':'#D8BFD8','tomato':'#FF6347','turquoise':'#40E0D0','violet':'#EE82EE'
+        };
+        this.setColor.apply(this, arguments);
+    }
+
+	/*
+	 * CONVERTORS
+	 */
+
+    static _RGB2INT(R, G, B){
+        return R << 16 | (G << 8) & 0xffff | B;
+    }
+
+    static _INT2RGB(val){
+        return [val >> 16, (val >> 8) & 0xFF, val & 0xFF];
+    }
+
+    static _RGB2HSV(r, g, b){
+        let computedH = 0;
+        let computedS = 0;
+        let computedV = 0;
+
+        //remove spaces from input RGB values, convert to int
+        r = parseInt( (''+r).replace(/\s/g,''),10 );
+        g = parseInt( (''+g).replace(/\s/g,''),10 );
+        b = parseInt( (''+b).replace(/\s/g,''),10 );
+
+        if ( r==null || g==null || b==null ||
+            isNaN(r) || isNaN(g)|| isNaN(b) ) {
+            alert ('Please enter numeric RGB values!');
+            return;
+        }
+        if (r<0 || g<0 || b<0 || r>255 || g>255 || b>255) {
+            alert ('RGB values must be in the range 0 to 255.');
+            return;
+        }
+        r=r/255; g=g/255; b=b/255;
+        let minRGB = Math.min(r,Math.min(g,b));
+        let maxRGB = Math.max(r,Math.max(g,b));
+
+        // Black-gray-white
+        if (minRGB==maxRGB) {
+            computedV = minRGB;
+            return [0,0,computedV];
+        }
+
+        // Colors other than black-gray-white:
+        let d = (r==minRGB) ? g-b : ((b==minRGB) ? r-g : b-r);
+        let h = (r==minRGB) ? 3 : ((b==minRGB) ? 1 : 5);
+        computedH = 60*(h - d/(maxRGB - minRGB));
+        computedS = (maxRGB - minRGB)/maxRGB;
+        computedV = maxRGB;
+        return [computedH,computedS,computedV];
+    	/*
+        let maxc = Math.max(Math.max(r, g), b);
+        let minc = Math.min(Math.min(r, g), b);
+        let h, s, v;
+        v = maxc;
+        if (minc == maxc){
+        	return [0, 0, v];
+        }
+        let diff = maxc - minc;
+        s = diff / maxc;
+        let rc = (maxc - r) / diff;
+        let gc = (maxc - g) / diff;
+        let bc = (maxc - b) / diff;
+        if(r == maxc){
+        	h = bc - gc
+        }
+    	else if(g == maxc){
+        	h = 2.0 + rc - bc
+        }
+    	else{
+        	h = 4.0 + gc - rc
+        }
+        h = (h / 6.0) % 1.0; //this calculates only the fractional part of h/6
+        return [h, s, v];
+        */
+    }
+
+    static _HSV2RGB(h, s, v){
+        let r, g, b;
+        let i;
+        let f, p, q, t;
+
+        // Make sure our arguments stay in-range
+        h = Math.max(0, Math.min(360, h));
+        s = Math.max(0, Math.min(100, s));
+        v = Math.max(0, Math.min(100, v));
+
+        // We accept saturation and value arguments from 0 to 100 because that's
+        // how Photoshop represents those values. Internally, however, the
+        // saturation and value are calculated from a range of 0 to 1. We make
+        // That conversion here.
+        s /= 100;
+        v /= 100;
+
+        if(s == 0) {
+            // Achromatic (grey)
+            r = g = b = v;
+            return [
+                Math.round(r * 255),
+                Math.round(g * 255),
+                Math.round(b * 255)
+            ];
+        }
+
+        h /= 60; // sector 0 to 5
+        i = Math.floor(h);
+        f = h - i; // factorial part of h
+        p = v * (1 - s);
+        q = v * (1 - s * f);
+        t = v * (1 - s * (1 - f));
+
+        switch(i) {
+            case 0:
+                r = v;
+                g = t;
+                b = p;
+                break;
+
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+
+            default: // case 5:
+                r = v;
+                g = p;
+                b = q;
+        }
+
+        return [
+            Math.round(r * 255),
+            Math.round(g * 255),
+            Math.round(b * 255)
+        ];
+    }
+
+    static _HEX2RGB(color) {
+        let num = parseInt(color.slice(1), 16);
+        return [num >> 16, num >> 8 & 0x00FF, num & 0x0000FF];
+    }
+
+    static _RGB2HEX(R, G, B){
+        return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+    }
+
+    static _HEX2INT(val){
+        return parseInt(val.replace("#", ""), 16);
+    }
+
+    static _INT2HEX(val){
+        let x = val.toString(16);
+        x = '000000'.substr(0, 6 - x.length) + x;
+        return '#' + x.toUpperCase();
+    }
+
+	/*
+	 * UPDATERS
+	 */
+    _rgbUpdate(){
+        this._hex = Color._RGB2HEX(this._r, this._g, this._b);
+        this._int = Color._RGB2INT(this._r, this._g, this._b);
+    }
+
+    darker(val){
+
+    }
+
+    brighter(val){
+
+    }
+
+    add(color){
+        this.setRGB(this._r + color._r, this._g + color._g, this._b + color._b, this._a + color._a);
+    }
+    sub(color){
+        this.setRGB(this._r - color._r, this._g - color._g, this._b - color._b, this._a - color._a);
+    }
+    mul(color){
+        this.setRGB(this._r * color._r, this._g * color._g, this._b * color._b, this._a * color._a);
+    }
+    div(color){
+        this.setRGB(this._r / color._r, this._g / color._g, this._b / color._b, this._a / color._a);
+    }
+
+
+	/*
+	 * GETTERS
+	 */
+    get red(){return this._r;}
+    get green(){return this._g;}
+    get blue(){return this._b;}
+    get RGB(){return [this._r, this._g, this._b];}
+    get RGBA(){return [this._r, this._g, this._b, this._a];}
+    get hex(){return this._hex;}
+    get int(){return this._int;}
+    get alpha(){return this._a;}
+
+    isLight(){return this._light;}
+
+
+	/*
+	 * SETTERS
+	 */
+    setLight(val){this._light = val;}
+
+    set red(val){this._r = val; this._rgbUpdate();}
+    set green(val){this._g = val; this._rgbUpdate();}
+    set blue(val){this._b = val; this._rgbUpdate();}
+    set alpha(val){this._a = val;}
+
+    set int(val){
+        this._int = val;
+        this.setRGB(Color._INT2RGB(val));
+        this._hex = Color._INT2HEX(val);
+    }
+
+    set hex(val){
+        this._hex = val;
+        this.setRGB(Color._HEX2RGB(this._hex));
+        this._int = Color._HEX2INT(this._hex);
+    }
+
+    setRGB(){
+        if(arguments.length == 1){
+            if(Array.isArray(arguments[0])){ //setRGB([255, 255, 255])
+                this._r = arguments[0][0];
+                this._g = arguments[0][1];
+                this._b = arguments[0][2];
+            }
+            else if(typeof arguments[0] === "number"){ //setRGB([255])
+                arguments[0] = Math.min(255, Math.max(0, arguments[0]));
+                this._r = arguments[0];
+                this._g = arguments[0];
+                this._b = arguments[0];
+            }
+        }
+        else if(arguments.length == 3){ //setRGB(255, 255, 255)
+            this._r = arguments[0];
+            this._g = arguments[1];
+            this._b = arguments[2];
+        }
+        this._rgbUpdate();
+        return this;
+    }
+
+    setColor(){
+        if(!arguments.length){ //setColor()
+            this.setRGBA(0, 0, 0, 255);
+        }
+        else if(arguments.length == 1){
+            if(typeof arguments[0] === "number"){ //setColor(1538)
+                this.int = arguments[0];
+            }
+            else if(Array.isArray(arguments[0])){ //setColor([255, 255, 0])
+                //this.setRGB(arguments[0]);
+                //>> 1.2.2017 ak je pole len s 3 parametrov tak sa pridá alpha a zavolá sa setRGB
+                if(arguments[0].length === 3){
+                    arguments[0].push(255);
+                }
+                this.setRGB.apply(this, arguments[0]);
+                //<< 1.2.2017
+            }
+            else if(typeof arguments[0] === "string"){ //setColor("#FFFFFF" | "red")
+                if(Color._namedColors.hasOwnProperty(arguments[0])){
+                    this.setColor(Color._namedColors[arguments[0]]);
+                }
+                else{
+                    this.hex = arguments[0];
+                }
+            }
+            this._a = 255;
+        }
+        else if(arguments.length == 3){
+            this.setRGBA(arguments[0], arguments[1], arguments[2], 255);
+        }
+        else if(arguments.length == 4){
+            this.setRGBA.apply(this, arguments);
+        }
+        else{
+            console.error("setRGBA: parametrov: 0-4, zadanych: " + arguments.length + ", parametre: ",arguments);
+        }
+        return this;
+    }
+
+    setRGBA(){
+        if(arguments.length == 4){
+            this._a = arguments[3];
+            this.setRGB(arguments[0], arguments[1], arguments[2]);
+        }
+        else{
+            console.error("setRGBA: parametrov: 4, zadanych: " + arguments.length + ", parametre: ",arguments);
+        }
+
+        return this;
+    }
+}
+
 glob.roughSizeOfObject = function(object) {
-	var objectList = [];
-	var stack = [object];
-	var bytes = 0;
+    let objectList = [];
+    let stack = [object];
+    let bytes = 0;
 
 	while (stack.length) {
-		var value = stack.pop();
+        let value = stack.pop();
 		if(isBoolean(value)){
 			bytes += 4;
 		}
@@ -220,7 +575,7 @@ glob.roughSizeOfObject = function(object) {
 		}
 		else if(isObject(value) && objectList.indexOf( value ) === -1){
 			objectList.push(value);
-			for(var i in value){
+			for(let i in value){
 				if(value.hasOwnProperty(i)){
 					stack.push(value[i]);
 				}
@@ -230,7 +585,7 @@ glob.roughSizeOfObject = function(object) {
 	return bytes;
 };
 
-var isUndefined 	= e => typeof e === KEYWORD_UNDEFINED,
+let isUndefined 	= e => typeof e === KEYWORD_UNDEFINED,
 	isDefined 		= e => typeof e !== KEYWORD_UNDEFINED,
 	isFunction 		= e => typeof e === KEYWORD_FUNCTION,
 	isNumber		= e => typeof e === KEYWORD_NUMBER,
@@ -241,7 +596,7 @@ var isUndefined 	= e => typeof e === KEYWORD_UNDEFINED,
 	isNull			= e => e === null,
 	isEmptyObject   = e => e && Object.keys(e).length === 0 && e.constructor === Object,
 	isEmptyArray    = e => isArray(e) && e.length === 0,
-	getLength		= function(obj){var counter = 0; each(obj, e => counter++); return counter;},
+	getLength		= function(obj){let counter = 0; each(obj, e => counter++); return counter;},
 	isSharing		= () => typeof Sharer !== "undefined" && Sharer.isSharing,
 	isInt 			= e => Number(e) === e && e % 1 === 0,
 	isFloat 		= e => Number(e) === e && e % 1 !== 0,
@@ -254,10 +609,10 @@ var isUndefined 	= e => typeof e === KEYWORD_UNDEFINED,
 
 
 glob.toHHMMSS = function(time, decimals = 0) {
-    var sec_num = parseInt(time, 10) / 1000;
-    var hours   = Math.floor(sec_num / 3600);
-    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+    let sec_num = parseInt(time, 10) / 1000;
+    let hours   = Math.floor(sec_num / 3600);
+    let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    let seconds = sec_num - (hours * 3600) - (minutes * 60);
 
     if (hours   < 10){ hours   = "0" + hours;}
     if (minutes < 10){ minutes = "0" + minutes;}
@@ -271,7 +626,7 @@ glob.toHHMMSS = function(time, decimals = 0) {
 };
 
 function each(obj, func, thisArg = false){
-	var i;
+    let i;
 	if(Array.isArray(obj)){
 		if(thisArg){
 			for(i=0 ; i<obj.length ; i++){
@@ -303,10 +658,10 @@ function each(obj, func, thisArg = false){
 }
 
 glob.loadPage = function(url){
-	var tag = document.createElement('script');
+	let tag = document.createElement('script');
 
 	tag.src = url;
-	var firstScriptTag = document.getElementsByTagName('script')[0];
+	let firstScriptTag = document.getElementsByTagName('script')[0];
 	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 };
 
@@ -314,12 +669,15 @@ glob.eachFiltered = function(obj, func1, func2, thisArg = false){
 	each(obj, (e, i, arr) => func1(e, i, arr) && func2(e, i, arr), thisArg);
 };
 
-var Movement = {
+let Movement = {
 	move: function(o, x, y, moveChildrens = true){
-		if(isDefined(o.locked) && o.locked){
+		if(o.movementType === MOVEMENT_NONE || (isDefined(o.locked) && o.locked)){
 			return;
 		}
 
+		if(isFunction(o.change())){
+			o.change();
+		}
 
 		if(isDefined(o.selectedConnector) && Creator.operation == OPERATION_DRAW_JOIN && o.selectedConnector){
 
@@ -332,8 +690,8 @@ var Movement = {
 
 			}
 			else{
-				var oldPos = o.position.getClone();
-				var oldSize = o.size.getClone();
+				let oldPos = o.position.getClone();
+                let oldSize = o.size.getClone();
 				switch(o.moveType){
 					case 0:
 						o.position.y += y;
@@ -350,6 +708,14 @@ var Movement = {
 						o.size.x -= x;
 						break;
 					case 4:
+                        switch(o.movementType){
+                            case MOVEMENT_VERTICAL:
+                                x = 0;
+                                break;
+                            case MOVEMENT_HORIZONTAL:
+                                y = 0;
+                                break;
+                        }
 						o.position.add(x, y);
 						if(moveChildrens){
 							o.eachChildren(e => {
@@ -371,7 +737,7 @@ var Movement = {
 			}
 		}
 		else if(isDefined(o.movingPoint)){
-			var intVal = 0;
+			let intVal = 0;
 			if(o.movingPoint < 0){//ak sa hýbe celým objektom
 				o.points.forEach(a => a.add(x, y));
 			}
@@ -408,17 +774,17 @@ function setCursor(val){
 
 function closeDialog(){
 	//$("#modalWindow > div").each((e) => $(e).hide());
-
-	$("#modalWindow > div").each(function(){
+	let win = $("#modalWindow");
+	win.find("div").each(function(){
 		$(this).hide();
 	});
 	$("#colorPalete").undelegate();
-	$("#modalWindow").hide();
+    win.hide();
 	$("canvas").removeClass("blur");
 }
 
 function getText(text, position, size, func, thisArg){
-	var T, x = $(document.createElement("INPUT"));
+    let T, x = $(document.createElement("INPUT"));
 
 	if (arguments.length > 1){
 		T = thisArg;
@@ -450,18 +816,18 @@ function getText(text, position, size, func, thisArg){
 }
 
 function getFormattedDate(ms = Date.now()) {
-	var date = new Date(ms);
+    let date = new Date(ms);
 	return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + " " + date.getMilliseconds();
 }
 
 glob.setCookie = function(cname, cvalue, exdays) {
-	var d = new Date();
+    let d = new Date();
 	d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
 	document.cookie = cname + "=" + cvalue + ";expires="+ d.toUTCString();
 };
 
 glob.getCookie = function(cname) {
-	var name = cname + "=",
+    let name = cname + "=",
 		ca = document.cookie.split(';'),
 		i, c;
 	for(i = 0; i <ca.length; i++) {
@@ -476,8 +842,8 @@ glob.getCookie = function(cname) {
 	return "";
 };
 
-function drawBorder(ctx, o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
-	if(!o.selected && o.name != "Paint"){
+function drawBorder(ctx, o){
+	if(!o.selectable || (!o.selected && o.name != "Paint")){
 		return;
 	}
 	doRect({
@@ -488,39 +854,39 @@ function drawBorder(ctx, o, selectors = {tc: 1, bc: 1, cl: 1, cr: 1, br: 1}){
 		ctx: ctx
 	});
 
-	if(selectors.hasOwnProperty("tc")){
+	if(o._selectors.hasOwnProperty("tc")){
 		drawSelectArc(ctx, o.position.x + (o.size.x >> 1), o.position.y);
 	}
-	if(selectors.hasOwnProperty("cl")){
+	if(o._selectors.hasOwnProperty("cl")){
 		drawSelectArc(ctx, o.position.x, o.position.y + (o.size.y >> 1));
 	}
-	if(selectors.hasOwnProperty("bc")){
+	if(o._selectors.hasOwnProperty("bc")){
 		drawSelectArc(ctx, o.position.x + (o.size.x >> 1), o.position.y + o.size.y);
 	}
-	if(selectors.hasOwnProperty("cr")){
+	if(o._selectors.hasOwnProperty("cr")){
 		drawSelectArc(ctx, o.position.x + o.size.x, o.position.y + (o.size.y >> 1));
 	}
 
-	if(selectors.hasOwnProperty("br")){
+	if(o._selectors.hasOwnProperty("br")){
 		drawSelectArc(ctx, o.position.x + o.size.x, o.position.y + o.size.y);
 	}
 }
 
 glob.rectRectCollision = function(minA, sizeA, minB, sizeB){
-	var ax = minA.x;
-	var ay = minA.y;
-	var bx = minB.x;
-	var by = minB.y;
-	var aw = sizeA.x;
-	var ah = sizeA.y;
-	var bw = sizeB.x;
-	var bh = sizeB.y;
+    let ax = minA.x;
+    let ay = minA.y;
+    let bx = minB.x;
+    let by = minB.y;
+    let aw = sizeA.x;
+    let ah = sizeA.y;
+    let bw = sizeB.x;
+    let bh = sizeB.y;
 
 	return (bx + bw > ax) && (by + bh > ay) && (bx < ax + aw) && (by < ay + ah);
 };
 
 function objectToArray(obj){
-	var result = [];
+    let result = [];
 	each(obj, e => result[result.length] = e);
 	return result;
 }
@@ -569,10 +935,10 @@ glob.showObject = function(obj){
 		console.log("parameter nieje objekt");
 		return;
 	}
-	var type;
-	for(var i in obj){
+    let type;
+	for(let i in obj){
 		if(obj.hasOwnProperty(i)){
-			var postfix = "";
+            let postfix = "";
 			type = typeof obj[i];
 			type = type === "object" && isArray(obj[i]) ? "array" : type;
 
@@ -588,7 +954,7 @@ glob.showObject = function(obj){
 };
 
 glob.getMousePos = function(canvasDom, mouseEvent) {
-	var rect = canvasDom.getBoundingClientRect();
+    let rect = canvasDom.getBoundingClientRect();
 	return {
 		x: mouseEvent["touches"][0].clientX - rect.left,
 		y: mouseEvent["touches"][0].clientY - rect.top
@@ -620,7 +986,7 @@ class EventTimer{
 	}
 
 	callIfCan(){
-		var diff = Date.now() - this._lastTime;
+        let diff = Date.now() - this._lastTime;
 		diff > this._time ? this._callEvent() : this._setTimeOut(diff);
 	}
 }

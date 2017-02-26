@@ -229,10 +229,10 @@ class ListenersManager{
 
 	mouseUp(position, shoutCloseDialog = true){
 		try{
-            let possibleChild = null;
-            let result = false;
-            let clickOnParent = false;
-            let clickOnConnectorObject = null;
+            let result 					= false;
+            let possibleChild 			= null;
+            let clickOnParent 			= false;
+            let clickOnConnectorObject 	= null;
 			
 			if(selectedObjects.size() === 1){
 				possibleChild = selectedObjects.firstObject;
@@ -313,6 +313,7 @@ class ListenersManager{
 
 			Scene.forEach(o => {
 				if(!result && o.clickIn(position.x, position.y)) {
+					o.click(position.x, position.y);
 					if(possibleChild){
 						if(possibleChild.parent === o){ //ak klikol na svojho rodiča tak sa nekontroluje priradenie dietata
 							clickOnParent = true;

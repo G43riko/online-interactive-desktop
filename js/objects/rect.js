@@ -17,13 +17,19 @@ class Rect extends Entity {
 //		this._checkRadius();
 //	}
 
+    /**
+	 * Funkcia upravý pozíciu objektu pri vytváraní
+	 *
+     * @param {GVector2f} pos - nová pozícia objektu
+     */
 	updateCreatingPosition(pos){
 		this.size.x = pos.x - this.position.x;
 		this.size.y = pos.y - this.position.y;
 	}
 
 	_hover(x, y){
-		if(this.clickInBoundingBox(x, y)){
+        this._mouseOver = this.clickInBoundingBox(x, y);
+        if(this._mouseOver){
 			if(this._locked){
 				setCursor(CURSOR_NOT_ALLOWED);
 			}
@@ -38,7 +44,7 @@ class Rect extends Entity {
 	}
 
 	_clickIn(x, y){
-		var vec = new GVector2f(x, y);
+		let vec = new GVector2f(x, y);
 		this.moveType = -1;
 		if(Input.isKeyDown(KEY_L_CTRL)){
 			this.checkConnectors(vec);
@@ -53,7 +59,7 @@ class Rect extends Entity {
 	}
 
 	_checkRadius(){
-		var minRadius = Math.min(this.size.x, this.size.y) >> 1;
+        let minRadius = Math.min(this.size.x, this.size.y) >> 1;
 		return this._radius > minRadius ? minRadius : this._radius;
 	}
 

@@ -4,17 +4,17 @@ class Arrow{
 			return;
 		}
 
-		var vec = pTo.getClone().sub(pFrom).normalize();
-		var cos = Math.cos(angle);
-		var sin = Math.sin(angle);
+        let vec = pTo.getClone().sub(pFrom).normalize();
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
 
-		var p0 = new GVector2f(pTo.x, pTo.y);
-		var p1 = new GVector2f(pTo.x - (vec.x * cos - vec.y * sin) * length,
+        let p0 = new GVector2f(pTo.x, pTo.y);
+        let p1 = new GVector2f(pTo.x - (vec.x * cos - vec.y * sin) * length,
 							   pTo.y - (vec.x * sin + vec.y * cos) * length);
-		var p2 = new GVector2f(pTo.x - (vec.x * cos + vec.y * sin) * length,
+        let p2 = new GVector2f(pTo.x - (vec.x * cos + vec.y * sin) * length,
 							   pTo.y + (vec.x * sin - vec.y * cos) * length);
 
-		var p3 = new GVector2f(((pTo.x - ((vec.x * cos - vec.y * sin) * length << 1)) + (pTo.x - ((vec.x * cos + vec.y * sin) * length << 1))) >> 1,
+        let p3 = new GVector2f(((pTo.x - ((vec.x * cos - vec.y * sin) * length << 1)) + (pTo.x - ((vec.x * cos + vec.y * sin) * length << 1))) >> 1,
 							   ((pTo.y - ((vec.x * sin + vec.y * cos) * length << 1)) + (pTo.y + ((vec.x * sin - vec.y * cos) * length << 1))) >> 1);
 
 		switch(type){

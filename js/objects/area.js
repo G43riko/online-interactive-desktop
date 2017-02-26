@@ -49,13 +49,13 @@ class Area{
 	}
 
 	removeSelected(onBorder, revert = false){
-		var inst = this;
-		var size = this._max.getClone().sub(this._min);
+		let inst = this;
+        let size = this._max.getClone().sub(this._min);
 		
 		//TODO spojiť vymazavanie objektov a malieb do jedneho ciklu
 		
 		Project.scene.forEach(function(e){//prejde všetky objekty
-			var tl = inst._isPointIn(e.position.x, e.position.y),
+            let tl = inst._isPointIn(e.position.x, e.position.y),
 				tr = inst._isPointIn(e.position.x + e.size.x, e.position.y),
 				bl = inst._isPointIn(e.position.x, e.position.y + e.size.y),
 				br = inst._isPointIn(e.position.x + e.size.x, e.position.y + e.size.y);
@@ -74,12 +74,12 @@ class Area{
 		});
 
 		each(Project.scene.layers, layer => {
-			var paths = layer.paint.points;
+            let paths = layer.paint.points;
 			each(paths, path => {
 				if(!path.points.length){
 					return false;
 				}
-				var tl = inst._isPointIn(path.min.x, path.min.y),
+                let tl = inst._isPointIn(path.min.x, path.min.y),
 					tr = inst._isPointIn(path.max.x, path.min.y),
 					bl = inst._isPointIn(path.min.x, path.max.y),
 					br = inst._isPointIn(path.max.x, path.max.y);
@@ -88,7 +88,7 @@ class Area{
 					return false;
 				}
 
-				var result;
+                let result;
 				if(onBorder){//ak maže z hranice tak sa hlada taky ktory je vo vnutry
 					result = false;
 					each(path.points, point => {
@@ -117,11 +117,11 @@ class Area{
 		if(this._points < 2){
 			return false;
 		}
-		var countLeft = 0; 
-		var countRight = 0;
-		var unRecognized = [];
+        let countLeft = 0;
+        let countRight = 0;
+        let unRecognized = [];
 		each(this._points, function(a, i, arr){
-			var b = arr[(i + 1) % arr.length];
+            let b = arr[(i + 1) % arr.length];
 			//ak prechadza hor. čiarov kde je bod
 			if((a.y >= y && b.y < y) || (a.y <= y && b.y > y)){
 				if(b.x > x && a.x > x){
@@ -150,7 +150,7 @@ class Area{
 			return false;
 		}
 
-		var val = x > this._min.x && y > this._min.y && x < this._max.x && y < this._max.y;
+        let val = x > this._min.x && y > this._min.y && x < this._max.x && y < this._max.y;
 
 		if(val){
 			val = this._isPointIn(x, y);
@@ -164,7 +164,7 @@ class Area{
 	}
 
 	addPoint(position){
-		var last = this._points[this._points.length - 1];
+        let last = this._points[this._points.length - 1];
 		
 		doLine({
 			points: [last.x, last.y, position.x, position.y],

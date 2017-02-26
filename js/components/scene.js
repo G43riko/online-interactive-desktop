@@ -148,12 +148,12 @@ class SceneManager{
 	}
 
 	changeLayer(object, newLayer){
-        let layer = Project.scene.getLayer(newLayer);
+        let layer = this.getLayer(newLayer);
 		if(layer){
             let oldLayer = object.layer;
 			layer.add(object);
 			Entity.changeAttr(object, "layer", newLayer);
-			Project.scene.getLayer(oldLayer).remove(object);
+            this.getLayer(oldLayer).remove(object);
 		}
 	}
 

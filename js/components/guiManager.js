@@ -4,17 +4,17 @@
 
 //SHOWERS
 
-var showPanel = function(id){
+let showPanel = function(id){
 	G("#" + id).show();
 	G("#modalWindow").show();
 	G("canvas").addClass("blur");
-}
+};
 
-var showOptions 			= () => showPanel("optionsForm");
-var showColors				= () => showPanel("colorPalete");
-var showWatcherOptions		= () => showPanel("watchForm");
-var showSharingOptions		= () => showPanel("shareForm");
-var showXmlSavingOptions	= () => {
+let showOptions 			= () => showPanel("optionsForm");
+let showColors				= () => showPanel("colorPalete");
+let showWatcherOptions		= () => showPanel("watchForm");
+let showSharingOptions		= () => showPanel("shareForm");
+let showXmlSavingOptions	= () => {
 	G("#idProjectTitle").val(Project.title);
 	showPanel("saveXmlForm");
 };
@@ -22,7 +22,7 @@ var showXmlSavingOptions	= () => {
 function showSavingOptions(){
 	G("#idImageWidth").val(canvas.width);
 	G("#idImageHeight").val(canvas.height);
-	var div, el1, el2, counter = 0, parent = G("#layersSavionOptions").empty();
+    let div, el1, el2, counter = 0, parent = G("#layersSavionOptions").empty();
 	each(Scene.layers, a => {
 		el1 = new G("input", {attr : {
 				type : "checkbox",
@@ -48,8 +48,8 @@ function showSavingOptions(){
 //SERIALIZATORS
 
 function serializeSaveData(){
-	var getValueIfExist = (e, val = false) => e ? (e.type == "checkbox" ? e.checked : e.value) : val;
-	var result = [];
+    let getValueIfExist = (e, val = false) => e ? (e.type == "checkbox" ? e.checked : e.value) : val;
+    let result = [];
 	result.width		= getValueIfExist(G.byId("idImageWidth"), canvas.width);
 	result.height		= getValueIfExist(G.byId("idImageHeight"), canvas.height);
 	result.name			= getValueIfExist(G.byId("idImageName"));
@@ -61,10 +61,10 @@ function serializeSaveData(){
 						result.format.options[result.format.selectedIndex] &&
 						result.format.options[result.format.selectedIndex].value;
 
-	var layerCheckboxes = G.byClass("layerVisibility");
+    let layerCheckboxes = G.byClass("layerVisibility");
 	result.selectedLayers = [];
 	//musí byť tento for ináč to dá viackrát to isté
-	for(var i=0 ; i < layerCheckboxes.length ; i++){
+	for(let i=0 ; i < layerCheckboxes.length ; i++){
 		layerCheckboxes[i].checked && result.selectedLayers.push(layerCheckboxes[i].name);
 	}
 
@@ -72,8 +72,8 @@ function serializeSaveData(){
 }
 
 function serializeShareData(){
-	var getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
-	var result = {};
+    let getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
+    let result = {};
 	//NEW
 	result.user_name	= getValueIfExists(G.byId("idUserName"));
 	result.type			= getValueIfExists(G.byId("idType"));
@@ -112,8 +112,8 @@ function serializeShareData(){
 }
 
 function serializeWatcherData(){
-	var getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
-	var result = {};
+    let getValueIfExists = e => e ? (e.type == "checkbox" ? e.checked : e.value) : false;
+    let result = {};
 	//NEW
 	result.user_name		= getValueIfExists(G.byId("idWatchUserName"));
 	result.less_id			= getValueIfExists(G.byId("idLessonId"));
@@ -133,8 +133,8 @@ function serializeWatcherData(){
 }
 
 function serializeSaveXmlData(){
-	var processValues = (result, el, ...args) => {
-		var process = item => {if(item) result[item.name] = item.type == "checkbox" ? item.checked : item.value};
+    let processValues = (result, el, ...args) => {
+        let process = item => {if(item) result[item.name] = item.type == "checkbox" ? item.checked : item.value};
 		process(G.byId(el));
 		each(args, e => process(G.byId(e)));
 		return result;
@@ -145,13 +145,13 @@ function serializeSaveXmlData(){
 //PROCESSORS
 
 function processWatchData(data){
-	var checkData = {
+    let checkData = {
 		shareId: data.shareId,
 		nickName: data.nickName,
 		password: data.password
 	};
-	var form = G.createElement("form"), createInput = (name, value) => {
-			return createElement({name: "input", attr: {value: value, name: name}});
+    let form = G.createElement("form"), createInput = (name, value) => {
+			return G.createElement("input",{value: value, name: name});
 	};
 	data.innerWidth = window.innerWidth;
 	data.innerHeight = window.innerHeight;
@@ -186,8 +186,8 @@ function processImageData(data){
 	/*
 	 * velký canvas kde sa všetko nakreslí
 	 */
-	var ca = G("canvas", {attr: {width: canvas.width, height: canvas.height}}).first();
-	var resContext = ca.getContext("2d");
+    let ca = G("canvas", {attr: {width: canvas.width, height: canvas.height}}).first();
+    let resContext = ca.getContext("2d");
 
 	/*
 	 * prekreslí pozadie ak je nastavene a nieje priesvitné
@@ -205,7 +205,7 @@ function processImageData(data){
 	/*
 	 * Vykreslí vrstvy určené na vykresleni
 	 */
-	for(var i in data.selectedLayers){
+	for(let i in data.selectedLayers){
 		if(data.selectedLayers.hasOwnProperty(i)){
 			Scene.getLayer(data.selectedLayers[i]).draw(resContext);
 		}
@@ -215,7 +215,7 @@ function processImageData(data){
 	/*
 	 * malý canvas kde sa prekreslí velký canvas
 	 */
-	var resCanvas = G.createElement("canvas", {width: data.width, height: data.height});
+    let resCanvas = G.createElement("canvas", {width: data.width, height: data.height});
 
 	resContext = resCanvas.getContext("2d");
 	resContext.drawImage(ca, 0, 0, resCanvas.width, resCanvas.height);
@@ -230,8 +230,8 @@ function processImageData(data){
 
 //UTILS
 
-var processValues = (result, el, ...args) => {
-	var process = item => {
+let processValues = (result, el, ...args) => {
+    let process = item => {
 		if(item){
 			result[item.name] = item.type == "checkbox" ? item.checked : item.value
 		}
@@ -239,7 +239,7 @@ var processValues = (result, el, ...args) => {
 	process(G.byId(el));
 	each(args, e => process(G.byId(e)));
 	return result;
-}
+};
 
 function shareALl(el){
 	Options.setOpt("grid", el.checked);
@@ -265,12 +265,12 @@ class GuiManager{
 	}
 
 	showOptionsByComponents(){
-		var setDisabledIfExist = (id, value) =>{
-			var el = G.byId(id);
+        let setDisabledIfExist = (id, value) =>{
+            let el = G.byId(id);
 			if(el){
 				el.parentElement.style.display = value ? "block" : "none";
 			}
-		}
+		};
 
 		setDisabledIfExist("idAllowedSnapping", Components.edit());
 		setDisabledIfExist("idShadows", Components.edit());

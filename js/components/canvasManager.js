@@ -101,7 +101,7 @@ function doPolygon(obj){
         Logger.error(getMessage(MSG_TRY_DRAW_EMPTY_POLYGON));
     }
 
-    let res = G.extend(glob._initDef(obj), obj),
+    let res = $.extend(glob._initDef(obj), obj),
         offX = obj.offset ? obj.offset.x : 0,
         offY = obj.offset ? obj.offset.y : 0;
 
@@ -188,8 +188,8 @@ function doArc(obj){
                         res.width >> 1, 
                         res.height >> 1, 
                         0, 
-                        0, 
-                        PI2);
+                        res.startAngle,
+                        res.endAngle);
     }
     else{
         res.ctx.rect(res.x + (res.width >> 1), 
@@ -200,7 +200,6 @@ function doArc(obj){
 
     _process(res);
 }
-
 
 function doRect(obj){
     let def = glob._checkPosAndSize(obj, OBJECT_RECT);
@@ -322,6 +321,46 @@ function doLine(obj){
     res.fill = false;
     _process(res);
 }
+
+function doText(obj){
+    if(isUndefined(obj.text) || isUndefined(obj.x) || isUndefined(obj.y) || isUndefined(obj.ctx)){
+        return;
+    }
+
+    let fontSize = obj.fontSize || 20;
+    let font = fontSize + "pt " + (obj.font || DEFAULT_FONT_FAMILY);
+    let halign = obj.textHalign || FONT_HALIGN_LEFT;
+    let valign = obj.textValign || FONT_VALIGN_BOTT;
+
+    let offset = CanvasHandler.calcTextWidth(obj.ctx, obj.text, font) * 1.2;
+    let rectPos = new GVector2f(obj.x, obj.y);
+    fontSize *=  1.2;
+    if(isString(obj.background)){
+        if(halign = FONT_HALIGN_CENTER){
+            rectPos.x -= offset >> 1;
+        }
+        else if(halign = FONT_HALIGN_RIGHT){
+            rectPos.x -= offset;
+        }
+
+        if(balign = FONT_VALIGN_BOTT){
+            rectPos.y -= fontSize >> 1;
+        }
+        doRect({
+            position: rectPos,
+            fillColor: obj.background,
+            width: offset,
+            height: fontSize,
+            ctx: obj.ctx
+        });
+    }
+    obj.ctx.textAlign = halign;
+    obj.ctx.textBaseline = valign;
+    obj.ctx.font = font;
+    obj.ctx.fillStyle = obj.fontColor || "#000000";
+    obj.ctx.fillText(obj.text, obj.x, obj.y);
+}
+
 function drawQuadraticCurve(param){
     let points = param.points,
         borderWidth = param.borderWidth || DEFAULT_BORDER_WIDTH,
@@ -401,7 +440,6 @@ function setShadow(variable){
     }
 }
 
-
 function setLineDash(variable){
     if(variable){
         CanvasHandler.setLineDash(context, 15, 5);
@@ -441,6 +479,8 @@ glob._initDef = function(obj){
         shadow: false,
         lineCap: LINE_CAP_BUTT,
         center: false,
+        startAngle: 0,
+        endAngle: PI2,
         offset: null,
         joinType: LINE_JOIN_MITER,
         lineStyle: LINE_STYLE_NORMAL,

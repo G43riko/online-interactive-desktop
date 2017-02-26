@@ -1,4 +1,4 @@
-class Color{
+class GColor{
 	constructor(){
 		Color._namedColors = {
 			'transparent':'rgba(0, 0, 0, 0)','aliceblue':'#F0F8FF','antiquewhite':'#FAEBD7','aqua':'#00FFFF','aquamarine':'#7FFFD4',

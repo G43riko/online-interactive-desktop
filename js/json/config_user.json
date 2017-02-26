@@ -438,6 +438,15 @@
 			"connected" : 2720,
 			"disconnected" : 2721
 		},
+		"movement" : {
+			"random" : 2800,
+			"random_limited" : 2801,
+			"vertical" : 2802,
+			"vertical_limited" : 2803,
+			"horizontal" : 2804,
+			"horizontal_limited" : 2805,
+			"none" : 2806
+		},
 		"object" : {
 			"arc" : "Arc",
 			"arrow" : "Arrow",

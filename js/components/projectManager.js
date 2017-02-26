@@ -11,6 +11,7 @@ class ProjectManager{
 		this._options 		= new OptionsManager();
 		this._input 		= new InputManager();
 		this._gui 			= new GuiManager();
+		this._panel			= null;
 		this._files 		= new FileManager();
 		this._content 		= new ContentManager();
 		this._listeners 	= new ListenersManager();
@@ -103,7 +104,7 @@ class ProjectManager{
 	get isMobile(){return this._analyzer.isMobile;}
 	get listeners(){return this._listeners;}
 	get options(){return this._options;}
-	get panel(){return null;}
+	get panel(){return this._panel;}
 	get runOnMobile(){return this._browserData.mobile > 0;}
 	get scene(){return this._scene;}
 	get time(){return Date.now() - this._createdAt; }

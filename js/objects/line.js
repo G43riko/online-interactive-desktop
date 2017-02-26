@@ -11,6 +11,9 @@ class Line extends Entity{
 		this._arrow.src 		= "img/arrow.png";
 		this._arrowEndType		= 0;
 		this._arrowStartType	= 0;
+		this._centerTexts		= [];
+		this._editable			= true; // či je možné pridávať a mazať body
+        this._movable			= true; //či je možné presúvať body
 		this.targetA 			= targetA;
 		this.targetB 			= targetB;
 
@@ -22,8 +25,8 @@ class Line extends Entity{
 			angle: Math.PI / 2
 		};
 		*/
-		this._text_A = "začiatok 10%";
-		this._text_B = "koniec 90%";
+		this._text_A = "";
+		this._text_B = "";
 
 		if(points.length < 2){
 			Logger.warn(getMessage(MSG_LINE_WITH_TOO_LESS_POINTS));
@@ -32,12 +35,38 @@ class Line extends Entity{
 		Entity.findMinAndMax(this._points, this.position, this.size);
 	}
 
+	setCenterText(text, index = 0){
+		this._centerTexts[index] = text;
+	}
+
+	removeCenterText(index = 0){
+		delete this._centerTexts[i];
+	}
+
+	set editable(value){this._editable = value;}
+    set movable(value){this._movable = value;}
+
+	get editable(){return this._editable;}
+    get movable(){return this._movable;}
+
+	set  textA(value){
+		if(isString(value) || isNumber(value)){
+			this._text_A = value;
+		}
+	}
+
+    set  textB(value){
+        if(isString(value) || isNumber(value)){
+            this._text_B = value;
+        }
+    }
+
 	setStartText(text, dist = 0, angle = 0, ctx = context){
 		if(arguments.length === 0 || !isString(text) || text.length === 0){
 			this._startText = null;
 			return;
 		}
-		var fontSize = 10;
+		let fontSize = 10;
 		this._startText = {
 			text: text,
 			dist: dist,
@@ -65,6 +94,10 @@ class Line extends Entity{
 			return false;
 		}
 
+		if(!this._editable){
+			return false;
+		}
+
 		this._points.forEach(function(e, i){
 			if(new GVector2f(x, y).dist(e) < SELECTOR_SIZE){
 				this._points.splice(i, 1);
@@ -84,29 +117,30 @@ class Line extends Entity{
 	_clickIn(x, y){
 		this.movingPoint = -1;
 
+		//zistí či bolo kliknuté na začiatočný text
 		if(this._startText !== null){
-			var final = this._points[this._points.length - 1].getClone();
+            let final = this._points[this._points.length - 1].getClone();
 			//var final = G.last(this._points).getClone();
-			var semiFinal = this._points[this._points.length - 2].getClone();
-			var vector = semiFinal.sub(final).normalize();
-			var angle = this._startText.angle;
-			var newVector = new GVector2f(vector.x * Math.cos(angle) - vector.y * Math.sin(angle),
+            let semiFinal = this._points[this._points.length - 2].getClone();
+            let vector = semiFinal.sub(final).normalize();
+            let angle = this._startText.angle;
+            let newVector = new GVector2f(vector.x * Math.cos(angle) - vector.y * Math.sin(angle),
 				vector.x * Math.sin(angle) + vector.y * Math.cos(angle));
-			var position = final.add(newVector.mul(this._startText.dist));
+            let position = final.add(newVector.mul(this._startText.dist));
 			if(position.dist(new GVector2f(x, y)) < this._startText.textWidth){
 				console.log("aaaaaaaaaanooooooooo");
 			}
 		}
 
-
+		//zistí či bolo klinutí na bod
 		this._points.forEach(function(e,i, points){
 			if(this.movingPoint >= 0){
 				return true;
 			}
-			if(new GVector2f(x, y).dist(e) < SELECTOR_SIZE){
+			if(this._movable && new GVector2f(x, y).dist(e) < SELECTOR_SIZE){
 				this.movingPoint = i;
 			}
-			else if(i + 1 < points.length &&
+			else if(this._editable && i + 1 < points.length &&
 				new GVector2f(x, y).dist((e.x + (points[i + 1].x) >> 1),
 					(e.y + (points[i + 1].y) >> 1)) < SELECTOR_SIZE){
 				this.movingPoint = parseFloat(i) + 0.5;
@@ -116,7 +150,8 @@ class Line extends Entity{
 			return this.movingPoint >= 0;
 		}
 
-		for(var i=1 ; i<this._points.length ; i++){
+		//zistí či bolo kliknuté na
+		for(let i=1 ; i<this._points.length ; i++){
 			if(Line.determineClick(this._points[i-1], this._points[i], x, y, 10)){
 				return true;
 			}
@@ -125,7 +160,7 @@ class Line extends Entity{
 	}
 
 	set targetB(val){
-		var object = val ? val.id : "";
+        let object = val ? val.id : "";
 		if(this._targetB == object){
 			return;
 		}
@@ -135,7 +170,7 @@ class Line extends Entity{
 	}
 
 	set targetA(val){
-		var object = val ? val.id : "";
+        let object = val ? val.id : "";
 		if(this._targetA == object){
 			return;
 		}
@@ -158,7 +193,7 @@ class Line extends Entity{
 			return false;
 		}
 
-		var dist = p1.dist(p2),
+        let dist = p1.dist(p2),
 			log = Math.ceil(Math.log2(dist)),
 			min,
 			max,
@@ -195,8 +230,16 @@ class Line extends Entity{
 		Entity.findMinAndMax(this._points, this.position, this.size);
 	}
 
-	draw(ctx = context){
-		var obj, size = this._points.length;
+	get positionA(){
+        return this._points[0];
+	}
+
+    get positionB(){
+        return this._points[this._points.length - 1];
+    }
+
+	_draw(ctx = context){
+        let obj, size = this._points.length;
 
 		if(this._targetA){
 			obj = Project.scene.getObject(this._targetLayerA, this._targetA);
@@ -240,35 +283,36 @@ class Line extends Entity{
 		Arrow.drawArrow(ctx, this._points[1], this._points[0], this, this._arrowEndType);
 		Arrow.drawArrow(ctx, this._points[size - 2], this._points[size - 1], this, this._arrowStartType);
 
-		var point, offset;
+        let point, offset;
 
 		//text_B
-		var first = this._points[0].getClone();
-		var second = this._points[1].getClone();
-		offset = CanvasHandler.calcTextWidth(ctx, this._text_B, "10pt Comic Sans MS");
-		point = first.add(second.sub(first).normalize().mul((offset >> 1) + 10));
-		doRect({
-			position: point,
-			fillColor: "white",
-			width: offset,
-			height: 10,
-			center: true,
-			ctx: ctx
-		});
-		ctx.fillStyle = "black";
-		ctx.textAlign = FONT_HALIGN_CENTER;
-		ctx.textBaseline = FONT_VALIGN_MIDDLE;
-		ctx.fillText(this._text_B, point.x, point.y);
-
-		if(isObject(this._startText) && this._startText !== null){
-			var final = this._points[this._points.length - 1].getClone();
+		if(isString(this._text_B) && this._text_B.length > 0){
+			let first = this._points[0].getClone();
+			let second = this._points[1].getClone();
+			offset = CanvasHandler.calcTextWidth(ctx, this._text_B, "10pt Comic Sans MS");
+			point = first.add(second.sub(first).normalize().mul((offset >> 1) + 10));
+			doRect({
+				position: point,
+				fillColor: "white",
+				width: offset,
+				height: 10,
+				center: true,
+				ctx: ctx
+			});
+			ctx.fillStyle = "black";
+			ctx.textAlign = FONT_HALIGN_CENTER;
+			ctx.textBaseline = FONT_VALIGN_MIDDLE;
+			ctx.fillText(this._text_B, point.x, point.y);
+        }
+		if(false && isObject(this._startText) && this._startText !== null){
+            let final = this._points[this._points.length - 1].getClone();
 			//var final = G.last(this._points).getClone();
-			var semiFinal = this._points[this._points.length - 2].getClone();
-			var vector = semiFinal.sub(final).normalize();
-			var angle = this._startText.angle;
-			var newVector = new GVector2f(vector.x * Math.cos(angle) - vector.y * Math.sin(angle),
+            let semiFinal = this._points[this._points.length - 2].getClone();
+            let vector = semiFinal.sub(final).normalize();
+            let angle = this._startText.angle;
+            let newVector = new GVector2f(vector.x * Math.cos(angle) - vector.y * Math.sin(angle),
 										  vector.x * Math.sin(angle) + vector.y * Math.cos(angle));
-			var position = final.add(newVector.mul(this._startText.dist));
+            let position = final.add(newVector.mul(this._startText.dist));
 			doRect({
 				position: position,
 				fillColor: "white",
@@ -282,6 +326,7 @@ class Line extends Entity{
 			ctx.textBaseline = FONT_VALIGN_MIDDLE;
 			ctx.fillText(this._startText.text, position.x, position.y);
 		}
+
 		/*
 		if(isObject(this._startText)){
 			var final = this._points[this._points.length - 1].getClone();
@@ -307,35 +352,57 @@ class Line extends Entity{
 		}
 		*/
 
-		/*
 		//text_A
-		var last = this._points[this._points.length - 1].getClone();
-		var subLast = this._points[this._points.length - 2].getClone();
-		offset = CanvasHandler.calcTextWidth(ctx, this._text_A, "10pt Comic Sans MS");
-		point = last.add(subLast.sub(last).normalize().mul((offset >> 1) + 10));
-		doRect({
-			position: point,
-			fillColor: "white",
-			width: offset,
-			height: 10,
-			center: true,
-			ctx: ctx
-		});
-		ctx.fillStyle = "black";
-		ctx.textAlign = FONT_HALIGN_CENTER;
-		ctx.textBaseline = FONT_VALIGN_MIDDLE;
-		ctx.fillText(this._text_A, point.x, point.y);
-		*/
-
+        if(isString(this._text_A) && this._text_A.length > 0) {
+            let last = this._points[this._points.length - 1].getClone();
+            let subLast = this._points[this._points.length - 2].getClone();
+            offset = CanvasHandler.calcTextWidth(ctx, this._text_A, "10pt Comic Sans MS");
+            point = last.add(subLast.sub(last).normalize().mul((offset >> 1) + 10));
+            doRect({
+                position: point,
+                fillColor: "white",
+                width: offset,
+                height: 10,
+                center: true,
+                ctx: ctx
+            });
+            ctx.fillStyle = "black";
+            ctx.textAlign = FONT_HALIGN_CENTER;
+            ctx.textBaseline = FONT_VALIGN_MIDDLE;
+            ctx.fillText(this._text_A, point.x, point.y);
+        }
 
 		context.lineWidth = DEFAULT_BORDER_WIDTH << 1;
-		if(this.selected){
-			drawBorder(ctx, this, {});
-			drawSelectArc(ctx, this._points[0].x, this._points[0].y);
-			for(var i=1 ; i<size ; i++){
-				drawSelectArc(ctx, this._points[i].x, this._points[i].y);
-				drawSelectArc(ctx, (this._points[i].x + this._points[i - 1].x) >> 1, (this._points[i].y + this._points[i - 1].y) >> 1);
+		if(this.selected) {
+            drawBorder(ctx, this, {});
+            drawSelectArc(ctx, this._points[0].x, this._points[0].y);
+        }
+
+		for(let i=1 ; i<size ; i++){
+			let center = {};
+
+			if(isString(this._centerTexts[i - 1])){
+				center.x = (this._points[i].x + this._points[i - 1].x) >> 1;
+				center.y = (this._points[i].y + this._points[i - 1].y) >> 1;
+				doText({
+					textHalign: FONT_HALIGN_CENTER,
+					textValign: FONT_VALIGN_MIDDLE,
+					fontSize: 10,
+					text: this._centerTexts[i - 1],
+					background: "#FFFFFF",
+					x: center.x,
+					y: center.y,
+					ctx: ctx
+				});
 			}
+            if(this.selected) {
+                drawSelectArc(ctx, this._points[i].x, this._points[i].y);
+                if (this._editable) {
+                    drawSelectArc(ctx,
+                        center.x || (this._points[i].x + this._points[i - 1].x) >> 1,
+                        center.y || (this._points[i].y + this._points[i - 1].y) >> 1);
+                }
+            }
 		}
 	}
 }

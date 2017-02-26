@@ -21,7 +21,7 @@ class ImageObject extends Entity{
 			return false;
 		}
 
-		var vec = new GVector2f(x, y);
+		let vec = new GVector2f(x, y);
 		this.moveType = -1;
 
 		this.checkConnectors(vec);
@@ -34,7 +34,7 @@ class ImageObject extends Entity{
 		return this.moveType >= 0;
 	}
 
-	draw(ctx = context){
+	_draw(ctx = context){
 		//context.drawImage(this._image, this.position.x, this.position.y, this.size.x, this.size.y);
 		doRect({
 			bgImage: this._image || false,
@@ -42,7 +42,7 @@ class ImageObject extends Entity{
 			position: this._position,
 			size: this.size,
 			radius: this.radius,
-			draw: true,
+			//draw: true,
 			shadow: this.moving && !this.locked,
 			borderWidth: this.borderWidth,
 			borderColor: this.borderColor,

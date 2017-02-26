@@ -10,7 +10,7 @@ class Arc extends Entity{
 	}
 
 	_clickIn(x, y){
-		var vec = new GVector2f(x, y);
+		let vec = new GVector2f(x, y);
 		this.moveType = -1;
 
 		this.checkConnectors(vec);

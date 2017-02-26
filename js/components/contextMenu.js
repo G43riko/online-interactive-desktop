@@ -202,7 +202,7 @@ class ContextMenuManager{
 	};
 
 	_doClickAct(opt) {
-		var act = opt.key;
+		let act = opt.key;
 		if(opt.disabled)
 			return false;
 
@@ -298,7 +298,7 @@ class ContextMenuManager{
 				actContextMenu = false;
 				break;
 			case "makeCopy":
-				var obj = Entity.create(this._selectedObject);
+				let obj = Entity.create(this._selectedObject);
 				obj.position.add(this._selectedObject.size);
 				Scene.addToScene(obj);
 				actContextMenu = false;
@@ -355,10 +355,10 @@ class ContextMenuManager{
 		if(!this.clickInBoundingBox(x, y))
 			return this._subMenu ? this._subMenu.clickIn(x, y) : false;
 
-		var i = parseInt((y - this._position.y) / CONTEXT_MENU_LINE_HEIGHT);
+		let i = parseInt((y - this._position.y) / CONTEXT_MENU_LINE_HEIGHT);
 
 		if(isDefined(this._titles[i]) && this._titles[i].hasOwnProperty("fields")){
-			var pos = this._position.getClone().add(this._menuWidth, i * CONTEXT_MENU_LINE_HEIGHT);
+            let pos = this._position.getClone().add(this._menuWidth, i * CONTEXT_MENU_LINE_HEIGHT);
 			if(pos.x + this._menuWidth > canvas.width)
 				pos.x -= this._menuWidth << 1;
 			if(this._titles[i].key === "changeLayer"){
