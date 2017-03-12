@@ -1,6 +1,10 @@
 class Line extends Entity{
 	constructor(points, width, fillColor, targetA = null, targetB = null) {
-		super(OBJECT_LINE, new GVector2f(), new GVector2f(), {fillColor: fillColor, borderWidth: width});
+		super(OBJECT_LINE, new GVector2f(), new GVector2f(), {
+			fillColor: fillColor,
+			borderWidth: width,
+			fontColor: null
+		});
 		this._points 			= points;
 		this.movingPoint		= -1;
 		this._lineCap			= LINE_CAP_BUTT;
@@ -43,24 +47,6 @@ class Line extends Entity{
 		delete this._centerTexts[i];
 	}
 
-	set editable(value){this._editable = value;}
-    set movable(value){this._movable = value;}
-
-	get editable(){return this._editable;}
-    get movable(){return this._movable;}
-
-	set  textA(value){
-		if(isString(value) || isNumber(value)){
-			this._text_A = value;
-		}
-	}
-
-    set  textB(value){
-        if(isString(value) || isNumber(value)){
-            this._text_B = value;
-        }
-    }
-
 	setStartText(text, dist = 0, angle = 0, ctx = context){
 		if(arguments.length === 0 || !isString(text) || text.length === 0){
 			this._startText = null;
@@ -80,14 +66,17 @@ class Line extends Entity{
 		}
 	}
 
-	get points(){return this._points;}
+	connectBTo(obj, selector){
+        obj.setConnector(selector);
+        this.targetB = obj;
+        obj.unsetConnector();
+	}
 
-	set lineCap(val){this._lineCap = val;}
-	set arrowEndType(val){this._arrowEndType = val;}
-	set lineType(val){this._lineType = val;}
-	set joinType(val){this._joinType = val;}
-	set lineStyle(val){this._lineStyle = val;}
-	set arrowStartType(val){this._arrowStartType = val;}
+    connectATo(obj, selector){
+        obj.setConnector(selector);
+        this.targetA = obj;
+        obj.unsetConnector();
+    }
 
 	doubleClickIn(x, y){
 		if(!this.clickInBoundingBox(x, y)){
@@ -159,26 +148,6 @@ class Line extends Entity{
 		return false;
 	}
 
-	set targetB(val){
-        let object = val ? val.id : "";
-		if(this._targetB == object){
-			return;
-		}
-		this._targetB			= object;
-		this._targetLayerB		= val ? val.layer : "";
-		this._targetConnectionB	= val ? val.selectedConnector : "";
-	}
-
-	set targetA(val){
-        let object = val ? val.id : "";
-		if(this._targetA == object){
-			return;
-		}
-		this._targetA			= object;
-		this._targetLayerA		= val ? val.layer : "";
-		this._targetConnectionA	= val ? val.selectedConnector : "";
-	}
-
 	setTarget(val){
 		if(this.movingPoint === 0){
 			this.targetA = val;
@@ -230,15 +199,7 @@ class Line extends Entity{
 		Entity.findMinAndMax(this._points, this.position, this.size);
 	}
 
-	get positionA(){
-        return this._points[0];
-	}
-
-    get positionB(){
-        return this._points[this._points.length - 1];
-    }
-
-	_draw(ctx = context){
+    _draw(ctx = context){
         let obj, size = this._points.length;
 
 		if(this._targetA){
@@ -388,6 +349,7 @@ class Line extends Entity{
 					textHalign: FONT_HALIGN_CENTER,
 					textValign: FONT_VALIGN_MIDDLE,
 					fontSize: 10,
+					fontColor: this._fontColor || this._fillColor,
 					text: this._centerTexts[i - 1],
 					background: "#FFFFFF",
 					x: center.x,
@@ -405,4 +367,54 @@ class Line extends Entity{
             }
 		}
 	}
+
+	//GETTERS
+
+    get points(){return this._points;}
+    get movable(){return this._movable;}
+    get editable(){return this._editable;}
+    get positionA(){return this._points[0];}
+    get positionB(){return this._points[this._points.length - 1];}
+
+	//SETTERS
+
+    set lineCap(val){this._lineCap = val;}
+    set lineType(val){this._lineType = val;}
+    set joinType(val){this._joinType = val;}
+    set movable(value){this._movable = value;}
+    set lineStyle(val){this._lineStyle = val;}
+    set editable(value){this._editable = value;}
+    set arrowEndType(val){this._arrowEndType = val;}
+    set arrowStartType(val){this._arrowStartType = val;}
+
+    set textA(value){
+        if(isString(value) || isNumber(value)){
+            this._text_A = value;
+        }
+    }
+
+    set  textB(value){
+        if(isString(value) || isNumber(value)){
+            this._text_B = value;
+        }
+    }
+    set targetB(val){
+        let object = val ? val.id : "";
+        if(this._targetB == object){
+            return;
+        }
+        this._targetB			= object;
+        this._targetLayerB		= val ? val.layer : "";
+        this._targetConnectionB	= val ? val.selectedConnector : "";
+    }
+
+    set targetA(val){
+        let object = val ? val.id : "";
+        if(this._targetA == object){
+            return;
+        }
+        this._targetA			= object;
+        this._targetLayerA		= val ? val.layer : "";
+        this._targetConnectionA	= val ? val.selectedConnector : "";
+    }
 }

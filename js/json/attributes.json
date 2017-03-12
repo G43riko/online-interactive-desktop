@@ -1,11 +1,15 @@
 {
 	"Entity" : {
 		"selectedConnector" : "boolean",
+		"movementType" : "number",
 		"borderColor" : "string",
 		"borderWidth" : "number",
+		"selectable" : "boolean",
 		"connectors" : "object",
+		"selectors" : "object",
 		"fillColor" : "string",
 		"selected" : "boolean",
+		"onClick" : "function",
 		"visible" : "boolean",
 		"position" : "object",
 		"minSize" : "boolean",
@@ -35,7 +39,11 @@
 		"data" : "object"
 	},
 	"Text" : {
-
+		"taskResult" : "string",
+		"fontSize" : "number",
+		"highlight" : "number",
+		"verticalTextAlign" : "number",
+		"horizontalTextAlign" : "number"
 	},
 	"Class" : {
 
@@ -45,6 +53,8 @@
 		"arrowEndType" : "number",
 		"movingPoint" : "number",
 		"lineStyle" : "number",
+		"fontColor" : "string",
+		"editable" : "boolean",
 		"joinType" : "number",
 		"lineType" : "number",
 		"lineCap" : "number",

@@ -3,8 +3,13 @@ class ImageObject extends Entity{
 		super(OBJECT_IMAGE, position, size, data);
 		this._radius = 20;
 
-		this._image = image || null;
+        this._image = image || null;
 
+		if(isString(this._image)){
+            this._image = new Image();
+            this._image.src = image;
+		}
+		
 		//if(!image)
 		//	loadImage(e => this._image = e);
 	}

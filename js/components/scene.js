@@ -4,6 +4,7 @@
 console.log("creating");
 class SceneManager{
 	constructor(){
+		this._items 		= {};
 		this._clickViewers 	= [];
 		this._layers 		= {};
 		this._secondCanvas 	= null;
@@ -213,20 +214,33 @@ class SceneManager{
 
 		return data.error === "" && findAssignment;
 	}
+	storeItem(key, value){
+        this._items[key] = value;
+	}
+    getItem(key){
+        return this._items[key];
+    }
+    deleteItem(key){
+		delete this._items[key];
+	}
 
 	addToScene(object, layer = Layers.activeLayerName, resend = true){
 		if(!this._layers.hasOwnProperty(layer)){
 			Logger.error(getMessage(MSG_ADD_OBJECT_TO_ABSENT_LAYER, layer));
 		}
-
-		object.layer = layer;
-		this._layers[layer].add(object);
-
-		Events.objectAdded(resend, object);
-
-		if(!resend){
-			object.selected = false;
+		if(isArray(object)){
+			each(object, e => this.addToScene(e, layer, resend));
 		}
+		else{
+			object.layer = layer;
+			this._layers[layer].add(object);
+
+			Events.objectAdded(resend, object);
+
+			if(!resend){
+				object.selected = false;
+			}
+        }
 
 		draw();
 	}
@@ -274,9 +288,12 @@ class SceneManager{
 
 
 	remove(obj, layer = obj.layer, resend = true){
+		//nemôžeme mazať veci z úkolovej vrstvy
+        if(this._layers[layer].taskLayer){
+            return;
+		}
 		this._layers[layer].remove(obj);
 		Events.objectDeleted(resend, obj);
-
 	}
 
 

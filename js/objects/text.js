@@ -1,18 +1,18 @@
 class TextField extends Entity{
 	constructor(text, position, size, fontColor = DEFAULT_FONT_COLOR){
 		super("Text", position, size, {fillColor: DEFAULT_FILL_COLOR, radius: DEFAULT_RADIUS});//TODO premenovať na input
-		this._text 			= text || "";
-		this._textColor 	= fontColor;
-		this._fontSize 		= DEFAULT_FONT_SIZE;
-		this._moveType 		= -1;
-		this._taskResult	= false;
-		this._hightlight	= false
-		this.size.x 		= calcTextWidth(text, this._fontSize + "pt " + DEFAULT_FONT_FAMILY) + (DEFAULT_FONT_OFFSET << 1);
-		this.minSize 		= this.size.getClone();
-		this._verticalTextAlign = FONT_VALIGN_TOP;
-		this._horizontalTextAlign = FONT_HALIGN_LEFT;
-		this._fontOffset 	= DEFAULT_FONT_OFFSET;
-		this._link			= false;
+		this._text 					= text || "";
+		this._textColor 			= fontColor;
+		this._fontSize 				= DEFAULT_FONT_SIZE;
+		this._moveType 				= -1;
+		this._taskResult			= false;
+		this._highlight			= false;
+		this.size.x 				= calcTextWidth(text, this._fontSize + "pt " + DEFAULT_FONT_FAMILY) + (DEFAULT_FONT_OFFSET << 1);
+		this.minSize 				= this.size.getClone();
+		this._verticalTextAlign		= FONT_VALIGN_TOP;
+		this._horizontalTextAlign 	= FONT_HALIGN_LEFT;
+		this._fontOffset 			= DEFAULT_FONT_OFFSET;
+		this._link					= false;
 		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1))
 	}
 
@@ -28,7 +28,7 @@ class TextField extends Entity{
 	
 
 	draw(ctx = context){
-		var pos = this.position.getClone();
+		let pos = this.position.getClone();
 
 		doRect({
 			shadow: this.moving && !this.locked,
@@ -37,7 +37,7 @@ class TextField extends Entity{
 			radius: this.radius,
 			fillColor: this.fillColor,
 			borderWidth: this._borderWidth,
-			borderColor: !this._hightlight ? DEFAULT_BORDER_COLOR : this._hightlight == HIGHTLIGHT_CORRECT ? "green" : "red",
+			borderColor: !this._highlight ? DEFAULT_BORDER_COLOR : this._highlight == HIGHTLIGHT_CORRECT ? "green" : "red",
 			draw: true,
 			fill: true,
 			ctx: ctx
@@ -77,7 +77,7 @@ class TextField extends Entity{
 			return false;
 		}
 
-		var pos = this.position,
+		let pos = this.position,
 			vec = new GVector2f(x, y);
 
 
@@ -112,24 +112,31 @@ class TextField extends Entity{
 			return false;
 		}
 
-		getText(this._text, new GVector2f(x, y), this._size.getClone().sub(4), function(val){
+		getText(this._text, new GVector2f(x, y), this._size.getClone().sub(4), val => {
 			if(val.length == 0){
 				Scene.remove(this);
 			}
 			this._text = val;
-			this._size.x = calcTextWidth(val) + (DEFAULT_FONT_OFFSET << 1);
+            //this._size.x = calcTextWidth(val) + (DEFAULT_FONT_OFFSET << 1);
+			this._size.x = calcTextWidth(val, this._fontSize + "pt " + DEFAULT_FONT_FAMILY) + (DEFAULT_FONT_OFFSET << 1);
 
-			if(Task && this.taskResult){
-				this._hightlight = Task.checkResult(this) ? HIGHTLIGHT_CORRECT : HIGHTLIGHT_WRONG;
+			if(this._taskResult){
+                this._highlight = this._taskResult == val ? HIGHTLIGHT_CORRECT : HIGHTLIGHT_WRONG;
 			}
-		}, this);
+			/*
+			if(Task && this.taskResult){
+				this._highlight = Task.checkResult(this) ? HIGHTLIGHT_CORRECT : HIGHTLIGHT_WRONG;
+			}
+			*/
+		});
 
 		return true;
 	}
 
 	set text(val){
 		this._text = val;
-		this._size.x = calcTextWidth(val) + (DEFAULT_FONT_OFFSET << 1);
+		//this._size.x = calcTextWidth(val) + (DEFAULT_FONT_OFFSET << 1);
+        this._size.x = calcTextWidth(val, this._fontSize + "pt " + DEFAULT_FONT_FAMILY) + (DEFAULT_FONT_OFFSET << 1);
 	}
 
 

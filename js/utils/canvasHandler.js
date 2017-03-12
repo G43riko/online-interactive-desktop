@@ -68,7 +68,7 @@ class CanvasHandler{
 	}
 
 	static imageToCanvas(image){
-		var canvas = document.createElement("canvas");
+		let canvas = document.createElement("canvas");
 		canvas.width = image.width;
 		canvas.height = image.height;
 		canvas.getContext("2d").drawImage(image, 0, 0);
@@ -90,7 +90,7 @@ class CanvasHandler{
 	}
 
 	static canvasToImage(canvas, format = "image/png"){
-		var image = new Image();
+		let image = new Image();
 		image.src = canvas.toDataURL(format);
 		image.width = canvas.width;
 		image.height = canvas.height;

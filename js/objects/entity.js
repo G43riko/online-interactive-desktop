@@ -10,7 +10,7 @@ class Entity{
 		this._size 				= size;
 		this._name 				= name;
 		this._selectors 		= {tc: 1, bc: 1, cl: 1, cr: 1, br: 1};
-		this._onchange			= null;
+		this._onChange			= null;
 		this._movementType		= MOVEMENT_RANDOM;
 		this._movementLimits	= {};
 		this._drawCounter		= -1;
@@ -58,8 +58,8 @@ class Entity{
 	}
 
 	change(){
-		if(isFunction(this._onchange)){
-            this._onchange(this);
+		if(isFunction(this._onChange)){
+            this._onChange(this);
 		}
 	}
 
@@ -616,7 +616,7 @@ class Entity{
 	get locked(){return this._locked;}
 	get minSize(){return this._minSize;}
 	get visible(){return this._visible;}
-    get onchange(){return this._onchange;}
+    get onchange(){return this._onChange;}
 	get selected(){return this._selected;}
 	get position(){return this._position;}
     get selectors(){return this._selectors;}
@@ -628,7 +628,9 @@ class Entity{
     get movementType(){return this._movementType;}
     get movementLimits(){return this._movementLimits;}
 	get selectedConnector(){return this._selectedConnector;}
-
+	get center(){
+		return this._position.getClone().add(this._size.getClone().div(2));
+	}
 
 
 	/**
@@ -641,8 +643,8 @@ class Entity{
 	set minSize(val){this._minSize = val;}
     set selected(val){this._selected = val;}
     set selectors(val){this._selectors = val;}
-    set onclick(value){this._onClick = value;}
-    set onchange(value){this._onchange = value;}
+    set onClick(value){this._onClick = value;}
+    set onchange(value){this._onChange = value;}
     set selectable(value){this._selectable = value;}
     set movementType(value){this._movementType = value;}
     set movementLimits(value){this._movementLimits = value;}
