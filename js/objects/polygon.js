@@ -1,8 +1,12 @@
 class Polygon extends Entity{
 	constructor(points, color){
-		super(OBJECT_POLYGON, new GVector2f(), new GVector2f(), {fillColor: color});
-		this.points 		= points;
-		this.movingPoint	= -1;
+		super(OBJECT_POLYGON, new GVector2f(), new GVector2f(), {
+			fillColor: color,
+			points: points,
+            movingPoint: -1
+		});
+		//this.points 		= points;
+		//this.movingPoint	= -1;
 		if(points.length < 3){
 			Logger.warn(getMessage(MSG_POLYGON_WITH_TOO_LESS_POINTS));
 			Scene.remove(this);

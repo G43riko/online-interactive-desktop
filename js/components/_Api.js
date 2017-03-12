@@ -10,8 +10,8 @@ class Api{
 			return null;
 		}
 
-		var x = object.x || object._x;
-		var y = object.y || object._y;
+		let x = object.x || object._x;
+        let y = object.y || object._y;
 		if(isNumber(x) && isNumber(y)){
 			return new GVector2f(x, y);
 		}
@@ -43,18 +43,18 @@ class Api{
 			return this.getError("parameter size musí byť zadaný");
 		}
 
-		var position = this._parseGVector2f(params.position);
+        let position = this._parseGVector2f(params.position);
 		if(!position){
 			return this.getError("parameter position musí byť valídny Vector2f");
 		}
 
-		var size = this._parseGVector2f(params.size);
+        let size = this._parseGVector2f(params.size);
 		if(!size){
 			return this.getError("parameter size musí byť valídny Vector2f");
 		}
 
-		var fillColor = params.fillColor || DEFAULT_FILL_COLOR;
-		var borderColor = params.borderColor || DEFAULT_BORDER_COLOR;
+        let fillColor = params.fillColor || DEFAULT_FILL_COLOR;
+        let borderColor = params.borderColor || DEFAULT_BORDER_COLOR;
 
 		/********************************************************
 		//SPOLOCNE KONTROLY
@@ -77,7 +77,7 @@ class Api{
 		if(!isString(params.layer)){
 			return this.getError("Parameter layer musí byť string");	
 		}
-		var object = null;
+        let object = null;
 		try{
 			object = this._scene.getObject(params.layer, params.id);
 		}

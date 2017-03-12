@@ -1,7 +1,9 @@
 class Paint extends Entity{
 	constructor(){
-		super(OBJECT_PAINT, new GVector2f(), new GVector2f());
-		this._points 		= [Paint.defArray()];
+		super(OBJECT_PAINT, new GVector2f(), new GVector2f(), {
+			points: [Paint.defArray()]
+		});
+		//this._points 		= [Paint.defArray()];
 		this._count 		= 0;
 		this._canvas		= Project.canvasManager.createCanvas(Project.canvas.width, Project.canvas.height, "canvas" + Project.generateId());
 		this.onScreenResize();
@@ -12,7 +14,7 @@ class Paint extends Entity{
 	}
 
 	isEmpty(){
-		for(var i=0 ; i<this._points.length ; i++){
+		for(let i=0 ; i<this._points.length ; i++){
 			if(this._points[i].points.length > 0){
 				return false;
 			}
@@ -38,13 +40,13 @@ class Paint extends Entity{
 	}
 
 	animate(speed = 20, limit = this._points.length - 1){
-		var points 	= this._points,
+		let points 	= this._points,
 			i 		= 0,
 			ii 		= 0,
 			inst 	= this;
 		this.cleanUp();
 
-		var interval = setInterval(function(){
+        let interval = setInterval(function(){
 			if(i >= limit || i >= points.length - 1){
 				clearInterval(interval);
 				return;
@@ -66,7 +68,7 @@ class Paint extends Entity{
 
 	redraw(points, limit = points.length - 1){
 		this.cleanUp();
-		var res = [];
+        let res = [];
 		points.forEach(function(e, i){
 			if(i > limit || isNull(e.color)){
 				return;
@@ -163,13 +165,13 @@ class Paint extends Entity{
 			this._points.push(Paint.defArray());
 		}
 
-		var lastArr = this._points[this._points.length - 1],
+        let lastArr = this._points[this._points.length - 1],
 			arr = lastArr.points;
 
 		if(CUT_OFF_PATHS_BEFORE && arr.length > 2){
-			var p1 = arr[arr.length - 2].getClone().sub(arr[arr.length - 1]);
-			var p2 = arr[arr.length - 1].getClone().sub(point);
-			var angle = GVector2f.angle(p1, p2) * p2.length();
+            let p1 = arr[arr.length - 2].getClone().sub(arr[arr.length - 1]);
+            let p2 = arr[arr.length - 1].getClone().sub(point);
+            let angle = GVector2f.angle(p1, p2) * p2.length();
 			if(angle < CUT_OFF_BEFORE_DISTANCE){
 				return;
 			}
@@ -225,13 +227,13 @@ class Paint extends Entity{
 	}
 
 	static roundPath(path, maxDist){
-		for(var i = path.points.length - 3 ; i-- ; i > 0){
-			var p1 = path.points[i], 
+		for(let i = path.points.length - 3 ; i-- ; i > 0){
+            let p1 = path.points[i],
 				p2 = path.points[i + 1], 
 				p3 = path.points[i + 2];
-			var angle = GVector2f.angle(p2.getClone().sub(p1), p3.getClone().sub(p1));
-			var b = p2.getClone().sub(p3).length();
-			var height = b * angle;
+            let angle = GVector2f.angle(p2.getClone().sub(p1), p3.getClone().sub(p1));
+            let b = p2.getClone().sub(p3).length();
+            let height = b * angle;
 			if(height < maxDist){
 				path.points.splice(i + 1, 1);
 			}
@@ -258,10 +260,10 @@ class Paint extends Entity{
 
 	findPathsForRemove(pos, radius){
 		//TODO dorobiť na porovnávanie čiarok pretože toto porovnáva len body a pri rýchlich pohyboch to nemusí trafiť
-		var pointsToRemove = [];
+        let pointsToRemove = [];
 		each(this._points, (e, i) => {
 			if(!e.forRemove && e.min && e.max){
-				var offset = (Creator.brushSize >> 1) + (e.size >> 1);
+                let offset = (Creator.brushSize >> 1) + (e.size >> 1);
 				if(pos.x + offset > e.min.x - e.size && pos.y + offset > e.min.y &&
 				   pos.x - offset < e.max.x + e.size && pos.y - offset < e.max.y ){
 					each(e.points, ee => {
@@ -316,7 +318,7 @@ class Paint extends Entity{
 	}
 
 	removeSelectedPaths(){
-		var i = this._points.length;
+        let i = this._points.length;
 		while (i--){
 			if(this._points[i].forRemove){
 				this._points.splice(i, 1);

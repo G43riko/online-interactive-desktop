@@ -13,16 +13,16 @@ class TaskManager{
 			this._results[i] = {
 				correctValue: e,
 				correct: false
-			}
+			};
 			this._resultCount++;
-		})
+		});
 		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 	onSuccess(){
 		Logger.write("Všetko je vyriešené správne");
 	}
 	_getMissingResultsCount(){
-		var missing = 0;
+		let missing = 0;
 		each(this._results, (e) => {
 			if(!e.correct)
 				missing++;

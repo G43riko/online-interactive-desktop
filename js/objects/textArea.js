@@ -2,7 +2,7 @@ class TextArea extends Entity{
 	constructor(text, position, size, fontColor = DEFAULT_FONT_COLOR){
 		super(OBJECT_TEXT, position, size, {fillColor: DEFAULT_BACKGROUND_COLOR, radius: DEFAULT_RADIUS});
 		this._text 		= text || "";
-		this._textColor = fontColor;
+		this._fontColor = fontColor;
 		this._fontSize 	= DEFAULT_FONT_SIZE;
 		this._moveType 	= -1;
 		this._verticalTextAlign = FONT_VALIGN_TOP;
@@ -55,7 +55,7 @@ class TextArea extends Entity{
 		area.style.backgroundColor = this._fillColor;
 		area.style.borderRadius = this._radius + "px";
 		area.style.padding = this._padding + "px";
-		area.style.color = this._textColor;
+		area.style.color = this._fontColor;
 		area.style.zIndex = 100000;
 
 		area.style.font = this._fontSize + "pt " + DEFAULT_FONT;
@@ -104,7 +104,7 @@ class TextArea extends Entity{
 
 		context.textAlign = this._horizontalTextAlign;
 		context.textBaseline = this._verticalTextAlign;
-		context.fillStyle = this._textColor;
+		context.fillStyle = this._fontColor;
 		context.font = this._fontSize + "pt " + DEFAULT_FONT;
 
 		var offsetY = this._padding;

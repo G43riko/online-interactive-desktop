@@ -1,7 +1,6 @@
 /*
 	compatible:	forEach, JSON parsing 14.9.2016
 */
-console.log("creating");
 class SceneManager{
 	constructor(){
 		this._items 		= {};
@@ -25,41 +24,75 @@ class SceneManager{
 	}
 
 	mouseUp(x, y){
+		//počítadlo pre kliknutia
         let counter = 0;
+
+        //vytvoríme zobrazenie kliknutia
         let viewer = new Arc(new GVector2f(x, y), new GVector2f());
+
+        //nastavime mu vlastnosti
 		Entity.changeAttr(viewer, {
 			"fill" : false,
 			"borderColor" : CLICK_COLOR
 		});
+
+		//pridame ho do zoznamu už existujucich zobrazení
 		this._clickViewers[this._clickViewers.length] = viewer;
+
+		//každú snímku
         let interval = setInterval(() => {
+        	//posunieme
 			viewer.position.sub(CLICK_SPEED);
+
+			//zmenime velkosť
 			viewer.size.add(CLICK_SPEED * 2);
+
+			//ak sa už vykreslil dostatočne vela krat
 			if(++counter == CLICK_LIMIT){
+				//zmažeme ho zo zoznamu
 				this._clickViewers.splice(this._clickViewers.indexOf(viewer), 1);
+
+				//zatavime inerval
 				clearInterval(interval);
-				pdraw();
 			}
+			//vykreslime
 			pdraw();
 		}, 1000 / FPS);
 	}
 	mouseDown(x, y){
+        //počítadlo pre kliknutia
         let counter = 0;
-        let viewer = new Arc(new GVector2f(x, y).sub(CLICK_SPEED*CLICK_LIMIT),
+
+        //vytvoríme zobrazenie kliknutia
+        let viewer = new Arc(new GVector2f(x, y).sub(CLICK_SPEED * CLICK_LIMIT),
 							 new GVector2f(CLICK_SPEED * 2 * CLICK_LIMIT));
+
+        //nastavime mu vlastnosti
 		Entity.changeAttr(viewer, {
 			"fill" : false,
 			"borderColor" : CLICK_COLOR
 		});
+
+        //pridame ho do zoznamu už existujucich zobrazení
 		this._clickViewers[this._clickViewers.length] = viewer;
+
+		//každú snímku
         let interval = setInterval(() => {
+			//posunieme
 			viewer.position.add(CLICK_SPEED);
+
+            //zmenime velkosť
 			viewer.size.sub(CLICK_SPEED * 2);
+
+            //ak sa už vykreslil dostatočne vela krat
 			if(++counter == CLICK_LIMIT){
+				//zmažeme ho zo zoznamu
 				this._clickViewers.splice(this._clickViewers.indexOf(viewer), 1);
+
+                //zatavime inerval
 				clearInterval(interval);
-				pdraw();
 			}
+            //vykreslime
 			pdraw();
 		}, 1000 / FPS);
 	}
@@ -76,16 +109,21 @@ class SceneManager{
 	}
 
 	cleanUp(){
+		//prejdeme všetky vrstvy
 		each(this._layers, e => {
+			//a každú jednu vyčistíme
 			e.cleanUp();
+			//ak nieje defaultná vrstva tak ju zmažeme
 			if(e.title !== PROJECT_LAYER_TITLE){
 				this.deleteLayer(e.title);
 			}
 		});
 
+		//zaznamename vyčistenie scény
 		Events.sceneCleanUp();
+
+		//zalogujeme
 		Logger.log(getMessage(MSG_OBJECT_CLEANED, this.constructor.name), LOGGER_OBJECT_CLEANED);
-		
 	}
 
 	onScreenResize(){
@@ -93,23 +131,33 @@ class SceneManager{
 	}
 
 	createLayer(title = PROJECT_LAYER_TITLE, layerType = ""){
+		//ak už vrstva z názvom existuje upozorníme používatela
 		if(this._layers.hasOwnProperty(title)){
 			Logger.error(getMessage(MSG_RECREATE_LAYER, title));
 			return null;
 		}
+
+		//ak už je vytvorený maximum vrstiev upozorníme používatela
 		if(this.layersNumber == LIMIT_MAXIMUM_LAYERS){
 			Logger.error(getMessage(MSG_MAXIMUM_LAYER, LIMIT_MAXIMUM_LAYERS));
 			return null;
 		}
+
+		//vytvorime vrstvy
 		this._layers[title] = new Layer(title, layerType);
+
+		//zvačšíme počet vrstiev
 		this._layersCount++;
 
-
+		//ak existuje viewer vytvorime ho aj v ňom
 		if(isDefined(Layers)){
 			Layers.createLayer(this._layers[title]);
 		}
 
+		//uložime vytvorenie vrstvy
 		Events.layerCreate(title, layerType);
+
+		//vratime novú vrstvu
 		return this._layers[title];
 	}
 
@@ -118,42 +166,66 @@ class SceneManager{
 	}
 
 	renameLayer(oldTitle, newTitle){
+		//ak existuje vrstva zo starým názov a neexistuje vrstva z novým názvom
 		if(this._layers[oldTitle] && !this._layers[newTitle]){
+			//presunieme vrstvu
 			this._layers[newTitle] = this._layers[oldTitle];
+
+			//zmažeme starý index v poly
 			delete this._layers[oldTitle];
+
+			//premenujeme vrstvu
 			this._layers[newTitle].rename(newTitle);
 		}
 		
 	}
 
 	deleteLayer(title){
+		//ak neexistuje vrstva ktora sa ide vymazať upozornime použivatela
 		if(!this._layers.hasOwnProperty(title)){
 			Logger.error(getMessage(MSG_TRY_DELETE_ABSENT_LAYER, title));
 		}
 
+		//ak je vrstva ktorá sa ide vymazať gui tak upozornime používatela
 		if(this._layers[title].guiLayer){
 			Logger.write(getMessage(MSG_TRY_DELETE_GUI_LAYER));
 			return false;
 		}
 
+		//vyčistíme vrstvu
 		this._layers[title].cleanUp();
+
+		//vymažeme vrstvu
 		delete this._layers[title];
 
+		//zmenšíme počet vrstiev
 		this._layersCount--;
 
+		//aj je viewer tak aj v ňom zmažeme vrstvu
 		if(isDefined(Layers)){
 			Layers.deleteLayer(title);
 		}
 
+		//uložíme zmazanie vrstvy
 		Events.layerDelete(title);
 	}
 
 	changeLayer(object, newLayer){
+		//získame vrstvu
         let layer = this.getLayer(newLayer);
+
+        //ak existuje
 		if(layer){
+			//získame staru vrstvu
             let oldLayer = object.layer;
+
+            //pridáme objekt do nover vrstvy
 			layer.add(object);
+
+			//zmenime hodnotu vrstvy v objekte
 			Entity.changeAttr(object, "layer", newLayer);
+
+			//zo starej vrstvy zmažeme objekt
             this.getLayer(oldLayer).remove(object);
 		}
 	}
@@ -225,23 +297,32 @@ class SceneManager{
 	}
 
 	addToScene(object, layer = Layers.activeLayerName, resend = true){
+    	//ak vrstva do ktorej pridávame objekt neexistuje upozornime používatela
 		if(!this._layers.hasOwnProperty(layer)){
 			Logger.error(getMessage(MSG_ADD_OBJECT_TO_ABSENT_LAYER, layer));
 		}
+
+		//ak je objekt pole tak rekurzivne zavolame funkciu pre každý jeden objekt
 		if(isArray(object)){
 			each(object, e => this.addToScene(e, layer, resend));
 		}
 		else{
+			//nastavime objektu vrstvu
 			object.layer = layer;
+
+			//pridame objekt do vrstvy
 			this._layers[layer].add(object);
 
+			//uložime pridanie objektu
 			Events.objectAdded(resend, object);
 
+			//ak nemá preposlať tak neoznačíme objekt lebo sa vytvoril na dialku
 			if(!resend){
 				object.selected = false;
 			}
         }
 
+        //vykreslíme
 		draw();
 	}
 
@@ -270,20 +351,10 @@ class SceneManager{
 
 	pdraw(ctx){
 		each(this._clickViewers, e => e.draw(ctx));
-		/*
-		for(var i=0 ; i<this._clickViewers.length ; i++){
-			this._clickViewers[i].draw(ctx);
-		}
-		*/
 	}
 
 	draw(){
 		each(this._layers, e => e.draw());
-		/*
-		for(var i=0 ; i<this._clickViewers.length ; i++){
-			this._clickViewers[i].draw();
-		}
-		*/
 	}
 
 
@@ -292,7 +363,11 @@ class SceneManager{
         if(this._layers[layer].taskLayer){
             return;
 		}
+
+		//zmažeme objekt z vrstvy
 		this._layers[layer].remove(obj);
+
+        //uložime zmazanie objektu
 		Events.objectDeleted(resend, obj);
 	}
 
@@ -314,11 +389,17 @@ class SceneManager{
 
 	toObject(){
 		let result = [];
-		each(this._layers, e => e.forEach(function(ee){//pre každu vrstvu prejde všetkými objektami
+
+        //pre každu vrstvu prejde všetkými objektami
+		each(this._layers, e => e.forEach(function(ee){
+			//ak objekt nieje layer viewer
 			if(ee.name != "LayerViewer"){
+				//pridame ho do zoznamu výsledkov
 				result[result.length] = ee;
 			}
 		}));
+
+		//vratime vysledky
 		return result;
 	}
 }

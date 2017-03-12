@@ -39,14 +39,20 @@
 		"data" : "object"
 	},
 	"Text" : {
+		"text" : "string",
 		"taskResult" : "string",
+		"fontColor" : "string",
 		"fontSize" : "number",
+		"fontOffset" : "number",
+		"link" : "string",
 		"highlight" : "number",
 		"verticalTextAlign" : "number",
 		"horizontalTextAlign" : "number"
 	},
 	"Class" : {
-
+	},
+	"Image" : {
+		"image" : "string"
 	},
 	"Line" : {
 		"arrowStartType" : "number",
@@ -57,6 +63,7 @@
 		"editable" : "boolean",
 		"joinType" : "number",
 		"lineType" : "number",
+		"movable" : "boolean",
 		"lineCap" : "number",
 		"points" : "object"
 	},

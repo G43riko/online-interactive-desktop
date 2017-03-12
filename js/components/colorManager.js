@@ -2,7 +2,7 @@
 	compatible: 14.9.2016
 */
 function pickUpColor(func, thisArg){
-	var T;
+	let T;
 	if (arguments.length > 1){
 		T = thisArg;
 	}
@@ -16,7 +16,7 @@ function pickUpColor(func, thisArg){
 }
 
 function shadeColor1(color, percent) {  // deprecated. See below.
-	var num = parseInt(color.slice(1), 16),
+    let num = parseInt(color.slice(1), 16),
 		amt = Math.round(2.55 * percent), 
 		R = (num >> 16) + amt, 
 		G = (num >> 8 & 0x00FF) + amt,
@@ -27,6 +27,6 @@ function shadeColor1(color, percent) {  // deprecated. See below.
 }
 
 glob.hexToRGBA = function(color) {
-	var num = parseInt(color.slice(1), 16);
+    let num = parseInt(color.slice(1), 16);
 	return [num >> 16, num >> 8 & 0x00FF, num & 0x0000FF];
 };

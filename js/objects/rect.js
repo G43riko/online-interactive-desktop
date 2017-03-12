@@ -1,7 +1,9 @@
 class Rect extends Entity {
 	constructor(position, size, fillColor){
-		super(OBJECT_RECT, position, size, {fillColor: fillColor});
-		this.moveType 	= -1;
+		super(OBJECT_RECT, position, size, {
+			fillColor: fillColor,
+			moveType: -1
+		});
 		this.minSize 	= new GVector2f(SELECTOR_SIZE);
 		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1));
 		//this._radius = Creator.radius;
@@ -30,12 +32,7 @@ class Rect extends Entity {
 	_hover(x, y){
         this._mouseOver = this.clickInBoundingBox(x, y);
         if(this._mouseOver){
-			if(this._locked){
-				setCursor(CURSOR_NOT_ALLOWED);
-			}
-			else{
-				setCursor(CURSOR_POINTER);
-			}
+            setCursor(this._locked ? CURSOR_NOT_ALLOWED : CURSOR_POINTER);
 			return true;
 		}
 

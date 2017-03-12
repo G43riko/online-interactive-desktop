@@ -165,7 +165,7 @@ class ContextMenuManager{
 				});
 			}
 
-			fillText(e.label, pX, posY,  30 - CONTEXT_MENU_OFFSET, this._textColor, [CONTEXT_MENU_OFFSET, 0]);
+			fillText(e.label, pX, posY,  30 - CONTEXT_MENU_OFFSET, this._fontColor, [CONTEXT_MENU_OFFSET, 0]);
 
 
 			if(e.type == INPUT_TYPE_CHECKBOX)

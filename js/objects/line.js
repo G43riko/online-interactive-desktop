@@ -3,21 +3,32 @@ class Line extends Entity{
 		super(OBJECT_LINE, new GVector2f(), new GVector2f(), {
 			fillColor: fillColor,
 			borderWidth: width,
-			fontColor: null
+			fontColor: null,
+			points: points,
+			lineCap: LINE_CAP_BUTT,
+			joinType: LINE_JOIN_MITER,
+			lineStyle: LINE_STYLE_NORMAL,
+			lineType: JOIN_LINEAR,
+			movingPoint: -1,
+			editable: true, // či je možné pridávať a mazať body
+			movable: true //či je možné presúvať body
+
 		});
-		this._points 			= points;
-		this.movingPoint		= -1;
+		//this._points 			= points;
+		//this.movingPoint		= -1;
+		/*
 		this._lineCap			= LINE_CAP_BUTT;
 		this._joinType			= LINE_JOIN_MITER;
 		this._lineStyle			= LINE_STYLE_NORMAL;
 		this._lineType			= JOIN_LINEAR;
+		*/
 		this._arrow 			= new Image();
 		this._arrow.src 		= "img/arrow.png";
 		this._arrowEndType		= 0;
 		this._arrowStartType	= 0;
 		this._centerTexts		= [];
-		this._editable			= true; // či je možné pridávať a mazať body
-        this._movable			= true; //či je možné presúvať body
+		//this._editable		= true; // či je možné pridávať a mazať body
+        //this._movable			= true; //či je možné presúvať body
 		this.targetA 			= targetA;
 		this.targetB 			= targetB;
 

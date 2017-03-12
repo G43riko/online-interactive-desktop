@@ -28,9 +28,9 @@ class FileManager{
 
 	loadImage(func){
 		this._input.onchange = function(e){
-			var reader = new FileReader();
+            let reader = new FileReader();
 			reader.onload = function(){
-				var image = new Image();
+                let image = new Image();
 				image.src = reader.result;
 				func(image);
 			};
@@ -41,7 +41,7 @@ class FileManager{
 
 	loadFile(func){
 		this._input.onchange = function(e){
-			var reader = new FileReader();
+            let reader = new FileReader();
 			reader.onload = () => func(reader.result);
 			reader.readAsText(e.target.files[0]);
 		};
@@ -55,7 +55,7 @@ function saveFile(name, text, type){
 	if(typeof type === "undefined"){
 		type = "text/plain";
 	}
-	var file = new Blob([text], {type: type}),
+	let file = new Blob([text], {type: type}),
 		a   = document.getElementById("fileLink");
 
 	a.href = URL.createObjectURL(file);
@@ -64,18 +64,18 @@ function saveFile(name, text, type){
 }
 
 function saveImage(name, image){
-	var a = document.getElementById("fileLink");
+    let a = document.getElementById("fileLink");
 	a.href = image;
 	a.download = name;
 	a.click();
 }
 
 function loadImage(func){
-	var el = document.getElementById("fileInput");
+    let el = document.getElementById("fileInput");
 	el.onchange = function(e){
-		var reader = new FileReader();
+        let reader = new FileReader();
 		reader.onload = function(){
-			var image = new Image();
+            let image = new Image();
 			image.src = reader.result;
 			func(image);
 		};
@@ -86,14 +86,14 @@ function loadImage(func){
 
 function loadFile(func){
 	//var el = document.getElementById("fileInput");
-	var el = document.createElement("input");
+    let el = document.createElement("input");
 	el.setAttribute("id", "fileInput");
 	el.setAttribute("type", "file");
 	el.setAttribute("value", "files");
 	el.setAttribute("class", "hide");
 
 	el.onchange = function(e){
-		var reader = new FileReader();
+        let reader = new FileReader();
 		reader.onload = () => func(reader.result);
 		reader.readAsText(e.target.files[0]);
 	};
@@ -115,10 +115,10 @@ function saveSceneAsFile(params = {projectTitle: "scene_backup"}){
 }
 
 function saveSceneAsTask(fileName = "default_task"){
-	var result = {};
+    let result = {};
 
 	if(Project.scene.getTaskObject(result)){
-		var data = {
+        let data = {
 			scene: result.content,
 			results:  result.results,
 			title: fileName,
@@ -136,7 +136,7 @@ function loadTask(scene, results, title){
 		return Logger.error(getMessage(MSG_TASK_EXIST));
 	}
 
-	var layer = Scene.createLayer(title, "task");
+    let layer = Scene.createLayer(title, "task");
 	each(scene, e => {
 		e.layer = layer.title;
 		Project.creator.create(e);
@@ -148,7 +148,7 @@ function loadTask(scene, results, title){
 function loadSceneFromFile(){
 	loadFile(function(content){
 		//try{
-		var data = JSON.parse(content);
+        let data = JSON.parse(content);
 		if(data.type && data.type === 2501){
 			loadTask(data.scene, data.results, data.title);
 		}

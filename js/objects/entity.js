@@ -160,6 +160,15 @@ class Entity{
 		objectToArray(arguments).forEach(e => this._connectors.push(e), this);
 	}
 
+    doubleClickIn(x, y){
+        //ak neexistuje funkcia alebo ak sa nekliklo na element vrátime false
+        if (!isFunction(this._doubleClickIn) || !this.clickInBoundingBox(x, y)) {
+            return false;
+        }
+
+        //zistíme že sa naozaj kliklo a výsledok vrátime
+        return this._doubleClickIn(x, y);
+    }
 
 	/**
 	 * Vráti true ak je šanca že bolo kliknuté na niektorú časť objektu
@@ -174,7 +183,6 @@ class Entity{
 			   y + SELECTOR_SIZE > obj._position.y && y - SELECTOR_SIZE < obj._position.y + obj._size.y;
 	}
 
-
 	/**
 	 * Zistí či bolo kliknuté na objekt a ak áno zavolá príslušnú funkciu
 	 *
@@ -187,8 +195,8 @@ class Entity{
 		//if(this.locked)
 		//	return false;
 
-		//zistime či je vôbec nejaká šanca že sa kliklo na objekt
-		if (!this.clickInBoundingBox(x, y)){
+        //ak neexistuje funkcia alebo ak sa nekliklo na element vrátime false
+		if (!isFunction(this._clickIn) || !this.clickInBoundingBox(x, y)){
 			return false;
 		}
 
@@ -196,17 +204,12 @@ class Entity{
 		return  this._clickIn(x, y);
 	}
 
-	_clickIn(x, y){return false;}
-
 	hover(x, y){
-		if(!this.clickInBoundingBox(x, y)){
+        //ak neexistuje funkcia alebo ak sa nekliklo na element vrátime false
+		if(!isFunction(this._hover) || !this.clickInBoundingBox(x, y)){
 			return false;
 		}
 		return this._hover(x, y);
-	}
-
-	_hover(x, y){
-		return false;
 	}
 
 	/**
@@ -221,22 +224,24 @@ class Entity{
 	 * @param y
 	 */
 	pressIn(x, y){
-		return false;
+        //ak neexistuje funkcia alebo ak sa nekliklo na element vrátime false
+        if (!isFunction(this._pressIn) || !this.clickInBoundingBox(x, y)){
+            return false;
+        }
+
+        //zistíme že sa naozaj kliklo a výsledok vrátime
+        return  this._pressIn(x, y);
 	}
-
-
 
 	/*
 	 * vykoná príslušnú akciu po pressnutí
 	 */
 	//_doPressAct(index, x, y){};
 
-
 	/**
 	 * Vyčistí objekt (vykonáva sa tesne pred zmazaním)
 	 */
 	cleanUp(){}
-
 
 	_draw(){}
 
@@ -323,7 +328,6 @@ class Entity{
 		return obj;
 	}
 
-
 	/**
 	 * Vypočíta maximálnu a minimálnu poziciu z pola bodov
 	 *
@@ -345,7 +349,6 @@ class Entity{
 
 		size.sub(position);
 	}
-
 
 	/**
 	 * Skontroluje či sa súradnica nachadza na nejakom connectore
@@ -378,7 +381,6 @@ class Entity{
 		}
 	}
 
-
 	/**
 	 * Vykreslí všetky connectory
 	 *
@@ -393,7 +395,6 @@ class Entity{
 
 		obj._connectors.forEach(e => drawConnector(e, obj, ctx));
 	}
-
 
 	/**
 	 * Animuje pohyb alebo zmenu velkosti
@@ -637,7 +638,7 @@ class Entity{
 	 * SETTERS
 	 *
 	 */
-	//set id(val){this._id = val;}
+
 	set layer(val){this._layer = val;}
 	set locked(val){this._locked = val;}
 	set minSize(val){this._minSize = val;}

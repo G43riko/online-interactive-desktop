@@ -1,7 +1,8 @@
 class ImageObject extends Entity{
 	constructor(position, size, image, data){
 		super(OBJECT_IMAGE, position, size, data);
-		this._radius = 20;
+
+		Entity.changeAttr(this, {radius: 20});
 
         this._image = image || null;
 
@@ -9,10 +10,18 @@ class ImageObject extends Entity{
             this._image = new Image();
             this._image.src = image;
 		}
-		
-		//if(!image)
-		//	loadImage(e => this._image = e);
 	}
+
+    _hover(x, y){
+        this._mouseOver = this.clickInBoundingBox(x, y);
+        if(this._mouseOver){
+            setCursor(this._locked ? CURSOR_NOT_ALLOWED : CURSOR_POINTER);
+            return true;
+        }
+
+        setCursor(CURSOR_DEFAULT);
+        return false;
+    }
 
 	set image(img){this._image = img;}
 
@@ -21,11 +30,7 @@ class ImageObject extends Entity{
 		this.size.y = pos.y - this.position.y;
 	}
 
-	clickIn(x, y){
-		if (!this.clickInBoundingBox(x, y)){
-			return false;
-		}
-
+	_clickIn(x, y){
 		let vec = new GVector2f(x, y);
 		this.moveType = -1;
 

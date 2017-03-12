@@ -555,15 +555,17 @@ let Examples = {
         }).change();
 
         /********OTHERS********/
+        let result = new TextField("Vaša odpoveď", new GVector2f(850, 160), new GVector2f(45));
         let text = new TextField("Akou silou musí pôsobiť Fridrich na kváder aby ním pohol?", new GVector2f(250, 100), new GVector2f(45));
 
+        Entity.changeAttr(result, {taskResult: "gabo"});
         Entity.changeAttr(text, {locked: true});
         Entity.changeAttr(floor, {locked : true});
         Entity.changeAttr(connector, {locked: true});
 
         /********APPEND********/
         Project.scene.createLayer("Physics task #1", LAYER_TASK);
-        Project.scene.addToScene([text, hint, connector, person, rock, floor, arrowMG, arrowFK, arrowFN], "Physics task #1");
+        Project.scene.addToScene([text, hint, connector, person, rock, floor, arrowMG, arrowFK, arrowFN, result], "Physics task #1");
 
 		//toto musí byť až za pridanim všetkych veci do sceny aby sa nastavila spravna vrstva
         connector.connectATo(person, 3);

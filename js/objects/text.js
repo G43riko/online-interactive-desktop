@@ -1,20 +1,34 @@
 class TextField extends Entity{
 	constructor(text, position, size, fontColor = DEFAULT_FONT_COLOR){
-		super("Text", position, size, {fillColor: DEFAULT_FILL_COLOR, radius: DEFAULT_RADIUS});//TODO premenovať na input
-		this._text 					= text || "";
-		this._textColor 			= fontColor;
-		this._fontSize 				= DEFAULT_FONT_SIZE;
-		this._moveType 				= -1;
-		this._taskResult			= false;
-		this._highlight			= false;
+		super("Text", position, size, {
+			fillColor: DEFAULT_FILL_COLOR,
+			radius: DEFAULT_RADIUS,
+			fontColor: fontColor,
+			fontSize: DEFAULT_FONT_SIZE,
+			moveType: -1,
+			taskResult: false,
+			highlight: false,
+            fontOffset: DEFAULT_FONT_OFFSET,
+            verticalTextAlign: FONT_VALIGN_TOP,
+            horizontalTextAlign: FONT_HALIGN_LEFT,
+			text: text || "",
+			link: false
+		});//TODO premenovať na input
 		this.size.x 				= calcTextWidth(text, this._fontSize + "pt " + DEFAULT_FONT_FAMILY) + (DEFAULT_FONT_OFFSET << 1);
 		this.minSize 				= this.size.getClone();
-		this._verticalTextAlign		= FONT_VALIGN_TOP;
-		this._horizontalTextAlign 	= FONT_HALIGN_LEFT;
-		this._fontOffset 			= DEFAULT_FONT_OFFSET;
-		this._link					= false;
 		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1))
 	}
+
+    _hover(x, y){
+        this._mouseOver = this.clickInBoundingBox(x, y);
+        if(this._mouseOver){
+            setCursor(this._locked ? CURSOR_NOT_ALLOWED : CURSOR_POINTER);
+            return true;
+        }
+
+        setCursor(CURSOR_DEFAULT);
+        return false;
+    }
 
 	get moveType(){return this._moveType;}
 	get text(){return this._text;}
@@ -25,9 +39,7 @@ class TextField extends Entity{
 	set verticalTextAlign(val){this._verticalTextAlign = val;}
 	set horizontalTextAlign(val){this._horizontalTextAlign = val;}
 
-	
-
-	draw(ctx = context){
+	_draw(ctx = context){
 		let pos = this.position.getClone();
 
 		doRect({
@@ -46,7 +58,7 @@ class TextField extends Entity{
 
 		ctx.textAlign = this._horizontalTextAlign;
 		ctx.textBaseline = this._verticalTextAlign;
-		ctx.fillStyle = this._textColor;
+		ctx.fillStyle = this._fontColor;
 		ctx.font = this._fontSize + "pt " + DEFAULT_FONT_FAMILY;
 		
 		if(this._horizontalTextAlign == FONT_HALIGN_LEFT){
@@ -72,11 +84,7 @@ class TextField extends Entity{
 		Entity.drawConnectors(this, ctx);
 	}
 
-	clickIn(x, y){
-		if(!this.clickInBoundingBox(x, y)){
-			return false;
-		}
-
+	_clickIn(x, y){
 		let pos = this.position,
 			vec = new GVector2f(x, y);
 
@@ -107,38 +115,34 @@ class TextField extends Entity{
 		return this._moveType >= 0;
 	}
 
-	doubleClickIn(x, y){
+	_doubleClickIn(x, y){
+		//ak sa nekliklo na element vrátime false
 		if(!this.clickInBoundingBox(x, y)){
 			return false;
 		}
 
+		//zobrazíme input pre vstup a nastavíme callback
 		getText(this._text, new GVector2f(x, y), this._size.getClone().sub(4), val => {
+			//ak je prázdny tak ho zmažeme
 			if(val.length == 0){
 				Scene.remove(this);
 			}
-			this._text = val;
-            //this._size.x = calcTextWidth(val) + (DEFAULT_FONT_OFFSET << 1);
-			this._size.x = calcTextWidth(val, this._fontSize + "pt " + DEFAULT_FONT_FAMILY) + (DEFAULT_FONT_OFFSET << 1);
 
+			//nastavíme hodnotu
+			this.text = val;
+
+			//ak je nastavený výsledok tak sa zvýrazný správnosť odpovede
 			if(this._taskResult){
                 this._highlight = this._taskResult == val ? HIGHTLIGHT_CORRECT : HIGHTLIGHT_WRONG;
 			}
-			/*
-			if(Task && this.taskResult){
-				this._highlight = Task.checkResult(this) ? HIGHTLIGHT_CORRECT : HIGHTLIGHT_WRONG;
-			}
-			*/
 		});
 
+		//vrátime trie
 		return true;
 	}
 
 	set text(val){
 		this._text = val;
-		//this._size.x = calcTextWidth(val) + (DEFAULT_FONT_OFFSET << 1);
         this._size.x = calcTextWidth(val, this._fontSize + "pt " + DEFAULT_FONT_FAMILY) + (DEFAULT_FONT_OFFSET << 1);
 	}
-
-
-
 }
