@@ -25,23 +25,6 @@ class Layer{
 		each(this._forRemove, e => Project.scene.remove(e));
 		this._forRemove = [];
 	}
-	
-	get locked(){return this._locked /*&& this._layerType === ""*/;}
-	get taskLayer(){return this._layerType === LAYER_TASK;}
-	get guiLayer(){return this._layerType === LAYER_GUI;}
-	get userLayer(){return this._layerType === LAYER_USER;}
-	get drawPaint(){return this._drawPaint;}
-	get layerType(){return this._layerType;}
-	get visible(){return this._visible;}
-	get objects(){return this._objects;}
-	get raster(){return this._raster;}
-	get title(){return this._title;}
-	get paint(){
-		if(isNull(this._paint)){
-			this._paint = new Paint();
-		}
-		return this._paint;
-	}
 
 	isEmpty(){
 		if(this._paint && !this._paint.isEmpty()){
@@ -55,13 +38,6 @@ class Layer{
 		return true;
 	}
 
-	set drawPaint(val){this._drawPaint = val;}
-	set visible(val){this._visible = val;}
-	set objects(val){this._objects = val;}
-	set title(val){this._title = val;}
-	set locked(val){
-		this._locked = val === true;
-	}
 
 	cleanUp(){
 		this.forEach(e => callIfFunc(e.cleanUp));
@@ -109,5 +85,30 @@ class Layer{
 
 	forEach(func){
 		each(this._objects, func);
+	}
+	
+	get locked(){return this._locked /*&& this._layerType === ""*/;}
+	get taskLayer(){return this._layerType === LAYER_TASK;}
+	get guiLayer(){return this._layerType === LAYER_GUI;}
+	get userLayer(){return this._layerType === LAYER_USER;}
+	get drawPaint(){return this._drawPaint;}
+	get layerType(){return this._layerType;}
+	get visible(){return this._visible;}
+	get objects(){return this._objects;}
+	get raster(){return this._raster;}
+	get title(){return this._title;}
+	get paint(){
+		if(isNull(this._paint)){
+			this._paint = new Paint();
+		}
+		return this._paint;
+	}
+	
+	set drawPaint(val){this._drawPaint = val;}
+	set visible(val){this._visible = val;}
+	set objects(val){this._objects = val;}
+	set title(val){this._title = val;}
+	set locked(val){
+		this._locked = val === true;
 	}
 }

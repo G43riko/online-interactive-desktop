@@ -101,9 +101,6 @@ class SceneManager{
 		this._secondCanvas = new CanvasHandler();
 	}
 
-	get creator(){return this._creator;}
-	get objectManager(){return this._objectManager;}
-
 	forEach(func){
 		each(this._layers, e => e.visible && e.forEach(func));
 	}
@@ -341,9 +338,11 @@ class SceneManager{
 	}
 
 	get layers(){return this._layers;}
+	get creator(){return this._creator;}
 	get paint(){return Layers.activeLayer.paint;}
 	get layersNumber(){return this._layersCount;}
 	get secondCanvas(){return this._secondCanvas;}
+	get objectManager(){return this._objectManager;}
 
 	getObject(layer, id){
 		return this._layers[layer].getObject(id);

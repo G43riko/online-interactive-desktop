@@ -10,42 +10,14 @@ class Area{
 		this._offset = new GVector2f();
 	}
 
-	get name(){
-		return this._name;
-	}
-
-	get moving(){
-		return this._moving;
-	}
 
 	move(x, y){
 		this._offset.add(x, y);
 	}
 
-	set moving(val){
-		this._moving = val;
-		if(!val){
-			each(this._points, (e) => {
-				e.x += this._offset.x;
-				e.y += this._offset.y;
-			});
-			this._min.add(this._offset);
-			this._max.add(this._offset);
-			this._offset.set(0, 0);
-		}
-	}
-
-	get isCreating(){
-		return this._isCreating;
-	}
-
 	clear(){
 		this._points = [];
 		this._isCreating = false;
-	}
-
-	get isReady(){
-		return this._min && this._max && this._min.dist(this._max) > MINIMAL_DIAGONAL;
 	}
 
 	removeSelected(onBorder, revert = false){
@@ -208,6 +180,23 @@ class Area{
 			borderWidth: 5,
 			borderColor: "red"
 		});
+	}
 
+	get name(){return this._name;}
+	get moving(){return this._moving;}
+	get isCreating(){return this._isCreating;}
+	get isReady(){return this._min && this._max && this._min.dist(this._max) > MINIMAL_DIAGONAL;}
+
+	set moving(val){
+		this._moving = val;
+		if(!val){
+			each(this._points, (e) => {
+				e.x += this._offset.x;
+				e.y += this._offset.y;
+			});
+			this._min.add(this._offset);
+			this._max.add(this._offset);
+			this._offset.set(0, 0);
+		}
 	}
 }

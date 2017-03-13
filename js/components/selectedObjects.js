@@ -8,20 +8,9 @@ class ObjectsManager{
 		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
-	get firstObject(){
-		return this._objects[0];
-	}
 
 	size(){
 		return this._objects.length;
-	}
-
-	get movedObject(){
-		return this._movedObject;
-	}
-
-	set movedObject(val){
-		this._movedObject = val;
 	}
 
 	onMouseMove(pos, movX, movY){
@@ -62,9 +51,6 @@ class ObjectsManager{
 		updateSelectedObjectView(o);
 	}
 
-	get(i){
-		return this._objects.hasOwnProperty(i) ? this._objects[i] : false;
-	}
 
 	getLast(){
 		return this._objects[this.size() - 1];
@@ -89,4 +75,11 @@ class ObjectsManager{
 	forEach(e){
 		each(this._objects, e);
 	}
+
+	get(i){
+		return this._objects.hasOwnProperty(i) ? this._objects[i] : false;
+	}
+	get firstObject(){return this._objects[0];}
+	get movedObject(){return this._movedObject;}
+	set movedObject(val){this._movedObject = val;}
 }

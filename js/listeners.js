@@ -11,11 +11,17 @@ class ListenersManager{
 	}
 	mouseDown(position, button){
 		try{
+			/*
+			 * ak je zapnuta možnosť zobrazovať kliknutia tak vytvor nové kliknutie
+			 */
 			if(Project.options.showClicks){
 				Project.scene.mouseDown(position.x, position.y);
 			}
 			this._clickedOnObject = false;
 
+			/*
+			 * ak je zapnutý dialog tak ho zavrie
+			 */
 			if($(canvas).hasClass("blur")){
 				closeDialog();
 				this._clickedOnObject = true;
@@ -107,18 +113,34 @@ class ListenersManager{
 	}
 
 	hashChange(){
+		/*
+		 * nastavime všetky komponenty
+		 */
 		glob.setUpComponents();
 
+		/*
+		 * nanovy sa vytovrí menu len s položkami ktoré patria k aktívnym komponentom
+		 */
 		if(MenuManager.dataBackup){
 			Menu.init(JSON.parse(MenuManager.dataBackup));
 		}
 
+		/*
+		 * ak je zapnuty komponent vrstvy zobrazí sa layer viewer
+		 */
 		if(Layers){
 			//Entity.setAttr(Layers, "visible", Components.layers());
 			Layers.visible = Components.layers();
 		}
 
+		/*
+		 * upravia sa možnosti podla komponentov
+		 */
 		Project.gui.showOptionsByComponents();
+
+		/*
+		 * vykresli sa aby sa zobrazili aktualne zmeny
+		 */
 		draw();
 	}
 
@@ -128,6 +150,10 @@ class ListenersManager{
 				area.removeSelected(isCtrlDown);//ak je aj ALT dole tak revertne mazanie
 			}
 		}
+
+		/*
+		 * zobrazí sa klavesa
+		 */
 		glob.showKey(key);
 		draw();
 	}
@@ -189,7 +215,14 @@ class ListenersManager{
 			return true;
 		}
 
-		Paints.breakLine();
+		/*
+		 * preruší kreslenie čiary ak sa kreslí
+		 */
+		 if(Creator.operation === OPERATION_DRAW_PATH && Components.draw()){
+			Paints.addPoint(position);
+			Paints.breakLine();
+			//return false;
+		}
 
 		/*
 		 * VYTVORI SA KONTEXTOVÉ MENU
@@ -213,16 +246,25 @@ class ListenersManager{
         let result	= false,
 			vec 	= new GVector2f(100, 40);
 
+		/*
+		 * prejdu sa všetky elementy
+		 */
 		Scene.forEach(e => {
 			if(!result && isDefined(e.doubleClickIn) && e.doubleClickIn(position.x, position.y)){
 				result = e;
 			}
 		});
 
+		/*
+		 * ak sa nekliklo na žiadny objekt tak sa vytvorí nový text
+		 */
 		if(!result){
 			getText("", position, vec, val => val.length && Scene.addToScene(new TextField(val, position, vec)));
 		}
 
+		/*
+		 * vykresli sa aby sa zobrazili zmeny
+		 */
 		draw();
 		return true;
 	}
@@ -237,6 +279,10 @@ class ListenersManager{
 			if(selectedObjects.size() === 1){
 				possibleChild = selectedObjects.firstObject;
 			}
+
+			/*
+			 * ak je zapnute zobrazovanie klikov tak sa zobrazi
+			 */
 			if(Project.options.showClicks){
 				Project.scene.mouseUp(position.x, position.y);
 			}
@@ -303,14 +349,23 @@ class ListenersManager{
 				return;
 			}
 
+			/*
+			 * ak sa kliklo na creator 
+			 */
 			if(Creator.clickIn(position.x, position.y)){
 				return;
 			}
 
+			/*
+			 * ak sa ma zavrieť dialog tak ho zavrie
+			 */
 			if(shoutCloseDialog){
 				closeDialog();
 			}
 
+			/*
+			 * prejde všetky objekty vo scene 
+			 */
 			Scene.forEach(o => {
 				if(!result && o.clickIn(position.x, position.y)) {
 					o.click(position.x, position.y);
@@ -366,6 +421,8 @@ class ListenersManager{
 			if(possibleChild && !clickOnParent){
 				possibleChild.removeParent();
 			}
+
+			
 			if(Creator.object){//tu može byť iba line ktorá nebola pripojená na konektor
 				Creator.finishCreating();
 			}
