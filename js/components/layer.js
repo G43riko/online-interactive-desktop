@@ -38,7 +38,6 @@ class Layer{
 		return true;
 	}
 
-
 	cleanUp(){
 		this.forEach(e => callIfFunc(e.cleanUp));
 		this._objects = {};
@@ -56,8 +55,6 @@ class Layer{
 		this._raster = true;
 		//TODO pri rastrovaní vrstvy nakresliť všetko do canvasu
 	}
-	
-
 
 	getObject(id){
 		return this._objects[id];

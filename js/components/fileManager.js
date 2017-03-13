@@ -21,7 +21,7 @@ class FileManager{
 	}
 
 	saveImage(name, image){
-		this._link.href = typeof image === "string" ? image : image.src;
+		this._link.href = isString(image) ? image : image.src;
 		this._link.download = name;
 		this._link.click();
 	}

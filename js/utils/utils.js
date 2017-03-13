@@ -775,7 +775,7 @@ function setCursor(val){
 function closeDialog(){
 	//$("#modalWindow > div").each((e) => $(e).hide());
 	let win = $("#modalWindow");
-	win.find("div").each(function(){
+	win.find("div.formContent").each(function(){
 		$(this).hide();
 	});
 	$("#colorPalete").undelegate();

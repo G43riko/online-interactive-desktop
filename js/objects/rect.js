@@ -30,7 +30,6 @@ class Rect extends Entity {
 	}
 
 	_hover(x, y){
-        this._mouseOver = this.clickInBoundingBox(x, y);
         if(this._mouseOver){
             setCursor(this._locked ? CURSOR_NOT_ALLOWED : CURSOR_POINTER);
 			return true;

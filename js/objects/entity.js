@@ -204,11 +204,27 @@ class Entity{
 		return  this._clickIn(x, y);
 	}
 
+	set mouseOver(val){
+		if(this._mouseOver !== val){
+			draw();
+		}
+        this._mouseOver = val;
+	}
+
 	hover(x, y){
-        //ak neexistuje funkcia alebo ak sa nekliklo na element vrátime false
-		if(!isFunction(this._hover) || !this.clickInBoundingBox(x, y)){
+        //ak neexistuje funkcia  vrátime false
+		if(!isFunction(this._hover)){
 			return false;
 		}
+
+		//zistime či sa kliklo na element
+        this.mouseOver = this.clickInBoundingBox(x, y);
+        //ak sa nekliklo na element vrátime false
+		if(!this._mouseOver){
+			return false;
+		}
+
+		//ak je šance že sa kliklo tak zistime či sa naozaj kliklo
 		return this._hover(x, y);
 	}
 

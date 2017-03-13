@@ -22,22 +22,16 @@ let showXmlSavingOptions	= () => {
 function showSavingOptions(){
 	G("#idImageWidth").val(canvas.width);
 	G("#idImageHeight").val(canvas.height);
-    let div, el1, el2, counter = 0, parent = G("#layersSavionOptions").empty();
+    let div, el1, counter = 0, parent = G("#layersSavionOptions").empty();
 	each(Scene.layers, a => {
-		el1 = new G("input", {attr : {
-				type : "checkbox",
-				class : "layerVisibility",
-				id : "layer" + counter,
-				checked : true,
-				name: a.title
-		}});
-
-		el2 = new G("label", {
-			attr : {for: "layer" + counter++},
-			cont : a.title
-		});
-		
-		parent.append(new G("div", {cont: [el1, el2]}));
+		el1 = G.createElement("input", {
+            type : "checkbox",
+            class : "layerVisibility",
+            id : "layer" + counter,
+            checked : true,
+            name: a.title
+        });
+        parent.append(G.createElement("div", {}, [el1, G.createElement("label", {for: "layer" + counter++}, a.title)]));
 	});
 
 	G("#saveForm").show();
@@ -177,7 +171,7 @@ function processWatchData(data){
 
 function processImageData(data){
 	data.name			= isString(data.name)	|| "desktopScreen";
-	data.format			= isString(data.format)	|| IMAGE_FORMAT_PNG;
+	data.format			= isString(data.format)	|| FORMAT_IMAGE_PNG;
 	data.width			= data.width			|| canvas.width;
 	data.height			= data.height			|| canvas.height;
 	data.selectedLayers	= data.selectedLayers	|| [];
@@ -202,6 +196,7 @@ function processImageData(data){
 			ctx: resContext
 		});
 	}
+
 	/*
 	 * Vykreslí vrstvy určené na vykresleni
 	 */
@@ -211,7 +206,6 @@ function processImageData(data){
 		}
 	}
 
-
 	/*
 	 * malý canvas kde sa prekreslí velký canvas
 	 */
@@ -219,7 +213,6 @@ function processImageData(data){
 
 	resContext = resCanvas.getContext("2d");
 	resContext.drawImage(ca, 0, 0, resCanvas.width, resCanvas.height);
-
 
 	/*
 	 * uloženie súboru

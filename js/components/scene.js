@@ -174,7 +174,6 @@ class SceneManager{
 			//premenujeme vrstvu
 			this._layers[newTitle].rename(newTitle);
 		}
-		
 	}
 
 	deleteLayer(title){
@@ -275,7 +274,7 @@ class SceneManager{
 
 					//ak nie tak podla do resultov pridá podla idečtka texfieldu spravny vysledok
 					//vymaže obsah
-				
+
 				//pridá to scene
 		if(isEmptyObject(data.results)){
 			data.error += getMessage(MSG_MISSING_RESULT_TEXT);
