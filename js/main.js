@@ -80,6 +80,14 @@ function sendMessage(message){
 	Panel.recieveMessage(message, Project.autor);
 }
 
+glob.tests = function(){
+	//spracovanie formularu pre uloženie obrazku
+    processImageData({test: true});
+
+    //Rect, Line, Arc, Polygon, Table, Class
+    this.init();
+};
+
 function ajax(url, options, dataType){
 	if(isFunction(options)){
 		options = {success: options};
@@ -382,13 +390,16 @@ function realDraw(){
 }
 
 let Examples = {
-	Newton: () => {
+	Newton: (data = {mintWidth: 1000, minHeight: 650}) => {
         /********INIT********/
-		let floorSize = 505, angle = 45, rockWeight = 20;
-        let person		= new ImageObject(new GVector2f(250, floorSize - 255), new GVector2f(100, 250), "img/examples/pulling.jpg");
-		let floor		= new Line([new GVector2f(0, floorSize), new GVector2f(window.innerWidth, floorSize)], 10, "black");
-		let rock		= new Rect(new GVector2f(600, floorSize - 55), new GVector2f(100, 50), "#ffffff");
-        let hint		= new Rect(new GVector2f(100, 100), new GVector2f(100, 50), "#ffffff");
+		let floorHeight = data.floorHeight || 555,
+			angle = 45,
+            layerName = data.layerName || "Physics task #1",
+			rockWeight = data.rockWight || 20;
+        let person		= new ImageObject(new GVector2f(450, floorHeight - 255), new GVector2f(100, 250), "img/examples/pulling.jpg");
+		let floor		= new Line([new GVector2f(0, floorHeight), new GVector2f(window.innerWidth, floorHeight)], 10, "black");
+		let rock		= new Rect(new GVector2f(800, floorHeight - 55), new GVector2f(100, 50), "#ffffff");
+        let hint		= new Rect(new GVector2f(50, 150), new GVector2f(100, 50), "#ffffff");
         let connector	= new Line([new GVector2f(), new GVector2f()], 2, "#000000");
 		let arrowMG		= new Line([new GVector2f(), new GVector2f()], 3, "blue");
         let arrowFN		= new Line([new GVector2f(), new GVector2f()], 3, "blue");
@@ -460,25 +471,31 @@ let Examples = {
                 	let rockCenter = rock.center;
                     arrowMG.positionB.set(rockCenter);
                 	arrowMG.positionA.set(arrowMG.positionB.x, arrowMG.positionB.y + 100);
-                    Entity.setAttr(arrowMG, "visible", true);
+                    Entity.changeAttr(arrowMG, {visible: true});
 
                     arrowFK.positionB.set(rock.position.getClone().add(rock.size));
                     arrowFK.positionA.set(arrowFK.positionB.x + 100, arrowFK.positionB.y - 5);
                     arrowFK.positionB.y -= 5;
-                    Entity.setAttr(arrowFK, "visible", true);
+                    Entity.changeAttr(arrowFK, {visible: true});
 
                     arrowFN.positionB.set(rockCenter.add(10));
                     arrowFN.positionA.set(arrowFN.positionB.x, arrowFN.positionB.y - 100);
-                    Entity.setAttr(arrowFN, "visible", true);
+                    Entity.changeAttr(arrowFN, {visible: true});
 				}
 				else if(hintCounter === 2){
-					let formula = new TextField("Fn + Fk + FT + G = 0", new GVector2f(1100, 100), new GVector2f(45));
-					Project.scene.addToScene(Entity.changeAttr(formula, {locked: true}), "Physics task #1");
+					let formula = new TextField("Fn + Fk + FT + G = 0", new GVector2f(window.innerWidth - 350, 160), new GVector2f(45));
+					Project.scene.addToScene(Entity.changeAttr(formula, {
+						locked: true,
+						onResize: () => formula.position.x = window.innerWidth - 350
+					}), "Physics task #1");
 				}
                 else if(hintCounter === 3){
                     each(["Fk = Trecia sila", "m = Hmotnosť", "g = gravitácia"], (e, i) => {
-                        let formula = new TextField(e, new GVector2f(1100, 160 + i * 60), new GVector2f(45));
-                        Project.scene.addToScene(Entity.changeAttr(formula, {locked: true}), "Physics task #1");
+                        let formula = new TextField(e, new GVector2f(window.innerWidth - 350, 240 + i * 60), new GVector2f(45));
+                        Project.scene.addToScene(Entity.changeAttr(formula, {
+                        	locked: true,
+							onResize: () => formula.position.x = window.innerWidth - 350
+						}), "Physics task #1");
                     });
                 }
                 if(hintCounter === texts.length){
@@ -555,17 +572,20 @@ let Examples = {
         }).change();
 
         /********OTHERS********/
-        let result = new TextField("Vaša odpoveď", new GVector2f(850, 160), new GVector2f(45));
-        let text = new TextField("Akou silou musí pôsobiť Fridrich na kváder aby ním pohol?", new GVector2f(250, 100), new GVector2f(45));
+        let result = new TextField("Vaša odpoveď", new GVector2f(400, 160), new GVector2f(45));
+        let text = new TextField("Akou silou musí pôsobiť Fridrich na kváder aby ním pohol?", new GVector2f(50, 100), new GVector2f(45));
 
         Entity.changeAttr(result, {taskResult: "gabo"});
         Entity.changeAttr(text, {locked: true});
-        Entity.changeAttr(floor, {locked : true});
+        Entity.changeAttr(floor, {
+        	locked : true,
+			onResize: () => floor.positionB.set(window.innerWidth, floorHeight)
+        });
         Entity.changeAttr(connector, {locked: true});
 
         /********APPEND********/
-        Project.scene.createLayer("Physics task #1", LAYER_TASK);
-        Project.scene.addToScene([text, hint, connector, person, rock, floor, arrowMG, arrowFK, arrowFN, result], "Physics task #1");
+        Project.scene.createLayer(layerName, LAYER_TASK);
+        Project.scene.addToScene([text, hint, connector, person, rock, floor, arrowMG, arrowFK, arrowFN, result], layerName);
 
 		//toto musí byť až za pridanim všetkych veci do sceny aby sa nastavila spravna vrstva
         connector.connectATo(person, 3);

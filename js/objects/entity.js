@@ -29,7 +29,6 @@ class Entity{
 
 		this.unsetConnector();
 
-
 		Entity.changeAttr(this, data);
 
 		if(isUndefined(this._connectors)){	//presunute nižšie lebo chcem priradiť iba ak neexsituju
@@ -209,6 +208,18 @@ class Entity{
 			draw();
 		}
         this._mouseOver = val;
+	}
+
+
+    onResize(){
+        //ak neexistuje funkcia  vrátime false
+        if(!isFunction(this._onResize)){
+            return false;
+        }
+
+        //zavolame funkciu
+        this._onResize();
+        return true;
 	}
 
 	hover(x, y){
@@ -431,6 +442,7 @@ class Entity{
 				}
 			}, 1000 / fps);
 	}
+
 
 	static animate(obj, attributes, duration){
 		let frameTime = 1000 / FPS;

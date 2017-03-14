@@ -34,6 +34,11 @@
 				"screen_width" : 480
 			}
 		},
+		"access" : {
+			"public" : "+",
+			"protected" : "#",
+			"private" : "-"
+		},
 		"restore" : {
 			"key" : "projectData"
 		},

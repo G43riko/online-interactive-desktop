@@ -50,7 +50,10 @@ class Layer{
 		Events.layerRename(this._title, title);
 		this._title = title;
 	}
-
+	onResize(){
+        this.forEach(e => e.onResize());
+        this.paint.onScreenResize();
+	}
 	makeRaster(){
 		this._raster = true;
 		//TODO pri rastrovaní vrstvy nakresliť všetko do canvasu

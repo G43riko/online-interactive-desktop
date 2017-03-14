@@ -12,9 +12,8 @@ class Polygon extends Entity{
 			Scene.remove(this);
 		}
 
-		Entity.findMinAndMax(this.points, this.position, this.size);
+		Entity.findMinAndMax(points, this.position, this.size);
 	}
-
 
 	doubleClickIn(x, y){
 		if(!this.clickInBoundingBox(x, y)){
@@ -41,7 +40,7 @@ class Polygon extends Entity{
 		}
 
 		this.movingPoint = -1;
-		var vec = new GVector2f(x, y);
+        let vec = new GVector2f(x, y);
 		this.points.forEach(function(e,i, points){
 			if(this.movingPoint >= 0){
 				return true;
@@ -63,9 +62,9 @@ class Polygon extends Entity{
 	}
 
 	static determineClick(points, x, y){
-		for(var i=0 ; i<points.length ; i++){
-			var big = i + 1;
-			var less = i - 1;
+		for(let i=0 ; i<points.length ; i++){
+            let big = i + 1;
+            let less = i - 1;
 			if(i === 0){
 				less = points.length - 1;
 			}
@@ -73,9 +72,9 @@ class Polygon extends Entity{
 				big = 0;
 			}
 
-			var vec1 = points[i].getClone().sub(points[less]);
-			var vec2 = points[big].getClone().sub(points[i]);
-			var toMouse = new GVector2f(x, y).sub(points[i]);
+            let vec1 = points[i].getClone().sub(points[less]);
+            let vec2 = points[big].getClone().sub(points[i]);
+            let toMouse = new GVector2f(x, y).sub(points[i]);
 			if(angleBetween(vec1, vec2) < angleBetween(vec1, toMouse)){
 				return false;
 			}
@@ -87,7 +86,7 @@ class Polygon extends Entity{
 	draw(ctx = context){
 		doPolygon({
 			shadow: this.moving && !this.locked,
-			points: this.points,
+			points: this._points,
 			fillColor: this.fillColor,
 			borderColor: this.borderColor,
 			borderWidth: this.borderWidth,
@@ -96,8 +95,8 @@ class Polygon extends Entity{
 		});
 		if(this.selected){
 			drawBorder(ctx, this, {});
-			for(var i=0 ; i<this.points.length ; i++){
-				var min = i - 1;
+			for(let i=0 ; i<this.points.length ; i++){
+                let min = i - 1;
 				if(i === 0){
 					min = this.points.length - 1;
 				}

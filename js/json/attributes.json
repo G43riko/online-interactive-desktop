@@ -6,6 +6,8 @@
 		"borderWidth" : "number",
 		"selectable" : "boolean",
 		"connectors" : "object",
+		"onChange" : "function",
+		"onResize" : "function",
 		"selectors" : "object",
 		"fillColor" : "string",
 		"selected" : "boolean",

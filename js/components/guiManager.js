@@ -215,9 +215,11 @@ function processImageData(data){
 	resContext.drawImage(ca, 0, 0, resCanvas.width, resCanvas.height);
 
 	/*
-	 * uloženie súboru
+	 * uloženie súboru iba v prípade že sa nejedná o test
 	 */
-	Project.files.saveImage(data.name, resCanvas.toDataURL(data.format));
+	if(data.test !== true){
+		Project.files.saveImage(data.name, resCanvas.toDataURL(data.format));
+    }
 	closeDialog();
 }
 

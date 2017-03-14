@@ -124,7 +124,7 @@ class SceneManager{
 	}
 
 	onScreenResize(){
-		each(this._layers, e => e.paint.onScreenResize());
+		each(this._layers, e => e.onResize());
 	}
 
 	createLayer(title = PROJECT_LAYER_TITLE, layerType = ""){
