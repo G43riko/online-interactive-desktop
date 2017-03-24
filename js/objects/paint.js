@@ -131,7 +131,23 @@ class Paint extends Entity{
 	}
 
 	addLine(line){
-		console.log("prijala sa line: ", line);
+		each(line.points, (e, i, arr) => arr[i] = new GVector2f(e._x, e._y));
+
+		if(this._points.length == 0){
+			this._points[this._points.length] = line;
+		}
+		else{
+			if(this._points[this._points.length - 1].points.length == 0){
+                this._points[this._points.length - 1] = line;
+			}
+			else{
+                this._points[this._points.length] = line;
+			}
+		}
+
+        this._points[this._points.length] = Paint.defArray();
+
+        this.redraw(this._points);
 	}
 	/*
 	animateLine(line, time = 0){
@@ -203,6 +219,22 @@ class Paint extends Entity{
 		lastArr.min.y = Math.min(lastArr.min.y, point.y);
 		lastArr.max.x = Math.max(lastArr.max.x, point.x);
 		lastArr.max.y = Math.max(lastArr.max.y, point.y);
+	}
+
+    removePath(id){
+		//console.log("0 " + path.points + " " + path.color + " " + path.size + " " + path.type + " - toto hladame");
+		each(this._points, (e, i) => {
+			if(e.id == id){
+                e.forRemove = true;
+			}
+			/*
+            console.log(i + " " + e.points.length + " " + e.color + " " + e.size + " " + e.type);
+			if(e.points.length === path.points && e.color === path.color && e.size === path.size && e.type === path.type){
+                e.forRemove = true;
+			}
+			*/
+		});
+		this.removeSelectedPaths();
 	}
 
 	fromObject(content, concat = false){
@@ -321,6 +353,7 @@ class Paint extends Entity{
         let i = this._points.length;
 		while (i--){
 			if(this._points[i].forRemove){
+				Events.paintRemovePath(this._layer, this._points[i].id);
 				this._points.splice(i, 1);
 			}
 		}

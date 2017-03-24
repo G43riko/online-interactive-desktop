@@ -8,20 +8,27 @@ class EventManager{
 	}
 
 	paintAddPoint(position, activeLayerName){//PaintManager.addPoint
+		/*
 		if(Project.connection){
 			Project.connection.paint.addPoint(position, activeLayerName);
 		}
+		*/
 	}
 	paintAddPath(activeLayerName, path){//PaintManager.breakLine
-		//if(Project.connection && path)
-		//	Project.connection.paint.addPath(activeLayerName, path);
+		if(Project.connection && path)
+			Project.connection.paint.addPath(activeLayerName, path);
+	}
+
+	paintRemovePath(activeLayerName, id){
+        if(Project.connection){
+            Project.connection.paint.remove(activeLayerName, id);
+        }
 	}
 
 	paintBreakLine(activeLayerName){//PaintManager.breakLine
 		if(Project.connection){
 			Project.connection.paint.breakLine(activeLayerName);
 		}
-
 		Logger.log("bola ukončená čiara vo vrstve " + activeLayerName, LOGGER_PAINT_ACTION);
 	}
 

@@ -244,6 +244,11 @@
 			},
 			"stack_recieved" : 2617
 		},
+		"mouse_button" : {
+			"left" : 0,
+			"right" : 2,
+			"middle" : 1
+		},
 		"key" : {
 			"arrow" : {
 				"up" : 38,
@@ -296,6 +301,7 @@
 			"sequencal" : 2002
 		},
 		"line" : {
+			"none" : 2210,
 			"cap" : {
 				"butt" : "butt",
 				"round" : "round",
@@ -317,7 +323,6 @@
 				"filled" : 2102
 			},
 			"end" : {
-				"none" : 2210,
 				"arrow" : {
 					"classic" : 2211,
 					"closed" : 2212,

@@ -113,7 +113,14 @@ class InputManager{
 				}
 				ee.target.onmouseup = false;
 
-				Project.listeners.mouseUp(new GVector2f(ee.offsetX, ee.offsetY), ee.button);
+				//ak je to prave tlačitko tak sa spravame ako pri podržaní tlačítka dole
+				if(ee.button === MOUSE_BUTTON_RIGHT){
+                    Project.listeners.mouseDown(new GVector2f(ee.offsetX, ee.offsetY), MOUSE_BUTTON_LEFT);
+                    Project.listeners.mousePress(new GVector2f(ee.offsetX, ee.offsetY));
+				}
+				else{
+					Project.listeners.mouseUp(new GVector2f(ee.offsetX, ee.offsetY), ee.button);
+                }
 			};
 			e.target.onmousemove = ee => {
 				this._mouseMove(ee);

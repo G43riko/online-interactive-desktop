@@ -12,6 +12,7 @@ class Entity{
 		this._selectors 		= {tc: 1, bc: 1, cl: 1, cr: 1, br: 1};
 		this._onChange			= null;
 		this._movementType		= MOVEMENT_RANDOM;
+		this._sceneAlias		= "";
 		this._movementLimits	= {};
 		this._drawCounter		= -1;
 		this._drawFunctions		= {};
@@ -72,6 +73,14 @@ class Entity{
 		this._selectedConnector = false;
 	}
 
+	set sceneAlias(val){
+		this._sceneAlias = val;
+	}
+
+	get sceneAlias(){
+		return this._sceneAlias;
+	}
+
 	highlight(){
         let counter = 0,
 			speed = HIGHLIGHT_SPEED,
@@ -96,7 +105,11 @@ class Entity{
 				draw();
 			}, 1000 / FPS);
 	}
+	/*
+	move(x, y){
 
+	}
+	*/
 	isIn(x, y, radius = 0){
 		return x + radius > this._position.x && x - radius < this._position.x + this._size.x &&
 			   y + radius > this._position.y && y - radius < this._position.y + this._size.y;
@@ -295,7 +308,8 @@ class Entity{
 		//vykreslím všetky pomocné kresliace funkcie
         for(let i in this._drawFunctions){
         	if(this._drawFunctions.hasOwnProperty(i)){
-            	this._drawFunctions[i](ctx);
+        		//volame funkciu aby this bol objekt ktorý ju volá
+            	this._drawFunctions[i].call(this, ctx);
             }
 		}
 
@@ -551,6 +565,8 @@ class Entity{
 				return new Polygon([0, 0, 0]);
 			case OBJECT_LINE :
 				return new Line([0, 0, 0]);
+            case OBJECT_IMAGE :
+                return new ImageObject();
 			case OBJECT_CLASS :
 				return new Class();
 			default :
@@ -578,17 +594,44 @@ class Entity{
 		if(result){
 			//nakopírujem atributy
 			each(obj, function(e, i){
+				console.log(e, " == ",i);
 				if(e && isDefined(e["_x"]) && typeof isDefined(e["_y"])){
 					result[i] = new GVector2f(e._x, e._y);
 				}
 				else if(i == "data"){
 					result[i] = e.map(ee => ee.map(eee => eee));
 				}
-				else if(i == "points"){
+				else if(i == "points" || i == "_points"){
+					result[i] = e.map(ee => new GVector2f(ee._x, ee._y));
+				}
+				else if(i == "_sceneAlias"){
+					if(e){
+						Scene.storeItem(e, result);
+                    }
+					result[i] = i;
+				}
+				else if(i == "_connectors"){
 					result[i] = e.map(ee => new GVector2f(ee._x, ee._y));
 				}
 				else if(i == "_id" && generateId){
 					result[i] = Project.generateId();//Entity.getId();
+				}
+				else if(i == "_onClick" || i == "_onChange"){
+					if(isString(e)){
+						this[i] = eval(e);
+                    }
+				}
+				else if(i == "_drawFunctions"){
+                    result[i] = {};
+                    //prejdem všetky kresliace funkcia
+					each(e, (ee, ii) => {
+						//kažu jednu priradim na svoje miesto
+                        result[i][ii] = eval(ee);
+					})
+				}
+				else if(i == "_image"){
+                    result[i] = new Image();
+                    result[i] = e.src;
 				}
 				else{
 					result[i] = e;
@@ -599,7 +642,21 @@ class Entity{
 		}
 		return result;
 	}
-
+    toObject(){
+        let result = jQuery.extend(true, {}, this),
+            addslashes = str => (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+        if(isFunction(this._onChange)){
+        	result._onChange = addslashes(this._onChange.toString());
+        }
+        if(isFunction(this._onClick)) {
+            result._onClick = addslashes(this._onClick.toString());
+        }
+        this._drawFunctions = {};
+		each(this._drawFunctions, (e, i) => {
+            result._drawFunctions[i] = addslashes(this._drawFunctions[i].toString());
+		});
+		return result;
+    }
 	/**
 	 * vytvorý kópiu objektu
 	 */

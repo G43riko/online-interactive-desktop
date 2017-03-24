@@ -202,7 +202,10 @@ class objectCreator{
 	create(obj){
 		let result = Entity.create(obj, false);
 		if(result){
-			//console.log("pridava sa nový objekt do vrstvy ", result.layer, result, obj);
+			//ak neexistuje vrstva tak ju vytvorim
+			if(!Project.scene.getLayer(result.layer)){
+                Project.scene.createLayer(result.layer);
+			}
 			Project.scene.addToScene(result, result.layer, false);
 			draw();
 		}

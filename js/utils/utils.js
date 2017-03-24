@@ -737,25 +737,31 @@ let Movement = {
 			}
 		}
 		else if(isDefined(o.movingPoint)){
-			let intVal = 0;
-			if(o.movingPoint < 0){//ak sa hýbe celým objektom
-				o.points.forEach(a => a.add(x, y));
-			}
-			else if(isInt(o.movingPoint)){//ak sa kliklo na bod zlomu tak sa bodom hýbe
-				if(o.movingPoint === 0){
-					o.targetA = "";
-				}
-				else if(o.movingPoint === o.points.length - 1){
-					o.targetB = "";
-				}
-				o.points[o.movingPoint].add(x, y);
-			}
-			else{//ináč sa vytvára nový bod
-				intVal = parseInt(o.movingPoint) + 1;
-				o.points.splice(intVal, 0, o.points[intVal - 1].getClone().add(o.points[(intVal % o.points.length)]).br(1));
-				o.movingPoint = intVal;
-			}
-			Entity.findMinAndMax(o.points, o.position, o.size);
+		    //zatial iba pre graf ale v buducnosti pre všetko
+            if(isFunction(o.move)){
+                o.move(x, y);
+            }
+            else{
+                let intVal = 0;
+                if(o.movingPoint < 0){//ak sa hýbe celým objektom
+                    o.points.forEach(a => a.add(x, y));
+                }
+                else if(isInt(o.movingPoint)){//ak sa kliklo na bod zlomu tak sa bodom hýbe
+                    if(o.movingPoint === 0){
+                        o.targetA = "";
+                    }
+                    else if(o.movingPoint === o.points.length - 1){
+                        o.targetB = "";
+                    }
+                    o.points[o.movingPoint].add(x, y);
+                }
+                else{//ináč sa vytvára nový bod
+                    intVal = parseInt(o.movingPoint) + 1;
+                    o.points.splice(intVal, 0, o.points[intVal - 1].getClone().add(o.points[(intVal % o.points.length)]).br(1));
+                    o.movingPoint = intVal;
+                }
+                Entity.findMinAndMax(o.points, o.position, o.size);
+            }
 		}
 		else{
 			o.position.add(x, y);

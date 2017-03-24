@@ -283,12 +283,14 @@ class SceneManager{
 		return data.error === "" && findAssignment;
 	}
 	storeItem(key, value){
+		value.sceneAlias = key;
         this._items[key] = value;
 	}
     getItem(key){
         return this._items[key];
     }
     deleteItem(key){
+        this._items[key].sceneAlias = "";
 		delete this._items[key];
 	}
 
@@ -393,7 +395,7 @@ class SceneManager{
 			//ak objekt nieje layer viewer
 			if(ee.name != "LayerViewer"){
 				//pridame ho do zoznamu výsledkov
-				result[result.length] = ee;
+				result[result.length] = ee.toObject();
 			}
 		}));
 

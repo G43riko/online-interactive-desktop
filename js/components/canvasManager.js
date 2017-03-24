@@ -323,6 +323,11 @@ function doLine(obj){
 }
 
 function doText(obj){
+    if(isObject(obj.position) && isNumber(obj.position.x) && isNumber(obj.position.y)){
+        obj.x = obj.position.x;
+        obj.y = obj.position.y;
+    }
+
     if(isUndefined(obj.text) || isUndefined(obj.x) || isUndefined(obj.y) || isUndefined(obj.ctx)){
         return;
     }

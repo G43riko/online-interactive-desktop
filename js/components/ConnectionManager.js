@@ -16,7 +16,8 @@ class ConnectionManager{
 			addPoint 	: (pos, layer)	=> this._paintAction(ACTION_PAINT_ADD_POINT, pos, layer),
 			breakLine 	: (layer)		=> this._paintAction(ACTION_PAINT_BREAK_LINE, layer),
 			clean 		: (layer)		=> this._paintAction(ACTION_PAINT_CLEAN, layer),
-			addPath 	: (layer, path) => this._paintAction(ACTION_PAINT_ADD_PATH, layer, path)
+			addPath 	: (layer, path) => this._paintAction(ACTION_PAINT_PATH_ADD, layer, path),
+            remove 		: (layer, id)	=> this._paintAction(ACTION_PAINT_PATH_REMOVE, layer, id)
 		};
 		this.object = {
 			move 		: (obj)			=> this._objectAction(ACTION_OBJECT_MOVE, obj),
@@ -439,12 +440,13 @@ class ConnectionManager{
 			case ACTION_PAINT_CLEAN :
 				data[CONN_KEY_LAYER] = arg1;
 				break;
-			case ACTION_PAINT_ADD_PATH :
+			case ACTION_PAINT_PATH_ADD :
 				data[CONN_KEY_LAYER] = arg1;
 				data.path = arg2;
 				break;
-			case ACTION_PAINT_REMOVE_PATH :
+			case ACTION_PAINT_PATH_REMOVE :
 				data[CONN_KEY_LAYER] = arg1;
+				data.id = arg2;
 				break;
 			default:
 				Logger.error(type, 3);
@@ -651,8 +653,11 @@ class Handler{
 			case ACTION_PAINT_CLEAN :
 				Paints.cleanUp(layer);
 				break;
-			case ACTION_PAINT_ADD_PATH :
+			case ACTION_PAINT_PATH_ADD :
 				Paints.addPath(layer, data.path);
+				break;
+			case ACTION_PAINT_PATH_REMOVE :
+				Paints.removePath(layer, data.id);
 				break;
 			default :
 				Logger.error(getMessage(MSG_RECIEVED_UNKNOWN_ACTION, data.action));

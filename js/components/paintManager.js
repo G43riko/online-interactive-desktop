@@ -49,6 +49,10 @@ class PaintManager{
 		Scene.getLayer(activeLayerName).paint.removeSelectedPaths();
 	}
 
+	removePath(activeLayerName, id){
+        Scene.getLayer(activeLayerName).paint.removePath(id);
+	}
+
 	/**
 	 * Vyčistí vrstvu danú ako parameter alebo vyčistí aktualnu vrstvu
 	 *
@@ -112,8 +116,8 @@ class PaintManager{
 		this._paintHistory[this._paintHistory.length] = activeLayerName;
 		this._undoHistory = [];
         let newPath = Scene.getLayer(activeLayerName).paint.breakLine();
-		Events.paintBreakLine(activeLayerName);
-		//Events.paintAddPath(activeLayerName, newPath);
+		//Events.paintBreakLine(activeLayerName);
+		Events.paintAddPath(activeLayerName, newPath);
 
 		this._setButtons();
 	}
