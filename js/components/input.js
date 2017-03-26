@@ -114,7 +114,7 @@ class InputManager{
 				ee.target.onmouseup = false;
 
 				//ak je to prave tlačitko tak sa spravame ako pri podržaní tlačítka dole
-				if(ee.button === MOUSE_BUTTON_RIGHT){
+				if(e.button === MOUSE_BUTTON_RIGHT){
                     Project.listeners.mouseDown(new GVector2f(ee.offsetX, ee.offsetY), MOUSE_BUTTON_LEFT);
                     Project.listeners.mousePress(new GVector2f(ee.offsetX, ee.offsetY));
 				}

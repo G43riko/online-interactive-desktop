@@ -256,17 +256,18 @@
 			for(var i=0 ; i<data.length ; i++){
 				line = JSON.parse(data[i]);
 				line.msg = line.msg.replace(new RegExp(" at ", 'g'), "<br/>&nbsp;&nbsp;&nbsp;&nbsp\t\t at ");
-				result += "<tr><th>" + line.time + "</th><th>" + line.ip + "</th><th>" + line.msg + "</th></tr>";
+				result += "<tr><td>" + line.time + "</td><td>" + line.ip + "</td><td>" + line.msg + "</td></tr>";
 			}
 			document.getElementById("errorsTable").innerHTML = result;
 		};
 
 		function setReports(data){
+		    console.log("jupiii reporty", data);
 			var line, result = "<tr><th>Time</th><th>Name</th><th>IP</th><th>MSG</th></tr>";
 			for(var i=0 ; i<data.length ; i++){
 				line = JSON.parse(data[i]);
-				result += "<tr><th>" + line.time + "</th><th>" + line.name + "</th>";
-				result += "<th>" + line.ip + "</th><th>" + line.message + "</th></tr>";
+				result += "<tr><td>" + line.recieved + "</td><td>" + line.name + "</td>";
+				result += "<td>" + line.ip + "</td><td>" + line.message + "</td></tr>";
 			}
 			document.getElementById("reportTable").innerHTML = result;
 		}

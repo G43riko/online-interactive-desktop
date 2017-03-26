@@ -95,7 +95,7 @@ class Paint extends Entity{
 		if(points.length > 0 && points[points.length - 1].points.length){
 			this.breakLine();
 		}
-		if(!points[points.length - 1].points.length){
+		if(!points.length || !points[points.length - 1].points.length){
 			this._points.push(Paint.defArray());
 		}
 		Logger.log("prekresluje sa " + this.constructor.name, LOGGER_DRAW);

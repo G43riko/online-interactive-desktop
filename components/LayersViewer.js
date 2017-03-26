@@ -164,16 +164,19 @@ class LayersViewer{
 				{
 					"key" : "animatePaint",
 					"type" : "button",
+					"attr" : "animatePaint",
 					"label" : "Prehrať malbu"
 				},
 				{
 					"key" : "clearPaint",
 					"type" : "button",
+                    "attr" : "clearPaint",
 					"label" : "Vyčistiť malbu"
 				},
 				{
 					"key" : "clearLayer",
 					"type" : "button",
+                    "attr" : "clearLayer",
 					"label" : "Vyčistiť vrstvu"
 				}
 			]
@@ -205,7 +208,16 @@ class LayersViewer{
 	static clickOnContext(element, key){
         let el = G(element);
         let childrens = el.children(".visible");
-		if(!childrens.isEmpty()){
+        if(key === "animatePaint"){
+            LayersViewer.instance.activeLayer.paint.animate();
+		}
+		else if(key === "clearPaint"){
+            LayersViewer.instance.activeLayer.paint.cleanUp();
+		}
+        else if(key === "clearLayer"){
+            LayersViewer.instance.activeLayer.cleanUp();
+        }
+		else if(!childrens.isEmpty()){
 			LayersViewer.instance.activeLayer[key] = !LayersViewer.instance.activeLayer[key];
 			childrens.class("/false");
 		}

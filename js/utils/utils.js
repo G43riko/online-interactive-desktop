@@ -665,6 +665,51 @@ glob.loadPage = function(url){
 	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 };
 
+glob.toString = function(obj){
+  for(let i in obj){
+      if(obj.hasOwnProperty(i)){
+          if(typeof obj[i] === "function"){
+              obj[i] = obj[i].toString();
+          }
+      }
+  }
+  return JSON.stringify(obj);
+};
+
+glob.parse = function(obj){
+    let result = JSON.parse(obj);
+    for(let i in result){
+        if(result.hasOwnProperty(i)){
+            if(typeof result[i] === "string"){
+                if(result[i].indexOf("function (") === 0){
+                    try{
+                        eval("result[i] = " + result[i]);
+                    }
+                    catch(e){
+                        result[i] = e;
+                    }
+                }
+            }
+        }
+    }
+    return result;
+};
+
+glob.testJSON = function(){
+    let testObj = {
+        "number" : 23,
+        "string" : "gabo",
+        "array" : [1, "a", []],
+        "object" : {},
+        "function" : function(a, b){return a + b;}
+    };
+    let stringObj = glob.toString(testObj);
+    console.log("stringObj: ", stringObj);
+    let resultObj = glob.parse(stringObj);
+    console.log("resultObj: ", resultObj);
+    console.log("test: ", resultObj.function(2, 4));
+};
+
 glob.eachFiltered = function(obj, func1, func2, thisArg = false){
 	each(obj, (e, i, arr) => func1(e, i, arr) && func2(e, i, arr), thisArg);
 };
