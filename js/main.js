@@ -346,6 +346,9 @@ glob.loading = function(){
     else if(query.demo === "a"){
         Examples.Newton();
     }
+    else if(query.demo === "c"){
+        glob.initGraphs();
+    }
 };
 
 function realPDraw(){
