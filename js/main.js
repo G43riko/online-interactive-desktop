@@ -168,9 +168,11 @@ glob.init = function(){
     Project.scene.addToScene(new Polygon([new GVector2f(1200, 100),
         new GVector2f(1150, 150),
         new GVector2f(1250, 150)], "#ff69b4"));
-    Project.scene.addToScene(new Table(new GVector2f(800, 250),
-        new GVector2f(200, 800),
-        [["meno", "vek"], ["gabo", 21], ["maros", 35]]), "test2");
+    Project.scene.addToScene(new Table(new GVector2f(800, 250), new GVector2f(200, 800), [
+        ["meno", "vek"],
+        ["gabo", 21],
+        ["maros", 35]]
+    ), "test2");
 
     loadImage(e => Project.scene.addToScene(new ImageObject(new GVector2f(300, 400),
         new GVector2f(300, 400), e)));
@@ -348,6 +350,9 @@ glob.loading = function(){
     }
     else if(query.demo === "c"){
         glob.initGraphs();
+    }
+    else if(query.demo === "d"){
+        glob.initRandomGraph();
     }
 };
 

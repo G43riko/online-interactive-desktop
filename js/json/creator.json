@@ -67,6 +67,24 @@
 		"action" : "chooseColors",
 		"type" : "color"
 	},
+	"createObject" : {
+		"label" : "Pre vytvorenie objektu drž CTRL a použi myš",
+		"allowedFor" : ["Rect", "Arc", "Polygon", "Table", "Image"],
+		"action" : "showText",
+		"type" : "text"
+	},
+	"createLine" : {
+		"label" : "Pre vytvorenie čiary alebo spojenie objektov drž CTRL a použi myš",
+		"allowedFor" : ["Line"],
+		"action" : "showText",
+		"type" : "text"
+	},
+	"createPaint" : {
+		"label" : "Pre kreslenie použi myš",
+		"allowedFor" : ["Paint"],
+		"action" : "showText",
+		"type" : "text"
+	},
 	"borderColor" : {
 		"allowedFor" : ["Line", "Rect", "Arc", "Polygon", "Text"],
 		"label" : "Border color",

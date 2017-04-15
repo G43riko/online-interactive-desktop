@@ -8,17 +8,19 @@ let createAnalyzer = (function(){
     let _browserData;
 
     /**
+	 * Funckia odošle dáta na zadanú URL
 	 *
-     * @param c
+     * @param data - dáta určené na odoslanie
      * @private
      */
-    let _sendData = c => $.post(_url, {
-        content: JSON.stringify(c)
+    let _sendData = data => $.post(_url, {
+        content: JSON.stringify(data)
     }).fail(() => Logger.warn(getMessage(MSG_ANNONYM_FAILED)));
 
     /**
+	 * Funckia spracuje a následne odošle spracované dáta
 	 *
-     * @param data
+     * @param data - objekt do ktorého sa pridajú spracované dáta
      * @private
      */
     let _sendAnonymousData = function(data = {}){
@@ -45,8 +47,9 @@ let createAnalyzer = (function(){
     };
 
     /**
-	 *
-     * @param data
+	 *Funkcia získa údaje o Window objekte
+     *
+	 * @param data - objekt do ktorého sa pridajú získané dáta
      * @returns {*}
      * @private
      */
@@ -97,6 +100,7 @@ let createAnalyzer = (function(){
             touch: 'ontouchstart' in document.documentElement
         };
     };
+    
 	return function(url){
 		if(_created){
 			return null;

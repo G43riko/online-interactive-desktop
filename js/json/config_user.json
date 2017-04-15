@@ -147,7 +147,7 @@
 			},
 			"offset" : 10,
 			"width" : 240,
-			"fill_color" : "<?= menu.fill.color %>",
+			"fill_color" : "#1abc9c",
 			"disabled_fill_color" : "<?= menu.disabled_fill_color %>",
 			"selected_fill_color" : "#ff0000"
 		},
@@ -257,6 +257,7 @@
 				"right" : 39
 			},
 			"a" : 65,
+			"b" : 66,
 			"delete" : 46,
 			"enter" : 13,
 			"escape" : 27,
@@ -341,7 +342,10 @@
 				"path" : 1002,
 				"line" : 1003,
 				"join" : 1004,
-				"image" : 1005
+				"image" : 1005,
+				"table" : 1008,
+				"polygon" : 1009
+
 			},
 			"rubber" : 1006,
 			"area" : 1007

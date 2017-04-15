@@ -8,6 +8,9 @@ class ContentManager{
 		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
+    /**
+	 * FUnckia upraví veľkosť contentu pri zmene ropzlíšenia
+     */
 	onResize(){
 		if(this._contentImage === null){
 			return;
@@ -16,6 +19,26 @@ class ContentManager{
 		this._contentImage.height = window.innerHeight;
 	}
 
+    setExtContentImage(src = false){
+        if(this._contentImage === null){
+            this._contentImage = document.getElementById("contentImage");
+            this.onResize();
+        }
+
+        if(src){
+            this._contentImage.src = src;
+        }
+        else{
+            this._contentImage.src = prompt("Zadajtu URL obrázku");
+        }
+
+        this._contentImage.classList.remove("hide");
+	}
+    /**
+	 * Funkcia nastaví ako pozadie obrázok na vstupe
+	 *
+     * @param src - adresa obrázku ktorý sa má nastaviť ako pozadie
+     */
 	setContentImage(src = false){
 		if(this._contentImage === null){
 			this._contentImage = document.getElementById("contentImage");

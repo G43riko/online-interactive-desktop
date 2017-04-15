@@ -21,6 +21,7 @@ class MenuManager{
 		this._canvas 					= parent == null ? document.createElement("canvas") : parent._canvas;
 		this._context					= null;
 		this._tmpDrawArray				= [];
+		this._activeButton				= null;
 		this._visible 					= true;
 		this._visibleSubMenu 			= false;
 		this._subMenus					= {};
@@ -40,12 +41,16 @@ class MenuManager{
 			draw();
 		}
 	}
+    get hasActiveButton(){
+        return !isNull(this._activeButton) && this._activeButton.hasCreator;
+        //return !isNull(this._activeButton) && !isIn(this._activeButton.key, "options", "startShare", "watch", "loadLocalImage", "loadXML", "saveXML");
+    }
 
 	hover(x, y){
 		if(!this._visible)
 			return false;
 
-		var posY = this._position.y,
+		let posY = this._position.y,
 			posX = this._position.x,
 			result = false;
 
@@ -115,7 +120,7 @@ class MenuManager{
 			MenuManager.dataBackup = JSON.stringify(data);
 
 		data = MenuManager._changeDataByComponents(data);
-		var array = [],
+        let array = [],
 			counter = new GVector2f(),
 			w = this._size.x + MENU_OFFSET,
 			h = this._size.y + MENU_OFFSET,
@@ -203,9 +208,12 @@ class MenuManager{
 	}
 
 	isToolActive(){
-		var tmp = this._toolActive;
+        return this._activeButton && Input.isKeyDown(KEY_L_CTRL);
+		/*
+        let tmp = this._toolActive;
 		this._toolActive = false;
 		return tmp;
+		*/
 	};
 
 	/*
@@ -216,7 +224,7 @@ class MenuManager{
 		if(!this._visible)
 			return false;
 
-		var posY = this._position.y,
+        let posY = this._position.y,
 			posX = this._position.x,
 			result = false;
 
@@ -235,7 +243,7 @@ class MenuManager{
 
 			if(x > posX && x < posX + this._size.x && y > posY && y < posY + this._size.y ){
 				result = e;
-				this._doClickAct(e);
+				this._doClickAct(e, posX, posY);
 			}
 
 			if(this._vertical)
@@ -249,7 +257,7 @@ class MenuManager{
 	};
 
 	disabled(menu, button, value){
-		var check = (e, i, arr) => {
+        let check = (e, i, arr) => {
 			if(e.key === button)
 					arr[i].disabled = typeof value === KEYWORD_UNDEFINED ? !e.disabled : value;
 		};
@@ -259,8 +267,15 @@ class MenuManager{
 			each(this._subMenus[menu]._items, check);
 	}
 
-	_doClickAct(val){
-		var key = val.key;
+
+	_doClickAct(val, posX = 0, posY = 0){
+        //this._activeButton = this._activeButton === val || isIn(val.key, "options", "startShare", "watch") ? null : val;
+        this._activeButton = this._activeButton === val || !val.hasCreator || val.disabled ? null : val;
+		if(isObject(this._activeButton)){
+			console.log("kliknute na " + val.key);
+			Creator.view.position.set(posX - this._offset, posY + this._size.y + this._offset);
+		}
+        let key = val.key;
 
 		if(val.disabled){
 			Logger.log("Klikol v menu na disablovanu položku " + key, LOGGER_MENU_CLICK);
@@ -288,6 +303,12 @@ class MenuManager{
 			case "draw":
 				Creator.operation = OPERATION_DRAW_PATH;
 				break;
+            case "table":
+                Creator.operation = OPERATION_DRAW_TABLE;
+                break;
+            case "polygon":
+                Creator.operation = OPERATION_DRAW_POLYGON;
+                break;
 			case "area":
 				Creator.toggleArea();
 				break;
@@ -306,6 +327,10 @@ class MenuManager{
 			case "loadLocalImage":
 				Project.content.setContentImage();
 				break;
+            case "loadExternalImage":
+                Project.content.setExtContentImage();
+                break;
+
 			case "loadLocalHTML":
 				Project.content.setContentHTML();
 				break;
@@ -380,7 +405,7 @@ class MenuManager{
 	pressIn(x, y){
 		if(!this._visible)
 			return false;
-		var posY = this._position.y,
+		let posY = this._position.y,
 			posX = this._position.x,
 			result = false;
 
@@ -417,7 +442,7 @@ class MenuManager{
 	draw(){
 		if(!this._items || !this._visible)
 			return;
-		var posY = this._position.y,
+		let posY = this._position.y,
 			posX = this._position.x;
 
 
@@ -429,13 +454,13 @@ class MenuManager{
 		each(this._items, function(e){
 			if(!e["visible"])
 				return;
-			var bgColor = e["disabled"] ? this._disabledBackgroundColor : this._backgroundColor;
+			let bgColor = e["disabled"] ? this._disabledBackgroundColor : this._backgroundColor;
 			if(e["key"] == "color" )
 				bgColor = Creator.color;
 
-			var shadow = e["key"] === "rubber" && Creator.operation === OPERATION_RUBBER || 
+			let shadow = e["key"] === "rubber" && Creator.operation === OPERATION_RUBBER ||
 						 e["key"] === "area" && Creator.operation === OPERATION_AREA || 
-						 e["key"] === this._visibleSubMenu;
+						(this._activeButton && e["key"] === this._activeButton.key);
 			doRect({
 				position: [posX, posY],
 				size: this._size,
@@ -470,7 +495,7 @@ class MenuManager{
 	}
 
 	_drawIcon(type, x, y, offset = 5, width = this._size.x, height = this._size.y, strokeColor = DEFAUL_STROKE_COLOR, strokeWidth = DEFAULT_BORDER_WIDTH){
-		var img;
+		let img;
 		switch(type.key){
 			case "arc":
 				doArc({

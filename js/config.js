@@ -315,7 +315,7 @@ const COMPONENT_SAVE	= "i";
 const COMPONENT_LAYERS	= "j";
 const COMPONENT_TASK	= "k";
 
-
+const TABLE_INPUT_DIVIDER = "_";
 const MSG_DIVIDER = "########";
 
 const MSG_CONN_RECONNECT				= "Spojenie zo serverom bolo uspešne znovunadviazané";
@@ -366,6 +366,8 @@ const MSG_ERROR_DRAW					= "Nastala chyba pri kreslení";
 const MSG_ERROR_MOUSE_DOWN				= "Nastala chyba pri stlačení tlačítka myši";
 const MSG_ERROR_MOUSE_UP				= "Nastala chyba pri pustení tlačítka myši";
 const MSG_ERROR_MOUSE_MOVE				= "Nastala chyba pri pohybe myši";
+const MSG_CREATE_TABLE_INPUT			= "zadajte velkosť tabulky v tvare riadky" + TABLE_INPUT_DIVIDER + "stlpce";
+const MSG_ERROR_CREATE_TABLE_INPUT		= "Veľkosť nebola zadaná v požadovanom tvare";
 
 function getMessage(text){
 	if(!arguments.length){
@@ -373,7 +375,7 @@ function getMessage(text){
 	}
 
 
-	for(var i=1 ; i<arguments.length ; i++){
+	for(let i=1 ; i<arguments.length ; i++){
 		text = text.replace(MSG_DIVIDER, arguments[i]);
 	}
 

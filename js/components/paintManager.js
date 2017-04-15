@@ -32,6 +32,9 @@ class PaintManager{
 	 * @param activeLayerName - názov vrstvy kde sa má bod pridať
 	 */
 	addPoint(position, activeLayerName = Layers.activeLayerName){
+		if(!Menu.hasActiveButton){
+			return
+		}
 		Events.paintAddPoint(position, activeLayerName);
         let layer = Scene.getLayer(activeLayerName);
 		if(layer){
@@ -113,6 +116,9 @@ class PaintManager{
 	 * @param activeLayerName - vrstva na ktorej sa má ťah prerušiť
 	 */
 	breakLine(activeLayerName = Layers.activeLayerName){
+        if(!Menu.hasActiveButton){
+            return
+        }
 		this._paintHistory[this._paintHistory.length] = activeLayerName;
 		this._undoHistory = [];
         let newPath = Scene.getLayer(activeLayerName).paint.breakLine();

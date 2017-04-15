@@ -38,6 +38,12 @@ class InputManager{
 		draw();
 	}
 
+	allKeysUp(){
+		each(this._keys, (e, i, arr) => {
+			arr[i] = false;
+		});
+	}
+
 	_initWindowListeners(){
 		window.onresize = this._onResize;
 		if(STORE_DATA_ONUNLOAD){

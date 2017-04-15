@@ -308,7 +308,6 @@ class LayersViewer{
 	}
 
 	get activeLayer(){
-		//TODO toto si niekde ukladať
 		return this._selectedLayer.layer;
 	}
 

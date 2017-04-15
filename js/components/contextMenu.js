@@ -44,7 +44,7 @@ class ContextMenuManager{
 		}
 		context.font = (30 - CONTEXT_MENU_OFFSET) + "pt " + DEFAULT_FONT_FAMILY;
 
-		var hasExtension = false;
+        let hasExtension = false;
 
 		if(this._titles.length){
 			//titles.forEach(function(e, i, arr){
@@ -81,7 +81,7 @@ class ContextMenuManager{
 	};
 
 	static disabled(val, ... args){
-		var res = ContextMenuManager.items[args[0]];
+		let res = ContextMenuManager.items[args[0]];
 
 		if(args[1])
 			res.fields[args[1]].disabled = val;
@@ -90,7 +90,7 @@ class ContextMenuManager{
 	}
 
 	static visibility(val, ... args){
-		var res = ContextMenuManager.items[args[0]];
+        let res = ContextMenuManager.items[args[0]];
 
 		if(args[1])
 			res.fields[args[1]].visible = val;
@@ -99,13 +99,19 @@ class ContextMenuManager{
 	}
 
 	_addFields(){
-		var res;
+        let res;
 
 		//objectToArray(arguments).forEach(function(e){
 		each(objectToArray(arguments), e => {
 			res = ContextMenuManager.items[e];
 			if(res && res.visible){
 				res.key = e;
+
+				if(res.fields){
+					each(res.fields, (ee, i) => {
+						ee.key = i;
+					})
+				}
 				this._titles[this._titles.length] = res;
 			}
 		}, this);
@@ -123,14 +129,13 @@ class ContextMenuManager{
 		if(this._position.y + this._titles.length * CONTEXT_MENU_LINE_HEIGHT >canvas.height)
 			this._position.y = canvas.height - this._titles.length * CONTEXT_MENU_LINE_HEIGHT;
 
-		var count 		= 0,
+        let count 		= 0,
 			pX 			= this._position.x,
 			pY 			= this._position.y,
 			menuWidth 	= this._menuWidth,
 			posY 		= pY,
 			checkSize 	= 20,
 			offset 		= (CONTEXT_MENU_LINE_HEIGHT - checkSize) >> 1;
-
 		doRect({
 			position:[pX, pY],
 			width: this._menuWidth,
@@ -145,13 +150,14 @@ class ContextMenuManager{
 		each(this._titles, function(e){
 			context.fillStyle = DEFAULT_FONT_COLOR;
 			posY = pY + count * CONTEXT_MENU_LINE_HEIGHT;
-			if(count++)
+			if(count++){
 				doLine({points: [pX, posY, pX + menuWidth, posY], draw: true});
+            }
 
 			//STARA SA O ROZBALANE ALEBO DISABLOVANE POZADIE
 			if(e.disabled || this._subMenu && e.key == this._subMenu._key){
-				var firstRadius = this._titles[0] === e ? MENU_RADIUS : 0;
-				var lastRadius = getLastElement(this._titles) === e ? MENU_RADIUS : 0;
+                let firstRadius = this._titles[0] === e ? MENU_RADIUS : 0;
+                let lastRadius = getLastElement(this._titles) === e ? MENU_RADIUS : 0;
 
 				doRect({
 					position:[pX, posY],
@@ -166,8 +172,6 @@ class ContextMenuManager{
 			}
 
 			fillText(e.label, pX, posY,  30 - CONTEXT_MENU_OFFSET, this._fontColor, [CONTEXT_MENU_OFFSET, 0]);
-
-
 			if(e.type == INPUT_TYPE_CHECKBOX)
 				doRect({
 					x: pX + menuWidth - offset - checkSize,
@@ -197,19 +201,21 @@ class ContextMenuManager{
 				});
 		}, this);
 	
-		if(this._subMenu)
+		if(this._subMenu){
 			this._subMenu.draw();
+        }
 	};
 
 	_doClickAct(opt) {
 		let act = opt.key;
-		if(opt.disabled)
+		if(opt.disabled){
 			return false;
+        }
+        console.log("kliklo sa na: ", opt);
 
 		Logger.log("Klikol v contextMenu na položku " + act, LOGGER_CONTEXT_CLICK);
 		switch (act) {
-			case "changeLayer" : 
-
+			case "changeLayer" :
 				break;
 			case "changeFillColor":
 				pickUpColor(color => Entity.changeAttr(this._selectedObject, ATTRIBUTE_FILL_COLOR, color), this);

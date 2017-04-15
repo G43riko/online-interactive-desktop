@@ -1,44 +1,128 @@
 {
 	"mainMenu" : {
-		"tools" : {
+		"draw": {
 			"visible" : true,
-			"disabled" : false
+			"disabled" : false,
+			"hasCreator" : true
+		},
+		"rect": {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : true
+		},
+		"line": {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : true
+		},
+		"arc": {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : true
+		},
+		"table": {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : true
+		},
+		"image": {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : true
+		},
+		"polygon": {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : true
+		},
+		"tools" : {
+			"visible" : false,
+			"disabled" : false,
+			"hasCreator" : false
 		},
 		"file": {
-			"visible" : true,
+			"visible" : false,
 			"disabled" : false
+		},
+		"saveImg" : {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : false
+		},
+		"saveXML" : {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : false
+		},
+		"loadXML" : {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : false
+		},
+		"loadLocalImage" : {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : false
+		},
+		"loadExternalImage" : {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : false
 		},
 		"content" : {
-			"visible" : true,
-			"disabled" : false
+			"visible" : false,
+			"disabled" : false,
+			"hasCreator" : false
 		},
 		"sharing": {
+			"visible" : false,
+			"disabled" : false,
+			"hasCreator" : false
+		},
+		"startShare" : {
 			"visible" : true,
-			"disabled" : false
+			"disabled" : false,
+			"hasCreator" : false
+		},
+		"copyUrl": {
+			"visible" : true,
+			"disabled" : true,
+			"hasCreator" : false
+		},
+		"watch" : {
+			"visible" : true,
+			"disabled" : false,
+			"hasCreator" : false
 		},
 		"options" : {
 			"visible" : true,
-			"disabled" : false
+			"disabled" : false,
+			"hasCreator" : false
 		},
 		"help" : {
-			"visible" : true,
-			"disabled" : true
+			"visible" : false,
+			"disabled" : true,
+			"hasCreator" : false
 		},
 		"undo": {
 			"visible" : false,
-			"disabled" : true
+			"disabled" : true,
+			"hasCreator" : false
 		},
 		"redo" : {
 			"visible" : false,
-			"disabled" : true
+			"disabled" : true,
+			"hasCreator" : false
 		},
 		"rubber" : {
 			"visible" : true,
-			"disabled" : false
+			"disabled" : false,
+			"hasCreator" : true
 		},
 		"area" : {
 			"visible" : true,
-			"disabled" : false
+			"disabled" : false,
+			"hasCreator" : true
 		},
 		"ctrl": {
 			"visible" : false,

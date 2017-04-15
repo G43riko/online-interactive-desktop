@@ -30,39 +30,19 @@ class objectCreator{
 		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
 
+    /**
+	 * Updadne aktuálne vytávaný objekt pri pohybe myši
+	 *
+     * @param pos
+     * @param movX
+     * @param movY
+     */
 	onMouseMove(pos, movX, movY){
 		updateSelectedObjectView(this._object);
 		if(isFunction(this._object.updateCreatingPosition)){
 			this._object.updateCreatingPosition(pos);
 		}
 	}
-
-	get view(){
-		return this._view;
-	}
-
-	get controllPress(){
-		return this._controllPress;
-	}
-
-	get allLAyers(){
-		return this._allLayers;
-	}
-
-	set visibleView(val){this._visibleView = val;}
-	/**
-	 * Nastaví view pre creator
-	 *
-	 * @param val - view ktorý sa má priradiť
-	 */
-	set view(val){
-		this._view = val;
-
-		if(this._items !== null){
-			this.init();
-		}
-	}
-
 
 	/**
 	 * Načíta dáta pre CreatorView
@@ -105,6 +85,12 @@ class objectCreator{
 			case OPERATION_DRAW_IMAGE:
 				this._object = new ImageObject(position, new GVector2f());
 				break;
+			case OPERATION_DRAW_POLYGON:
+                this._object = new Polygon([position, position.getClone(), position.getClone()], this._fillColor);
+				break;
+			case OPERATION_DRAW_TABLE:
+				this._object = new Table(position, new GVector2f());
+				break;
 		}
 		selectedObjects.clearAndAdd(this._object);//TODO toto nesposobuje to rýchle pohybocanie objektt???
 	}
@@ -115,18 +101,43 @@ class objectCreator{
 	 */
 	finishCreating(){
 		if(this._object.name === OBJECT_IMAGE){
+            Input.allKeysUp();
 			loadImage(e => {
 				this._object.image = e;
 				Project.scene.addToScene(this._object);
 				this._object = false;
 			});
 		}
+		else if(this._object.name === OBJECT_TABLE){
+			Input.allKeysUp();
+            let result = prompt(getMessage(MSG_CREATE_TABLE_INPUT));
+
+            result = result.split(TABLE_INPUT_DIVIDER);
+            if(result.length !== 2){
+            	Logger.warn(getMessage(MSG_ERROR_CREATE_TABLE_INPUT));
+                this._object = false;
+            	return;
+			}
+            let data = [];
+            for(let i=0 ; i<result[0] ; i++){
+                data[data.length] = [];
+                for(let j=0 ; j<result[1] ; j++){
+                    data[data.length - 1][data[data.length - 1].length] = "";
+                }
+            }
+            this._object.setData(data);
+            Project.scene.addToScene(this._object);
+            this._object = false;
+        }
 		else{
 			Project.scene.addToScene(this._object);
 			this._object = false;
 		}
 	}
 
+    /**
+	 * Prepne medzy nástrojom area a pävodným nástrojom
+     */
 	toggleArea(){
 		if(this._operation !== OPERATION_AREA){
 			if(this._operation !== OPERATION_RUBBER){
@@ -290,8 +301,10 @@ class objectCreator{
 		return isDefined(this._view) && this._visibleView ? this._view.clickIn(x, y, doAct) : false;
 	}
 
+    get view(){return this._view;}
 	get items(){return this._items;}
 	get object(){return this._object;}
+    get allLAyers(){return this._allLayers;}
 
 	get radius(){return this._radius;}
 	get color(){return this._fillColor;}
@@ -307,7 +320,21 @@ class objectCreator{
 	get brushColor(){return this._brushColor;}
 	get borderColor(){return this._borderColor;}
 	get borderWidth(){return this._borderWidth;}
+    get controllPress(){return this._controllPress;}
 
-	set object(val){this._object = val;}
+    /**
+     * Nastaví view pre creator
+     *
+     * @param val - view ktorý sa má priradiť
+     */
+    set view(val){
+        this._view = val;
+
+        if(this._items !== null){
+            this.init();
+        }
+    }
+    set object(val){this._object = val;}
+    set visibleView(val){this._visibleView = val;}
 	set operation(val){this._operation = val; this._view.changeOperation();}
 }

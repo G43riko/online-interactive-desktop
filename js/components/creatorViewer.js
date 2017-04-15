@@ -92,6 +92,17 @@ class CreatorViewer extends Entity{
 		//window.open(this._canvas.toDataURL("image/png"), '_blank');
 	}
 
+    /**
+	 * Funkcia vykreslí boolean
+	 *
+     * @param value
+     * @param posX
+     * @param posY
+     * @param width
+     * @param height
+     * @param offset
+     * @private
+     */
 	_drawBool(value, posX, posY, width, height, offset){
         let center = posY + height >> 1;
 
@@ -118,6 +129,18 @@ class CreatorViewer extends Entity{
 		}
 	}
 
+    /**
+	 * Funkcia nakreslí požadovanú ikonu
+	 *
+     * @param key
+     * @param value
+     * @param posX
+     * @param posY
+     * @param width
+     * @param height
+     * @param offset
+     * @private
+     */
 	_drawIcon(key, value, posX, posY, width = MENU_WIDTH, height = MENU_HEIGHT,  offset = 5){
 		switch(key){
 			case "allLayers" :
@@ -253,7 +276,18 @@ class CreatorViewer extends Entity{
 		}
 	}
 
+    /**
+	 * Funkcia zistí či bolo kliknuté na niektoré tlačítko a ak áno tak ho vráti
+	 *
+     * @param x
+     * @param y
+     * @returns {*}
+     * @private
+     */
 	_clickOn(x, y){
+        if(!this._isVisible()){
+            return;
+        }
 		if(y < this.position.y || x < this.position.x || x > this.position.x + this.size.x){
 			return false;
 		}
@@ -261,6 +295,9 @@ class CreatorViewer extends Entity{
 			click 	= null,
 			num;
 		each(this._items, function(e, i, arr){
+			if(e.item.type === "text"){
+				return;
+			}
 			if(!click && x > counter && x < counter + MENU_WIDTH){
 				if(y < this.position.y + MENU_OFFSET + MENU_HEIGHT){
 					click = e;
@@ -288,6 +325,9 @@ class CreatorViewer extends Entity{
 	}
 
 	clickIn(x, y, doAct = true){//TODO skúsiť prerobiť do čitatelnejšej formy
+        if(!this._isVisible()){
+            return;
+        }
         let inst = this,
 			e = this._clickOn(x, y);
 		if(!e){
@@ -317,26 +357,42 @@ class CreatorViewer extends Entity{
 		return true;
 	}
 
+    /**
+	 * Funkcia zobrazí povolené možnosti pre jednotlivé nástroje
+	 *
+     * @param operation
+     * @param allowed
+     * @returns {*}
+     */
 	static allowedOption(operation, allowed){
 		switch(operation){
-			case 1000:
+			case OPERATION_DRAW_RECT:
 				return isIn(OBJECT_RECT, allowed);
-			case 1001:
+			case OPERATION_DRAW_ARC:
 				return isIn(OBJECT_ARC, allowed);
-			case 1002:
+			case OPERATION_DRAW_PATH:
 				return isIn(OBJECT_PAINT, allowed);
-			case 1003:
+			case OPERATION_DRAW_LINE:
 				return isIn(OBJECT_LINE, allowed);
-			case 1004:
+			case OPERATION_DRAW_JOIN:
 				return isIn(OBJECT_JOIN, allowed);
-			case 1006:
+            case OPERATION_DRAW_TABLE:
+                return isIn(OBJECT_TABLE, allowed);
+            case OPERATION_DRAW_IMAGE:
+                return isIn(OBJECT_IMAGE, allowed);
+            case OPERATION_DRAW_POLYGON:
+                return isIn(OBJECT_POLYGON, allowed);
+			case OPERATION_RUBBER:
 				return isIn(OBJECT_RUBBER, allowed);
-			case 1007:
+			case OPERATION_AREA:
 				return isIn(OBJECT_AREA, allowed);
 		}
 		return false;
 	}
 
+    /**
+	 * Funkcia zmení povolené nástroje pri zmene nástroja
+     */
 	changeOperation(){
 		this._items = [];
 		each(Creator.items, function(e, i){
@@ -352,10 +408,28 @@ class CreatorViewer extends Entity{
 		}, this);
 	}
 
-	draw(){
+    /**
+	 * Funkcia hovorí o tom či sa má alebo nemá vykreslovať cretor
+	 *
+     * @returns {*}
+     * @private
+     */
+	_isVisible(){
+		return Menu.hasActiveButton;
+	}
+
+	draw(ctx = context){
+		if(!this._isVisible()){
+			return;
+		}
         let counter = MENU_OFFSET;
+		let texts = [];
 		//this._items.forEach(function(e){
 		each(this._items, function(e){
+			if(e.item.type === "text"){
+				texts[texts.length] = e;
+				return;
+			}
 			doRect({
 				bgImage: {
 					x: e.item.offset,
@@ -404,9 +478,41 @@ class CreatorViewer extends Entity{
 					});
 				},this);
 			}
-
-
 			counter += MENU_WIDTH + MENU_OFFSET;
 		}, this);
+
+        let fontSize = 17;
+        each(texts, function(e){
+            let width = CanvasHandler.calcTextWidth(ctx, e.item.label, fontSize + "pt " + DEFAULT_FONT_FAMILY) + (MENU_OFFSET << 1);
+            doRect({
+                x: this.position.x + counter,
+                y: this.position.y + MENU_OFFSET,
+                width: width,
+                height: MENU_HEIGHT,
+                radius: this._radius,
+				fillColor: this._fillColor,
+                borderColor: this._borderColor,
+                borderWidth: this._borderWidth
+            });
+            doText({
+                x: this.position.x + counter + MENU_OFFSET,
+                y: this.position.y + MENU_OFFSET + (MENU_HEIGHT >> 1),
+				text: e.item.label,
+                textValign: FONT_VALIGN_MIDDLE,
+                fontColor: MENU_BORDER_COLOR,
+                fontSize: fontSize,
+				ctx: ctx
+			});
+			/*
+            fillText(e.item.label,
+					this.position.x + counter + (MENU_WIDTH >> 1),
+					this.position.y + MENU_OFFSET + (MENU_HEIGHT >> 1),
+					17,
+					MENU_FONT_COLOR,
+					0,
+                	FONT_ALIGN_NORMAL);
+			*/
+            counter += width + MENU_OFFSET;
+        }, this);
 	}
 }

@@ -50,16 +50,31 @@ class ConnectionManager{
 	/*********************
 	 * INITIALIZATIONS
 	 ********************/
+    /**
+	 * Funckia začne zdielanie zo zadanými parametramy
+	 *
+     * @param data - vstupné parametre pre zdielanie
+     */
 	startShare(data){
 		data[CONN_KEY_TYPE] = CONN_KEY_SHARE;
 		this.connect(data);
 	}
 
+    /**
+     * Funckia začne využovanie zo zadanými parametramy
+     *
+     * @param data - vstupné parametre pre vyučovanie
+     */
 	startTeach(data){
 		data[CONN_KEY_TYPE] = CONN_KEY_TEACH;
 		this.connect(data);
 	}
 
+    /**
+     * Funckia začne sledovanie zo zadanými parametramy
+     *
+     * @param data - vstupné parametre pre sledovanie
+     */
 	startWatch(data){
 		data[CONN_KEY_TYPE] = CONN_KEY_WATCH;
 
@@ -71,6 +86,11 @@ class ConnectionManager{
 		this.connect(data);
 	}
 
+    /**
+     * Funckia začne cvičenie zo zadanými parametramy
+     *
+     * @param data - vstupné parametre pre cvičenie
+     */
 	startExercise(data){
 		data[CONN_KEY_TYPE] = CONN_KEY_EXERCISE;
 
@@ -82,6 +102,11 @@ class ConnectionManager{
 		this.connect(data);
 	}
 
+    /**
+	 * Funkcia sa pripojí k serveru
+	 *
+     * @param data - vstupné parametre pre pripojenie
+     */
 	connect(data){
 		//this._socket = io(URL_CHAT);
 		this._socket = io();
@@ -155,10 +180,18 @@ class ConnectionManager{
 		this._socket.emit("initConnection", data);
 	}
 
+    /**
+	 * Funckia vráti link pre aktuálne pripojenie
+     */
 	getAutoConnectLink(){
 		let result = URL_CHAT + "/app#abcdefghijk?less_id=" + this._less_id;
 	}
 
+    /**
+	 * Funkcia vykreslí aktuálne pozíciu kurzora
+	 *
+     * @param ctx
+     */
 	pdraw(ctx){
 		if(this._mousePosition){
 			doArc({
@@ -173,6 +206,9 @@ class ConnectionManager{
 		}
 	}
 
+    /**
+	 * Funkcia nás odpojí od servera a ukončí spojenie
+     */
 	disconnect(){
 		if(isFunction(Project.topMenu.disabled)){
 			Project.topMenu.disabled("sharing", CONN_KEY_WATCH);
@@ -195,6 +231,12 @@ class ConnectionManager{
 	/*********************
 	 * MESSAGES
 	 ********************/
+    /**
+	 * Funckia spracuje prijaté dáta pre Input akciu
+	 *
+     * @param data
+     * @private
+     */
 	 _processInputAction(data){
 	 	if(data.type === ACTION_MOUSE_MOVE){
 	 		this._mousePosition = data.position;
@@ -203,7 +245,13 @@ class ConnectionManager{
 	 		glob.showKey(data.key);
 	 	}
 	 }
-	 
+
+    /**
+     * Funckia spracuje prijaté dáta v zásobníku
+     *
+	 * @param data
+     * @private
+     */
 	_processStack(data){
 		let toto = Project.connection;
 		Logger.log("prijaty buffer po: " + (Date.now() - toto._messageTime), LOGGER_STACK_RECIEVED);
@@ -245,6 +293,12 @@ class ConnectionManager{
 	 	});
 	}
 
+    /**
+	 * funkcia odošle všetky dáta na zásobníku
+	 *
+     * @returns {boolean}
+     * @private
+     */
 	_sendStack(){
 		if(!this._socket || this._socket.disconnected){
 			return;
@@ -263,6 +317,13 @@ class ConnectionManager{
 		this._buffer = [];
 	}
 
+    /**
+	 * Funckia pridá správu do zásobník a ak už ubehla vhodná doba tak odošle zásobník
+	 *
+     * @param action
+     * @param data
+     * @private
+     */
 	_sendMessage(action, data){
 		this._buffer[this._buffer.length] = {action: action, time: Date.now(), data: data};
 		this._sender.callIfCan();
@@ -293,11 +354,19 @@ class ConnectionManager{
 	/*********************
 	 * ACTIONS
 	 ********************/
-
+    /**
+	 * Funkcia resetuje ostávajúci počet pokusov o pripojenie po úspešnom pripojené
+     */
 	resetLives(){
 		this._lives = CONNECTION_TRIES;
 	}
 
+    /**
+	 * Funckia vytvorí správu hovoriacu o zmene creatora
+	 *
+     * @param key
+     * @param value
+     */
 	creatorChange(key, value){
 		if(!this._socket || !this._shareCreator || this.watching){
 			return;
@@ -310,6 +379,14 @@ class ConnectionManager{
 		this._sendMessage('creatorAction', data);
 	}
 
+    /**
+	 * Funckia vytvorí správu o akcii na vrstve
+	 *
+     * @param type
+     * @param arg1
+     * @param arg2
+     * @private
+     */
 	_layerAction(type, arg1, arg2){
 		if(!this._socket || !this._shareLayers || this.watching){
 			return;

@@ -73,7 +73,7 @@ app.post('/getErrors', function(req, res){
 
 glob.getIp = function(request){
 	return request.headers['x-forwarded-for'] || request.connection.remoteAddress;
-}
+};
 
 app.post("/report", function(req){
 	Logger.log("bol prijatý report");
@@ -109,6 +109,19 @@ app.post("/anonymousData", function (request) {
 app.get('/anonymousData', function(req, res){
 	res.sendFile('/welcomeBootstrap.html' , { root : __dirname});
 });
+var serverError = function(err){
+
+};
+var check = function(func){
+	return function(){
+		try{
+            func();
+        }
+        catch(err){
+			serverError(err);
+		}
+    };
+};
 
 io.on('connection', function(socket){
 	serverLogs.increase("connected");
@@ -116,34 +129,34 @@ io.on('connection', function(socket){
 	FROM SHARER
 	*******************/
 	socket.on("changeCreator", changeCreator);
-	socket.on("paintAction", paintAction);
-	socket.on("startShare", startShare);
-	socket.on('mouseData', mouseData);
-	socket.on("action", action);
-	socket.on("sendAllData", sendAllData);
+	socket.on("paintAction", check(paintAction));
+	socket.on("startShare", check(startShare));
+	socket.on('mouseData', check(mouseData));
+	socket.on("action", check(action));
+	socket.on("sendAllData", check(sendAllData));
 	/*******************
 	FROM WATCHER
 	*******************/
-	socket.on('createWatcher', createWatcher);
+	socket.on('createWatcher', check(createWatcher));
 	/*******************
 	FROM ALL
 	*******************/
-	socket.on('disconnect', disconnect);
-	socket.on('chatMessage', chatMessage);
-	socket.on("broadcastMsg", broadcastMsg);
-	socket.on("sendBuffer", sendBuffer);
+	socket.on('disconnect', check(disconnect));
+	socket.on('chatMessage', check(chatMessage));
+	socket.on("broadcastMsg", check(broadcastMsg));
+	socket.on("sendBuffer", check(sendBuffer));
 	
 	/*******************
 	FROM OVERVIEW
 	*******************/
-	socket.on("dataReqiere", dataReqiere);
-	socket.on("getErrors", getErrors);
-	socket.on("getReports", getReports);
+	socket.on("dataReqiere", check(dataReqiere));
+	socket.on("getErrors", check(getErrors));
+	socket.on("getReports", check(getReports));
 
 	/*******************
 	 FROM USER
 	 *******************/
-	socket.on("initConnection", initConnection);
+	socket.on("initConnection", check(initConnection));
 
 
 	//socket.on("completeAuth", completeAuth);

@@ -7,7 +7,7 @@ function pickUpColor(func, thisArg){
 		T = thisArg;
 	}
 	$("#colorPalete").delegate(".colorPatern", "click", function(){
-		G("#colorPalete .selected").removeClass("selected")
+		G("#colorPalete .selected").removeClass("selected");
 		func.call(T, G(this).addClass("selected").css("backgroundColor"));
 		closeDialog();
 		draw();

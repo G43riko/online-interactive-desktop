@@ -353,8 +353,8 @@ class SceneManager{
 		each(this._clickViewers, e => e.draw(ctx));
 	}
 
-	draw(){
-		each(this._layers, e => e.draw());
+	draw(ctx = context){
+		each(this._layers, e => e.draw(ctx));
 	}
 
 

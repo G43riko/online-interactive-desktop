@@ -7,6 +7,11 @@ const CANVAS_PREFIX     = "canvas";
 const MAIN_CANVAS       = "mainCanvas";
 
 class CanvasManager{
+    /**
+     * @constructor
+     * @param sizeX
+     * @param sizeY
+     */
     constructor(sizeX, sizeY){
 
         //this._sizeX = sizeX;
@@ -169,8 +174,8 @@ function doPolygon(obj){
                                              e.y + v1.y * l1 * res.radius + offY);
                 }
             });
-            res.ctx.closePath();
         }
+        res.ctx.closePath();
     };
     
     isArray(res.points[0]) ? each(res.points, drawLines) : drawLines(res.points);
@@ -587,6 +592,11 @@ function _process(res){
     if(res.shadow){
         setShadow(false);
     }
+    /*
+    if(isDefined(res.shadow)){
+        setShadow(res.shadow);
+    }
+    */
 
     res.ctx.lineCap = res.lineCap;
     res.ctx.lineJoin = res.joinType;

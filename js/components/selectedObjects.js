@@ -31,7 +31,7 @@ class ObjectsManager{
 	}
 
 	deleteAll(){
-		each(this._objects, Scene.remove);
+		each(this._objects, e => Scene.remove(e), Scene);
 		draw();
 	}
 
