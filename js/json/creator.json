@@ -67,6 +67,20 @@
 		"action" : "chooseColors",
 		"type" : "color"
 	},
+	"arrowStart" : {
+		"label" : "Arrow Type",
+		"allowedFor" : ["Line"],
+		"action" : "selectArrow",
+		"type" : "number",
+		"values" : [2210, 2211, 2212, 2213, 2214, 2215]
+	},
+	"arrowEnd" : {
+		"label" : "Arrow Type",
+		"allowedFor" : ["Line"],
+		"action" : "selectArrow",
+		"type" : "number",
+		"values" : [2210, 2211, 2212, 2213, 2214, 2215]
+	},
 	"createObject" : {
 		"label" : "Pre vytvorenie objektu drž CTRL a použi myš",
 		"allowedFor" : ["Rect", "Arc", "Polygon", "Table", "Image"],

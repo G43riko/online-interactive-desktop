@@ -16,6 +16,8 @@ class objectCreator{
 		this._brushSize		= DEFAULT_BRUSH_SIZE;
 		this._brushType		= DEFAULT_BRUSH_TYPE;
 		this._brushColor	= DEFAULT_BRUSH_COLOR;
+		this._arrowStart	= DEFAULT_ARROW_START;
+        this._arrowEnd		= DEFAULT_ARROW_END;
 		this._radius		= DEFAULT_RADIUS;
 		this._items 		= null;
 		this._controllPress	= false;
@@ -25,7 +27,7 @@ class objectCreator{
 		this._visibleView	= true;
 		this._allowedItems 	= ["_fillColor", "_borderColor", "_borderWidth", "_operation", 
 							   "_lineWidth", "_fontSize", "_fontColor", "_lineType", "_lineStyle", 
-							   "_brushSize", "_brushType", "_brushColor", "_radius"];
+							   "_brushSize", "_brushType", "_brushColor", "_radius", "_arrowStart", "_arrowEnd"];
 		
 		Logger.log(getMessage(MSG_OBJECT_CREATED, this.constructor.name), LOGGER_COMPONENT_CREATE);
 	}
@@ -310,6 +312,7 @@ class objectCreator{
 	get color(){return this._fillColor;}
 	get lineType(){return this._lineType;}
 	get fontSize(){return this._fontSize;}
+    get arrowEnd(){return this._arrowEnd;}
 	get fillColor(){return this._fillColor;}
 	get fontColor(){return this._fontColor;}
 	get operation(){return this._operation;}
@@ -317,6 +320,7 @@ class objectCreator{
 	get lineStyle(){return this._lineStyle;}
 	get brushSize(){return this._brushSize;}
 	get brushType(){return this._brushType;}
+    get arrowStart(){return this._arrowStart;}
 	get brushColor(){return this._brushColor;}
 	get borderColor(){return this._borderColor;}
 	get borderWidth(){return this._borderWidth;}

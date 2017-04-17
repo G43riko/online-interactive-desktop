@@ -354,6 +354,12 @@ glob.loading = function(){
     else if(query.demo === "d"){
         glob.initRandomGraph();
     }
+    else if(query.demo === "e"){
+        Examples.Pizza();
+    }
+    else if(query.demo === "ee"){
+        Examples.PizzaFinish();
+    }
 };
 
 function realPDraw(){
@@ -402,6 +408,122 @@ function realDraw(){
 }
 
 let Examples = {
+    Pizza: () =>{
+
+        let isOrder = new Rect(new GVector2f(50, 100), new GVector2f(200, 200));
+        isOrder.setCenterText("je objednaná pizza");
+        isOrder.setRhombus(true);
+
+        let waitForPizza = new Rect(new GVector2f(300, 100), new GVector2f(200, 50));
+        waitForPizza.setCenterText("Počkaj na pizzu");
+
+        let checkResources = new Rect(new GVector2f(300, 200), new GVector2f(200, 50));
+        checkResources.setCenterText("Skontroluj suroviny");
+
+        let hasAllResources = new Rect(new GVector2f(550, 100), new GVector2f(200, 200));
+        hasAllResources.setCenterText("Sú všetky");
+        hasAllResources.setRhombus(true);
+
+
+        let bringFromWH = new Rect(new GVector2f(800, 100), new GVector2f(200, 50));
+        bringFromWH.setCenterText("Dones ich zo skladu");
+
+        let preparePizza = new Rect(new GVector2f(800, 200), new GVector2f(200, 50));
+        preparePizza.setCenterText("Piprav pizzu");
+
+        let waitForOven = new Rect(new GVector2f(800, 300), new GVector2f(200, 50));
+        waitForOven.setCenterText("počkaj na pec");
+
+
+
+        let isOvenFree = new Rect(new GVector2f(1050, 100), new GVector2f(200, 200));
+        isOvenFree.setCenterText("Je pec volná");
+        isOvenFree.setRhombus(true);
+
+        let cookPizza = new Rect(new GVector2f(1300, 100), new GVector2f(200, 50));
+        cookPizza.setCenterText("Daj piecť pizzu");
+
+
+        let isKurierReady = new Rect(new GVector2f(1550, 100), new GVector2f(200, 200));
+        isKurierReady.setCenterText("Je kuriuer pripravený");
+        isKurierReady.setRhombus(true);
+
+        let waitForKKurier = new Rect(new GVector2f(1300, 200), new GVector2f(200, 50));
+        waitForKKurier.setCenterText("Počkaj na kuriera");
+
+        let sendPizza = new Rect(new GVector2f(300, 300), new GVector2f(200, 50));
+        sendPizza.setCenterText("Odošli pizzu");
+
+        Scene.addToScene([isOrder, waitForPizza, checkResources, hasAllResources, bringFromWH, preparePizza, isOvenFree, cookPizza, isKurierReady, waitForKKurier, sendPizza, waitForOven]);
+    },
+    PizzaFinish: () =>{
+        let connect = function(obj1, conn1, obj2, conn2, text = "", points = [new GVector2f(), new GVector2f()]){
+            let connector = new Line(points, 2, "#000000");
+            connector.arrowStartType = 2211;
+            connector.connectATo(obj1, conn1);
+            connector.setCenterText(text);
+            connector.connectBTo(obj2, conn2);
+            Scene.addToScene(connector);
+        };
+
+        let isOrder = new Rect(new GVector2f(50, 100), new GVector2f(200, 200));
+        isOrder.setCenterText("je objednaná pizza");
+        isOrder.setRhombus(true);
+
+        let waitForPizza = new Rect(new GVector2f(50, 400), new GVector2f(200, 50));
+        waitForPizza.setCenterText("Počkaj na pizzu");
+
+        let checkResources = new Rect(new GVector2f(350, 175), new GVector2f(200, 50));
+        checkResources.setCenterText("Skontroluj suroviny");
+
+        let hasAllResources = new Rect(new GVector2f(650, 100), new GVector2f(200, 200));
+        hasAllResources.setCenterText("Sú všetky");
+        hasAllResources.setRhombus(true);
+
+        let bringFromWH = new Rect(new GVector2f(650, 400), new GVector2f(200, 50));
+        bringFromWH.setCenterText("Dones ich zo skladu");
+
+        let preparePizza = new Rect(new GVector2f(950, 175), new GVector2f(200, 50));
+        preparePizza.setCenterText("Piprav pizzu");
+
+        let waitForOven = new Rect(new GVector2f(1450, 50), new GVector2f(200, 50));
+        waitForOven.setCenterText("počkaj na pec");
+
+        let isOvenFree = new Rect(new GVector2f(1250, 100), new GVector2f(200, 200));
+        isOvenFree.setCenterText("Je pec volná");
+        isOvenFree.setRhombus(true);
+
+        let cookPizza = new Rect(new GVector2f(1650, 175), new GVector2f(200, 50));
+        cookPizza.setCenterText("Daj piecť pizzu");
+
+        let isKurierReady = new Rect(new GVector2f(1650, 300), new GVector2f(200, 200));
+        isKurierReady.setCenterText("Je kuriuer pripravený");
+        isKurierReady.setRhombus(true);
+
+        let waitForKKurier = new Rect(new GVector2f(1350, 600), new GVector2f(200, 50));
+        waitForKKurier.setCenterText("Počkaj na kuriera");
+
+        let sendPizza = new Rect(new GVector2f(1650, 600), new GVector2f(200, 50));
+        sendPizza.setCenterText("Odošli pizzu");
+
+        connect(waitForOven, 3, cookPizza, 0, "", [new GVector2f(), new GVector2f(1750, 75), new GVector2f()]);
+        connect(cookPizza, 1, isKurierReady, 0, "");
+        connect(preparePizza, 3, isOvenFree, 2, "");
+        connect(isOrder, 1, waitForPizza, 0, "nie");
+        connect(isOvenFree, 3, cookPizza, 2, "áno");
+        connect(waitForKKurier, 3, sendPizza, 2, "");
+        connect(bringFromWH, 3, preparePizza, 1, "", [new GVector2f(), new GVector2f(1050, 425), new GVector2f()]);
+        connect(isOvenFree, 0, waitForOven, 2, "nie", [new GVector2f(), new GVector2f(1350, 75), new GVector2f()]);
+        connect(isOrder, 3, checkResources, 2, "áno");
+        connect(isKurierReady, 1, sendPizza, 0, "áno");
+        connect(waitForPizza, 3, checkResources, 1, "", [new GVector2f(), new GVector2f(450, 425), new GVector2f()]);
+        connect(checkResources, 3, hasAllResources, 2, "");
+        connect(hasAllResources, 1, bringFromWH, 0, "nie");
+        connect(hasAllResources, 3, preparePizza, 2, "áno");
+        connect(isKurierReady, 2, waitForKKurier, 0, "nie", [new GVector2f(), new GVector2f(1450, 400), new GVector2f()]);
+
+        Scene.addToScene([isOrder, waitForPizza, checkResources, hasAllResources, bringFromWH, preparePizza, isOvenFree, cookPizza, isKurierReady, waitForKKurier, sendPizza, waitForOven]);
+    },
     Newton: (data = {mintWidth: 1000, minHeight: 650}) => {
         /********INIT********/
         let floorHeight = data.floorHeight || 555,

@@ -410,7 +410,6 @@ class ListenersManager{
 			if(selectedObjects.movedObject){
 				if(clickOnConnectorObject && selectedObjects.movedObject.name === OBJECT_LINE){
 					selectedObjects.movedObject.setTarget(clickOnConnectorObject);
-					console.log("teraz");
 				}
 				selectedObjects.movedObject.moving = false;
 				selectedObjects.movedObject = false;

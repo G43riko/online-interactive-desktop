@@ -4,12 +4,21 @@ class Rect extends Entity {
 			fillColor: fillColor,
 			moveType: -1
 		});
+		this._innerText	= "";
+		this._isRhombus	= false;
 		this.minSize 	= new GVector2f(SELECTOR_SIZE);
-		this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1));
+		if(!this._isRhombus){
+			this.addConnector(new GVector2f(0, 0), new GVector2f(1, 0),new GVector2f(0, 1),new GVector2f(1, 1));
+        }
 		//this._radius = Creator.radius;
 		//console.log("creator: " + Creator.radius);
 	}
-
+    setCenterText(text){
+		this._innerText = text;
+	}
+	setRhombus(val){
+		this._isRhombus = val;
+	}
 //	set radius(val){
 		//this._radius = parseFloat(val);
 		/*
@@ -60,16 +69,44 @@ class Rect extends Entity {
 	}
 
 	_draw(ctx){
-		doRect({
-			position: this.position,
-			size: this.size,
-			fillColor: this.fillColor,
-			shadow: this.moving && !this.locked,
-			borderWidth: this.borderWidth,
-			borderColor: this.borderColor,
-			radius: this._checkRadius(),
-			ctx: ctx
-		});
+		if(this._isRhombus){
+			doPolygon({
+				points: [new GVector2f(this._position.x + this._size.x / 2, this._position.y),
+						 new GVector2f(this._position.x, this._position.y + this._size.y / 2),
+						 new GVector2f(this._position.x + this._size.x / 2, this._position.y + this._size.y),
+						 new GVector2f(this._position.x + this._size.x, this._position.y + this._size.y / 2)],
+                fillColor: this.fillColor,
+                shadow: this.moving && !this.locked,
+                borderWidth: this.borderWidth,
+                borderColor: this.borderColor,
+                ctx: ctx
+			})
+		}
+		else{
+            doRect({
+                position: this.position,
+                size: this.size,
+                fillColor: this.fillColor,
+                shadow: this.moving && !this.locked,
+                borderWidth: this.borderWidth,
+                borderColor: this.borderColor,
+                radius: this._checkRadius(),
+                ctx: ctx
+            });
+		}
+
+		if(this._innerText){
+            doText({
+                textHalign: FONT_HALIGN_CENTER,
+                textValign: FONT_VALIGN_MIDDLE,
+                fontSize: 14,
+                fontColor: this._borderColor,
+                text: this._innerText,
+                x: this._position.x + this._size.x / 2,
+                y: this._position.y + this._size.y / 2,
+                ctx: ctx
+            });
+		}
 		Entity.drawConnectors(this, ctx);
 
 		drawBorder(ctx, this);

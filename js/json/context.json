@@ -291,6 +291,12 @@
 		"visible" : true,
 		"disabled" : false
 	},
+	"setCenterText" : {
+		"label" : "Set text",
+		"type" : "text",
+		"visible" : true,
+		"disabled" : false
+	},
 	"renameLayer" : {
 		"label" : "Rename layer",
 		"type" : "text",
@@ -531,7 +537,7 @@
 				"label": "none",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 0,
+				"name": 2210,
 				"visible" : true,
 				"disabled" : false
 			},
@@ -539,7 +545,7 @@
 				"label": "classic",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 2210,
+				"name": 2211,
 				"visible" : true,
 				"disabled" : false
 			},
@@ -547,7 +553,7 @@
 				"label": "closed",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 2211,
+				"name": 2212,
 				"visible" : true,
 				"disabled" : false
 			},
@@ -555,7 +561,7 @@
 				"label": "filled",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 2212,
+				"name": 2213,
 				"visible" : true,
 				"disabled" : false
 			},
@@ -563,7 +569,7 @@
 				"label": "diamond",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 2213,
+				"name": 2214,
 				"visible" : true,
 				"disabled" : false
 			},
@@ -571,7 +577,7 @@
 				"label": "diamond filled",
 				"group": "arrowEndType",
 				"type" : "radio",
-				"name": 2214,
+				"name": 2215,
 				"visible" : true,
 				"disabled" : false
 			}

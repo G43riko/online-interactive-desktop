@@ -24,8 +24,8 @@ class Line extends Entity{
 		*/
 		this._arrow 			= new Image();
 		this._arrow.src 		= "img/arrow.png";
-		this._arrowEndType		= 0;
-		this._arrowStartType	= 0;
+		this._arrowEndType		= Creator.arrowEnd;
+		this._arrowStartType	= Creator.arrowStart;
 		this._centerTexts		= [];
 		//this._editable		= true; // či je možné pridávať a mazať body
         //this._movable			= true; //či je možné presúvať body
@@ -51,6 +51,9 @@ class Line extends Entity{
 	}
 
 	setCenterText(text, index = 0){
+		if(!text){
+			return;
+		}
 		this._centerTexts[index] = text;
 	}
 

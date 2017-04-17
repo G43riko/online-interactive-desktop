@@ -142,6 +142,7 @@ class CreatorViewer extends Entity{
      * @private
      */
 	_drawIcon(key, value, posX, posY, width = MENU_WIDTH, height = MENU_HEIGHT,  offset = 5){
+        let startPos, endPos;
 		switch(key){
 			case "allLayers" :
 				this._drawBool(value, posX, posY, width, height, offset);
@@ -170,6 +171,28 @@ class CreatorViewer extends Entity{
 					ctx: this._context
 				});
 				break;
+			case ATTRIBUTE_ARROW_START:
+				startPos = new GVector2f(posX + offset, posY + (height >> 1));
+				endPos = new GVector2f(posX + width - offset, posY + (height >> 1));
+				doLine({
+					points: [startPos, endPos],
+                    borderWidth: 2,
+                    borderColor: "black",
+					ctx: this._context
+				});
+                Arrow.drawArrow(this._context, startPos, endPos, {fillColor:"white", borderColor: "black", borderWidth: 2}, value, Math.PI / 6, (width - offset * 2) / 2);
+				break;
+            case ATTRIBUTE_ARROW_END:
+                startPos = new GVector2f(posX + offset, posY + (height >> 1));
+                endPos = new GVector2f(posX + width - offset, posY + (height >> 1));
+                doLine({
+                    points: [startPos, endPos],
+                    borderWidth: 2,
+                    borderColor: "black",
+                    ctx: this._context
+                });
+                Arrow.drawArrow(this._context, endPos, startPos, {fillColor:"white", borderColor: "black", borderWidth: 2}, value, Math.PI / 6, (width - offset * 2) / 2);
+                break;
 			case ATTRIBUTE_FILL_COLOR :
 				doRect({
 					position: [posX + (offset << 1), posY + (offset << 1)],

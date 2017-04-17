@@ -23,7 +23,8 @@ class ContextMenuManager{
 
 				if(isIn(selectedObjects.movedObject.name, OBJECT_RECT, OBJECT_POLYGON, OBJECT_TEXT, OBJECT_LINE))
 					this._addFields("radius");
-
+                if(isIn(selectedObjects.movedObject.name, OBJECT_LINE, OBJECT_RECT))
+                    this._addFields("setCenterText");
 				if(selectedObjects.movedObject.name == OBJECT_LINE)
 					this._addFields("joinType", "lineCap", "lineStyle", "lineType", "lineWidth", "arrowEndType", "arrowStartType");
 				else if(selectedObjects.movedObject.name == OBJECT_TABLE)
@@ -246,6 +247,10 @@ class ContextMenuManager{
 			case "removeRow":
 				this._selectedObject.removeRow(this._parent.position.y);
 				actContextMenu = false;
+				break;
+			case "setCenterText":
+                this._selectedObject.setCenterText(prompt("Zadajte text"));
+                actContextMenu = false;
 				break;
 			case "removeColumn":
 				this._selectedObject.removeColumn(this._parent.position.x);

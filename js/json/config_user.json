@@ -64,6 +64,10 @@
 	},
 	"environmentOptions" : {
 		"default" : {
+			"arrow" : {
+				"start" : 2210,
+				"end" : 2210
+			},
 			"font" : {
 				"family" : "Comic Sans MS",
 				"color" : "#000000",
@@ -410,6 +414,10 @@
 			"file_xml" : "text/xml"
 		},
 		"attribute" : {
+			"arrow" : {
+				"start" : "arrowStart",
+				"end" : "arrowEnd"
+			},
 			"fill_color" : "fillColor",
 			"border" : {
 				"color" : "borderColor",
