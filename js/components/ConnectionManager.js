@@ -108,6 +108,7 @@ class ConnectionManager{
      * @param data - vstupné parametre pre pripojenie
      */
 	connect(data){
+		console.log("pripara sa:", data);
 		//this._socket = io(URL_CHAT);
 		this._socket = io();
 		this._startTime = Date.now();
@@ -145,6 +146,7 @@ class ConnectionManager{
 
 
 		this._socket.on('confirmConnection', response => {
+			console.log("pripojenie uspešneeee", response);
 			this._less_id = response[CONN_KEY_DATA][CONN_KEY_LESS_ID];
 			this._connectTime = Date.now();
 			this._messageTime = Date.now();

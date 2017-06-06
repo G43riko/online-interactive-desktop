@@ -93,7 +93,8 @@ class OptionsManager{
 		}
 
 		if(key === "showLayersViewer"){
-			Entity.setAttr(Layers, "visible", val);
+			//Entity.setAttr(Layers, "visible", val);
+            Layers.visible = val;
 		}
 		
 		Logger.log(getMessage(MSG_OPTION_CHANGE, key, val), LOGGER_CHANGE_OPTION);

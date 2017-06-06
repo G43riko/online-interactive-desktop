@@ -30,7 +30,8 @@
 		"descriptions" : [
 			"riešenie ulohy",
 			"nastavanie podla ulohy"
-		]
+		],
+		"link" : "#"
 	},{
 		"title" : "Zdielanie",
 		"components" : [
@@ -40,7 +41,8 @@
 			"zdielanie obrazovky",
 			"kreslenie",
 			"upravu sceny"
-		]
+		],
+		"link" : "#"
 	},{
 		"title" : "Sledovanie",
 		"components" : [
@@ -58,6 +60,7 @@
 		],
 		"descriptions" : [
 			"Tvorba nového zadania"
-		]
+		],
+		"link" : "#"
 	}
 ]

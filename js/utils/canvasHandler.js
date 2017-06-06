@@ -74,6 +74,9 @@ class CanvasHandler{
 		canvas.getContext("2d").drawImage(image, 0, 0);
 		return canvas;
 	}
+	static showCanvas(canvas){
+        window.open(canvas.toDataURL("image/png"), '_blank');
+	}
 
 	static setLineDash(ctx, ...args){
 		//TODO otestovať;

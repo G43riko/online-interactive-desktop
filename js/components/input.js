@@ -75,7 +75,6 @@ class InputManager{
 		
 		window.onkeydown = e => {
 			this._keyDown(e.keyCode);
-
 			if(!e.target.onkeyup){
 				e.target.onkeyup = e => {
 					this._keyUp(e.keyCode);

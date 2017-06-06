@@ -37,7 +37,7 @@
 		<p>Aplikácia s ktorou je celý život jednoduchší!</p> 
 	</div>
 
-
+	<!--
 	<div class="container">
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -48,7 +48,11 @@
 			</div>
 		</div>
 	</div>
+	-->
 	<div class="container">
+		<a href="/app#abcdefghijk">
+			<button type="button" class="btn btn-primary btn-block btn-lg">Spustiť aplikáciu</button>
+		</a>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h2>Komponenty</h2>
@@ -62,7 +66,7 @@
 	<div class="container">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h2>Ukážky</h2>
+				<h2>Scenáre</h2>
 			</div>
 			<div class="panel-body">
 				<div class="row" id="demoWrapper">
@@ -77,35 +81,35 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		var createComponentPanel = function(item){
-			var listGroupItem = document.createElement("a");
-			listGroupItem.setAttribute("class", "list-group-item" + (item.checked ? " active" : ""));
+		let createComponentPanel = function(item){
+			let listGroupItem = document.createElement("a");
+			listGroupItem.setAttribute("class", "list-group-item" + (item.checked ? " active" : "") + " componentItem");
 			listGroupItem.setAttribute("href", "#");
+            listGroupItem.setAttribute("shortcut", item.shortcut);
 			listGroupItem.onclick = function(e){
-				listGroupItem.classList.toggle("active")
+				listGroupItem.classList.toggle("active");
 				listGroupItem.getElementsByClassName("glyphicon")[0].classList.toggle("glyphicon-check");
 				listGroupItem.getElementsByClassName("glyphicon")[0].classList.toggle("glyphicon-unchecked");
 				return false;
-			}
+			};
 
-			var row = document.createElement("div");
+			let row = document.createElement("div");
 			row.setAttribute("class", "row");
 
-			var panel;
+			let panel;
 
 			//ICON
-			var span = document.createElement("span");
+			let span = document.createElement("span");
 			span.setAttribute("class", "glyphicon glyphicon-" + (item.checked ? "check" : "unchecked"));
-
 			panel = document.createElement("div");
 			panel.setAttribute("class", "col-sm-1");
 			panel.appendChild(span);
 			row.appendChild(panel);
 
 			//TITLE
-			var title = document.createElement("h4");
+			let title = document.createElement("h4");
 			title.setAttribute("class", "list-group-item-heading");
-			title.appendChild(document.createTextNode(item.title))
+			title.appendChild(document.createTextNode(item.title));
 
 			panel = document.createElement("div");
 			panel.setAttribute("class", "col-sm-4 ");
@@ -113,7 +117,7 @@
 			row.appendChild(panel);
 
 			//DESC
-			var description = document.createElement("p");
+			let description = document.createElement("p");
 			description.setAttribute("class", "list-group-item-text");
 			description.appendChild(document.createTextNode(item.description));
 
@@ -124,11 +128,11 @@
 
 			listGroupItem.appendChild(row);
 			return listGroupItem;
-		}
+		};
 
-		var createCompponents = function(componentWrapper, components, columns = 2){
-			var i, containter, listGroup;
-			var divideNum = Math.ceil(components.length / columns);
+		let createCompponents = function(componentWrapper, components, columns = 2){
+			let i, containter, listGroup;
+			let divideNum = Math.ceil(components.length / columns);
 
 			for(i = 0; i < components.length ; i++){
 				if(i % divideNum === 0){
@@ -143,53 +147,65 @@
 					listGroup.appendChild(createComponentPanel(components[i]));
 			}
 
-			var button = document.createElement("button");
+			let button = document.createElement("button");
 			button.appendChild(document.createTextNode("Spustiť aplikáciu s vlastnými komponentami"));
 			button.setAttribute("type", "button");
 			button.setAttribute("class", "btn btn-primary btn-lg btn-block");
-
+            button.setAttribute("onclick", "startComponentApp();");
 			componentWrapper.appendChild(button);
-		}
+		};
+		let startComponentApp = function(){
+			let items = document.getElementsByClassName("componentItem");
 
-		var createPackagePanel = function(item){
-			var panel = document.createElement("div");
+			let result = "";
+			for(let i=0 ; i<items.length ; i++){
+			    if(items[i].matches(".active")){
+					//console.log(items[i], items[i].shortcut, items[i].getAttribute("shortcut"));
+					result += items[i].getAttribute("shortcut");
+                }
+			}
+
+			window.location = "/app#" + result;
+		};
+		let createPackagePanel = function(item){
+			let panel = document.createElement("div");
 			panel.setAttribute("class", "panel panel-info");
 
 			//PANEL HEADER
-			var header = document.createElement("div");
+			let header = document.createElement("div");
 			header.setAttribute("class", "panel-heading text-center");
 			header.setAttribute("style", "cursor: pointer;");
 			
 			panel.appendChild(header);
 
-			var title = document.createElement("h2");
+			let title = document.createElement("h2");
 			title.appendChild(document.createTextNode(item.title));
 			header.appendChild(title);
 
 			//PANEL BODY
 
-			var body = document.createElement("div");
+			let body = document.createElement("div");
 			body.setAttribute("class", "panel-body");
 			body.setAttribute("style", "min-height: 150px;");
 			panel.appendChild(body);
 
-			var row = document.createElement("div");
+			let row = document.createElement("div");
 			row.setAttribute("class", "row");
 			body.appendChild(row);
 
-			var description = document.createElement("div");
+			let description = document.createElement("div");
 			description.setAttribute("class", "col-sm-6 text-center");
 			row.appendChild(description);
 
-			var dlDesc = document.createElement("dl");
+			let dlDesc = document.createElement("dl");
 			//dlDesc.setAttribute("class", "well");
 			description.appendChild(dlDesc);
 
-			var dt = document.createElement("dt");
+			let dt = document.createElement("dt");
 			dt.appendChild(document.createTextNode("Vhodné pre:"));
 			dlDesc.appendChild(dt);
-			var dd;
-			for(var i in item.descriptions)
+			let dd;
+			for(let i in item.descriptions)
 				if(item.descriptions.hasOwnProperty(i)){
 					dd = document.createElement("dd");
 					dd.appendChild(document.createTextNode("- " + item.descriptions[i]));
@@ -197,25 +213,24 @@
 				}
 
 
-			var component = document.createElement("div");
+			let component = document.createElement("div");
 			component.setAttribute("class", "col-sm-6 text-center");
 			row.appendChild(component);
 
-			var dlComp = document.createElement("dl");
+			let dlComp = document.createElement("dl");
 			component.appendChild(dlComp);
 
-			var dt = document.createElement("dt");
+			dt = document.createElement("dt");
 			dt.appendChild(document.createTextNode("Komponenty:"));
 			dlComp.appendChild(dt);
-			var dd;
-			for(var i in item.components)
+			for(let i in item.components)
 				if(item.components.hasOwnProperty(i)){
 					dd = document.createElement("dd");
 					dd.appendChild(document.createTextNode("- " + item.components[i]));
 					dlComp.appendChild(dd);
 				}
 
-			var button = document.createElement("button");
+			let button = document.createElement("button");
 			button.setAttribute("type", "button");
 			button.setAttribute("class", "btn btn-primary btn-lg btn-block");
 			button.style.display = "none";
@@ -223,40 +238,43 @@
 			body.appendChild(button);
 
 			header.onclick = function(e){
-				var element = document.getElementsByClassName("panel-primary")[0];
+				let element = document.getElementsByClassName("panel-primary")[0];
 				if(element && element !== panel){
 					element.classList.toggle("panel-info");
 					element.classList.toggle("panel-primary");
 					element.getElementsByClassName("btn btn-primary btn-lg btn-block")[0].style.display = "none";
 				}
-				if(item.link)
+				if(item.link !== "#")
 					button.style.display = button.style.display==="block" ? "none" : "block";
 				button.onclick = function(){
 					location.href = item.link;
-				}
+				};
 				panel.classList.toggle("panel-info");
 				panel.classList.toggle("panel-primary");
-			}
+			};
 
 
 			return panel;
-		}
+		};
 
-		var createPackageMenu = function(item, panel){
-			if(!item.link)
-				return false;
-			var li = document.createElement("li");
-			var a = document.createElement("a");
-			a.setAttribute("href", item.link);
+		let createPackageMenu = function(item, panel){
+			let li = document.createElement("li");
+			let a = document.createElement("a");
+            if(item.link === "#"){
+                a.classList.add("disabled");
+            }
+            else{
+                a.setAttribute("href", item.link );
+			}
 			a.appendChild(document.createTextNode(item.title));
-
+            console.log(a);
 			li.appendChild(a);
 			panel.appendChild(li);
-		}
+		};
 
-		var createPackages = function(packageWrapper, packages, columns = 3){
-			var i, containter, panel;
-			var divideNum = Math.ceil(packages.length / columns);
+		let createPackages = function(packageWrapper, packages, columns = 3){
+			let i, containter, panel;
+			let divideNum = Math.ceil(packages.length / columns);
 			for(i = 0; i < packages.length ; i++){
 				if(i % divideNum === 0){
 					containter = document.createElement("div");
@@ -268,12 +286,12 @@
 					containter.appendChild(createPackagePanel(packages[i]));
 				}
 			}
-		}
+		};
 
 		try{
 			$.getJSON("js/json/packages.json", function(data){
 				try{
-					createPackages(document.getElementById("packageWrapper"), data);
+					//createPackages(document.getElementById("packageWrapper"), data);
 				}catch(ee){
 					alert("chybaa");
 				}

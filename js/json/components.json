@@ -3,46 +3,57 @@
 		"title": "Zdielanie",
 		"key": "Share",
 		"description": "Umožnuje zdielať obrazovku",
-		"checked": false
+		"checked": false,
+		"visible": true,
+		"shortcut" : "b"
 	},{
 		"title": "Upravovanie",
 		"key": "Edit",
 		"description": "Umožnuje upravovať objekt",
-		"checked": false
+		"checked": false,
+		"visible": true,
+		"shortcut" : "h"
 	},{
 		"title": "Kreslenie",
 		"key": "Draw",
 		"description": "Umožnuje kreslenie",
-		"checked": false
+		"checked": false,
+		"visible": true,
+		"shortcut" : "a"
 	},{
 		"title": "Nástroje",
 		"key": "Draw",
 		"description": "Umožnuje zmenu nástrojov",
-		"checked": false
+		"checked": false,
+		"visible": true,
+		"shortcut" : "d"
 	},{
 		"title": "Ukladanie",
 		"key": "Draw",
 		"description": "Umožnuje ukladanie vytvoreného obsahu",
-		"checked": false
+		"checked": false,
+		"visible": true,
+		"shortcut" : "i"
 	},{
 		"title": "Načítavanie",
 		"key": "Draw",
 		"description": "Umožnuje načítanie",
-		"checked": false
+		"checked": false,
+		"visible": true,
+		"shortcut" : "e"
 	},{
 		"title": "Zadania",
 		"key": "Draw",
 		"description": "Umožnuje pracovanie zo zadaním",
-		"checked": false
+		"checked": false,
+		"visible": true,
+		"shortcut" : "k"
 	},{
 		"title": "Vrstvy",
 		"key": "Draw",
 		"description": "Umožnuje prácu s vrstvami",
-		"checked": false
-	},{
-		"title": "Vytváranie",
-		"key": "Draw",
-		"description": "Umožnuje vytvárať nové objekty",
-		"checked": false
+		"checked": false,
+		"visible": true,
+		"shortcut" : "j"
 	}
 ]

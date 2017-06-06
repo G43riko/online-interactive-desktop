@@ -3,7 +3,8 @@
 	"redis" : {
 		"port" : 6379,
 		"host2" : "192.168.100.10",
-		"host" : "127.0.0.1"
+		"1host" : "127.0.0.1",
+		"timeOut" : 1000
 	},
 	"requestTimeOut" : 3000,
 	"loopTime" : 1000,

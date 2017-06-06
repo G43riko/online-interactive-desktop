@@ -352,7 +352,7 @@ class Entity{
 
 
 	/**
-	 * Zmení objektu atribút
+	 * Zmení objektu jeden alebo viac atribútov
 	 *
 	 * @param obj - objekt ktorý sa bude meniť
 	 * @param {string|object} data - názov atribútu alebo objekt zo všetkýmy atribútmy

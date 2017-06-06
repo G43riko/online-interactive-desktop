@@ -95,6 +95,7 @@ class EventManager{
 		if(resend && Project.connection){
 			Project.connection.object.create(object);
 		}
+		Project.createObject();
 		Logger.log("Vytvára sa objekt ", LOGGER_OBJECT_CREATED);
 	}
 
@@ -105,6 +106,7 @@ class EventManager{
 	}
 
 	objectDeleted(resend, object){//Scene.remove
+        Project.removeObject();
 		if(resend && Project.connection){
 			Project.connection.object.delete(object);
 		}
@@ -129,6 +131,7 @@ class EventManager{
 		if(Project.connection){
 			Project.connection.input.keyDown(key);
 		}
+		Project.keyDown();
 		Logger.log("stlačené klavesa " + key, LOGGER_KEY_EVENT);
 	}
 	keyUp(key){
@@ -145,7 +148,7 @@ class EventManager{
 	}
 	mouseDown(key, x, y){//Input._buttonDown
 		Logger.log("stlačené tlačítko myši ::" + key + "::" + x + "::"+ y, LOGGER_MOUSE_EVENT);
-
+        Project.mouseDown();
 		if(isSharing()){
 			Sharer.mouseChange(key);
 		}

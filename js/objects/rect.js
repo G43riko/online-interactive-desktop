@@ -34,8 +34,8 @@ class Rect extends Entity {
      * @param {GVector2f} pos - nová pozícia objektu
      */
 	updateCreatingPosition(pos){
-		this.size.x = pos.x - this.position.x;
-		this.size.y = pos.y - this.position.y;
+		this.size.x = Math.abs(pos.x - this.position.x);
+		this.size.y = Math.abs(pos.y - this.position.y);
 	}
 
 	_hover(x, y){
@@ -85,7 +85,7 @@ class Rect extends Entity {
 		else{
             doRect({
                 position: this.position,
-                size: this.size,
+				size: this.size,
                 fillColor: this.fillColor,
                 shadow: this.moving && !this.locked,
                 borderWidth: this.borderWidth,

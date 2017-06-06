@@ -494,7 +494,7 @@ class MenuManager{
 		Logger.log("prekresluje sa " + this.constructor.name, LOGGER_DRAW);
 	}
 
-	_drawIcon(type, x, y, offset = 5, width = this._size.x, height = this._size.y, strokeColor = DEFAUL_STROKE_COLOR, strokeWidth = DEFAULT_BORDER_WIDTH){
+	_drawIcon(type, x, y, offset = 10, width = this._size.x, height = this._size.y, strokeColor = DEFAUL_STROKE_COLOR, strokeWidth = DEFAULT_BORDER_WIDTH){
 		let img;
 		switch(type.key){
 			case "arc":

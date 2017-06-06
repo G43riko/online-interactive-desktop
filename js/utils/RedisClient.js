@@ -6,20 +6,30 @@ function pad(num, size) {
 	return s.substr(s.length - size);
 }
 
-module.exports.Redis = function(red, config){
+module.exports.Redis = function(red, config, callback){
 	this._config = config;
 	this._actualUserId = -1;
 	this._actualLessonId = -1;
 	this._actualConnectionId = -1;
 	this._isConnected = false;
 	this._isSynchronized = 0;
-	this._client = red.createClient(config.redis.port, config.redis.host);
+	this._client = red.createClient({
+		port: config.redis.port,
+		host: config.redis.host,
+        connect_timeout: config.redis.timeOut
+	});
 
 	this._client.on("connect", () => {
-		console.log("pripojenie k redis DB bolo úspešné");
+        // module.exports.Redis.prototype.initConnection();
+		console.log("Pripojenie k Redisu bolo úspešné");
 		this._isConnected = true;
 		this._isSynchronized++;
-	});
+		if(typeof callback === "function"){
+            callback();
+		}
+	}).on("error", function (err) {
+        console.log("Nepodarilo sa pripojiť k Redisu: " + err);
+    });
 
 	this._client.get('userIdSequencer', (err, reply) => {
 		this._actualUserId = reply;
@@ -31,6 +41,10 @@ module.exports.Redis = function(red, config){
 		this._actualLessonId = reply;
 		this._isSynchronized++;
 	});
+};
+
+module.exports.Redis.prototype.disconnect = function(){
+	this._client.	quit();
 };
 
 module.exports.Redis.prototype._createNewUser = function(data){
@@ -188,7 +202,7 @@ module.exports.Redis.prototype.initConnection = function(data){
 	return data.less_id;
 };
 
-module.exports.Redis.prototype.reset = function(){
+module.exports.Redis.prototype.reset = function(callback){
 	this._client.del("userIdSequencer");
 	this._client.del("lessonIdSequencer");
 	this._client.del("connectionIdSequencer");
@@ -198,16 +212,17 @@ module.exports.Redis.prototype.reset = function(){
 	this._client.del("conn_*");
 	this._client.del("errors");
 	this._client.del("reports");
-	
 
 	this._client.set(["userIdSequencer", 0]);
 	this._client.set(["lessonIdSequencer", 0]);
 	this._client.set(["connectionIdSequencer", 0]);
 	this._actualUserId = 0;
 	this._actualLessonId = 0;
-	this._actualConnectionId = 0
+	this._actualConnectionId = 0;
+	if(typeof callback === "function"){
+		callback();
+	}
 };
-
 module.exports.Redis.prototype._getNewUserId = function(){
 	this._client.incr('userIdSequencer');
 	return pad(++this._actualUserId, 4);

@@ -819,6 +819,7 @@ let Movement = {
 	}
 };
 
+
 function setCursor(val){
 	canvas.style.cursor = val;
 }

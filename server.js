@@ -113,9 +113,9 @@ var serverError = function(err){
 
 };
 var check = function(func){
-	return function(){
+	return function(argu){
 		try{
-            func();
+            func(argu);
         }
         catch(err){
 			serverError(err);
@@ -129,34 +129,34 @@ io.on('connection', function(socket){
 	FROM SHARER
 	*******************/
 	socket.on("changeCreator", changeCreator);
-	socket.on("paintAction", check(paintAction));
-	socket.on("startShare", check(startShare));
-	socket.on('mouseData', check(mouseData));
-	socket.on("action", check(action));
-	socket.on("sendAllData", check(sendAllData));
+	socket.on("paintAction", paintAction);
+	socket.on("startShare", startShare);
+	socket.on('mouseData', mouseData);
+	socket.on("action", action);
+	socket.on("sendAllData", sendAllData);
 	/*******************
 	FROM WATCHER
 	*******************/
-	socket.on('createWatcher', check(createWatcher));
+	socket.on('createWatcher', createWatcher);
 	/*******************
 	FROM ALL
 	*******************/
-	socket.on('disconnect', check(disconnect));
-	socket.on('chatMessage', check(chatMessage));
-	socket.on("broadcastMsg", check(broadcastMsg));
-	socket.on("sendBuffer", check(sendBuffer));
+	socket.on('disconnect', disconnect);
+	socket.on('chatMessage', chatMessage);
+	socket.on("broadcastMsg", broadcastMsg);
+	socket.on("sendBuffer", sendBuffer);
 	
 	/*******************
 	FROM OVERVIEW
 	*******************/
-	socket.on("dataReqiere", check(dataReqiere));
-	socket.on("getErrors", check(getErrors));
-	socket.on("getReports", check(getReports));
+	socket.on("dataReqiere", dataReqiere);
+	socket.on("getErrors", getErrors);
+	socket.on("getReports", getReports);
 
 	/*******************
 	 FROM USER
 	 *******************/
-	socket.on("initConnection", check(initConnection));
+	socket.on("initConnection", initConnection);
 
 
 	//socket.on("completeAuth", completeAuth);
@@ -411,6 +411,7 @@ sendBuffer = function(data){
 
 function checkConnectionRequest(data, res){
 	try{
+
 		if(typeof data !== "object"){
 			res.send(JSON.stringify({
 				result: -1,
@@ -444,29 +445,26 @@ function checkConnectionRequest(data, res){
 					}));
 				}
 				else {
-					var realType = lessonsManager.getMemberType(data.less_id)
+					var realType = lessonsManager.getMemberType(data.less_id);
 					if(realType === "exercise"){//USPECH PRE EXERCISE
-						res.send(JSON.stringify({
-							result: 1,
-							sharePaints: true,
-							shareInput: false,
-							shareCreator: false,
-							shareLayers: false,
-							shareObjects: true,
-							type : realType
-						}));
+                        data.result = 1;
+                        data.sharePaints = true;
+                        data.shareInput = false;
+                        data.shareCreator = false;
+                        data.shareLayers = false;
+                        data.shareObjects = true;
+                        data.type = realType;
+						res.send(JSON.stringify(data));
 					}
 					else{
-						res.send(JSON.stringify({
-							result: 1
-						}));
+						data.result = 1;
+						res.send(JSON.stringify(data));
 					}
 				}
 			}
 			else{
-				res.send(JSON.stringify({
-					result: 1
-				}));
+                data.result = 1;
+				res.send(JSON.stringify(data));
 			}
 		}
 	}
